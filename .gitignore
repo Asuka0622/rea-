@@ -1,0 +1,13 @@
+node_modules/
+.sandbox/
+test/.sandbox-smoke/
+
+samples/artcraft/*/
+
+samples/game-mods/.drafts/
+exports/game-mods/
+data/game-mods/results/
+
+samples/games/*/
+
+data/*.log

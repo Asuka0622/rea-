@@ -1,0 +1,56 @@
+{
+  "generatedAssets": [
+    {
+      "file": "public/assets/adventure-map.png",
+      "source": "Native ImageGen tool invocation in this task",
+      "original": "C:/Users/Administrator/.codex/generated_images/01a12fa8-53c1-7311-a316-b2012492134e/exec-1e888b53-14af-4bf9-b9ae-94ac2642fc36.png",
+      "description": "Top-down pixel forest with camp, ruined gateway, bridge and treasure; no UI text.",
+      "descriptionIsExactPrompt": false,
+      "provenance": "Original generated PNG caBX/C2PA metadata retained without visual edits; original prompt in ImageGen tool call.",
+      "sha256": "2722af3f4e583b418798cedf87567cad154be87745eec3df4834050c2c215d5f"
+    },
+    {
+      "file": "public/assets/adventure-props.png",
+      "source": "Native ImageGen tool invocation in this task",
+      "original": "C:/Users/Administrator/.codex/generated_images/01a12fa8-53c1-7311-a316-b2012492134e/exec-e213498c-f65f-4e11-98f1-7e371eb7a5b7.png",
+      "description": "Transparent pixel travel props: books, lantern, map, compass and quill.",
+      "descriptionIsExactPrompt": false,
+      "provenance": "Original generated PNG caBX/C2PA metadata retained without visual edits; original prompt in ImageGen tool call.",
+      "sha256": "a5f3a3cc9fb2315c4cc455f04dbb41442cb8337c0fe606febe5e408edb81ff23"
+    },
+    {
+      "file": "public/assets/map-desert.png",
+      "source": "Native ImageGen tool edit, original map as layout reference",
+      "original": "C:\\Users\\Administrator\\.codex\\generated_images\\01a12fa8-53c1-7311-a316-b2012492134e\\exec-3e2dc6fa-b6d8-484c-8190-3b1c0eea5290.png",
+      "exactPrompt": "Create a high-quality top-down 16-bit pixel art RPG world map, using the supplied existing forest map as a strict layout reference. Transform the biome into an ancient desert oasis: golden sand dunes, sandstone cliffs, date palms, turquoise oasis water, ruined desert temple. Keep the same winding walkable route and four functional landmarks at these exact relative coordinates: adventurer camp near x18% y72%, ruined gateway x40% y47%, bridge x63% y57%, golden treasure chest sanctuary x83% y28%. Keep terrain proportions, camera projection, map edges, wide landscape composition and pixel size consistent with reference. Map is a game background behind HTML markers. No text, labels, buttons, UI, icons, lettering, borders, logo or watermark. Detailed handcrafted coherent pixel art, crisp small pixels, warm amber and muted teal palette, atmospheric but readable, calm adventure scene. Preserve all four landmarks unobstructed. Fill full image edge to edge.",
+      "sha256": "92bd36f22718103be79165a4e79fecf66348882128793a01060e1c3c85a0df4e",
+      "provenance": "Native PNG C2PA retained unchanged"
+    },
+    {
+      "file": "public/assets/map-snow.png",
+      "source": "Native ImageGen tool edit, original map as layout reference",
+      "original": "C:\\Users\\Administrator\\.codex\\generated_images\\01a12fa8-53c1-7311-a316-b2012492134e\\exec-eeadd28b-3843-4aef-b946-640b97fc5411.png",
+      "exactPrompt": "Create a high-quality top-down 16-bit pixel art RPG world map, using the supplied existing forest map as a strict layout reference. Transform the biome into a snowy mountain castle region: blue-white snow drifts, frost-covered evergreen trees, icy rocky cliffs, an unfrozen indigo stream, ancient stone castle ruins. Keep the same winding walkable route and four functional landmarks at these exact relative coordinates: adventurer camp with warm amber lantern near x18% y72%, ruined stone gateway x40% y47%, sturdy wooden bridge x63% y57%, golden treasure chest castle sanctuary x83% y28%. Keep terrain proportions, camera projection, map edges, wide landscape composition and pixel size consistent with reference. Map is a game background behind HTML markers. No text, labels, buttons, UI, icons, lettering, borders, logo or watermark. Detailed handcrafted coherent pixel art, crisp small pixels, muted icy blue and pine with warm gold landmarks, atmospheric but readable, calm adventure scene. Preserve all four landmarks unobstructed. Fill full image edge to edge.",
+      "sha256": "d6302130dc32165d07bac895b7f6ae5338507df39e7751a3de24639b24a273dd",
+      "provenance": "Native PNG C2PA retained unchanged"
+    },
+    {
+      "file": "public/assets/map-autumn.png",
+      "source": "Native ImageGen tool edit, original map as layout reference",
+      "original": "C:\\Users\\Administrator\\.codex\\generated_images\\01a12fa8-53c1-7311-a316-b2012492134e\\exec-240de6ec-8240-4d9b-a1a4-20e841d74eaa.png",
+      "exactPrompt": "Create a high-quality top-down 16-bit pixel art RPG world map, using the supplied existing forest map as a strict layout reference. Transform the biome into an autumn enchanted forest: russet and amber maple canopies, mossy stone cliffs, softly lit leaf-covered footpaths, a deep teal stream, ancient woodland shrine ruins. Keep the same winding walkable route and four functional landmarks at these exact relative coordinates: adventurer camp near x18% y72%, ruined gateway x40% y47%, wooden bridge x63% y57%, golden treasure chest shrine sanctuary x83% y28%. Keep terrain proportions, camera projection, map edges, wide landscape composition and pixel size consistent with reference. Map is a game background behind HTML markers. No text, labels, buttons, UI, icons, lettering, borders, logo or watermark. Detailed handcrafted coherent pixel art, crisp small pixels, rich autumn copper, burnt orange, gold and deep teal palette, atmospheric but readable, calm adventure scene. Preserve all four landmarks unobstructed. Fill full image edge to edge.",
+      "sha256": "7d191241392fcfd42342d2745d50404f80585fb66851a1f823dd7ce131aee352",
+      "provenance": "Native PNG C2PA retained unchanged"
+    }
+  ],
+  "font": {
+    "name": "Fusion Pixel 12px proportional Simplified Chinese",
+    "source": "https://github.com/TakWolf/fusion-pixel-font/releases/tag/2026.09.25",
+    "license": "OFL-1.1",
+    "files": "public/fonts/fusion-pixel",
+    "local": true
+  },
+  "tooling": {
+    "impeccable": "Launcher unavailable; automated embed-prompt scanner could not run. Native C2PA provenance preserved."
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "rea-workbench-sandbox",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["sandbox.mjs", "--no-open", "--port", "7321"],
+      "port": 7321
+    }
+  ]
+}

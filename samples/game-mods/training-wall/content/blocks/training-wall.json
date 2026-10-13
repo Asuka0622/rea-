@@ -1,0 +1,13 @@
+{
+  "type": "Wall",
+  "name": "REA Training Wall",
+  "description": "Training wall for numeric balancing.",
+  "health": 400,
+  "armor": 2,
+  "size": 1,
+  "requirements": [
+    "copper/6"
+  ],
+  "category": "defense",
+  "research": "copper-wall"
+}

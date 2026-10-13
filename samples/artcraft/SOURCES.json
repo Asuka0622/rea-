@@ -1,0 +1,65 @@
+[
+  {
+    "id": "photocraft",
+    "repository": "https://github.com/storytold/photocraft",
+    "commit": "e0f6ce430285b1351ffcfc47fbd395fa8f243a6f",
+    "archive": "https://codeload.github.com/storytold/photocraft/zip/e0f6ce430285b1351ffcfc47fbd395fa8f243a6f",
+    "sha256": "79cd271a59c67048cedd541349df0d2b42e39b604f4c23c7d9194e096326eaa1",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "vectorcraft",
+    "repository": "https://github.com/storytold/vectorcraft",
+    "commit": "63686e659e9ccaf2b35a9c70e371a7aaa5275a2e",
+    "archive": "https://codeload.github.com/storytold/vectorcraft/zip/63686e659e9ccaf2b35a9c70e371a7aaa5275a2e",
+    "sha256": "2c2f92e28f384f79ca78b0e2b1d395cb5c34fcfdd5c36e917b4f8ba48142aa35",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "filmcraft",
+    "repository": "https://github.com/storytold/filmcraft",
+    "commit": "ade0f365445717390b22cd9b6eabf9db21a93e44",
+    "archive": "https://codeload.github.com/storytold/filmcraft/zip/ade0f365445717390b22cd9b6eabf9db21a93e44",
+    "sha256": "3ce610521bc78e3693289293becce1de9bc42563c23105681980e914f8e565f2",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "lightcraft",
+    "repository": "https://github.com/storytold/lightcraft",
+    "commit": "68c924047d5e139d2a003234fa75a30de1ceb89f",
+    "archive": "https://codeload.github.com/storytold/lightcraft/zip/68c924047d5e139d2a003234fa75a30de1ceb89f",
+    "sha256": "b7f9d38b595fed3b00335332d981eb59dd261379881bd221c4a187d09a97f4dc",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "printcraft",
+    "repository": "https://github.com/storytold/printcraft",
+    "commit": "685fd7eeea02ff6f5007e6f5799f854d90a7dd04",
+    "archive": "https://codeload.github.com/storytold/printcraft/zip/685fd7eeea02ff6f5007e6f5799f854d90a7dd04",
+    "sha256": "81445d3f4641c001e0f62a7de74af421a9e7d7bca1503fbe95690a9a1eca56fb",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "effectcraft",
+    "repository": "https://github.com/storytold/effectcraft",
+    "commit": "470ea7a3af82ee1dd1d2f86c777fe6891bd0c37b",
+    "archive": "https://codeload.github.com/storytold/effectcraft/zip/470ea7a3af82ee1dd1d2f86c777fe6891bd0c37b",
+    "sha256": "24657a9989810b16466b48a7ccb055136ea08bac21dc9c55692481429e3eae92",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  },
+  {
+    "id": "designcraft",
+    "repository": "https://github.com/storytold/designcraft",
+    "commit": "91263c912f1c1f2c61c087541d446e88edf43401",
+    "archive": "https://codeload.github.com/storytold/designcraft/zip/91263c912f1c1f2c61c087541d446e88edf43401",
+    "sha256": "acccb7f131ae13eb4fda15e5442b1495865165b08e89594582e7859e55848a8f",
+    "acquired": "2026-10-13",
+    "scope": "Complete official source archive; not built or executed"
+  }
+]

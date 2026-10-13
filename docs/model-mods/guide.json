@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-13",
+  "title": "人物模型 Mod · 制作与工具",
+  "summary": "从现有 Mod 的文件结构入手，学习替换贴图、修改网格和适配角色模型。工作台检查文件并整理 AI 任务；3D 编辑与导出在 Blender 中完成。",
+  "tools": [
+    {"id":"blender","name":"Blender","need":"改模型时必需","purpose":"编辑网格、UV、材质和骨骼权重，检查动作变形。","publisher":"Blender","url":"https://www.blender.org/download/","mcpStatus":"已找到官方 MCP","mcpKind":"official","mcpUrl":"https://www.blender.org/lab/mcp-server/","mcpSource":"https://projects.blender.org/lab/blender_mcp","detail":"Blender Lab 官方项目。官方页面要求 Blender 5.1+，另装官方扩展与 MCP Server，并连接支持 MCP 的 AI 客户端；并非 Blender 内置功能。模型导出插件的版本需单独确认。","automation":"可通过 Blender Python API 操作场景；MCP 不会自动解决角色骨骼适配。"},
+    {"id":"import-export","name":"3DMigoto / GIMI Blender 插件","need":"导入、导出游戏模型时必需","purpose":"在 Blender 与 Mod 的网格缓冲区文件之间转换。","publisher":"Mod 工具作者（非米哈游）","url":"https://github.com/SilentNightSound/GI-Model-Importer","mcpStatus":"未找到作者官方 MCP","mcpKind":"not-found","mcpUrl":null,"detail":"作者项目包含 Blender 导入导出工具和历史教程；旧教程标注过时，不能据此保证兼容 Blender 5.1+ 或当前游戏。MCP 和模型格式插件是两种不同的扩展。","automation":"可考虑通过 Blender API 调用插件暴露的操作，须先核对实际插件与导出格式。"},
+    {"id":"xxmi","name":"XXMI Launcher / GIMI","need":"在对应游戏中加载时需要","purpose":"管理对应游戏的模型导入器与 Mod。","publisher":"SpectrumQT 与 GIMI 维护者（非米哈游）","url":"https://github.com/SpectrumQT/XXMI-Launcher","mcpStatus":"未找到作者官方 MCP","mcpKind":"not-found","mcpUrl":null,"detail":"GIMI 旧仓库已建议使用 XXMI。已核对作者 README 与相关搜索，未发现公开官方 MCP；不是对所有社区实现的穷尽结论。","automation":"本工作台提供作者入口与文件检查；加载器仍需按作者文档配置。"},
+    {"id":"krita","name":"Krita","need":"改贴图时可选","purpose":"绘制颜色、图案与纹理；也可用其他图像编辑器。","publisher":"Krita","url":"https://krita.org/en/download/","mcpStatus":"找到社区 MCP，未核实官方 MCP","mcpKind":"community","mcpUrl":"https://github.com/SanSaSane/krita-mcp","detail":"SanSaSane/krita-mcp 是社区作者项目，提供文档、图层、绘制和导出工具；README 要求 Krita 5.2+ 与 Python 3.8+，实际兼容性尚未本机验证。","automation":"Krita Python 插件桥接；当前工作台未安装或连接。"},
+    {"id":"texconv","name":"DirectXTex · texconv","need":"贴图格式转换时可选","purpose":"转换 DDS / PNG 等贴图格式，按目标 Mod 选择压缩格式与 mipmap。","publisher":"Microsoft","url":"https://github.com/microsoft/DirectXTex/wiki/Texconv","mcpStatus":"未找到微软官方 MCP","mcpKind":"not-found","mcpUrl":null,"detail":"微软维护的命令行纹理转换工具。已有 CLI 不等于已有官方 MCP。","automation":"可由脚本调用 CLI；工作台尚未接入自动转换。"},
+    {"id":"painter","name":"Substance 3D Painter","need":"进阶贴图制作可选","purpose":"在 3D 模型上制作、烘焙和导出材质贴图。","publisher":"Adobe","url":"https://www.adobe.com/products/substance3d/apps/painter.html","mcpStatus":"找到社区 MCP，未核实 Adobe 官方 MCP","mcpKind":"community","mcpUrl":"https://github.com/jwang47/substance-painter-mcp","detail":"这是社区桥接项目。Painter 的脚本接口与 Adobe Substance 3D 云 API 都不等于官方 Painter MCP。需要适用的软件许可，本机未验证。","automation":"通过 Painter 插件与脚本接口桥接；做基础换色不必准备此工具。"}
+  ],
+  "stages": [
+    {"title":"准备模型与现有 Mod","text":"确定要替换的目标角色，准备有权使用的模型或现有 Mod 的副本。先阅读作者说明，确认游戏、导入器与插件版本。"},
+    {"title":"检查文件结构","text":"在下方选择已解压的 Mod 文件夹。工作台盘点 INI、VB / IB / BUF 与 DDS 文件，检查静态 filename 引用是否存在。"},
+    {"title":"编辑外观与适配","text":"在 Blender 中修改网格、UV、材质与骨骼权重。只改贴图时可选 Krita；完整换人物需要检查分组、权重和动作变形。"},
+    {"title":"导出并核对资源","text":"使用与目标格式兼容的导出插件生成 Mod 文件；按需转换 DDS。重新检查导出目录，核对文件名、资源引用与贴图。"},
+    {"title":"预览与验证","text":"先在 Blender 中检查材质与姿态，再在适用的测试环境验证效果。工作台文件检查通过不代表游戏内兼容或动作正确。"}
+  ],
+  "mcpSetup": [
+    "先确认 Blender 5.1+ 和模型导出插件兼容；官方 MCP 与 3DMigoto 导出插件需要分别准备。",
+    "从 Blender 官方 MCP 页面进入 Blender Lab 扩展与 Server 的下载、Setup 文档，避免把同名社区包当成官方包。",
+    "安装扩展与 Server 后，在支持 MCP 的 AI 客户端中配置；通过实际工具列表、读取当前场景等操作验证连接。",
+    "先在场景副本中测试。官方说明其 MCP 能执行 AI 生成的 Python，且没有保护本地数据的沙箱。"
+  ],
+  "mcpSetupUrl":"https://projects.blender.org/lab/blender_mcp/wiki/Setup",
+  "communityAlternative":{"name":"ahujasid/mcp-for-blender","url":"https://github.com/ahujasid/mcp-for-blender","note":"明确声明与 Blender Foundation 无关联；是另一套社区 MCP，不能与 Blender Lab 的扩展、命令或包名混用。"},
+  "connectionState":"本次已核实来源并添加指南；未安装或连接任何外部 MCP，也未核验本机 Blender 版本。",
+  "limitations":["只检查静态配置与文件存在性，不能解析模型拓扑、骨骼权重或游戏运行效果。","原神官服使用第三方模型工具存在封号风险，GIMI 作者明确提醒；视觉替换不保证账号安全。"],
+  "sources":[
+    {"title":"Blender 官方 MCP 页面","url":"https://www.blender.org/lab/mcp-server/","finding":"官方来源、Blender 5.1+ 与外部组件要求、Python 执行范围。已读取官方页面；Setup 子页被访问验证拦截，未核实具体启动命令。"},
+    {"title":"GIMI 作者项目与历史制作指南","url":"https://github.com/SilentNightSound/GI-Model-Importer","finding":"Blender 插件、模型制作流程、旧独立加载器弃用与官服风险。"},
+    {"title":"GIMI 模型制作指南（历史）","url":"https://github.com/SilentNightSound/GI-Model-Importer/blob/main/Guides/UsageInstructions.md","finding":"网格分组、贴图与缓冲区文件组织；需结合当前工具版本。"},
+    {"title":"XXMI 作者项目","url":"https://github.com/SpectrumQT/XXMI-Launcher","finding":"支持的模型导入器与安装入口；README 未发现 MCP。"},
+    {"title":"Blender 社区 MCP 作者声明","url":"https://github.com/ahujasid/mcp-for-blender","finding":"作者明确标注为第三方项目。"},
+    {"title":"Krita 社区 MCP 作者项目","url":"https://github.com/SanSaSane/krita-mcp","finding":"社区实现与作者声明的依赖；未进行本机验证。"},
+    {"title":"微软 texconv 文档","url":"https://github.com/microsoft/DirectXTex/wiki/Texconv","finding":"官方 CLI 功能；未找到官方 MCP。"},
+    {"title":"Painter 社区 MCP 作者项目","url":"https://github.com/jwang47/substance-painter-mcp","finding":"社区插件桥接；未找到 Adobe 官方 Painter MCP。"}
+  ],
+  "searchScope":"核对上述官方或作者文档，并搜索 Blender/Krita/Adobe/微软/XXMI 的 MCP；插件目录搜索 Blender 与 Painter 未返回结果。未找到不等于确定不存在，后续发布可能改变。",
+  "aiTask":"请根据我提供的模型 Mod 静态报告，先解释 INI 的资源段、hash 与 filename 如何对应本地网格和贴图。引用实际文件与行号，区分已找到、缺失、动态表达式和目录外引用。然后制定一个最小外观修改方案，列出 Blender 的网格、UV、权重与导出检查步骤。不要把文件存在当作兼容性证明；如有 MCP，先确认它的维护者、版本和实际工具列表，优先 Blender Lab 官方方案。"
+}

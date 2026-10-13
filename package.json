@@ -1,0 +1,21 @@
+{
+  "name": "rea-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "零基础也能用的 REA 逆向分析工作台：拖入文件、看中文报告、一键接入各家 AI 工具和分析引擎。",
+  "type": "module",
+  "bin": {
+    "rea-workbench": "server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "rea-agents": "6.4.0"
+  },
+  "license": "MIT"
+}

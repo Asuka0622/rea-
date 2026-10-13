@@ -1,0 +1,1 @@
+{ "name": "notes-demo", "version": "1.0.0", "main": "main.js", "dependencies": { "electron": "^33.0.0", "electron-store": "^10.0.0" } }

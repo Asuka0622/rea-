@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-12T12:39:15.516Z",
+  "title": "Design System: REA 像素冒险工作台",
+  "extensions": {
+    "colorMeta": {
+      "gold": {
+        "role": "primary",
+        "displayName": "冒险金色",
+        "tonalRamp": [
+          "oklch(15% 0.1136 81.5)",
+          "oklch(27% 0.1136 81.5)",
+          "oklch(38% 0.1136 81.5)",
+          "oklch(49% 0.1136 81.5)",
+          "oklch(61% 0.1136 81.5)",
+          "oklch(72% 0.1136 81.5)",
+          "oklch(84% 0.1136 81.5)",
+          "oklch(95% 0.1136 81.5)"
+        ]
+      },
+      "midnight": {
+        "role": "neutral",
+        "displayName": "午夜营地",
+        "tonalRamp": [
+          "oklch(15% 0.0239 262.3)",
+          "oklch(27% 0.0239 262.3)",
+          "oklch(38% 0.0239 262.3)",
+          "oklch(49% 0.0239 262.3)",
+          "oklch(61% 0.0239 262.3)",
+          "oklch(72% 0.0239 262.3)",
+          "oklch(84% 0.0239 262.3)",
+          "oklch(95% 0.0239 262.3)"
+        ]
+      },
+      "parchment": {
+        "role": "neutral",
+        "displayName": "羊皮纸",
+        "tonalRamp": [
+          "oklch(15% 0.0493 90.5)",
+          "oklch(27% 0.0493 90.5)",
+          "oklch(38% 0.0493 90.5)",
+          "oklch(49% 0.0493 90.5)",
+          "oklch(61% 0.0493 90.5)",
+          "oklch(72% 0.0493 90.5)",
+          "oklch(84% 0.0493 90.5)",
+          "oklch(95% 0.0493 90.5)"
+        ]
+      },
+      "pine": {
+        "role": "secondary",
+        "displayName": "松林绿",
+        "tonalRamp": [
+          "oklch(15% 0.0325 174.0)",
+          "oklch(27% 0.0325 174.0)",
+          "oklch(38% 0.0325 174.0)",
+          "oklch(49% 0.0325 174.0)",
+          "oklch(61% 0.0325 174.0)",
+          "oklch(72% 0.0325 174.0)",
+          "oklch(84% 0.0325 174.0)",
+          "oklch(95% 0.0325 174.0)"
+        ]
+      },
+      "gold-hover": {
+        "role": "neutral",
+        "displayName": "gold-hover",
+        "tonalRamp": [
+          "oklch(15% 0.1149 87.6)",
+          "oklch(27% 0.1149 87.6)",
+          "oklch(38% 0.1149 87.6)",
+          "oklch(49% 0.1149 87.6)",
+          "oklch(61% 0.1149 87.6)",
+          "oklch(72% 0.1149 87.6)",
+          "oklch(84% 0.1149 87.6)",
+          "oklch(95% 0.1149 87.6)"
+        ]
+      },
+      "parchment-secondary": {
+        "role": "neutral",
+        "displayName": "parchment-secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0591 90.0)",
+          "oklch(27% 0.0591 90.0)",
+          "oklch(38% 0.0591 90.0)",
+          "oklch(49% 0.0591 90.0)",
+          "oklch(61% 0.0591 90.0)",
+          "oklch(72% 0.0591 90.0)",
+          "oklch(84% 0.0591 90.0)",
+          "oklch(95% 0.0591 90.0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "ink",
+        "tonalRamp": [
+          "oklch(15% 0.0099 132.6)",
+          "oklch(27% 0.0099 132.6)",
+          "oklch(38% 0.0099 132.6)",
+          "oklch(49% 0.0099 132.6)",
+          "oklch(61% 0.0099 132.6)",
+          "oklch(72% 0.0099 132.6)",
+          "oklch(84% 0.0099 132.6)",
+          "oklch(95% 0.0099 132.6)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "ink-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0277 107.4)",
+          "oklch(27% 0.0277 107.4)",
+          "oklch(38% 0.0277 107.4)",
+          "oklch(49% 0.0277 107.4)",
+          "oklch(61% 0.0277 107.4)",
+          "oklch(72% 0.0277 107.4)",
+          "oklch(84% 0.0277 107.4)",
+          "oklch(95% 0.0277 107.4)"
+        ]
+      },
+      "night-text": {
+        "role": "neutral",
+        "displayName": "night-text",
+        "tonalRamp": [
+          "oklch(15% 0.0360 91.1)",
+          "oklch(27% 0.0360 91.1)",
+          "oklch(38% 0.0360 91.1)",
+          "oklch(49% 0.0360 91.1)",
+          "oklch(61% 0.0360 91.1)",
+          "oklch(72% 0.0360 91.1)",
+          "oklch(84% 0.0360 91.1)",
+          "oklch(95% 0.0360 91.1)"
+        ]
+      },
+      "day-camp": {
+        "role": "neutral",
+        "displayName": "day-camp",
+        "tonalRamp": [
+          "oklch(15% 0.0470 90.9)",
+          "oklch(27% 0.0470 90.9)",
+          "oklch(38% 0.0470 90.9)",
+          "oklch(49% 0.0470 90.9)",
+          "oklch(61% 0.0470 90.9)",
+          "oklch(72% 0.0470 90.9)",
+          "oklch(84% 0.0470 90.9)",
+          "oklch(95% 0.0470 90.9)"
+        ]
+      },
+      "day-text": {
+        "role": "neutral",
+        "displayName": "day-text",
+        "tonalRamp": [
+          "oklch(15% 0.0468 142.4)",
+          "oklch(27% 0.0468 142.4)",
+          "oklch(38% 0.0468 142.4)",
+          "oklch(49% 0.0468 142.4)",
+          "oklch(61% 0.0468 142.4)",
+          "oklch(72% 0.0468 142.4)",
+          "oklch(84% 0.0468 142.4)",
+          "oklch(95% 0.0468 142.4)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "field",
+        "tonalRamp": [
+          "oklch(15% 0.0330 89.8)",
+          "oklch(27% 0.0330 89.8)",
+          "oklch(38% 0.0330 89.8)",
+          "oklch(49% 0.0330 89.8)",
+          "oklch(61% 0.0330 89.8)",
+          "oklch(72% 0.0330 89.8)",
+          "oklch(84% 0.0330 89.8)",
+          "oklch(95% 0.0330 89.8)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "像素标题",
+        "purpose": "标题与游戏菜单"
+      },
+      "body": {
+        "displayName": "普通正文",
+        "purpose": "报告和工具说明"
+      }
+    },
+    "shadows": [
+      {
+        "name": "parchment-inset",
+        "value": "inset 0 0 0 2px #c5ad77,inset 0 0 0 5px #e7d5a9",
+        "purpose": "羊皮纸内描边"
+      },
+      {
+        "name": "button-inset",
+        "value": "inset 0 2px #f4d88a,inset 0 -3px #b18a40",
+        "purpose": "像素按钮明暗边"
+      }
+    ],
+    "motion": [
+      {
+        "name": "traveler",
+        "value": "left 1s steps(10),top 1s steps(10)",
+        "purpose": "阶段间移动"
+      },
+      {
+        "name": "chest-open",
+        "value": "1s steps(8)",
+        "purpose": "箱盖开启"
+      },
+      {
+        "name": "reward-reveal",
+        "value": "1050ms",
+        "purpose": "真实报告显露；减少动态效果时为0"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "1150px"
+      },
+      {
+        "name": "medium",
+        "value": "900px"
+      },
+      {
+        "name": "mobile",
+        "value": "650px"
+      },
+      {
+        "name": "wide",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "开始探索或开启宝箱。",
+      "html": "<button class=\"ds-primary\">开始探索</button>",
+      "css": ".ds-primary {background:var(--gold);color:var(--ink);font:12px var(--font-display);padding:8px 17px;min-height:42px;border:2px solid #84652c;border-radius:0;box-shadow:inset 0 2px #f4d88a,inset 0 -3px #b18a40;}.ds-primary:hover {background:#e7c36b;}.ds-primary:focus-visible {outline:3px solid var(--gold);outline-offset:4px;}.ds-primary:active {transform:translateY(2px);}.ds-primary:disabled {opacity:.5;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "description": "次要行动。",
+      "html": "<button class=\"ds-secondary\">选择文件夹</button>",
+      "css": ".ds-secondary {background:#e7dfc4;color:#303d31;border:2px solid #8f855f;border-radius:0;padding:8px 17px;min-height:42px;font:12px var(--font-display);box-shadow:inset 0 -3px #c6bea2;}.ds-secondary:hover {background:#f1e8cd;}.ds-secondary:focus-visible {outline:3px solid var(--gold);outline-offset:4px;}.ds-secondary:active {transform:translateY(2px);}"
+    },
+    {
+      "name": "Path Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "本机目标路径。",
+      "html": "<input class=\"ds-field\" aria-label=\"文件路径\" placeholder=\"文件或文件夹路径\">",
+      "css": ".ds-field {background:#faf1d9;color:#30362d;border:1px solid #8f895f;border-radius:0;min-height:40px;font:13px var(--font-body);padding:8px 12px;}.ds-field::placeholder {color:#716b53;}.ds-field:focus-visible {outline:3px solid var(--gold);outline-offset:4px;}"
+    },
+    {
+      "name": "Navigation Tab",
+      "kind": "nav",
+      "description": "页眉功能入口。",
+      "html": "<button class=\"ds-tab\" aria-selected=\"true\">冒险地图</button>",
+      "css": ".ds-tab {background:#263932;color:#f0cd76;border:1px solid #9c8654;border-radius:0;padding:11px 18px;font:12px var(--font-display);min-height:44px;}.ds-tab:hover {background:#22342f;color:#ffe09d;}.ds-tab:focus-visible {outline:3px solid var(--gold);outline-offset:4px;}"
+    },
+    {
+      "name": "Equipment Chip",
+      "kind": "chip",
+      "description": "装备建议选项。",
+      "html": "<button class=\"ds-chip\">只看电脑软件</button>",
+      "css": ".ds-chip {background:#334739;color:#d5dfc6;border:1px solid #758762;border-radius:0;padding:6px 14px;font:13px var(--font-body);}.ds-chip:focus-visible {outline:3px solid var(--gold);outline-offset:4px;}"
+    },
+    {
+      "name": "Parchment Panel",
+      "kind": "card",
+      "refersTo": "parchment-panel",
+      "description": "任务与报告容器。",
+      "html": "<section class=\"ds-parchment\"><h3>准备好，进入遗迹</h3><p>确认目标与分析装备。</p></section>",
+      "css": ".ds-parchment {background:var(--parchment);color:var(--ink);border:3px solid #28312c;border-radius:0;outline:1px solid var(--frame);box-shadow:inset 0 0 0 2px #c5ad77,inset 0 0 0 5px #e7d5a9;padding:24px;font:14px/1.7 var(--font-body);}.ds-parchment h3 {font:24px/1.5 var(--font-display);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "像素冒险工作台",
+    "overview": "像素地图是视觉主体，羊皮纸面板承载任务与报告，金色菜单突出行动。中文像素字体负责游戏标题与菜单，普通正文负责长报告与配置说明。\n\n四张地图共享同一套操作界面：森林、沙漠、雪山和秋林拥有独立节点坐标，周围营地遵守主题偏好；午夜页眉始终使用浅色文字。",
+    "keyCharacteristics": [
+      "像素场景与方形菜单",
+      "中文像素显示字体和可读正文",
+      "地图独立坐标",
+      "真实成果与宝箱动效"
+    ],
+    "rules": [],
+    "dos": [
+      "Do 使用本地像素资产和中文像素菜单。",
+      "Do 用普通正文和等宽代码承载长报告。",
+      "Do 为每张地图分别设置节点与角色坐标。",
+      "Do 保留键盘焦点与减少动态效果的路径。"
+    ],
+    "donts": [
+      "Don't 在分析进行中自动换图。",
+      "Don't 把取消或失败表现为获得成果。",
+      "Don't 用远程字体替代已打包字体。"
+    ]
+  }
+}

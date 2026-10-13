@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>REA 工作台</title>
+<meta name="workbench-token" content="__WORKBENCH_TOKEN__">
+<script>
+  // Apply the saved theme before first paint to avoid a flash.
+  try {
+    const theme = localStorage.getItem("rea-wb-theme");
+    if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+  } catch {}
+</script>
+<link rel="stylesheet" href="/fonts/noto-serif-sc/600.css">
+<link rel="stylesheet" href="/fonts/plex-mono/plex-mono.css">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="mode-beginner">
+<canvas id="ocean" aria-hidden="true"></canvas>
+<a class="announce beginner-only" href="#clients" data-goto="clients">新功能：一键接入 Trae、通义灵码等 AI 工具<i data-icon="arrow" data-size="14"></i></a>
+<header class="topbar">
+  <div class="topbar-row">
+    <a class="brand" href="/" aria-label="REA 工作台首页">
+      <svg class="brand-mark" viewBox="0 0 40 24" aria-hidden="true">
+        <path d="M2 9c4.5-5 9.5-5 14 0s9.5 5 14 0 6-3.6 8-3.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M2 15.5c4.5-5 9.5-5 14 0s9.5 5 14 0 6-3.6 8-3.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+        <circle cx="20" cy="21" r="1.6" fill="var(--marker)"/>
+      </svg>
+      <span class="brand-text">
+        <span class="wordmark">REA 工作台</span>
+        <span class="brand-sub mono">Reverse&nbsp;Engineer&nbsp;Anything · 本机运行</span>
+      </span>
+    </a>
+    <div class="topbar-tools">
+      <div class="mode-switch" role="radiogroup" aria-label="使用模式">
+        <button role="radio" data-mode="beginner" aria-checked="true"><i data-icon="seed" data-size="16"></i>新手</button>
+        <button role="radio" data-mode="pro" aria-checked="false"><i data-icon="wrench" data-size="16"></i>专业</button>
+      </div>
+      <button class="tool-btn" id="theme-toggle" type="button" aria-label="切换浅色/深色" title="外观：跟随系统"><i data-icon="auto" data-size="18"></i></button>
+      <button class="tool-btn" id="open-glossary" type="button" title="小词典：看不懂的词都在这里"><i data-icon="glossary" data-size="18"></i><span class="beginner-only label">小词典</span></button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="页面">
+    <button role="tab" data-tab="home" aria-selected="true"><i data-icon="home" data-size="17"></i>首页</button>
+    <button role="tab" data-tab="learn" class="beginner-only"><i data-icon="learn" data-size="17"></i>新手教程</button>
+    <button role="tab" data-tab="engines"><i data-icon="engines" data-size="17"></i>分析引擎</button>
+    <button role="tab" data-tab="clients"><i data-icon="plug" data-size="17"></i>接入 AI 工具</button>
+    <button role="tab" data-tab="doctor"><i data-icon="pulse" data-size="17"></i>体检</button>
+    <span class="tab-ink" aria-hidden="true"></span>
+  </nav>
+</header>
+
+<main>
+  <!-- 首页 -->
+  <section id="tab-home" class="panel">
+    <div id="home-start">
+      <section class="hero beginner-only" id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">逆向分析 · 全程在你的电脑上进行</p>
+          <h2 class="hero-title">看见软件的<br>水面之下。</h2>
+          <p class="hero-sub">分析一个软件，就像一次下潜。<br>先认出它是什么，再一层层往下，直到看清它是怎么做出来的。</p>
+          <div class="hero-actions">
+            <button class="btn primary pill" id="hero-sample">开始一次示范下潜<i data-icon="arrow" data-size="17"></i></button>
+            <button class="play-link" id="hero-tour" type="button"><span class="play-ring"><i data-icon="play" data-size="14"></i></span>30 秒了解它</button>
+          </div>
+        </div>
+        <div class="hero-foot">
+          <button class="sea-toggle" id="sea-toggle" type="button" aria-pressed="false"><span class="play-ring small"><i data-icon="pause" data-size="12"></i></span><span class="sea-toggle-label">海面实时</span></button>
+          <a class="scroll-cue" href="#dive-map">向下潜<i data-icon="down" data-size="15"></i></a>
+        </div>
+      </section>
+
+      <section class="dive-map beginner-only" id="dive-map" aria-labelledby="dive-map-title">
+        <div class="dive-map-head">
+          <p class="eyebrow">下潜路线</p>
+          <h2 id="dive-map-title" class="section-title">每一层，回答一个问题</h2>
+          <p class="sea-soft">工作台会带你从水面一路潜到海底。前三层不用装任何东西；更深的地方，需要「分析引擎」当潜水装备。</p>
+        </div>
+        <ol class="layers" id="layer-map"></ol>
+      </section>
+
+      <div class="beginner-only start-here">
+        <p class="eyebrow">选一个起点，开始下潜</p>
+        <div id="tasks" class="tasks"></div>
+      </div>
+      <div id="guide" class="guide" hidden></div>
+
+      <div class="pro-only pro-head">
+        <p class="eyebrow">分析目标</p>
+        <h2 class="page-title">选择文件、文件夹或粘贴路径</h2>
+        <p class="muted">可以让工作台自动挑选命令，也可以手动指定要运行的 REA 命令。</p>
+      </div>
+      <div id="drop" class="drop" tabindex="0">
+        <div class="drop-art" aria-hidden="true"><i data-icon="scan" data-size="30"></i></div>
+        <div class="drop-copy">
+          <p class="drop-title"><span class="beginner-only">已经有文件了？</span>把文件拖到这里</p>
+          <p class="muted">APK、exe、dll、so、ipa、asar、zip、HAR，或者整个软件文件夹</p>
+        </div>
+        <div class="drop-actions">
+          <button class="btn primary" id="pick-file"><i data-icon="file" data-size="17"></i>选择文件</button>
+          <button class="btn" id="pick-folder"><i data-icon="folder" data-size="17"></i>选择文件夹</button>
+        </div>
+        <details class="path-entry" id="path-details">
+          <summary>我知道<span class="term-inline" data-term="路径">路径</span>，直接粘贴</summary>
+          <form id="path-form">
+            <input id="path-input" placeholder="例如 D:\apps\MyApp 或 C:\Downloads\demo.apk" autocomplete="off" spellcheck="false" aria-label="文件或文件夹路径">
+            <select id="command-select" class="pro-only" aria-label="要运行的命令">
+              <option value="">自动选择命令</option>
+            </select>
+            <button class="btn primary" type="submit">分析</button>
+          </form>
+        </details>
+      </div>
+      <p class="legal"><i data-icon="shield" data-size="15"></i>只读取文件，不运行软件，不上传任何内容。请只分析你自己的或有权研究的软件。</p>
+    </div>
+
+    <div id="run" class="run" hidden>
+      <aside class="gauge" aria-label="下潜深度">
+        <div class="gauge-reading"><span class="mono" id="gauge-depth">0</span><small>米</small></div>
+        <ol class="gauge-layers" id="gauge-layers"></ol>
+      </aside>
+      <div class="run-main">
+      <div class="run-head">
+        <div class="run-title">
+          <p class="eyebrow" id="run-kind-label">正在识别</p>
+          <h2 id="run-kind" class="run-kind">…</h2>
+          <div class="run-meta">
+            <span id="run-target" class="mono target"></span>
+            <span id="run-signature" class="signature mono" hidden></span>
+          </div>
+        </div>
+        <div class="run-actions">
+          <button class="btn primary beginner-only" id="explain-ai" disabled><i data-icon="spark" data-size="17"></i>看不懂？让 AI 解释</button>
+          <button class="btn pro-only" id="copy-md" disabled><i data-icon="copy" data-size="16"></i>复制 Markdown</button>
+          <button class="btn" id="cancel-run"><i data-icon="stop" data-size="15"></i>停止</button>
+          <button class="btn ghost" id="new-run"><i data-icon="back" data-size="16"></i>分析别的</button>
+        </div>
+      </div>
+      <div id="hints"></div>
+      <div id="reports"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 新手教程 -->
+  <section id="tab-learn" class="panel" hidden>
+    <div class="page-head">
+      <p class="eyebrow">新手教程 · 8 课 · 约 5 分钟</p>
+      <h2 class="page-title">从零开始</h2>
+      <p class="muted">按顺序看一遍，就知道这个工具能做什么、该怎么用。</p>
+      <button class="btn ghost" id="replay-onboarding"><i data-icon="compass" data-size="16"></i>重新看一遍入门引导</button>
+    </div>
+    <div id="lessons" class="lessons"></div>
+  </section>
+
+  <!-- 分析引擎 -->
+  <section id="tab-engines" class="panel" hidden>
+    <div class="page-head">
+      <p class="eyebrow">分析引擎</p>
+      <h2 class="page-title">想看得更深，再装引擎</h2>
+      <p class="muted">不装引擎也能分析大多数电脑软件。想看安卓 App 的代码、普通程序的内部代码，才需要装对应的「<span class="term-inline" data-term="引擎">引擎</span>」。免费引擎都能一键安装，不会改动系统设置。</p>
+    </div>
+    <div class="advisor beginner-only" id="engine-advisor">
+      <p class="advisor-q">我需要装哪些？</p>
+      <div class="advisor-options">
+        <button class="chip" data-need="desktop"><i data-icon="monitor" data-size="16"></i>只看电脑软件</button>
+        <button class="chip" data-need="android"><i data-icon="phone" data-size="16"></i>看安卓 App</button>
+        <button class="chip" data-need="native"><i data-icon="terminal" data-size="16"></i>看普通 exe 程序的代码</button>
+        <button class="chip" data-need="phone"><i data-icon="plug" data-size="16"></i>连接手机</button>
+      </div>
+      <p id="advisor-answer" class="advisor-answer" hidden></p>
+    </div>
+    <div id="engine-list" class="cards"></div>
+    <details class="fold" id="paid-engines">
+      <summary>付费引擎<span class="muted">专业用户才需要</span></summary>
+      <div id="engine-list-paid" class="cards"></div>
+    </details>
+  </section>
+
+  <!-- 接入 AI 工具 -->
+  <section id="tab-clients" class="panel" hidden>
+    <div class="page-head">
+      <p class="eyebrow">接入 AI 工具</p>
+      <h2 class="page-title">让 AI 自己调用 REA</h2>
+      <div class="note beginner-only">
+        <i data-icon="bulb" data-size="20"></i>
+        <div>
+          如果你平时只用<b>网页版 AI</b>（豆包、Kimi、DeepSeek、通义千问），<b>不需要这一页</b>：分析完点报告上方的「看不懂？让 AI 解释」就行。<br>
+          这一页是给用 Trae、Cursor、通义灵码这类 <span class="term-inline" data-term="AI 工具">AI 编程工具</span>的人准备的。接入后，直接对 AI 说「帮我分析某某软件」，它会自己调用 REA。
+        </div>
+      </div>
+      <p class="pro-only muted">把 REA 注册为 <span class="term-inline" data-term="MCP">MCP</span> 服务器。修改前预览改动并自动备份；只增删名为 <code>rea</code> 的一项。</p>
+    </div>
+    <div class="settings-row">
+      <fieldset class="profiles" id="profiles"></fieldset>
+      <label class="switch">
+        <input type="checkbox" id="compact">
+        <span class="track" aria-hidden="true"></span>
+        <span><b>精简模式</b><small>减少 REA 工具说明的体积，国产模型和小模型更容易用好（推荐）</small></span>
+      </label>
+    </div>
+    <h3 class="group-title">在你电脑上找到的</h3>
+    <p class="muted group-note" id="detected-note">检测中…</p>
+    <div id="clients-detected" class="cards"></div>
+
+    <details class="fold" id="clients-more">
+      <summary>其他 AI 工具<span class="muted">没在你电脑上找到，或需要手动设置</span></summary>
+      <h3 class="group-title">一键接入 · 工作台支持</h3>
+      <p class="muted group-note">REA 官方安装器不支持的工具，由工作台直接写入它们的 MCP 配置文件。</p>
+      <div id="clients-extra" class="cards"></div>
+      <h3 class="group-title">一键接入 · REA 官方支持</h3>
+      <p class="muted group-note">由 REA 自带的安装程序写入，同时安装一份教 AI 使用 REA 的技能说明。这一组始终提供全部工具。</p>
+      <div id="clients-native" class="cards"></div>
+      <h3 class="group-title">复制粘贴接入</h3>
+      <p class="muted group-note">这些工具的设置保存在应用界面里，按步骤粘贴即可。不同版本的菜单位置可能略有差别。</p>
+      <div id="clients-manual" class="cards"></div>
+    </details>
+  </section>
+
+  <!-- 体检 -->
+  <section id="tab-doctor" class="panel" hidden>
+    <div class="page-head">
+      <p class="eyebrow">体检</p>
+      <h2 class="page-title">工作台状态</h2>
+      <p class="beginner-only muted">显示「没装」的项目大多是可选引擎，不影响基本使用。</p>
+      <p id="overview" class="muted mono-soft">读取中…</p>
+    </div>
+    <div id="doctor-list" class="cards"></div>
+    <div class="danger-zone pro-only">
+      <h3>移除所有 REA 接入</h3>
+      <p class="muted">调用 REA 自带的卸载程序，从它管理的所有 AI 工具中移除 REA 并删除技能说明。工作台自己写入的接入请在「接入 AI 工具」里逐个断开。</p>
+      <button class="btn danger" id="uninstall-all">移除所有 REA 接入</button>
+    </div>
+  </section>
+</main>
+
+<!-- 入门引导 -->
+<dialog id="onboarding" aria-labelledby="ob-title">
+  <div class="ob-body">
+    <div class="ob-art" id="ob-art" aria-hidden="true"></div>
+    <p class="eyebrow" id="ob-step"></p>
+    <h2 id="ob-title"></h2>
+    <div id="ob-content"></div>
+    <div class="ob-foot">
+      <button class="btn link" id="ob-skip">跳过</button>
+      <div class="ob-dots" id="ob-dots" aria-hidden="true"></div>
+      <div class="ob-nav">
+        <button class="btn ghost" id="ob-prev">上一步</button>
+        <button class="btn primary" id="ob-next">下一步</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 小词典 -->
+<dialog id="glossary" class="sheet-dialog" aria-labelledby="glossary-title">
+  <div class="sheet-dialog-head">
+    <div>
+      <p class="eyebrow">小词典</p>
+      <h2 id="glossary-title">看不懂的词，都在这里</h2>
+    </div>
+    <button class="tool-btn" id="close-glossary" aria-label="关闭"><i data-icon="close" data-size="18"></i></button>
+  </div>
+  <input id="glossary-search" placeholder="搜一个词，比如 APK" aria-label="搜索词条" autocomplete="off">
+  <dl id="glossary-list"></dl>
+</dialog>
+
+<!-- 通用弹窗 -->
+<dialog id="dialog">
+  <form method="dialog" class="dialog-body">
+    <h3 id="dialog-title"></h3>
+    <div id="dialog-content"></div>
+    <div class="dialog-actions" id="dialog-actions"></div>
+  </form>
+</dialog>
+
+<div id="term-pop" role="tooltip" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/app.js" type="module"></script>
+</body>
+</html>
