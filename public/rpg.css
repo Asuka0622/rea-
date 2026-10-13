@@ -2,7 +2,7 @@
 @font-face {font-family:"Fusion Pixel";src:url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
 :root, :root[data-theme="dark"], :root[data-theme="light"] {
   --paper:#111722; --sheet:#f0e3bf; --sheet-2:#e7d7ac;
-  --ink:#282b26; --ink-soft:#61614f; --rule:#b19b69;
+  --ink:#282b26; --ink-soft:#4f4f41; --rule:#b19b69;
   --cyan:#d6aa57; --cyan-strong:#e8c270; --cyan-wash:#e5d4a0;
   --teal:#486040; --marker:#99692a; --marker-wash:#dfc68e;
   --ok:#385731; --ok-wash:#dae2bd; --warn:#755218; --warn-wash:#ead8a5;
@@ -369,3 +369,29 @@ body[data-quest-state="reward"] .world-map .pixel-chest {animation:chest-bob 1.1
 .model-risk-scope {font-weight:600;}
 .model-risk-safe {padding-top:8px;border-top:1px dashed color-mix(in srgb,var(--bad) 45%,transparent);}
 @media(max-width:650px) {.model-risk {padding:14px 14px 12px;}.model-risk h3 {font-size:17px;}.model-risk ul {font-size:13px;}}
+
+/* Contrast fixes (WCAG AA). Pixel presentation only; simple mode has its own palette.
+   Several colors were tuned for the dark camp and were unreadable on the light camp, or the reverse. */
+:root:not([data-presentation="simple"]) .fold>summary .muted {color:#c9d3bf;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .fold>summary {color:#3a5438;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .fold>summary .muted {color:#44593c;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .fold>summary::after {color:#5d4a1c;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .page-head>.muted,
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .page-head .muted,
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .group-note {color:#3f5637;}
+/* notes that sit directly on the camp, outside any parchment card */
+:root:not([data-presentation="simple"]) #doctor-list>p.muted {color:#c4cfbf;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] #doctor-list>p.muted {color:#3f5637;}
+/* the selected tool profile has a dark fill */
+:root:not([data-presentation="simple"]) .profiles label:has(input:checked) small {color:#d3dcc6;}
+/* small print on parchment */
+:root:not([data-presentation="simple"]) .task-drop-hint,
+:root:not([data-presentation="simple"]) .task-divider,
+:root:not([data-presentation="simple"]) .task-foot p,
+:root:not([data-presentation="simple"]) .task-muted,
+:root:not([data-presentation="simple"]) .task-caption {color:#575240;}
+:root:not([data-presentation="simple"]) .status.plain {color:#4a4a3c;}
+:root:not([data-presentation="simple"]) .profiles label:not(:has(input:checked)) small {color:#4a4a3c;}
+:root:not([data-presentation="simple"]) .seabed b {color:#f0d58a;}
+:root:not([data-presentation="simple"]) .section .explain {color:#4f533e;}
+:root:not([data-presentation="simple"])[data-camp-theme="light"] .run-meta .target {color:#3f5637;}

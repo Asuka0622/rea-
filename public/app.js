@@ -660,7 +660,7 @@ async function explainWithAi() {
   await copy(prompt, "已复制，去粘贴给 AI 吧");
   const paste = navigator.platform.startsWith("Mac") ? "⌘ + V" : "Ctrl + V";
   await dialog(
-    "伙伴任务：报告已经复制好了",
+    "报告已经复制好了，接下来：",
     [
       h(
         "ol",
@@ -811,7 +811,7 @@ function seabedPanel() {
   return h(
     "div",
     { class: "seabed", id: "seabed" },
-    h("div", {}, h("b", {}, isPro() ? "导出整份报告" : "伙伴任务 · 让 AI 解读你的发现"), h("small", {}, isPro() ? "复制为 Markdown，交给任意 AI 或存档。" : "把上面所有发现整理好，一键复制给豆包、Kimi、DeepSeek。")),
+    h("div", {}, h("b", {}, isPro() ? "导出整份报告" : "让 AI 用大白话解读这份报告"), h("small", {}, isPro() ? "复制为 Markdown，交给任意 AI 或存档。" : "把上面所有发现整理好，一键复制给豆包、Kimi、DeepSeek。")),
     isPro()
       ? h("button", { class: "btn", onclick: () => current && copy(reportMarkdown()) }, icon("copy", { size: 16 }), "复制 Markdown")
       : h("button", { class: "btn primary", onclick: () => current && explainWithAi() }, icon("spark", { size: 16 }), "让 AI 用大白话解释"),
