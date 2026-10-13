@@ -168,6 +168,7 @@ export function createAdventure(actions) {
     body(
       button('看报告', () => $('#run')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), { primary: true, iconName: 'down' }),
       button('让 AI 用大白话解释', actions.explain, { iconName: 'spark' }),
+      button('自己动手做一个类似的', actions.replicate, { iconName: 'wrench' }),
       button('再看一个软件', actions.restart, { iconName: 'back' }),
       el('p', { class: 'task-caption' }, '报告里有「继续深入」的按钮，可以接着探索更深一层。'),
     );

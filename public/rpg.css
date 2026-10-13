@@ -395,3 +395,44 @@ body[data-quest-state="reward"] .world-map .pixel-chest {animation:chest-bob 1.1
 :root:not([data-presentation="simple"]) .seabed b {color:#f0d58a;}
 :root:not([data-presentation="simple"]) .section .explain {color:#4f533e;}
 :root:not([data-presentation="simple"])[data-camp-theme="light"] .run-meta .target {color:#3f5637;}
+
+/* ---------- 自己动手做一个: the replicate exercise after the report ---------- */
+.replicate {margin-top:22px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;color:var(--ink);}
+.rep-head h3 {font:600 23px/1.5 var(--font-display);margin:0;}
+.rep-head p {margin:4px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.75;}
+.rep-progress {list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;}
+.rep-progress li {display:flex;align-items:center;gap:6px;padding:7px 8px;font-size:12px;color:var(--ink-soft);background:var(--sheet-2);border:1px solid var(--rule);min-width:0;}
+.rep-progress li span {flex:none;width:20px;height:20px;display:grid;place-items:center;font:500 11px var(--font-mono);border:1px solid currentColor;}
+.rep-progress li.active {color:var(--ink);border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan);font-weight:600;}
+.rep-progress li.done {color:var(--ok);}
+.rep-page {display:flex;flex-direction:column;gap:12px;}
+.rep-page>p {margin:0;font-size:14px;line-height:1.8;}
+.rep-page h4 {margin:6px 0 0;font-size:14px;}
+.rep-group {margin:0;padding:10px 12px 12px;border:1px solid var(--rule);}
+.rep-group legend {padding:0 6px;font-weight:600;font-size:13px;}
+.rep-group legend small {font-weight:400;color:var(--ink-soft);margin-left:8px;}
+.rep-options {display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;}
+.rep-option {display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border:1px solid var(--rule);background:var(--sheet);cursor:pointer;min-width:0;}
+.rep-option:has(input:checked) {border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan);background:var(--sheet-2);}
+.rep-option input {margin-top:4px;flex:none;}
+.rep-option span {display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rep-option b {font-size:13px;overflow-wrap:anywhere;}
+.rep-option em {font-style:normal;font-size:11px;color:var(--warn);}
+.rep-option small {font-size:12px;color:var(--ink-soft);line-height:1.6;overflow-wrap:anywhere;}
+.rep-goal,.rep-field {display:flex;flex-direction:column;gap:6px;font-size:13px;}
+.rep-goal input,.rep-field select {width:100%;}
+.rep-spec {max-height:380px;white-space:pre-wrap;font-size:12px;line-height:1.7;margin:0;}
+.rep-actions,.rep-nav,.seabed-actions {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.rep-nav {margin-top:4px;}
+.rep-note {margin:0;font-size:12px;color:var(--ink-soft);line-height:1.7;}
+.rep-checks {list-style:none;margin:0;padding:0;display:grid;gap:8px;}
+.rep-checks label {display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.6;cursor:pointer;}
+.rep-checks input {margin-top:4px;}
+.rep-done {display:flex;gap:8px;align-items:center;margin:0;padding:10px 12px;background:var(--ok-wash);color:var(--ok);font-weight:600;font-size:13px;}
+.rep-pro-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+@media(max-width:650px) {
+  .replicate {padding:18px 16px;}
+  .rep-progress {grid-template-columns:repeat(5,minmax(0,1fr));}
+  .rep-progress li {flex-direction:column;justify-content:center;font-size:10px;padding:6px 2px;text-align:center;}
+  .rep-pro-grid {grid-template-columns:1fr;}
+}

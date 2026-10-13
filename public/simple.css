@@ -96,3 +96,6 @@
 }
 :root[data-presentation="simple"] .model-risk {border-width:2px;border-radius:var(--radius);box-shadow:none;}
 :root[data-presentation="simple"] .model-risk h3 {font-family:var(--font-body);}
+:root[data-presentation="simple"] .replicate {border-radius:var(--radius);}
+:root[data-presentation="simple"] .rep-head h3 {font-family:var(--font-body);}
+:root[data-presentation="simple"] .rep-option,:root[data-presentation="simple"] .rep-group,:root[data-presentation="simple"] .rep-progress li {border-radius:var(--radius-s);}

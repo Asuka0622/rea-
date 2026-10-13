@@ -3,6 +3,7 @@ import { hydrateIcons, icon } from "./icons.js";
 import {mountModelMods} from "./model-mods.js";
 import {mountGameCases} from "./game-cases.js";
 import { createAdventure } from "./adventure.js";
+import { mountReplicate } from "./replicate.js";
 
 const TOKEN = document.querySelector('meta[name="workbench-token"]').content;
 const $ = (selector) => document.querySelector(selector);
@@ -191,6 +192,7 @@ function applyMode(next, { announce = false } = {}) {
   requestAnimationFrame(moveInk);
   adventure.refresh();
   modelWorkshop.refresh();
+  replicate.refresh();
   // Professional mode has no task panel: always leave it something to act on.
   if (isPro() && $("#run").hidden && !adventure.busy) $("#home-start").hidden = false;
   if (announce) toast(isPro() ? "专业模式：显示全部细节和命令" : "新手模式：只显示重点，配有说明");
@@ -770,6 +772,7 @@ async function executeAnalysis(target, commands) {
           }
         } else if (event.type === "done") {
           completed = true;
+          replicate.refresh();
           if (current.reports.length && !$("#seabed")) $("#reports").after(seabedPanel());
           renderGauge();
         } else if (event.type === "fatal") {
@@ -804,6 +807,7 @@ function resetAnalyze() {
   $("#run").hidden = true;
   $("#home-start").hidden = false;
   adventure.reset();
+  replicate.reset();
 }
 
 /** The last stop of every dive: hand the whole report to an AI. */
@@ -814,7 +818,9 @@ function seabedPanel() {
     h("div", {}, h("b", {}, isPro() ? "导出整份报告" : "让 AI 用大白话解读这份报告"), h("small", {}, isPro() ? "复制为 Markdown，交给任意 AI 或存档。" : "把上面所有发现整理好，一键复制给豆包、Kimi、DeepSeek。")),
     isPro()
       ? h("button", { class: "btn", onclick: () => current && copy(reportMarkdown()) }, icon("copy", { size: 16 }), "复制 Markdown")
-      : h("button", { class: "btn primary", onclick: () => current && explainWithAi() }, icon("spark", { size: 16 }), "让 AI 用大白话解释"),
+      : h("div", { class: "seabed-actions" },
+          h("button", { class: "btn primary", onclick: () => current && explainWithAi() }, icon("spark", { size: 16 }), "让 AI 用大白话解释"),
+          h("button", { class: "btn", onclick: () => replicate.open() }, icon("wrench", { size: 16 }), "自己动手做一个")),
   );
 }
 
@@ -1231,6 +1237,7 @@ const adventure = createAdventure({
   upload: (file) => uploadAndAnalyze(file),
   stop: () => current?.controller.abort(),
   explain: () => current && explainWithAi(),
+  replicate: () => replicate.open(),
   learn: () => showTab("learn"),
   engines: () => showTab("engines"),
   restart: () => {
@@ -1245,6 +1252,7 @@ const adventure = createAdventure({
   isSimple,
   notice: toast,
 });
+const replicate = mountReplicate({ h, icon, toast, copy, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();
