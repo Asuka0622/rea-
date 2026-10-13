@@ -831,7 +831,8 @@ async function loadDemos() {
   try {
     const {demos} = await api("/api/demos");
     list.replaceChildren(...demos.map(demo => h("div", {class:"demo-row",role:"listitem"},
-      h("div", {class:"demo-description"}, h("h3", {}, demo.name + "（Adobe " + demo.alternative + "）"), h("p", {}, demo.category),
+      // Name the open-source project itself; the commercial product is only a point of comparison.
+      h("div", {class:"demo-description"}, h("h3", {}, demo.name), h("p", {}, demo.category + " · 开源替代，对标 " + demo.alternative),
         h("small", {}, demo.ready ? "本地源码已就绪 · 版本 " + demo.commit.slice(0,8) : "本地源码尚未准备好，请先从官方仓库获取")),
       h("div", {class:"demo-actions"},
         h("button", {class:"btn small",type:"button",disabled:!demo.ready,"aria-label":"分析 " + demo.name + " 源码",onclick:()=>{

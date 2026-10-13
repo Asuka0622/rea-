@@ -1,50 +1,50 @@
 [
-    {
-        "archive":  "https://codeload.github.com/tModLoader/tModLoader/zip/c90e19230b4cd82181776812b0513ac8f0fbb596",
-        "id":  "terraria-examplemod",
-        "subdir":  "ExampleMod",
-        "acquired":  "2026-10-13",
-        "bytes":  113289715,
-        "commit":  "c90e19230b4cd82181776812b0513ac8f0fbb596",
-        "sha256":  "9fcd4488c56fd548ef44cd5dcd95fb2ffebde4d4bbebde178d80d5b7524fb697",
-        "repository":  "https://github.com/tModLoader/tModLoader",
-        "scope":  "Complete upstream source archive; analysis focuses on ExampleMod; local workbench-source.json metadata added; not built or executed",
-        "license":  "MIT"
-    },
-    {
-        "archive":  "https://codeload.github.com/CJBok/SDV-Mods/zip/9bf8e959209eb19b047c6bfca81783408ade1db8",
-        "id":  "stardew-cjb",
-        "subdir":  "CJBCheatsMenu",
-        "acquired":  "2026-10-13",
-        "bytes":  6511392,
-        "commit":  "9bf8e959209eb19b047c6bfca81783408ade1db8",
-        "sha256":  "e1b032ac281b419e9ad7bc3f6a759b7aca8970dd1965d9d497a1071f964dc8bd",
-        "repository":  "https://github.com/CJBok/SDV-Mods",
-        "scope":  "Complete upstream source archive; analysis focuses on CJBCheatsMenu; local workbench-source.json metadata added; not built or executed",
-        "license":  "MIT"
-    },
-    {
-        "archive":  "https://codeload.github.com/FabricMC/fabric-example-mod/zip/1685ed178a113092f8aa002c4f7d78181643d75b",
-        "id":  "minecraft-fabric",
-        "subdir":  "",
-        "acquired":  "2026-10-13",
-        "bytes":  74817,
-        "commit":  "1685ed178a113092f8aa002c4f7d78181643d75b",
-        "sha256":  "3478254c04d8b9953a5fee21628a35d2bdf00ce2f20c567cedf0409152a4d0d5",
-        "repository":  "https://github.com/FabricMC/fabric-example-mod",
-        "scope":  "Complete upstream source archive; analysis focuses on project root; local workbench-source.json metadata added; not built or executed",
-        "license":  "CC0-1.0"
-    },
-    {
-        "archive":  "https://codeload.github.com/gdquest-demos/godot-open-rpg/zip/19bd328fae9e4b534d3bb6db380a3d871d6ea58f",
-        "id":  "godot-open-rpg",
-        "subdir":  "",
-        "acquired":  "2026-10-13",
-        "bytes":  20873283,
-        "commit":  "19bd328fae9e4b534d3bb6db380a3d871d6ea58f",
-        "sha256":  "851d7695554b8c21bdfbc8efcb426d19859cc5e64d8f9c31a0ec0ce2f6fd11ce",
-        "repository":  "https://github.com/gdquest-demos/godot-open-rpg",
-        "scope":  "Complete upstream source archive; analysis focuses on project root; local workbench-source.json metadata added; not built or executed",
-        "license":  "MIT"
-    }
+  {
+    "archive": "https://codeload.github.com/tModLoader/tModLoader/zip/c90e19230b4cd82181776812b0513ac8f0fbb596",
+    "id": "terraria-examplemod",
+    "subdir": "ExampleMod",
+    "acquired": "2026-10-13",
+    "bytes": 12255175,
+    "commit": "c90e19230b4cd82181776812b0513ac8f0fbb596",
+    "sha256": "9fcd4488c56fd548ef44cd5dcd95fb2ffebde4d4bbebde178d80d5b7524fb697",
+    "repository": "https://github.com/tModLoader/tModLoader",
+    "scope": "Upstream archive verified; kept only ExampleMod, LICENSE, README.md, TERMS_OF_USE.md; analysis focuses on ExampleMod; local workbench-source.json metadata added; not built or executed",
+    "license": "MIT"
+  },
+  {
+    "archive": "https://codeload.github.com/CJBok/SDV-Mods/zip/9bf8e959209eb19b047c6bfca81783408ade1db8",
+    "id": "stardew-cjb",
+    "subdir": "CJBCheatsMenu",
+    "acquired": "2026-10-13",
+    "bytes": 6511392,
+    "commit": "9bf8e959209eb19b047c6bfca81783408ade1db8",
+    "sha256": "e1b032ac281b419e9ad7bc3f6a759b7aca8970dd1965d9d497a1071f964dc8bd",
+    "repository": "https://github.com/CJBok/SDV-Mods",
+    "scope": "Complete upstream source archive; analysis focuses on CJBCheatsMenu; local workbench-source.json metadata added; not built or executed",
+    "license": "MIT"
+  },
+  {
+    "archive": "https://codeload.github.com/FabricMC/fabric-example-mod/zip/1685ed178a113092f8aa002c4f7d78181643d75b",
+    "id": "minecraft-fabric",
+    "subdir": "",
+    "acquired": "2026-10-13",
+    "bytes": 74817,
+    "commit": "1685ed178a113092f8aa002c4f7d78181643d75b",
+    "sha256": "3478254c04d8b9953a5fee21628a35d2bdf00ce2f20c567cedf0409152a4d0d5",
+    "repository": "https://github.com/FabricMC/fabric-example-mod",
+    "scope": "Complete upstream source archive; analysis focuses on project root; local workbench-source.json metadata added; not built or executed",
+    "license": "CC0-1.0"
+  },
+  {
+    "archive": "https://codeload.github.com/gdquest-demos/godot-open-rpg/zip/19bd328fae9e4b534d3bb6db380a3d871d6ea58f",
+    "id": "godot-open-rpg",
+    "subdir": "",
+    "acquired": "2026-10-13",
+    "bytes": 20873283,
+    "commit": "19bd328fae9e4b534d3bb6db380a3d871d6ea58f",
+    "sha256": "851d7695554b8c21bdfbc8efcb426d19859cc5e64d8f9c31a0ec0ce2f6fd11ce",
+    "repository": "https://github.com/gdquest-demos/godot-open-rpg",
+    "scope": "Complete upstream source archive; analysis focuses on project root; local workbench-source.json metadata added; not built or executed",
+    "license": "MIT"
+  }
 ]

@@ -94,3 +94,5 @@
   :root[data-presentation="simple"] .simple-actions {gap:8px;}
   :root[data-presentation="simple"] .simple-actions .btn {flex:1 1 auto;}
 }
+:root[data-presentation="simple"] .model-risk {border-width:2px;border-radius:var(--radius);box-shadow:none;}
+:root[data-presentation="simple"] .model-risk h3 {font-family:var(--font-body);}
