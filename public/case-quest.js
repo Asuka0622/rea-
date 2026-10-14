@@ -1,7 +1,7 @@
 // Questions for 案例馆 investigations. Options come from the learner's actual report, so answering
 // means reading the report. Pure functions (no DOM) so they can be unit-tested in Node.
 
-function findSection(reports, title) {
+export function findSection(reports, title) {
   for (const report of reports || []) {
     const section = (report.sections || []).find((candidate) => candidate.title === title);
     if (section) return section;
@@ -9,7 +9,7 @@ function findSection(reports, title) {
   return null;
 }
 
-const firstCells = (section) => [...new Set((section.table ? section.table.rows.map((row) => String(row[0] ?? "")) : (section.items || []).map(String)).filter(Boolean))];
+export const firstCells = (section) => [...new Set((section.table ? section.table.rows.map((row) => String(row[0] ?? "")) : (section.items || []).map(String)).filter(Boolean))];
 const rowCount = (section) => (section.table ? section.table.rows.length : (section.items || []).length);
 
 /**

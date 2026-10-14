@@ -503,3 +503,57 @@ details.section.case-flash {animation:case-flash 1.8s ease-out;}
 .save-lab-result.bad {background:var(--warn-wash);color:var(--warn);}
 /* 兴趣拓展: optional extras sit below the teaching path and look secondary. */
 .demo-library.extras {margin-top:28px;border-style:dashed;}
+
+/* ---------- 侦探模式: dialogue, evidence hunting in the report, verdict and case closed ---------- */
+.case-say {display:flex;gap:12px;align-items:flex-start;}
+.case-say .guide-avatar {margin-top:6px;}
+.case-say-text {flex:1;min-width:0;padding:10px 14px;background:var(--sheet);border:2px solid var(--rule);position:relative;}
+.case-say-text::before {content:"";position:absolute;left:-8px;top:14px;width:10px;height:10px;background:inherit;border-left:2px solid var(--rule);border-bottom:2px solid var(--rule);transform:rotate(45deg);}
+.case-say-text b {font-size:12px;color:var(--warn);}
+.case-say-text p {margin:2px 0 0;font-size:15px;line-height:1.8;}
+.case-say.client .case-say-text {background:var(--sheet-2);}
+.case-say.right .case-say-text {border-color:var(--ok);background:var(--ok-wash);}
+.case-say.wrong .case-say-text {border-color:var(--warn);background:var(--warn-wash);}
+.client-avatar {background:#8a5a44;border-color:#4b2f25;box-shadow:inset 0 4px #b07a5c;}
+.client-avatar::before {background:#e3bf95;border-top-color:#3a2a20;}
+.client-avatar::after {background:#6d7fa3;border-color:#3b4660;}
+.case-mode-tag {margin:0;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ok);font-weight:600;}
+.case-card-stars {margin-left:auto;font-size:15px;letter-spacing:2px;color:var(--warn);white-space:nowrap;}
+.case-hunt-tip {margin:0;display:flex;gap:6px;align-items:center;font-size:13px;color:var(--ink-soft);}
+.case-bag-head {display:flex;align-items:center;gap:8px;font-size:14px;}
+.case-bag-empty {margin:0;font-size:13px;color:var(--ink-soft);}
+.case-bag {list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;}
+.case-bag-item {width:100%;height:100%;display:flex;flex-direction:column;gap:2px;text-align:left;padding:8px 10px;background:var(--sheet);color:var(--ink);border:2px solid var(--rule);font:inherit;}
+.case-bag-item small {font-size:11px;color:var(--ink-soft);}
+.case-bag-item span {font:500 13px var(--font-mono);overflow-wrap:anywhere;}
+.case-bag.selectable .case-bag-item {cursor:pointer;}
+.case-bag.selectable .case-bag-item:hover,.case-bag.selectable .case-bag-item:focus-visible {border-color:var(--cyan);background:var(--sheet-2);}
+.case-presented {list-style:none;margin:0;padding:0;display:grid;gap:6px;}
+.case-presented li {display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 10px;background:var(--ok-wash);color:var(--ink);font-size:13px;}
+.case-presented svg {color:var(--ok);}
+.case-presented b {font:500 12px var(--font-mono);overflow-wrap:anywhere;}
+.case-closed {position:relative;display:flex;flex-direction:column;gap:10px;padding-right:110px;}
+.case-stamp {position:absolute;right:6px;top:4px;width:92px;height:92px;display:grid;place-items:center;font:700 26px var(--font-display);color:#a8322b;border:5px double #a8322b;border-radius:50%;transform:rotate(-14deg);animation:case-stamp .5s cubic-bezier(.2,1.6,.4,1) both;}
+@keyframes case-stamp {from {transform:rotate(-14deg) scale(2.2);opacity:0;} to {transform:rotate(-14deg) scale(1);opacity:1;}}
+.case-stars {margin:0;font-size:30px;letter-spacing:6px;color:var(--warn);}
+.case-score {margin:0;font-size:13px;color:var(--ink-soft);}
+/* Hunting: report rows become clickable evidence. */
+#reports.case-hunting details.section tbody tr,#reports.case-hunting details.section .section-body > ul > li {cursor:pointer;transition:background .15s;}
+#reports.case-hunting details.section tbody tr:hover,#reports.case-hunting details.section .section-body > ul > li:hover {background:var(--marker-wash, var(--sheet-2));outline:2px solid var(--cyan);outline-offset:-2px;}
+#reports details.section .case-evidence {background:var(--ok-wash);box-shadow:inset 4px 0 var(--ok);}
+#reports details.section tr.case-evidence td:first-child::after,#reports details.section li.case-evidence::after {content:" ✔ 证据";font-size:11px;color:var(--ok);font-weight:700;white-space:nowrap;}
+.case-miss {animation:case-miss .4s;}
+@keyframes case-miss {0%,100% {transform:none;} 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} 30%,70% {background:var(--warn-wash);}}
+.case-fly {position:fixed;z-index:60;padding:3px 8px;background:var(--ok);color:var(--sheet);font:700 12px var(--font-body);pointer-events:none;}
+/* The guide's dialogue box, pinned to the bottom while you search the report. */
+.case-hud {position:fixed;z-index:50;left:50%;bottom:14px;transform:translateX(-50%);width:min(860px,calc(100% - 24px));display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--sheet);color:var(--ink);border:3px solid var(--ink);box-shadow:0 6px 0 rgba(0,0,0,.25);}
+.case-hud.right {border-color:var(--ok);}
+.case-hud.wrong {border-color:var(--warn);}
+.case-hud-text {flex:1;min-width:0;}
+.case-hud-text b {font-size:12px;color:var(--warn);}
+.case-hud-text p {margin:2px 0 0;font-size:14px;line-height:1.7;max-height:5.1em;overflow:auto;}
+.case-hud-actions {display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end;}
+.case-hud-count {font:600 13px var(--font-mono);padding:2px 8px;background:var(--sheet-2);}
+@media(prefers-reduced-motion:reduce) {.case-stamp,.case-miss {animation:none;}}
+@media(max-width:650px) {.case-hud {flex-wrap:wrap;bottom:8px;padding:10px 12px;}.case-hud .guide-avatar {display:none;}.case-hud-actions {width:100%;}.case-closed {padding-right:0;padding-top:70px;}.case-stamp {width:76px;height:76px;font-size:21px;}}
+body.case-hud-on main {padding-bottom:170px;}

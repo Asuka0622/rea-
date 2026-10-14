@@ -120,3 +120,5 @@
 :root[data-presentation="simple"] .case-card-head h3,:root[data-presentation="simple"] .case-quest-head h3,:root[data-presentation="simple"] .case-conclusion h4 {font-family:var(--font-body);}
 :root[data-presentation="simple"] .case-tale,:root[data-presentation="simple"] .save-lab,:root[data-presentation="simple"] .save-lab-code,:root[data-presentation="simple"] .save-lab-field input {border-radius:var(--radius-s);border-width:1px;}
 :root[data-presentation="simple"] .case-tale h4,:root[data-presentation="simple"] .save-lab h4 {font-family:var(--font-body);}
+:root[data-presentation="simple"] .case-say-text,:root[data-presentation="simple"] .case-bag-item,:root[data-presentation="simple"] .case-hud {border-radius:var(--radius-s);border-width:1px;}
+:root[data-presentation="simple"] .case-hud {box-shadow:0 6px 24px rgba(0,0,0,.18);}

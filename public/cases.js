@@ -1,5 +1,6 @@
 import { isCorrect, questionOptions } from "./case-quest.js";
 import { mountSaveLab } from "./save-lab.js";
+import { createDetective, savedStars, starText } from "./case-detective.js";
 
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
@@ -13,6 +14,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   const progress = new Map(); // case id -> { index, picked: Set, feedback, solved: Set }
   const labs = new Map(); // case id -> lab element, kept so its progress survives re-renders
   let reading = null; // id of the stories case being read
+  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean) });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));
@@ -55,18 +57,21 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     storiesPanel.hidden = true;
     progress.delete(item.id);
     labs.delete(item.id);
+    detective.reset(item.id);
     showHome();
     library.open = false;
     analyze(item.path);
   }
 
   function renderList() {
+    const stars = savedStars();
     list.replaceChildren(
       ...catalog.map((item) =>
         h(
           "article",
           { class: "case-card", role: "listitem" },
-          h("div", { class: "case-card-head" }, h("span", { class: "case-no" }, String(item.order).padStart(2, "0")), h("h3", {}, item.title)),
+          h("div", { class: "case-card-head" }, h("span", { class: "case-no" }, String(item.order).padStart(2, "0")), h("h3", {}, item.title), stars[item.id] && h("span", { class: "case-card-stars", "aria-label": `最好成绩 ${stars[item.id]} 星` }, starText(stars[item.id]))),
+          item.game && h("p", { class: "case-mode-tag" }, icon("spark", { size: 14 }), "侦探模式：在报告里亲手找证据"),
           h("p", { class: "case-story" }, item.story),
           h("div", { class: "case-skills" }, item.skills.map((skill) => h("span", { class: "tag" }, skill))),
           item.requires?.length && h("p", { class: "case-requires" }, icon("engines", { size: 15 }), `需要先安装分析引擎：${item.requires.map((id) => ENGINE_NAMES[id] || id).join(" + ")}`),
@@ -215,9 +220,16 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     const reports = getReports();
     if (!item || !reports.length) {
       quest.hidden = true;
+      detective.hide();
       return;
     }
     quest.hidden = false;
+    if (item.game && !isPro()) {
+      quest.replaceChildren(...detective.render(item, reports).filter(Boolean));
+      renderList();
+      return;
+    }
+    detective.hide();
     quest.replaceChildren(
       h("div", { class: "case-quest-head" }, h("p", { class: "case-kicker" }, "案例馆 · 调查任务"), h("h3", { id: "case-quest-title" }, item.title), !isPro() && h("p", {}, "报告已经到手。下面几条线索，都能在下方的报告里找到答案。")),
       ...(isPro() ? renderPro(item, reports) : renderBeginner(item, reports)).filter(Boolean),
