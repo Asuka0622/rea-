@@ -9,8 +9,9 @@ html[data-game="on"] .game-shell {display:grid;position:fixed;inset:0;z-index:40
 html[data-game="on"] .game-shell[hidden] {display:none;}
 #toast {z-index:70;}
 
-.game-stage {--px:4;position:relative;width:calc(320px * var(--px));height:calc(180px * var(--px));overflow:hidden;image-rendering:pixelated;
-  box-shadow:0 0 0 4px #5e3415,0 0 0 8px #2a170b;}
+/* The stage is the whole window; scenes inside it are scaled to cover it. */
+.game-stage {--px:4;position:absolute;inset:0;overflow:hidden;image-rendering:pixelated;background:#1b1410;}
+.game-room {position:absolute;left:50%;top:50%;width:calc(320px * var(--px));height:calc(180px * var(--px));transform:translate(-50%,-50%);}
 .game-bg {position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;}
 
 /* ----- drawn town (until town.png exists) ----- */
@@ -198,3 +199,22 @@ html[data-game="on"] .panel > .scene-wrap {display:none!important;}
 /* High-resolution sheets (the art AI's originals) are scaled smoothly instead of as hard pixels. */
 .game-sprite.player.sheet.smooth {image-rendering:auto;}
 img.game-sprite,img.scene-sprite {image-rendering:auto;}
+
+/* Clients' homes: a warm sign, and "!" pins on the map, like a quest marker. */
+.game-building.case-home .game-label {background:#ffe7a3;}
+.game-map-pin.case {color:#fff;background:#d4683a;border-color:#7a2f12;}
+.game-map-list b {display:block;margin:10px 0 2px;font:13px var(--font-display,"Fusion Pixel");color:#7a3f12;}
+.game-map-list ul {list-style:none;margin:0;padding:0;}
+
+/* The menu bar sits on its own wooden strip so it never blends into the map. */
+.game-hud {top:0;left:0;right:0;max-width:none;padding:8px 12px;gap:8px;background:#84491d;border-bottom:4px solid #2a170b;
+  background-image:repeating-linear-gradient(180deg,transparent 0 14px,rgba(0,0,0,.14) 14px 16px);box-shadow:0 4px 0 rgba(0,0,0,.3);}
+@media (max-height:500px) {html[data-game="on"][data-skin][data-presentation] .game-hud {top:0;left:0;padding:4px 6px;}}
+
+/* A slimmer dialogue box: smaller portrait, no forced height. */
+html[data-game="on"][data-skin][data-presentation] .game-dialogue {align-items:flex-end;}
+html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-portrait {width:112px;height:112px;}
+html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-portrait img {width:112px;height:112px;}
+html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text {min-height:0;padding:18px 16px 12px;}
+html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text p {margin:0;line-height:1.7;}
+html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}

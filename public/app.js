@@ -1285,7 +1285,7 @@ const adventure = createAdventure({
   notice: toast,
 });
 const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
-const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open() });
+const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open(), onCatalog: () => gameShell?.redraw() });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();
@@ -1320,7 +1320,7 @@ loadScenes();
 
 /* ================= game shell ================= */
 // Beginners get the town-map game; professionals and "网页模式" keep the plain page.
-var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets });
+var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id) });
 document.querySelector("#game-toggle")?.addEventListener("click", () => gameShell.leaveWebMode());
 gameShell.sync();
 // The map guides first-time users; the full guide is available on demand.

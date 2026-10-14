@@ -6,7 +6,7 @@ import { sceneBanner } from "./scenes.js";
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
 // professionals see the findings and explanations directly. A "stories" case is read, not analysed.
-export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate }) {
+export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog }) {
   const library = document.querySelector("#case-library");
   const list = document.querySelector("#case-list");
   const quest = document.querySelector("#case-quest");
@@ -254,6 +254,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
       catalog = data.cases;
       portraits = new Set(data.portraits || []);
       pixelArt = new Set(data.pixel || []);
+      onCatalog?.();
       renderList();
       render();
     } catch (error) {
@@ -268,5 +269,14 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   }
 
   load();
-  return { refresh: render, open };
+  return {
+    refresh: render,
+    open,
+    /** For the game shell: the case list, and starting a case from a client's door. */
+    catalog: () => catalog,
+    startById(id) {
+      const item = catalog.find((c) => c.id === id);
+      if (item) start(item);
+    },
+  };
 }

@@ -15,18 +15,31 @@ const WEB_KEY = "rea-wb-web-mode";
  * the drawn stand-in uses the same places.
  */
 const TOWN = {
-  learn: { x: 30, y: 6, w: 58, h: 44, door: { x: 61, y: 49 }, kind: "library" },
-  home: { x: 128, y: 3, w: 62, h: 47, door: { x: 162, y: 49 }, kind: "office" },
-  engines: { x: 240, y: 10, w: 50, h: 43, door: { x: 265, y: 52 }, kind: "workshop" },
-  clients: { x: 37, y: 86, w: 48, h: 40, door: { x: 61, y: 121 }, kind: "post" },
-  doctor: { x: 243, y: 82, w: 50, h: 44, door: { x: 267, y: 121 }, kind: "clinic" },
+  learn: { x: 50, y: 22, w: 87, h: 69, door: { x: 93, y: 93 }, kind: "library" },
+  home: { x: 270, y: 40, w: 88, h: 69, door: { x: 316, y: 111 }, kind: "office" },
+  engines: { x: 428, y: 33, w: 66, h: 66, door: { x: 457, y: 101 }, kind: "workshop" },
+  clients: { x: 138, y: 215, w: 75, h: 59, door: { x: 173, y: 276 }, kind: "post" },
+  doctor: { x: 400, y: 210, w: 83, h: 63, door: { x: 438, y: 275 }, kind: "clinic" },
 };
-/** Other things you cannot walk through: the pond, and the river except at the bridge. */
+/** The case clients' homes (keyed by case id): walking to the door and pressing E takes the case. */
+const CASE_HOUSES = {
+  "privacy-ledger": { x: 128, y: 118, w: 82, h: 59, door: { x: 165, y: 179 } },
+  "weather-keys": { x: 190, y: 28, w: 47, h: 56, door: { x: 222, y: 86 } },
+  "calculator-eggs": { x: 550, y: 215, w: 60, h: 59, door: { x: 565, y: 276 } },
+  "farm-save": { x: 553, y: 22, w: 60, h: 49, door: { x: 588, y: 73 } },
+  "flashlight-apk": { x: 415, y: 132, w: 65, h: 49, door: { x: 450, y: 183 } },
+  "real-stories": { x: 537, y: 130, w: 73, h: 53, door: { x: 573, y: 185 } },
+};
+/** Other things you cannot walk through: the fountain, the pond and stream, and the river except at the bridge. */
 const OBSTACLES = [
-  { x: 142, y: 73, w: 46, h: 28 },
-  { x: 0, y: 150, w: 146, h: 30 },
-  { x: 174, y: 150, w: 146, h: 30 },
+  { x: 300, y: 150, w: 33, h: 30 },
+  { x: 353, y: 94, w: 22, h: 18 },
+  { x: 0, y: 150, w: 72, h: 55 },
+  { x: 0, y: 205, w: 22, h: 100 },
+  { x: 0, y: 305, w: 296, h: 55 },
+  { x: 336, y: 305, w: 304, h: 55 },
 ];
+const SPAWN = { x: 320, y: 250 };
 
 /** What can be done in each place. `target` is scrolled into view inside the window. */
 const ACTIONS = {
@@ -49,7 +62,7 @@ const EXTRA_LINES = {
   doctor: "我来给你的装备做个检查。",
 };
 
-export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
+export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {} }) {
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -124,20 +137,21 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
      (a 320x180 town does not scroll). ----- */
   let roomPx = 1;
   let townPx = 1;
-  const world = { w: 320, h: 180 };
+  const world = { w: 640, h: 360 };
   const camera = { x: 0, y: 0 };
   function fit() {
-    const fractional = Math.min(window.innerWidth / 320, window.innerHeight / 180);
-    // Phones are narrower than 2x: fill the width instead (pixels then scale unevenly, which is fine there).
-    roomPx = fractional < 2 ? fractional : Math.floor(fractional);
-    townPx = roomPx;
+    // Cover the whole window: the 320x180 scene is scaled up until no border is left; what does not
+    // fit is cropped at the edges, and on the map the camera keeps the player in view.
+    roomPx = Math.max(window.innerWidth / 320, window.innerHeight / 180);
+    // The town is scaled by its own size, so a bigger map shows more of the town instead of zooming in.
+    townPx = Math.max(window.innerWidth / world.w, window.innerHeight / world.h);
     stage.style.setProperty("--px", String(roomPx));
     worldEl?.style.setProperty("--px", String(townPx));
     placePlayer();
   }
   window.addEventListener("resize", fit);
-  const viewW = () => (320 * roomPx) / townPx; // how much of the town (in map pixels) fits on screen
-  const viewH = () => (180 * roomPx) / townPx;
+  const viewW = () => stage.clientWidth / townPx; // how much of the town (in map pixels) fits on screen
+  const viewH = () => stage.clientHeight / townPx;
   let worldEl = null;
   function followCamera() {
     if (!worldEl) return;
@@ -156,6 +170,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   function drawTown() {
     const picture = has("town");
     stage.dataset.view = "town";
+    spotCache = null;
     nearDoor = null; // the prompt is re-attached to the new world layer when needed
     const background = picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : null;
     if (background) {
@@ -164,18 +179,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
         world.h = background.naturalHeight;
         worldEl.style.width = `calc(${world.w}px * var(--px))`;
         worldEl.style.height = `calc(${world.h}px * var(--px))`;
-        followCamera();
+        fit();
       });
     }
     worldEl = h("div", { class: "game-world", style: `--px:${townPx};width:calc(${world.w}px * var(--px));height:calc(${world.h}px * var(--px))` });
     stage.replaceChildren(worldEl);
     worldEl.append(
       background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
-      ...Object.entries(TOWN).map(([id, spot]) => {
-        const scene = SCENES[id];
+      ...Object.entries(spots()).map(([id, spot]) => {
+        const scene = info(id);
         return h(
           "button",
-          { class: `game-building ${picture ? "over-art" : spot.kind}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `进入${scene.place}（${scene.purpose}）` },
+          { class: `game-building ${picture ? "over-art" : spot.kind || "office"} ${TOWN[id] ? "" : "case-home"}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）` },
           !picture && h("span", { class: "roof", "aria-hidden": "true" }),
           !picture && h("span", { class: "wall", "aria-hidden": "true" }, h("span", { class: "door" })),
           h("span", { class: "game-label" }, scene.place, h("small", {}, scene.purpose)),
@@ -192,9 +207,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     const picture = has(`room-${id}`);
     stage.dataset.view = id;
     stage.replaceChildren(
-      picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
+      h("div", { class: "game-room" },
+        picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
+        sprite("lumi", 110)),
       h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place),
-      sprite("lumi", 110),
     );
   }
 
@@ -243,7 +259,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
 
   /* ----- walking on the town map: WASD / arrow keys, right-click a spot, or the on-screen stick ----- */
   const SPEED = 72; // map pixels per second
-  const player = { x: 160, y: 132, left: false, walking: false };
+  const player = { x: SPAWN.x, y: SPAWN.y, left: false, walking: false };
   let playerEl = null;
   let target = null; // { x, y, then }
   let lastPlace = null;
@@ -252,18 +268,41 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   const stick = { x: 0, y: 0 };
   const KEY_DIRS = { w: [0, -1], arrowup: [0, -1], s: [0, 1], arrowdown: [0, 1], a: [-1, 0], arrowleft: [-1, 0], d: [1, 0], arrowright: [1, 0] };
 
-  const doorOf = (id) => TOWN[id].door;
-  const blocks = () => [...Object.values(TOWN).map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 2 })), ...OBSTACLES];
-  /** The feet (a small box at the bottom of the sprite) would hit a building, the pond or the edge. */
+  /** Case homes whose case exists in the library. */
+  const caseHouses = () => Object.fromEntries(Object.entries(CASE_HOUSES).filter(([id]) => cases().some((c) => c.id === id)));
+  // Built once per drawing of the town: collision checks run thousands of times per path search.
+  let spotCache = null;
+  const spots = () => (spotCache ||= { ...TOWN, ...caseHouses() });
+  /** Name and purpose shown on a spot's sign. */
+  function info(id) {
+    if (SCENES[id] && TOWN[id]) return { place: SCENES[id].place, purpose: SCENES[id].purpose };
+    const item = cases().find((c) => c.id === id);
+    return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : `委托 · 案例 ${item?.order ?? ""}` };
+  }
+  const doorOf = (id) => (TOWN[id] || CASE_HOUSES[id]).door;
+  const blocks = () => [...Object.values(spots()).map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 2 })), ...OBSTACLES];
+  /* Walkability map built from the town picture (scripts/build-walkmap.py): trees, walls, fences,
+     benches, lamps and water are blocked; paths, grass and paving are open. */
+  let walkMap = null;
+  fetch("/art/pixel/town-walk.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).then((data) => (walkMap = data)).catch(() => {});
+  const openGround = (x, y) => {
+    if (!walkMap || !has("town")) return true;
+    const row = walkMap.rows[Math.floor(y / walkMap.cell)];
+    return row ? row[Math.floor(x / walkMap.cell)] === "1" : false;
+  };
+  const nearDoorway = (x, y) => Object.values(spots()).some((b) => Math.abs(x - b.door.x) < 7 && y >= b.door.y - 4 && y - b.door.y < 9);
+  /** The feet (an 8x3 box at the bottom of the sprite) would hit something, or leave the map. */
   function blocked(x, y) {
     if (x < 6 || x > world.w - 6 || y < 14 || y > world.h - 2) return true;
-    return blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h);
+    if (nearDoorway(x, y)) return false;
+    if (blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h)) return true;
+    return [[-4, 0], [4, 0], [-4, -3], [4, -3], [0, -1]].some(([dx, dy]) => !openGround(x + dx, y + dy));
   }
 
   /* Sprite-sheet animation (anim-<name>.png + .json): idle frames while standing, walk frames while moving. */
   // The sheet is drawn at any resolution; on the map one frame is always 16x32 map pixels.
   let animation = { frame: [16, 32], sheet: [4, 2], side: "right", animations: { idle: { row: 0, frames: 2, ms: [2200, 160] }, walk: { row: 1, frames: 4, ms: 140 } } };
-  fetch("/art/pixel/anim-lumi.json").then((r) => (r.ok ? r.json() : null)).then((data) => data && (animation = data)).catch(() => {});
+  fetch("/art/pixel/anim-lumi.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).then((data) => data && (animation = data)).catch(() => {});
   let animClock = 0;
   let facing = "down"; // down | up | side
   let lastClip = "";
@@ -431,7 +470,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
       const ny = player.y + dy * step;
       let moved = false;
       if (!blocked(nx, player.y)) [player.x, moved] = [nx, true];
+      else if (dx && !dy) {
+        // Brushing a corner while walking sideways: slip up or down around it.
+        for (const nudge of [1, -1, 2, -2, 3, -3]) {
+          if (!blocked(nx, player.y + nudge)) {
+            [player.x, player.y, moved] = [nx, player.y + nudge * Math.min(1, step), true];
+            break;
+          }
+        }
+      }
       if (!blocked(player.x, ny)) [player.y, moved] = [ny, true];
+      else if (dy && !dx) {
+        for (const nudge of [1, -1, 2, -2, 3, -3]) {
+          if (!blocked(player.x + nudge, ny)) {
+            [player.x, player.y, moved] = [player.x + nudge * Math.min(1, step), ny, true];
+            break;
+          }
+        }
+      }
       if (!moved && target) target = { ...target, x: player.x, y: player.y, rest: [] }; // stuck: stop here, still arrive
       if (dx) player.left = dx < 0;
       movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);
@@ -443,10 +499,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
 
   /* At a doorway, a prompt appears; E / Enter / Space (or tapping it) goes inside. */
   let nearDoor = null;
-  const prompt = h("button", { class: "game-interact", type: "button", onclick: () => nearDoor && enter(nearDoor) });
+  const prompt = h("button", { class: "game-interact", type: "button", onclick: () => nearDoor && enterSpot(nearDoor) });
   prompt.hidden = true;
   function showDoorPrompt() {
-    const id = Object.keys(TOWN).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
+    const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
     if (id === nearDoor) {
       if (id) positionPrompt();
       return;
@@ -454,7 +510,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     nearDoor = id;
     prompt.hidden = !id;
     if (!id) return;
-    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), `进入 · ${SCENES[id].place}`);
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), TOWN[id] ? `进入 · ${info(id).place}` : `接委托 · ${info(id).place}`);
     worldEl?.append(prompt);
     positionPrompt();
   }
@@ -529,13 +585,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
       h("div", { class: "game-map-body" },
         h("div", { class: "game-map-picture", style: `aspect-ratio:${world.w} / ${world.h}` },
           picture ? h("img", { src: "/art/pixel/town.png", alt: "" }) : h("div", { class: "game-map-blank" }),
-          ...Object.entries(TOWN).map(([id, spot]) => h("button", { class: "game-map-pin", type: "button", style: mark(spot.door.x, spot.door.y), onclick: () => travel(id), title: SCENES[id].place }, "▼")),
+          ...Object.entries(spots()).map(([id, spot]) => h("button", { class: `game-map-pin ${TOWN[id] ? "" : "case"}`, type: "button", style: mark(spot.door.x, spot.door.y), onclick: () => travel(id), title: info(id).place }, TOWN[id] ? "▼" : "!")),
           h("span", { class: "game-map-you", style: mark(player.x, player.y), "aria-label": "你在这里" }, "你")),
-        h("ul", { class: "game-map-list" },
-          ...Object.entries(TOWN).map(([id]) => h("li", {}, h("button", { class: "game-choice", type: "button", onclick: () => travel(id) }, h("span", { class: "game-cursor", "aria-hidden": "true" }, "▶"), SCENES[id].place, h("small", {}, SCENES[id].purpose)))))),
+        h("div", { class: "game-map-list" },
+          h("b", {}, "小镇设施"),
+          h("ul", {}, ...Object.keys(TOWN).map((id) => listItem(id))),
+          Object.keys(caseHouses()).length > 0 && h("b", {}, "委托人的家"),
+          h("ul", {}, ...Object.keys(caseHouses()).map((id) => listItem(id))))),
     );
     mapPanel.hidden = false;
     mapPanel.querySelector(".game-map-list button")?.focus({ preventScroll: true });
+  }
+  function listItem(id) {
+    return h("li", {}, h("button", { class: "game-choice", type: "button", onclick: () => travel(id) }, h("span", { class: "game-cursor", "aria-hidden": "true" }, "▶"), info(id).place, h("small", {}, info(id).purpose)));
   }
   function closeMap() {
     mapPanel.hidden = true;
@@ -566,6 +628,35 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
         face: "normal",
       },
     ]);
+  }
+
+  function enterSpot(id) {
+    if (TOWN[id]) return enter(id);
+    // A client's home: the case opens in the game window; closing it returns to this door.
+    closeWindow();
+    target = null;
+    keys.clear();
+    place = null;
+    lastPlace = id;
+    menu.hidden = true;
+    dialogue.hidden = true;
+    windowOpen = true;
+    showTab("home");
+    windowTitle.textContent = `${info(id).place} · ${cases().find((c) => c.id === id)?.title || "委托"}`;
+    gameWindow.hidden = false;
+    windowBody.scrollTop = 0;
+    startCase(id);
+    // When the analysis finishes, the client's conversation appears: bring it into view.
+    const quest = document.querySelector("#case-quest");
+    const stories = document.querySelector("#case-stories");
+    const started = Date.now();
+    const watch = setInterval(() => {
+      const shown = [quest, stories].find((el) => el && !el.hidden);
+      if (shown || !windowOpen || Date.now() - started > 120000) {
+        clearInterval(watch);
+        shown?.scrollIntoView({ block: "start" });
+      }
+    }, 300);
   }
 
   function enter(id) {
@@ -600,6 +691,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     gameWindow.hidden = true;
     windowOpen = false;
     if (place) enter(place);
+    else if (stage.dataset.view !== "town" || lastPlace) goTown();
   }
 
   /* ----- switching between game and page ----- */
@@ -645,7 +737,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     }
     if ((key === "e" || event.key === "Enter" || event.key === " ") && nearDoor && !windowOpen && stage.dataset.view === "town" && dialogue.hidden && !event.target.closest?.("button,a")) {
       event.preventDefault();
-      enter(nearDoor);
+      enterSpot(nearDoor);
       return;
     }
     if (event.key === "Escape") {
