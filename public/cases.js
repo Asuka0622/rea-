@@ -1,6 +1,7 @@
 import { isCorrect, questionOptions } from "./case-quest.js";
 import { mountSaveLab } from "./save-lab.js";
 import { createDetective, savedStars, starText } from "./case-detective.js";
+import { sceneBanner } from "./scenes.js";
 
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
@@ -15,6 +16,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   const labs = new Map(); // case id -> lab element, kept so its progress survives re-renders
   let reading = null; // id of the stories case being read
   let portraits = new Set();
+  let pixelArt = new Set();
   const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
@@ -51,7 +53,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
       missing = await missingEngines(item);
     } catch {}
     if (missing.length) {
-      toast(`这个案例要先安装 ${missing.map((id) => ENGINE_NAMES[id] || id).join(" 和 ")}，正在带你去「分析引擎」`);
+      toast(`这个案例要先安装 ${missing.map((id) => ENGINE_NAMES[id] || id).join(" 和 ")}，正在带你去「工具铺」`);
       return showEngines?.();
     }
     reading = null;
@@ -177,6 +179,13 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     ];
   }
 
+  /** The case's own scene (e.g. the client's room) above its investigation. */
+  function sceneOf(item) {
+    const scene = item.scene;
+    if (!scene) return null;
+    return sceneBanner({ h, icon, id: `case-${item.id}`, place: scene.place, purpose: `案例 ${item.order}`, iconName: item.type === "stories" ? "learn" : "scan", art: `case-scene-${item.id}`, look: scene.look, have: pixelArt, compact: true });
+  }
+
   function lab(item) {
     if (item.lab?.type !== "save-editor") return null;
     if (!labs.has(item.id)) {
@@ -213,6 +222,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     storiesPanel.hidden = !story;
     if (story) {
       storiesPanel.replaceChildren(
+        sceneOf(story) || "",
         h("div", { class: "case-quest-head" }, h("p", { class: "case-kicker" }, "案例馆 · 真实世界"), h("h3", { id: "case-stories-title" }, story.title)),
         ...renderStories(story).filter(Boolean),
       );
@@ -226,12 +236,13 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     }
     quest.hidden = false;
     if (item.game && !isPro()) {
-      quest.replaceChildren(...detective.render(item, reports).filter(Boolean));
+      quest.replaceChildren(...[sceneOf(item), ...detective.render(item, reports)].filter(Boolean));
       renderList();
       return;
     }
     detective.hide();
     quest.replaceChildren(
+      ...[sceneOf(item)].filter(Boolean),
       h("div", { class: "case-quest-head" }, h("p", { class: "case-kicker" }, "案例馆 · 调查任务"), h("h3", { id: "case-quest-title" }, item.title), !isPro() && h("p", {}, "报告已经到手。下面几条线索，都能在下方的报告里找到答案。")),
       ...(isPro() ? renderPro(item, reports) : renderBeginner(item, reports)).filter(Boolean),
     );
@@ -242,6 +253,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
       const data = await api("/api/cases");
       catalog = data.cases;
       portraits = new Set(data.portraits || []);
+      pixelArt = new Set(data.pixel || []);
       renderList();
       render();
     } catch (error) {

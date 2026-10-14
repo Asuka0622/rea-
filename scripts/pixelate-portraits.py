@@ -1,6 +1,6 @@
 """Turn high-resolution character portraits into small pixel-art portraits for the dialogue windows.
 
-Usage: python -I scripts/pixelate-portraits.py <source dir> <output dir> [--size 64] [--colors 24]
+Usage: python -I scripts/pixelate-portraits.py <source dir> <output dir> [--size 128] [--colors 32]
 
 For each PNG in the source dir: crop the head-and-shoulders square from the top, shrink it with an
 area filter, reduce the palette (no dithering), make the alpha hard-edged and add a one-pixel dark
@@ -48,8 +48,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--size", type=int, default=64)
-    parser.add_argument("--colors", type=int, default=24)
+    parser.add_argument("--size", type=int, default=128)
+    parser.add_argument("--colors", type=int, default=32)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     for source in sorted(args.source.glob("*.png")):

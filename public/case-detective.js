@@ -46,7 +46,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     const mood = expression || (/right/.test(kind) ? "happy" : /(wrong|hint)/.test(kind) ? (client ? "surprised" : "thinking") : "normal");
     const have = portraits();
     const name = character && [`${character}-${mood}`, `${character}-normal`].find((n) => have.has(n));
-    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/pixel/portraits/${name}.png`, alt: "", width: 64, height: 64 }));
+    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/pixel/portraits/${name}.png`, alt: "", width: 128, height: 128 }));
     return h("div", { class: `guide-avatar ${client ? "client-avatar" : ""}`, "aria-hidden": "true" }, h("span", {}));
   };
   const bubble = (who, text, kind, expression) => h("div", { class: `case-say ${kind || ""}` }, avatar(kind, expression), h("div", { class: "case-say-text" }, h("b", {}, who), h("p", {}, text)));

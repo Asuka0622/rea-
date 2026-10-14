@@ -152,3 +152,82 @@
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .mode-switch::before {background:#f0c98a;}
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.btn.ghost,.btn.link,body.mode-pro .btn.ghost) {color:var(--cyan);}
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] body .case-hud .btn.ghost.case-hud-bag {color:#2f6b2a;}
+
+/* ---------- 小镇场景: a banner per place, with a hanging wooden sign ---------- */
+:root[data-skin="cozy"][data-presentation] .scene-wrap {display:flex;flex-direction:column;gap:6px;margin:0 0 20px;}
+:root[data-skin="cozy"][data-presentation] .scene {position:relative;height:170px;overflow:hidden;border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);image-rendering:pixelated;
+  --sky-1:#7cc6ee;--sky-2:#9cd6f4;--sky-3:#c4e9f8;--hill-1:#8cc45a;--hill-2:#5f9e3a;--wall-1:#f3d9a4;--wall-2:#ecca8c;}
+:root[data-skin="cozy"][data-presentation] .scene.compact {height:120px;}
+:root[data-skin="cozy"][data-presentation] .scene-art {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;}
+:root[data-skin="cozy"][data-presentation] .scene-drawn {position:absolute;inset:0;background:linear-gradient(180deg,var(--sky-1) 0 34%,var(--sky-2) 34% 58%,var(--sky-3) 58% 100%);}
+/* Stepped hills behind, a darker row in front. */
+:root[data-skin="cozy"][data-presentation] .scene-drawn::before,:root[data-skin="cozy"][data-presentation] .scene-drawn::after {content:"";position:absolute;left:0;right:0;bottom:24px;height:62px;background:var(--hill-1);
+  clip-path:polygon(0 60%,8% 60%,8% 40%,16% 40%,16% 20%,26% 20%,26% 40%,34% 40%,34% 55%,46% 55%,46% 30%,54% 30%,54% 10%,64% 10%,64% 30%,72% 30%,72% 50%,84% 50%,84% 25%,92% 25%,92% 45%,100% 45%,100% 100%,0 100%);}
+:root[data-skin="cozy"][data-presentation] .scene-drawn::after {height:40px;background:var(--hill-2);clip-path:polygon(0 50%,12% 50%,12% 30%,22% 30%,22% 55%,38% 55%,38% 25%,50% 25%,50% 45%,66% 45%,66% 20%,78% 20%,78% 50%,90% 50%,90% 35%,100% 35%,100% 100%,0 100%);}
+:root[data-skin="cozy"][data-presentation] .scene-ground {position:absolute;left:0;right:0;bottom:0;height:24px;background-color:#7fbf4e;border-top:4px solid #4f8a2c;
+  background-image:linear-gradient(45deg,#6fae3f 25%,transparent 25%,transparent 75%,#6fae3f 75%),linear-gradient(45deg,#6fae3f 25%,transparent 25%,transparent 75%,#6fae3f 75%);background-size:8px 8px;background-position:0 0,4px 4px;}
+:root[data-skin="cozy"][data-presentation] .scene-sun {position:absolute;right:9%;top:18px;width:28px;height:28px;background:#ffe066;box-shadow:0 0 0 4px #ffd23f;}
+/* Pixel clouds: one block, the rest drawn with shadows. */
+:root[data-skin="cozy"][data-presentation] .scene-cloud {position:absolute;left:14%;top:30px;width:12px;height:12px;background:#fff;
+  box-shadow:12px 0 #fff,24px 0 #fff,36px 0 #fff,12px -12px #fff,24px -12px #fff,-12px 0 #fff;animation:scene-drift 40s linear infinite alternate;}
+:root[data-skin="cozy"][data-presentation] .scene-cloud.two {left:56%;top:56px;animation-duration:55s;opacity:.9;}
+@keyframes scene-drift {from {translate:0 0;} to {translate:80px 0;}}
+:root[data-skin="cozy"][data-presentation] .scene-window {display:none;}
+/* Rooms: wallpaper, a window with sky, and a wooden floor. */
+:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-drawn {background:repeating-linear-gradient(90deg,var(--wall-1) 0 16px,var(--wall-2) 16px 20px);}
+:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-drawn::before,:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-drawn::after,
+:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-sun,:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-cloud {display:none;}
+:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-window {display:block;position:absolute;left:10%;top:20%;width:96px;height:64px;border:5px solid #5e3415;
+  background:linear-gradient(90deg,transparent 44px,#5e3415 44px 48px,transparent 48px),linear-gradient(180deg,transparent 28px,#5e3415 28px 32px,transparent 32px),linear-gradient(180deg,var(--sky-1),var(--sky-3));}
+:root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-ground {height:30px;border-top:4px solid #5e3415;background:repeating-linear-gradient(90deg,#b8763a 0 46px,#9a5f2c 46px 48px);}
+/* Each place its own tint. */
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="learn"] {--wall-1:#e3d4ef;--wall-2:#d2bfe3;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="doctor"] {--wall-1:#d6efe4;--wall-2:#c2e3d4;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="engines"] {--sky-1:#f2a65e;--sky-2:#f7c47e;--sky-3:#fbe0a6;--hill-1:#9cbf55;--hill-2:#6c9a36;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="clients"] {--sky-1:#8fb8ef;--sky-2:#b2cff5;--sky-3:#dbe9fb;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene^="case-"] {--wall-1:#f6e1bd;--wall-2:#efd2a2;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="case-weather-keys"] {--wall-1:#d9e4ee;--wall-2:#c6d4e2;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="case-calculator-eggs"] {--wall-1:#f7d6e4;--wall-2:#efc2d5;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="case-notes-versions"] {--wall-1:#e4e6ea;--wall-2:#d3d7de;}
+:root[data-skin="cozy"][data-presentation] .scene[data-scene="case-flashlight-apk"] {--wall-1:#e8d8c4;--wall-2:#dcc6aa;--sky-1:#1d2a55;--sky-3:#3b4a7a;}
+/* Night: deep sky, a moon instead of the sun, dimmer rooms. */
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .scene {--sky-1:#16224a;--sky-2:#1f2f5c;--sky-3:#2d3f70;--hill-1:#3e6b3a;--hill-2:#2b4f2a;--wall-1:#6b5640;--wall-2:#5d4a36;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .scene-sun {background:#f4f1d0;box-shadow:0 0 0 4px #d9d4a8;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .scene-cloud {opacity:.35;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .scene-ground {background-color:#3f6e33;border-top-color:#2b4f22;}
+/* The hanging wooden sign. */
+:root[data-skin="cozy"][data-presentation] .scene-sign {position:absolute;left:50%;top:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;padding:8px 24px 6px;
+  background:#f6cf8e;border:4px solid #5e3415;box-shadow:inset 0 -4px 0 #d79a52,0 4px 0 rgba(50,25,8,.35);color:#3b2312;text-align:center;white-space:nowrap;}
+:root[data-skin="cozy"][data-presentation] .scene-sign::before,:root[data-skin="cozy"][data-presentation] .scene-sign::after {content:"";position:absolute;top:-30px;width:4px;height:26px;background:#5e3415;}
+:root[data-skin="cozy"][data-presentation] .scene-sign::before {left:16px;}
+:root[data-skin="cozy"][data-presentation] .scene-sign::after {right:16px;}
+:root[data-skin="cozy"][data-presentation] .scene-sign b {font:22px/1.3 var(--font-display);}
+:root[data-skin="cozy"][data-presentation] .scene-sign small {font:12px/1.4 var(--font-display);color:#6b4626;}
+:root[data-skin="cozy"][data-presentation] .scene-sign svg {position:absolute;left:-14px;top:-14px;width:28px;height:28px;padding:4px;background:#a6d96a;border:3px solid #2f5418;color:#1f3310;box-sizing:border-box;}
+:root[data-skin="cozy"][data-presentation] .scene.compact .scene-sign {top:18px;padding:6px 16px 4px;}
+:root[data-skin="cozy"][data-presentation] .scene.compact .scene-sign b {font-size:18px;}
+:root[data-skin="cozy"][data-presentation] .scene-say {margin-top:4px;}
+:root[data-skin="cozy"][data-presentation] body.mode-pro .scene-say {display:none;}
+:root[data-skin="cozy"][data-presentation] body.mode-pro .scene {height:110px;}
+.tab-purpose {display:none;}
+:root[data-skin="cozy"][data-presentation] .tab-purpose {display:inline;margin-left:4px;font:11px var(--font-body);opacity:.85;}
+@media(max-width:650px) {
+  :root[data-skin="cozy"][data-presentation] .scene {height:120px;}
+  :root[data-skin="cozy"][data-presentation] .scene-sign b {font-size:17px;}
+  :root[data-skin="cozy"][data-presentation] .scene[data-look="room"] .scene-window {left:6%;width:64px;height:48px;}
+  :root[data-skin="cozy"][data-presentation] .tab-purpose {display:none;}
+}
+@media(prefers-reduced-motion:reduce) {:root[data-skin="cozy"][data-presentation] .scene-cloud {animation:none;}}
+:root[data-skin="cozy"][data-presentation] .tabs button[aria-selected="true"] svg {color:#7a3f12;}
+
+/* Pages other than the office are one big paper window, so nothing sits on the grass. */
+:root[data-skin="cozy"][data-presentation] .panel:not(#tab-home) {background:var(--sheet);color:var(--ink);border:4px solid var(--wood-dark);box-shadow:inset 0 0 0 3px var(--wood-light),0 5px 0 rgba(50,25,8,.35);padding:20px 22px 26px;}
+/* Old pixel-theme colours that ignored day/night. */
+:root[data-skin="cozy"][data-presentation] .lesson {background:var(--sheet-2);color:var(--ink);border-color:var(--rule);}
+:root[data-skin="cozy"][data-presentation] :is(.fold>summary,.lesson summary,.lesson .num) {color:var(--ink);}
+:root[data-skin="cozy"][data-presentation] .profiles b {color:var(--ink);}
+@media(max-width:650px) {:root[data-skin="cozy"][data-presentation] .panel:not(#tab-home) {padding:14px 12px 20px;}}
+:root[data-skin="cozy"][data-presentation] :is(.profiles label,.switch) {background:var(--sheet);color:var(--ink);}
+:root[data-skin="cozy"][data-presentation] .profiles label:has(input:checked) {background:var(--cyan-wash);outline:3px solid var(--cyan);outline-offset:-3px;}
+:root[data-skin="cozy"][data-presentation] :is(.profiles label,.switch) :is(b,span) {color:var(--ink);}
+:root[data-skin="cozy"][data-presentation] :is(.profiles label,.switch) small {color:var(--ink-soft);}

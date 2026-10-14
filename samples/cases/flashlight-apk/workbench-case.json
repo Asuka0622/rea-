@@ -90,5 +90,9 @@
     ],
     "practice": "试试复刻练习：想一想，一个只要闪光灯权限的手电筒应该怎么设计。"
   },
-  "note": "这个教学安装包由 scripts/build-case-apk.mjs 生成，只有清单文件，没有代码，也不能安装。"
+  "note": "这个教学安装包由 scripts/build-case-apk.mjs 生成，只有清单文件，没有代码，也不能安装。",
+  "scene": {
+    "place": "王奶奶家",
+    "look": "room"
+  }
 }

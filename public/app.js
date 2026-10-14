@@ -5,6 +5,7 @@ import {mountGameCases} from "./game-cases.js";
 import { createAdventure } from "./adventure.js";
 import { mountReplicate } from "./replicate.js";
 import { mountCases } from "./cases.js";
+import { mountScenes } from "./scenes.js";
 import { beginnerReading } from "./report-reading.js";
 import { recommendExercise } from "./exercise-recommendation.js";
 import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
@@ -1291,4 +1292,22 @@ loadCommands();
 loadDemos();
 applyMode(mode);
 applyPresentation();
+
+/* ================= town scenes ================= */
+// Each page is a place in town: a scene banner and a line from the guide (hidden in pro mode).
+async function loadScenes() {
+  let art = { portraits: [], pixel: [] };
+  try {
+    art = await api("/api/art");
+  } catch {}
+  const portraits = new Set(art.portraits || []);
+  const say = (text) =>
+    h("div", { class: "case-say scene-say" },
+      portraits.has("lumi-normal")
+        ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: "/art/pixel/portraits/lumi-normal.png", alt: "", width: 128, height: 128 }))
+        : h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {})),
+      h("div", { class: "case-say-text" }, h("b", {}, "路米"), h("p", {}, text)));
+  mountScenes({ h, icon, say, have: new Set(art.pixel || []) });
+}
+loadScenes();
 // The map guides first-time users; the full guide is available on demand.

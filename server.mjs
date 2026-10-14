@@ -16,7 +16,7 @@ import {gameCaseCatalog,gameCaseGuide} from "./lib/game-cases.mjs";
 import {gameModCatalog,buildModFiles,writeModFiles,modZip} from "./lib/game-mods.mjs";
 import { demoCatalog } from "./lib/demos.mjs";
 import { findInstalledApps } from "./lib/apps.mjs";
-import { caseCatalog, portraitList } from "./lib/cases.mjs";
+import { caseCatalog, pixelArtList, portraitList } from "./lib/cases.mjs";
 import { openPractice, revealPractice, savePractice } from "./lib/practice.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -131,7 +131,8 @@ const routes = {
 
   "GET /api/demos": async (_req, res) => sendJson(res, 200, { demos: demoCatalog() }),
 
-  "GET /api/cases": async (_req, res) => sendJson(res, 200, { cases: caseCatalog(), portraits: portraitList() }),
+  "GET /api/cases": async (_req, res) => sendJson(res, 200, { cases: caseCatalog(), portraits: portraitList(), pixel: pixelArtList() }),
+  "GET /api/art": async (_req, res) => sendJson(res, 200, { portraits: portraitList(), pixel: pixelArtList() }),
 
   "GET /api/sample": async (_req, res) => sendJson(res, 200, { path: path.join(here, "samples", "notes-demo") }),
 
