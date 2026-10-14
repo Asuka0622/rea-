@@ -196,9 +196,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           h("span", { class: "game-label" }, scene.place, h("small", {}, scene.purpose)),
         );
       }),
+      ...[], // fronts are added by addFronts() below
       (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
     );
     placePlayer();
+    addFronts();
   }
 
   function drawRoom(id) {
@@ -280,11 +282,45 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : `委托 · 案例 ${item?.order ?? ""}` };
   }
   const doorOf = (id) => (TOWN[id] || CASE_HOUSES[id]).door;
-  const blocks = () => [...Object.values(spots()).map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 2 })), ...OBSTACLES];
+  const blocks = () => [
+    ...Object.values(spots()).map((b) => {
+      const roof = Math.round(b.h * 0.45); // the top of the picture is roof: you can stand behind it
+      return { x: b.x, y: b.y + roof, w: b.w, h: b.h - roof - 2 };
+    }),
+    ...OBSTACLES,
+  ];
   /* Walkability map built from the town picture (scripts/build-walkmap.py): trees, walls, fences,
      benches, lamps and water are blocked; paths, grass and paving are open. */
   let walkMap = null;
-  fetch("/art/pixel/town-walk.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).then((data) => (walkMap = data)).catch(() => {});
+  fetch("/art/pixel/town-walk.json", { cache: "no-cache" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      walkMap = data;
+      addFronts();
+    })
+    .catch(() => {});
+  /* Depth: every tree and house has its own pixels on town-front.png and a base line. Each is drawn as
+     a layer whose stacking order is its base; the player's order is the y of its feet. So the player
+     is hidden behind a canopy or roof when standing above its base, and in front of it otherwise. */
+  function addFronts() {
+    if (!worldEl || !walkMap?.fronts || !has("town") || !has("town-front")) return;
+    worldEl.querySelectorAll(".game-front").forEach((el) => el.remove());
+    for (const f of walkMap.fronts) {
+      worldEl.append(
+        h("span", {
+          class: "game-front",
+          "aria-hidden": "true",
+          style: [
+            `left:calc(${f.x}px * var(--px))`, `top:calc(${f.y}px * var(--px))`,
+            `width:calc(${f.w}px * var(--px))`, `height:calc(${f.h}px * var(--px))`,
+            `background-size:calc(${world.w}px * var(--px)) calc(${world.h}px * var(--px))`,
+            `background-position:calc(${-f.x}px * var(--px)) calc(${-f.y}px * var(--px))`,
+            `z-index:${f.base}`,
+          ].join(";"),
+        }),
+      );
+    }
+  }
   const openGround = (x, y) => {
     if (!walkMap || !has("town")) return true;
     const row = walkMap.rows[Math.floor(y / walkMap.cell)];
@@ -338,6 +374,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     playerEl.style.top = `calc(${player.y.toFixed(2)}px * var(--px))`;
     playerEl.classList.toggle("walking", player.walking);
     playerEl.classList.toggle("face-left", player.left);
+    playerEl.style.zIndex = String(Math.round(player.y));
     followCamera();
   }
 
@@ -488,6 +525,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           }
         }
       }
+      // Squeezing diagonally through a gap: neither axis alone is free, but the diagonal step is.
+      if (!moved && !blocked(nx, ny)) [player.x, player.y, moved] = [nx, ny, true];
       if (!moved && target) target = { ...target, x: player.x, y: player.y, rest: [] }; // stuck: stop here, still arrive
       if (dx) player.left = dx < 0;
       movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);

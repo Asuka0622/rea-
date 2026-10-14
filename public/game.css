@@ -218,3 +218,8 @@ html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-portrait
 html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text {min-height:0;padding:18px 16px 12px;}
 html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text p {margin:0;line-height:1.7;}
 html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
+
+/* Depth layers: stacking order = base line in map pixels (set inline); labels and prompts stay on top. */
+.game-front {position:absolute;pointer-events:none;background-image:url(/art/pixel/town-front.png);background-repeat:no-repeat;image-rendering:pixelated;}
+.game-world .game-building {z-index:1000;}
+.game-world .game-interact {z-index:1001;}
