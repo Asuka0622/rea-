@@ -479,3 +479,25 @@ details.section.case-flash {animation:case-flash 1.8s ease-out;}
 @keyframes case-flash {0%,40% {box-shadow:0 0 0 4px var(--marker);} 100% {box-shadow:0 0 0 0 transparent;}}
 @media(prefers-reduced-motion:reduce) {details.section.case-flash {animation:none;outline:3px solid var(--marker);}}
 @media(max-width:650px) {.case-quest {padding:18px 16px;}.case-options {grid-template-columns:1fr;}}
+.case-requires {margin:0;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--warn);}
+.case-story-intro {margin:0;font-size:14px;line-height:1.85;color:var(--ink-soft);}
+.case-stories {display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.case-tale {display:flex;flex-direction:column;gap:8px;padding:16px 18px;background:var(--sheet);border:2px solid var(--rule);}
+.case-tale h4 {margin:0;font:600 17px/1.5 var(--font-display);}
+.case-tale p {margin:0;font-size:13px;line-height:1.85;}
+.case-tale-when {font:500 12px var(--font-mono);color:var(--warn);}
+.case-tale-lesson {display:flex;gap:6px;align-items:flex-start;padding:8px 10px;background:var(--sheet-2);color:var(--ink);}
+.case-tale-lesson svg {flex:none;margin-top:3px;}
+.case-tale .case-actions {margin-top:auto;}
+.save-lab {display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--sheet);border:2px solid var(--cyan);}
+.save-lab h4 {margin:0;display:flex;gap:8px;align-items:center;font:600 19px/1.5 var(--font-display);}
+.save-lab-intro,.save-lab-step p {margin:0;font-size:13px;line-height:1.85;}
+.save-lab-step {display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding-top:10px;border-top:1px dashed var(--rule);}
+.save-lab-step b {font-size:14px;}
+.save-lab-code {align-self:stretch;margin:0;max-height:220px;overflow:auto;padding:10px 12px;background:var(--sheet-2);color:var(--ink);font:12px/1.6 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--rule);}
+.save-lab-step code {font:12px var(--font-mono);padding:1px 4px;background:var(--sheet-2);overflow-wrap:anywhere;}
+.save-lab-field {display:flex;gap:8px;align-items:center;font-size:14px;}
+.save-lab-field input {width:140px;padding:6px 8px;font:14px var(--font-mono);color:var(--ink);background:var(--sheet);border:2px solid var(--rule);}
+.save-lab-result {display:flex;gap:8px;align-items:center;padding:8px 12px;font-weight:600;}
+.save-lab-result.ok {background:var(--ok-wash);color:var(--ok);}
+.save-lab-result.bad {background:var(--warn-wash);color:var(--warn);}

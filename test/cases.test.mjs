@@ -20,9 +20,9 @@ test("the case catalog lists the privacy case first, with its sample folder", ()
 });
 
 test("count questions offer numbers around the real row count", () => {
-  const { available, options, correct } = questionOptions({ type: "count", section: "联网请求（发往哪里）" }, [report]);
+  const { available, options, correct } = questionOptions({ id: "count-urls", type: "count", section: "联网请求（发往哪里）" }, [report]);
   assert.ok(available);
-  assert.deepEqual(options, ["1 处", "2 处", "3 处", "4 处"]);
+  assert.deepEqual(options, ["2 处", "3 处", "4 处", "5 处"]);
   assert.deepEqual(correct, ["2 处"]);
 });
 

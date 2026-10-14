@@ -1,0 +1,8 @@
+{
+  "name": "quick-notes",
+  "productName": "随手便签",
+  "version": "1.1.0",
+  "description": "REA 工作台教学样本：两个版本对比。仅供学习，不能运行。",
+  "main": "main.js",
+  "license": "MIT"
+}

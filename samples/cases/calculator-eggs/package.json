@@ -1,0 +1,8 @@
+{
+  "name": "pixel-calculator",
+  "productName": "像素计算器",
+  "version": "1.4.0",
+  "description": "REA 工作台教学样本：藏着几个彩蛋和一个调试后门。仅供学习，不能运行。",
+  "main": "main.js",
+  "license": "MIT"
+}

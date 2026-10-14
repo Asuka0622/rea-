@@ -59,6 +59,13 @@ export function beginnerReading(report = {}, command = '') {
       .map(row => ({ label: clip(row[1]), evidence: clip(row[0]) }));
     result.structure = '入口文件决定从哪里开始；其他脚本和资源负责具体行为。数值线索标出代码位置，不等于完整执行流程。';
     result.learn = '先读上面一项学习入口，弄清一个属性或行为由哪里控制；修改前查看案例说明里的工具、版本和验证方法。';
+  } else if (command === 'compare-javascript-versions' || report.title === '版本对比') {
+    const changes = sections.filter(item => /^(新增|去掉) · /.test(item.title));
+    result.title = '版本对比报告';
+    result.finding = report.headline || '这次对比了同一个软件的两个版本。';
+    result.clues = changes.slice(0, 5).map(item => ({ label: item.title, evidence: clip((item.table?.rows || item.items || []).map(row => Array.isArray(row) ? row[0] : row).join('、')) }));
+    result.structure = '先看开发者自己写的「更新说明」，再看下面每一组「新增」和「去掉」。说明里没提、代码里却变了的地方，最值得留意。';
+    result.learn = '挑一项新增的变化，回到新版本的代码里找到它，弄清它做了什么、为什么更新说明里没写。';
   } else if (command === 'inspect-android-package') {
     result.title = '手机 App 结构报告';
     result.finding = '这次读取了 App 的组件、权限和开发框架线索。申请某项权限不等于实际使用过它，也不能据此判断 App 的完整用途。';

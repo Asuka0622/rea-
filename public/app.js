@@ -1291,7 +1291,7 @@ const adventure = createAdventure({
   notice: toast,
 });
 const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
-const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open() });
+const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open() });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();

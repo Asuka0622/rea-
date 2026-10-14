@@ -22,13 +22,26 @@ export function questionOptions(question, reports) {
   if (!section) return { available: false, multi: false, options: [], correct: [] };
   if (question.type === "count") {
     const n = rowCount(section);
-    const numbers = [...new Set([Math.max(0, n - 1), n, n + 1, n + 2])].sort((a, b) => a - b);
+    // Shift the window per question so the right answer is not always in the same place.
+    const shift = [...String(question.id || "")].reduce((sum, c) => sum + c.charCodeAt(0), 0) % 4;
+    const first = Math.max(0, n - shift);
+    const numbers = [first, first + 1, first + 2, first + 3];
     return { available: true, multi: false, options: numbers.map((x) => `${x} 处`), correct: [`${n} 处`] };
   }
-  const options = firstCells(section).slice(0, 8);
   const wanted = [].concat(question.answer);
-  const correct = options.filter((option) => wanted.some((answer) => option.includes(answer)));
+  const matches = (option) => wanted.some((answer) => option.includes(answer));
+  const rows = firstCells(section).slice(0, 8);
+  // Distractors pad short sections so there is a real choice; they never count as an answer.
+  const extra = (question.distractors || []).map(String).filter((d) => !matches(d) && !rows.includes(d));
+  const options = [...rows, ...extra].sort((a, b) => hash(`${question.id}|${a}`) - hash(`${question.id}|${b}`));
+  const correct = rows.filter(matches);
   return { available: correct.length > 0, multi: question.type === "pick-rows", options, correct };
+}
+
+function hash(text) {
+  let value = 0;
+  for (const char of text) value = (value * 31 + char.charCodeAt(0)) >>> 0;
+  return value;
 }
 
 /** True when the picked options are exactly the correct ones. */

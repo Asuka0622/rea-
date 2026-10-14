@@ -1,0 +1,8 @@
+{
+  "name": "xiaobai-weather",
+  "productName": "天气小助手",
+  "version": "2.1.0",
+  "description": "REA 工作台教学样本：代码里写死了密钥。仅供学习，不能运行，所有密钥都是编造的。",
+  "main": "main.js",
+  "license": "MIT"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "pixel-farm-diary",
+  "productName": "像素小镇·种田日记",
+  "version": "0.9.0",
+  "description": "REA 工作台教学样本：单机小游戏的存档格式。仅供学习，不能运行。",
+  "main": "main.js",
+  "license": "MIT"
+}

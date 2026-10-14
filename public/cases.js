@@ -1,14 +1,18 @@
 import { isCorrect, questionOptions } from "./case-quest.js";
+import { mountSaveLab } from "./save-lab.js";
 
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
-// professionals see the findings and explanations directly.
-export function mountCases({ h, icon, api, toast, analyze, busy, showHome, getReports, getTarget, isPro, openReplicate }) {
+// professionals see the findings and explanations directly. A "stories" case is read, not analysed.
+export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate }) {
   const library = document.querySelector("#case-library");
   const list = document.querySelector("#case-list");
   const quest = document.querySelector("#case-quest");
+  const storiesPanel = document.querySelector("#case-stories");
   let catalog = [];
   const progress = new Map(); // case id -> { index, picked: Set, feedback, solved: Set }
+  const labs = new Map(); // case id -> lab element, kept so its progress survives re-renders
+  let reading = null; // id of the stories case being read
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));
@@ -17,9 +21,40 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, getRe
     return progress.get(id);
   };
 
-  function start(item) {
+  const ENGINE_NAMES = { jadx: "JADX", java: "Java" };
+
+  async function missingEngines(item) {
+    if (!item.requires?.length) return [];
+    const engines = await api("/api/engines");
+    return item.requires.filter((id) => {
+      const engine = engines.find((e) => e.id === id);
+      return !(engine?.ok || engine?.partial);
+    });
+  }
+
+  async function start(item) {
+    if (item.type === "stories") {
+      reading = item.id;
+      showHome();
+      library.open = false;
+      render();
+      // The library above closes with a short height transition; scroll once it has settled.
+      setTimeout(() => storiesPanel.scrollIntoView({ behavior: "smooth", block: "start" }), 380);
+      return;
+    }
     if (busy()) return toast("探索进行中，请先停止当前探索");
+    let missing = [];
+    try {
+      missing = await missingEngines(item);
+    } catch {}
+    if (missing.length) {
+      toast(`这个案例要先安装 ${missing.map((id) => ENGINE_NAMES[id] || id).join(" 和 ")}，正在带你去「分析引擎」`);
+      return showEngines?.();
+    }
+    reading = null;
+    storiesPanel.hidden = true;
     progress.delete(item.id);
+    labs.delete(item.id);
     showHome();
     library.open = false;
     analyze(item.path);
@@ -34,7 +69,10 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, getRe
           h("div", { class: "case-card-head" }, h("span", { class: "case-no" }, String(item.order).padStart(2, "0")), h("h3", {}, item.title)),
           h("p", { class: "case-story" }, item.story),
           h("div", { class: "case-skills" }, item.skills.map((skill) => h("span", { class: "tag" }, skill))),
-          h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("scan", { size: 16 }), "开始调查"),
+          item.requires?.length && h("p", { class: "case-requires" }, icon("engines", { size: 15 }), `需要先安装分析引擎：${item.requires.map((id) => ENGINE_NAMES[id] || id).join(" + ")}`),
+          item.type === "stories"
+            ? h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("learn", { size: 16 }), "阅读故事")
+            : h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("scan", { size: 16 }), "开始调查"),
         ),
       ),
     );
@@ -78,7 +116,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, getRe
     const state = stateOf(item.id);
     const total = item.questions.length;
     const dots = h("ol", { class: "case-dots", "aria-label": "调查进度" }, item.questions.map((q, i) => h("li", { class: state.solved.has(q.id) ? "done" : i === state.index ? "active" : "" }, i + 1)));
-    if (state.index >= total) return [dots, conclusion(item)];
+    if (state.index >= total) return [dots, lab(item), conclusion(item)];
     const question = item.questions[state.index];
     const { available, multi, options } = questionOptions(question, reports);
     if (!available) {
@@ -128,11 +166,51 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, getRe
         const { correct, available } = questionOptions(question, reports);
         return h("li", {}, h("b", {}, question.prompt), h("p", {}, available ? `答案：${correct.join("、")}` : `报告缺少「${question.section}」`), h("p", { class: "rep-note" }, question.explain));
       })),
+      lab(item),
       conclusion(item),
     ];
   }
 
+  function lab(item) {
+    if (item.lab?.type !== "save-editor") return null;
+    if (!labs.has(item.id)) {
+      try {
+        labs.set(item.id, mountSaveLab({ h, icon, lab: item.lab }));
+      } catch (error) {
+        return h("p", { class: "rep-note" }, `存档实验室打不开：${error.message}`);
+      }
+    }
+    return labs.get(item.id);
+  }
+
+  function renderStories(item) {
+    const byId = new Map(catalog.map((c) => [c.id, c]));
+    return [
+      h("p", { class: "case-story-intro" }, item.story),
+      h("div", { class: "case-stories" }, item.stories.map((story) => {
+        const related = story.related && byId.get(story.related);
+        return h("article", { class: "case-tale" },
+          h("p", { class: "case-tale-when" }, story.when),
+          h("h4", {}, story.title),
+          h("p", {}, story.body),
+          h("p", { class: "case-tale-lesson" }, icon("bulb", { size: 15 }), story.lesson),
+          h("div", { class: "case-actions" },
+            related && h("button", { class: "btn small", type: "button", onclick: () => start(related) }, icon("scan", { size: 14 }), `动手做：${related.title.split("：")[0]}`),
+            story.link && h("a", { class: "btn small ghost", href: story.link, target: "_blank", rel: "noopener noreferrer" }, "看原文（英文）")));
+      })),
+      h("div", { class: "case-actions" }, h("button", { class: "btn", type: "button", onclick: () => ((reading = null), render(), open()) }, icon("back", { size: 15 }), "回到案例馆")),
+    ];
+  }
+
   function render() {
+    const story = reading && catalog.find((c) => c.id === reading);
+    storiesPanel.hidden = !story;
+    if (story) {
+      storiesPanel.replaceChildren(
+        h("div", { class: "case-quest-head" }, h("p", { class: "case-kicker" }, "案例馆 · 真实世界"), h("h3", { id: "case-stories-title" }, story.title)),
+        ...renderStories(story).filter(Boolean),
+      );
+    }
     const item = activeCase();
     const reports = getReports();
     if (!item || !reports.length) {

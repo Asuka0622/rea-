@@ -118,3 +118,5 @@
 @media(max-width:650px){:root[data-presentation="simple"] .practice-input textarea {font-size:16px!important;}}
 :root[data-presentation="simple"] .case-card,:root[data-presentation="simple"] .case-option,:root[data-presentation="simple"] .case-conclusion,:root[data-presentation="simple"] .case-dots li {border-radius:var(--radius-s);border-width:1px;}
 :root[data-presentation="simple"] .case-card-head h3,:root[data-presentation="simple"] .case-quest-head h3,:root[data-presentation="simple"] .case-conclusion h4 {font-family:var(--font-body);}
+:root[data-presentation="simple"] .case-tale,:root[data-presentation="simple"] .save-lab,:root[data-presentation="simple"] .save-lab-code,:root[data-presentation="simple"] .save-lab-field input {border-radius:var(--radius-s);border-width:1px;}
+:root[data-presentation="simple"] .case-tale h4,:root[data-presentation="simple"] .save-lab h4 {font-family:var(--font-body);}
