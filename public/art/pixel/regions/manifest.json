@@ -1,0 +1,63 @@
+{
+  "baseState": {
+    "season": "autumn",
+    "weather": "clear",
+    "time": "noon",
+    "label": "autumn-clear-noon"
+  },
+  "stateNote": "This first asset batch covers only the autumn / clear / noon base state. Other season, weather, and time variants have not been generated.",
+  "regionMapSize": [
+    960,
+    540
+  ],
+  "roomSize": [
+    320,
+    180
+  ],
+  "resampling": "nearest-neighbor",
+  "regions": [
+    {
+      "file": "town-center.png",
+      "purpose": "Public facilities and central plaza"
+    },
+    {
+      "file": "town-homes.png",
+      "purpose": "Client homes"
+    },
+    {
+      "file": "town-craft.png",
+      "purpose": "Craft street"
+    },
+    {
+      "file": "town-north.png",
+      "purpose": "North office"
+    },
+    {
+      "file": "town-south.png",
+      "purpose": "South bank, bridge, pier, and picnic clearing"
+    }
+  ],
+  "interiors": [
+    {
+      "file": "../room-home.png",
+      "purpose": "Detective office, retained existing art"
+    },
+    {
+      "file": "../room-learn.png",
+      "purpose": "Library"
+    },
+    {
+      "file": "../room-engines.png",
+      "purpose": "Tool and engine shop"
+    },
+    {
+      "file": "../room-clients.png",
+      "purpose": "Post office"
+    },
+    {
+      "file": "../room-doctor.png",
+      "purpose": "Clinic"
+    }
+  ],
+  "integration": "Region maps are standalone art assets. Runtime region navigation and connector coordinates still need integration."
+}
