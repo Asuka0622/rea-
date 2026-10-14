@@ -436,3 +436,46 @@ body[data-quest-state="reward"] .world-map .pixel-chest {animation:chest-bob 1.1
   .rep-progress li {flex-direction:column;justify-content:center;font-size:10px;padding:6px 2px;text-align:center;}
   .rep-pro-grid {grid-template-columns:1fr;}
 }
+
+/* ---------- 案例馆: case cards and the investigation panel ---------- */
+.case-list {display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px;}
+.case-card {display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:var(--sheet);color:var(--ink);border:2px solid var(--rule);}
+.case-card-head {display:flex;gap:10px;align-items:baseline;}
+.case-card-head h3 {margin:0;font:600 18px/1.5 var(--font-display);}
+.case-no {font:500 13px var(--font-mono);color:var(--warn);}
+.case-story {margin:0;font-size:13px;line-height:1.8;color:var(--ink-soft);}
+.case-skills {display:flex;flex-wrap:wrap;gap:6px;}
+.case-card .btn {align-self:flex-start;}
+.case-quest {margin:22px 0 18px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;color:var(--ink);}
+.case-quest-head h3 {margin:2px 0 4px;font:600 22px/1.5 var(--font-display);}
+.case-quest-head p {margin:0;font-size:13px;color:var(--ink-soft);}
+.case-kicker {font-size:12px!important;letter-spacing:.12em;color:var(--warn)!important;}
+.case-dots {list-style:none;margin:0;padding:0;display:flex;gap:6px;}
+.case-dots li {width:28px;height:28px;display:grid;place-items:center;font:500 12px var(--font-mono);border:2px solid var(--rule);color:var(--ink-soft);background:var(--sheet);}
+.case-dots li.active {border-color:var(--cyan);color:var(--ink);}
+.case-dots li.done {background:var(--ok-wash);border-color:var(--ok);color:var(--ok);}
+.case-q {margin:0;font-size:16px;line-height:1.75;display:flex;flex-direction:column;gap:2px;}
+.case-q b {font-size:12px;color:var(--warn);font-weight:600;}
+.case-options {display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+.case-option {display:flex;align-items:center;gap:8px;text-align:left;padding:10px 12px;border:2px solid var(--rule);background:var(--sheet);color:var(--ink);font:500 13px var(--font-mono);cursor:pointer;overflow-wrap:anywhere;}
+.case-option:hover:not(:disabled) {border-color:var(--cyan);}
+.case-option.picked {border-color:var(--cyan);background:var(--sheet-2);box-shadow:inset 0 0 0 1px var(--cyan);}
+.case-option:disabled {cursor:default;}
+.case-option .box {flex:none;width:14px;height:14px;border:2px solid currentColor;}
+.case-option.picked .box {background:currentColor;}
+.case-feedback {padding:12px 14px;font-size:14px;line-height:1.8;}
+.case-feedback p {margin:0 0 6px;}
+.case-feedback.right {background:var(--ok-wash);color:var(--ink);border-left:4px solid var(--ok);}
+.case-feedback.wrong {background:var(--warn-wash);color:var(--ink);border-left:4px solid var(--warn);}
+.case-actions {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.case-conclusion {display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--sheet);border:2px solid var(--ok);}
+.case-conclusion h4 {margin:0;display:flex;gap:8px;align-items:center;font:600 19px/1.5 var(--font-display);color:var(--ok);}
+.case-conclusion>p {margin:0;font-size:14px;line-height:1.85;}
+.case-columns {display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;font-size:13px;line-height:1.8;}
+.case-columns ul {margin:4px 0 0;padding-left:18px;}
+.case-pro {margin:0;padding-left:20px;display:grid;gap:10px;font-size:13px;}
+.case-pro p {margin:2px 0 0;}
+details.section.case-flash {animation:case-flash 1.8s ease-out;}
+@keyframes case-flash {0%,40% {box-shadow:0 0 0 4px var(--marker);} 100% {box-shadow:0 0 0 0 transparent;}}
+@media(prefers-reduced-motion:reduce) {details.section.case-flash {animation:none;outline:3px solid var(--marker);}}
+@media(max-width:650px) {.case-quest {padding:18px 16px;}.case-options {grid-template-columns:1fr;}}

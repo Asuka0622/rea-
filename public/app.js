@@ -4,6 +4,7 @@ import {mountModelMods} from "./model-mods.js";
 import {mountGameCases} from "./game-cases.js";
 import { createAdventure } from "./adventure.js";
 import { mountReplicate } from "./replicate.js";
+import { mountCases } from "./cases.js";
 import { beginnerReading } from "./report-reading.js";
 import { recommendExercise } from "./exercise-recommendation.js";
 import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
@@ -196,6 +197,7 @@ function applyMode(next, { announce = false } = {}) {
   adventure.refresh();
   modelWorkshop.refresh();
   replicate.refresh();
+  cases.refresh();
   // Professional mode has no task panel: always leave it something to act on.
   if (isPro() && $("#run").hidden && !adventure.busy) $("#home-start").hidden = false;
   if (announce) toast(isPro() ? "专业模式：显示全部细节和命令" : "新手模式：只显示重点，配有说明");
@@ -802,6 +804,7 @@ async function executeAnalysis(target, commands) {
         } else if (event.type === "done") {
           completed = true;
           replicate.refresh();
+          cases.refresh();
           if (current.reports.length && !$("#seabed")) $("#reports").after(seabedPanel());
           renderGauge();
         } else if (event.type === "fatal") {
@@ -837,6 +840,7 @@ function resetAnalyze() {
   $("#home-start").hidden = false;
   adventure.reset();
   replicate.reset();
+  cases.refresh();
 }
 
 /** The last stop of every dive: hand the whole report to an AI. */
@@ -1271,6 +1275,7 @@ const adventure = createAdventure({
   stop: () => current?.controller.abort(),
   explain: () => current && explainWithAi(),
   replicate: () => replicate.open(),
+  cases: () => cases.open(),
   learn: () => showTab("learn"),
   engines: () => showTab("engines"),
   restart: () => {
@@ -1286,6 +1291,7 @@ const adventure = createAdventure({
   notice: toast,
 });
 const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
+const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open() });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();
