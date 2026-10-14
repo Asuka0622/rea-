@@ -1311,7 +1311,7 @@ async function loadScenes() {
   const say = (text) =>
     h("div", { class: "case-say scene-say" },
       portraits.has("lumi-normal")
-        ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: "/art/pixel/portraits/lumi-normal.png", alt: "", width: 80, height: 80 }))
+        ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: "/art/faces/lumi-normal.webp", alt: "", width: 160, height: 160 }))
         : h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {})),
       h("div", { class: "case-say-text" }, h("b", {}, "路米"), h("p", {}, text)));
   mountScenes({ h, icon, say, have: new Set(art.pixel || []) });

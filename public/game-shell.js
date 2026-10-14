@@ -5,7 +5,7 @@ import { SCENES } from "./scenes.js";
 // choosing what to do opens an in-game window holding the existing page (cases, reports, tutorial…).
 // Nothing is rewritten: the page's <main> is moved into the window and back again.
 // Pictures are optional: public/art/pixel/town.png and room-<place>.png (320x180) replace the drawn
-// stand-ins, sprite-<name>.png (16x32) stands in the scenes, portraits come from art/pixel/portraits.
+// stand-ins, sprite-<name>.png (16x32) stands in the scenes; dialogue portraits are anime-style art/faces/*.webp.
 
 const WEB_KEY = "rea-wb-web-mode";
 
@@ -160,7 +160,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   const portrait = () => {
     const name = art().portraits.has("lumi-normal") ? "lumi-normal" : null;
     return name
-      ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/pixel/portraits/${name}.png`, alt: "", width: 80, height: 80 }))
+      ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }))
       : h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
   };
 

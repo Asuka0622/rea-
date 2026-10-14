@@ -100,9 +100,9 @@
 /* A blinking "more" marker. */
 :root[data-skin="cozy"][data-presentation] .case-say-text::after {content:"▼";position:absolute;right:12px;bottom:4px;font-size:10px;color:#a8642e;animation:cozy-blink 1s steps(2) infinite;}
 @keyframes cozy-blink {50% {opacity:0;}}
-/* Portrait frame: an 80px pixel portrait shown at exactly 2x (1x in the small bottom box and on phones). */
+/* Portrait frame: the anime-style portrait (320px source) scaled smoothly into a wooden frame. */
 :root[data-skin="cozy"][data-presentation] .case-portrait {flex:none;width:160px;height:160px;margin-top:14px;background:linear-gradient(180deg,#bfe3f0,#e6f4d6);border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);overflow:hidden;}
-:root[data-skin="cozy"][data-presentation] .case-portrait img {display:block;width:160px;height:160px;image-rendering:pixelated;}
+:root[data-skin="cozy"][data-presentation] .case-portrait img {display:block;width:160px;height:160px;image-rendering:auto;}
 :root[data-skin="cozy"][data-presentation] :is(.case-say,.case-hud) .guide-avatar {display:block!important;flex:none;width:56px;height:64px;transform:none;border-width:4px;margin-top:14px;}
 /* The bottom dialogue box while hunting in the report. */
 :root[data-skin="cozy"][data-presentation] .case-hud {padding:12px 14px;}

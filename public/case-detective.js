@@ -39,14 +39,14 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     return games.get(id);
   };
 
-  /** A pixel portrait (public/art/pixel/portraits/<character>-<expression>.png), or a drawn stand-in. */
+  /** A dialogue portrait (public/art/faces/<character>-<expression>.webp), or a drawn stand-in. */
   const avatar = (kind = "guide", expression) => {
     const client = String(kind).includes("client");
     const character = client ? active?.item.game.client.portrait : "lumi";
     const mood = expression || (/right/.test(kind) ? "happy" : /(wrong|hint)/.test(kind) ? (client ? "surprised" : "thinking") : "normal");
     const have = portraits();
     const name = character && [`${character}-${mood}`, `${character}-normal`].find((n) => have.has(n));
-    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/pixel/portraits/${name}.png`, alt: "", width: 80, height: 80 }));
+    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }));
     return h("div", { class: `guide-avatar ${client ? "client-avatar" : ""}`, "aria-hidden": "true" }, h("span", {}));
   };
   const bubble = (who, text, kind, expression) => h("div", { class: `case-say ${kind || ""}` }, avatar(kind, expression), h("div", { class: "case-say-text" }, h("b", {}, who), h("p", {}, text)));
