@@ -1,4 +1,4 @@
-/* Optional plain presentation. Pixel rules and assets remain intact. */
+/* The base layout and plain look. A skin (cozy.css, data-skin) can restyle it. */
 :root[data-presentation="simple"] {
   --paper:#f6f7f9;--sheet:#fff;--sheet-2:#f1f3f5;--ink:#20262e;--ink-soft:#59636f;--rule:#d5dbe2;
   --cyan:#2457b8;--cyan-strong:#19468f;--cyan-wash:#eaf0fb;--teal:#2457b8;--on-cyan:#fff;
@@ -13,7 +13,7 @@
 }
 :root[data-presentation="simple"] body {background:var(--paper);color:var(--ink);font:14px/1.65 var(--font-body);}
 :root[data-presentation="simple"] body::before,:root[data-presentation="simple"] body::after {display:none;}
-:root[data-presentation="simple"] * {animation:none!important;transition:none!important;box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;}
+:root[data-presentation="simple"]:not([data-skin]) * {animation:none!important;transition:none!important;box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;}
 :root[data-presentation="simple"] ::selection {background:var(--cyan-wash);color:var(--ink);}
 :root[data-presentation="simple"] * {scrollbar-color:var(--ink-soft) var(--paper);caret-color:var(--cyan);}
 :root[data-presentation="simple"] :focus-visible {outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px;}

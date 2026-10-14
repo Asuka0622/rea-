@@ -9,6 +9,7 @@
   // Apply the saved theme before first paint to avoid a flash.
   try {
     document.documentElement.dataset.presentation = "simple";
+    document.documentElement.dataset.skin = "cozy";
     const theme = localStorage.getItem("rea-wb-theme");
     if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
   } catch {}
@@ -18,6 +19,7 @@
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/rpg.css">
 <link rel="stylesheet" href="/simple.css">
+<link rel="stylesheet" href="/cozy.css">
 </head>
 <body class="mode-beginner">
 

@@ -1,0 +1,143 @@
+/* 温馨像素皮肤 (data-skin="cozy"): a Japanese-indie look on top of the simple layout. The world is warm
+   pixel craft (grass, wooden signboard, paper windows, plank buttons, pixel headings); conversations use
+   an RPG message window with a name plate, where anime-style portraits will sit. Body text stays in a
+   normal font so long reports remain easy to read. Original styling; no game assets are copied. */
+@font-face {font-family:"Fusion Pixel";src:url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');font-display:swap;}
+
+:root[data-skin="cozy"][data-presentation] {
+  --paper:#9fd178;--sheet:#fff4d8;--sheet-2:#f7e2b5;--ink:#3b2312;--ink-soft:#6b4626;--rule:#c79a5b;
+  --cyan:#2f6b2a;--cyan-strong:#23531f;--cyan-wash:#e1f2c8;--teal:#2f6b2a;--on-cyan:#fff;
+  --ok:#2f6b2a;--ok-wash:#dff0c6;--warn:#87470c;--warn-wash:#fde0b0;--bad:#a3322a;--bad-wash:#f9d4ca;
+  --marker:#c0612b;--marker-wash:#fde0b0;--gold:#2f6b2a;--pine:#2f6b2a;
+  --wood:#84491d;--wood-dark:#5e3415;--wood-light:#f2c27f;--plank:#f6cf8e;--plank-shade:#d79a52;
+  --leaf:#a6d96a;--leaf-shade:#6fae3f;--leaf-dark:#2f5418;
+  --window:#18295a;--window-2:#0f1c40;--window-ink:#fdfaf0;--plate:#ffe7a3;
+  --font-display:"Fusion Pixel","Microsoft YaHei",sans-serif;--radius:0;--radius-s:0;--radius-l:0;color-scheme:light;
+}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] {
+  --paper:#1d2740;--sheet:#3a2a1d;--sheet-2:#4a3626;--ink:#fbead0;--ink-soft:#e2c9a2;--rule:#8a5f36;
+  --cyan:#b7e486;--cyan-strong:#cdf0a4;--cyan-wash:#34482a;--teal:#b7e486;--on-cyan:#1d2a12;
+  --ok:#b7e486;--ok-wash:#2f4527;--warn:#ffcf85;--warn-wash:#4d3820;--bad:#ffab9e;--bad-wash:#4f2a26;
+  --marker:#ffb36b;--marker-wash:#4d3820;--gold:#b7e486;--pine:#b7e486;
+  --wood:#6e4220;--wood-dark:#24130a;--wood-light:#a8703c;--plank:#c99456;--plank-shade:#9a6a35;
+  --leaf:#8cc456;--leaf-shade:#5c9234;--leaf-dark:#1d3610;color-scheme:dark;
+}
+
+/* ----- the world: grass by day, a starry field by night ----- */
+:root[data-skin="cozy"][data-presentation] body {
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(45deg,rgba(60,100,30,.10) 25%,transparent 25%,transparent 75%,rgba(60,100,30,.10) 75%),
+    linear-gradient(45deg,rgba(60,100,30,.10) 25%,transparent 25%,transparent 75%,rgba(60,100,30,.10) 75%);
+  background-size:16px 16px;background-position:0 0,8px 8px;
+}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] body {
+  background-image:radial-gradient(#ffffff55 1px,transparent 1.5px),radial-gradient(#ffe7a333 1px,transparent 1.5px);
+  background-size:46px 46px,73px 73px;background-position:0 0,20px 31px;
+}
+
+/* ----- signboard header ----- */
+:root[data-skin="cozy"][data-presentation] .topbar {
+  max-width:none;background:var(--wood);border-bottom:4px solid var(--wood-dark);
+  background-image:repeating-linear-gradient(180deg,transparent 0 22px,rgba(0,0,0,.14) 22px 24px);
+  box-shadow:0 4px 0 rgba(40,20,5,.25);padding:16px max(24px,calc((100% - 1072px)/2)) 0;
+}
+:root[data-skin="cozy"][data-presentation] .brand,:root[data-skin="cozy"][data-presentation] .wordmark {color:#fff3d6;}
+:root[data-skin="cozy"][data-presentation] .wordmark {font:24px/1.3 var(--font-display);text-shadow:2px 2px 0 var(--wood-dark);}
+:root[data-skin="cozy"][data-presentation] .wordmark small {font:14px var(--font-display);color:#ffe2b0;}
+:root[data-skin="cozy"][data-presentation] .brand-mark {display:block!important;color:var(--plate);width:30px;height:30px;}
+:root[data-skin="cozy"][data-presentation] .tabs button {font:14px var(--font-display);color:#ffe9c4;padding:10px 12px;}
+:root[data-skin="cozy"][data-presentation] .tabs button[aria-selected="true"] {background:var(--sheet);color:var(--ink);box-shadow:inset 0 3px 0 var(--wood-light);}
+:root[data-skin="cozy"][data-presentation] .tab-ink {display:none;}
+:root[data-skin="cozy"][data-presentation] .tool-btn,:root[data-skin="cozy"][data-presentation] .mode-switch {background:var(--plank);border:3px solid var(--wood-dark);color:var(--ink);font:13px var(--font-display);}
+:root[data-skin="cozy"][data-presentation] .mode-switch button {font:13px var(--font-display);color:var(--ink-soft);}
+:root[data-skin="cozy"][data-presentation] .mode-switch button[aria-checked="true"] {color:var(--ink);}
+:root[data-skin="cozy"][data-presentation] .mode-switch::before {background:#fff7e3;border-radius:0;}
+
+/* ----- paper windows in a wooden frame ----- */
+:root[data-skin="cozy"][data-presentation] :is(.parchment,.card,#home-start,.report,dialog,.replicate) {
+  background:var(--sheet);color:var(--ink);border:4px solid var(--wood-dark);border-radius:0;
+  box-shadow:inset 0 0 0 3px var(--wood-light),0 5px 0 rgba(50,25,8,.35);
+}
+:root[data-skin="cozy"][data-presentation] :is(.fact,.section,.seabed,.drop,.guide,.case-card,.case-tale,.case-option,.case-bag-item,.case-conclusion,.save-lab,.demo-row,.task-hint) {border-radius:0;border-color:var(--rule);}
+:root[data-skin="cozy"][data-presentation] :is(.case-card,.case-tale) {border-width:2px;box-shadow:0 3px 0 var(--rule);}
+:root[data-skin="cozy"][data-presentation] :is(h2,h3,h4,.demo-library>summary,.report-head h3,.page-title,.case-card-head h3,.case-quest-head h3,.case-conclusion h4,.case-tale h4,.save-lab h4,.task-body h2,.rep-head h3,.model-mod-body h3,.demo-description h3) {font-family:var(--font-display);font-weight:400;letter-spacing:.02em;}
+:root[data-skin="cozy"][data-presentation] .headline {font-weight:600;}
+:root[data-skin="cozy"][data-presentation] .demo-library>summary>span {font-family:var(--font-body);}
+:root[data-skin="cozy"][data-presentation] .rpg-footer {background:var(--sheet);border:3px solid var(--wood-dark);padding:10px 14px;color:var(--ink-soft);}
+
+/* ----- plank buttons ----- */
+:root[data-skin="cozy"][data-presentation] :is(.btn,body.mode-pro .btn) {
+  background:var(--plank);color:var(--ink);border:3px solid var(--wood-dark);border-radius:0;font:15px/1.3 var(--font-display);
+  box-shadow:inset 0 -4px 0 var(--plank-shade),0 3px 0 var(--wood-dark);transition:transform .08s,box-shadow .08s;
+}
+:root[data-skin="cozy"][data-presentation] .btn:hover:not(:disabled) {background:#ffdca0;border-color:var(--wood-dark);}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .btn:hover:not(:disabled) {background:#dba766;}
+:root[data-skin="cozy"][data-presentation] .btn:active:not(:disabled) {transform:translateY(2px);box-shadow:inset 0 -2px 0 var(--plank-shade),0 1px 0 var(--wood-dark);}
+:root[data-skin="cozy"][data-presentation] :is(.btn.primary,body.mode-pro .btn.primary) {background:var(--leaf);color:#1f3310;border-color:var(--leaf-dark);box-shadow:inset 0 -4px 0 var(--leaf-shade),0 3px 0 var(--leaf-dark);}
+:root[data-skin="cozy"][data-presentation] .btn.primary:hover:not(:disabled) {background:#b8e57f;border-color:var(--leaf-dark);}
+:root[data-skin="cozy"][data-presentation] .btn.small {font-size:13px;}
+:root[data-skin="cozy"][data-presentation] :is(.btn.ghost,.btn.link,body.mode-pro .btn.ghost,body.mode-pro .btn.link) {background:transparent;border-color:transparent;box-shadow:none;color:var(--cyan);}
+:root[data-skin="cozy"][data-presentation] :is(input,select,textarea) {border:2px solid var(--wood-dark)!important;border-radius:0!important;background:#fffaf0!important;color:#3b2312!important;}
+:root[data-skin="cozy"][data-presentation] .tag {border-radius:0;font-family:var(--font-display);}
+
+/* ----- RPG message windows for conversations (portraits slot in on the left) ----- */
+:root[data-skin="cozy"][data-presentation] .case-say {gap:14px;align-items:flex-end;}
+:root[data-skin="cozy"][data-presentation] .case-say-text {
+  background:linear-gradient(180deg,var(--window),var(--window-2));color:var(--window-ink);
+  border:3px solid #fff;border-radius:6px;box-shadow:0 0 0 3px var(--window-2),0 6px 0 rgba(0,0,0,.25);padding:20px 18px 14px;margin-top:14px;
+}
+:root[data-skin="cozy"][data-presentation] .case-say-text::before {display:none;}
+:root[data-skin="cozy"][data-presentation] .case-say-text b {
+  position:absolute;top:-15px;left:12px;padding:2px 12px;background:var(--window-2);border:2px solid #fff;border-radius:4px;
+  color:var(--plate);font:13px/1.5 var(--font-display);
+}
+:root[data-skin="cozy"][data-presentation] .case-say-text p {color:var(--window-ink);font-size:15px;}
+:root[data-skin="cozy"][data-presentation] .case-say.client .case-say-text {background:linear-gradient(180deg,#5a2f4f,#3a1c33);box-shadow:0 0 0 3px #3a1c33,0 6px 0 rgba(0,0,0,.25);}
+:root[data-skin="cozy"][data-presentation] .case-say.client .case-say-text b {background:#3a1c33;color:#ffd1e4;}
+:root[data-skin="cozy"][data-presentation] .case-say.right .case-say-text {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #7fd36a,0 6px 0 rgba(0,0,0,.25);}
+:root[data-skin="cozy"][data-presentation] .case-say.wrong .case-say-text {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #ffb347,0 6px 0 rgba(0,0,0,.25);}
+:root[data-skin="cozy"][data-presentation] :is(.case-say,.case-hud) .guide-avatar {display:block!important;flex:none;width:56px;height:64px;transform:none;border-width:4px;}
+:root[data-skin="cozy"][data-presentation] .case-hud {
+  background:linear-gradient(180deg,var(--window),var(--window-2));color:var(--window-ink);border:3px solid #fff;border-radius:6px;
+  box-shadow:0 0 0 3px var(--window-2),0 8px 0 rgba(0,0,0,.3);
+}
+:root[data-skin="cozy"][data-presentation] .case-hud.right {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #7fd36a;}
+:root[data-skin="cozy"][data-presentation] .case-hud.wrong {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #ffb347;}
+:root[data-skin="cozy"][data-presentation] .case-hud-text b {color:var(--plate);font:13px var(--font-display);}
+:root[data-skin="cozy"][data-presentation] .case-hud-text p {color:var(--window-ink);font-size:15px;}
+:root[data-skin="cozy"][data-presentation] .case-hud-count {background:var(--window-2);color:var(--plate);border:2px solid #fff;font-family:var(--font-display);}
+:root[data-skin="cozy"][data-presentation] body .case-hud .btn.ghost.case-hud-bag {color:var(--plate);}
+/* A blinking "more" marker, like a message window waiting for you. */
+:root[data-skin="cozy"][data-presentation] .case-say-text::after {content:"▼";position:absolute;right:12px;bottom:4px;font-size:10px;color:var(--plate);animation:cozy-blink 1s steps(2) infinite;}
+@keyframes cozy-blink {50% {opacity:0;}}
+
+/* ----- case library touches ----- */
+:root[data-skin="cozy"][data-presentation] .case-no {font-family:var(--font-display);font-size:16px;}
+:root[data-skin="cozy"][data-presentation] .case-stars,:root[data-skin="cozy"][data-presentation] .case-card-stars {color:#d08a10;text-shadow:2px 2px 0 var(--wood-dark);}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.case-stars,.case-card-stars) {color:#ffd25e;}
+:root[data-skin="cozy"][data-presentation] .case-dots li {border-radius:0;font-family:var(--font-display);}
+:root[data-skin="cozy"][data-presentation] .case-stamp {font-family:var(--font-display);}
+
+@media(max-width:650px) {
+  :root[data-skin="cozy"][data-presentation] .topbar {padding:14px 16px 0;}
+  :root[data-skin="cozy"][data-presentation] .tabs button {padding:9px 8px;font-size:13px;}
+  :root[data-skin="cozy"][data-presentation] .case-say .guide-avatar {width:44px;height:52px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  :root[data-skin="cozy"][data-presentation] .case-say-text::after {animation:none;}
+  :root[data-skin="cozy"][data-presentation] .btn {transition:none;}
+}
+
+/* Spacing for the plank buttons' drop shadow, and no leftover bevels from the old pixel rules. */
+:root[data-skin="cozy"][data-presentation] .task-body > .btn {margin:4px 0 8px;}
+:root[data-skin="cozy"][data-presentation] .task-body > .btn + .task-caption {margin-top:10px;}
+:root[data-skin="cozy"][data-presentation] :is(.task-guide p,.task-guide,.journal-title,.quest-journal::before,.chip,.fact,.section,.status,.count) {box-shadow:none;}
+:root[data-skin="cozy"][data-presentation] #case-quest > h3 {font-size:22px;margin:2px 0 6px;}
+
+/* Readability fixes: the report header gets its own paper strip; plank buttons keep dark ink at night. */
+:root[data-skin="cozy"][data-presentation] .run-head {background:var(--sheet);border:4px solid var(--wood-dark);box-shadow:inset 0 0 0 3px var(--wood-light);padding:14px 18px;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.btn,body.mode-pro .btn,.tool-btn,.mode-switch button,.mode-switch button[aria-checked="true"]) {color:#24130a;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .mode-switch::before {background:#f0c98a;}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.btn.ghost,.btn.link,body.mode-pro .btn.ghost) {color:var(--cyan);}
+:root[data-skin="cozy"][data-presentation] body .case-hud .btn.ghost.case-hud-bag {color:var(--plate);}
