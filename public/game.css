@@ -191,3 +191,7 @@ html[data-game="on"] .panel > .scene-wrap {display:none!important;}
   .game-map-body {grid-template-columns:minmax(0,1fr) 150px;gap:8px;padding:8px;}
 }
 @media(prefers-reduced-motion:reduce) {.game-interact,.game-map-you {animation:none;}}
+
+/* The player drawn from a sprite sheet: one 16x32 frame shown, the sheet moved by the animation. */
+.game-sprite.player.sheet {display:block;width:calc(16px * var(--px));height:calc(32px * var(--px));background-repeat:no-repeat;
+  background-size:calc(64px * var(--px)) calc(64px * var(--px));image-rendering:pixelated;animation:none;}

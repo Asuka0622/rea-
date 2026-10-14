@@ -119,9 +119,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     } catch {}
   }
 
-  /* ----- scale: the stage is 320x180 room pixels at a whole-number size that fits the screen. The town
-     is drawn one whole step closer (townPx) and the camera follows the player, so the town can be larger
-     than the screen: its size comes from town.png (320x180 now, bigger maps scroll). ----- */
+  /* ----- scale: the stage is 320x180 map pixels at a whole-number size that fits the screen. The town
+     can be larger than that: its size comes from town.png, and the camera follows the player when it is
+     (a 320x180 town does not scroll). ----- */
   let roomPx = 1;
   let townPx = 1;
   const world = { w: 320, h: 180 };
@@ -130,7 +130,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     const fractional = Math.min(window.innerWidth / 320, window.innerHeight / 180);
     // Phones are narrower than 2x: fill the width instead (pixels then scale unevenly, which is fine there).
     roomPx = fractional < 2 ? fractional : Math.floor(fractional);
-    townPx = fractional < 2 ? roomPx * 1.5 : roomPx + 1;
+    townPx = roomPx;
     stage.style.setProperty("--px", String(roomPx));
     worldEl?.style.setProperty("--px", String(townPx));
     placePlayer();
@@ -181,7 +181,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
           h("span", { class: "game-label" }, scene.place, h("small", {}, scene.purpose)),
         );
       }),
-      (playerEl = sprite("lumi", 0, "player")),
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
     );
     placePlayer();
   }
@@ -258,6 +258,23 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   function blocked(x, y) {
     if (x < 6 || x > world.w - 6 || y < 14 || y > world.h - 2) return true;
     return blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h);
+  }
+
+  /* Sprite-sheet animation (anim-<name>.png + .json): idle frames while standing, walk frames while moving. */
+  let animation = { frame: [16, 32], animations: { idle: { row: 0, frames: 2, ms: [2200, 160] }, walk: { row: 1, frames: 4, ms: 140 } } };
+  fetch("/art/pixel/anim-lumi.json").then((r) => (r.ok ? r.json() : null)).then((data) => data && (animation = data)).catch(() => {});
+  let animClock = 0;
+  function animate(dt) {
+    if (!playerEl?.classList.contains("sheet")) return;
+    const clip = animation.animations[player.walking ? "walk" : "idle"] || animation.animations.idle;
+    const durations = Array.isArray(clip.ms) ? clip.ms : Array(clip.frames).fill(clip.ms);
+    const total = durations.reduce((a, b) => a + b, 0);
+    animClock = (animClock + dt * 1000) % total;
+    let t = animClock;
+    let index = 0;
+    while (t >= durations[index] && index < clip.frames - 1) t -= durations[index++];
+    const [fw, fh] = animation.frame;
+    playerEl.style.backgroundPosition = `calc(${-index * fw}px * var(--px)) calc(${-clip.row * fh}px * var(--px))`;
   }
 
   function placePlayer() {
@@ -404,6 +421,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
       movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);
     }
     placePlayer();
+    animate(dt);
     showDoorPrompt();
   }
 

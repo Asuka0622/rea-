@@ -1,0 +1,21 @@
+{
+  "frame": [
+    16,
+    32
+  ],
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        2200,
+        160
+      ]
+    },
+    "walk": {
+      "row": 1,
+      "frames": 4,
+      "ms": 140
+    }
+  }
+}

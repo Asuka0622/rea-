@@ -23,3 +23,5 @@ samples/unity/*.obj
 __pycache__/
 # High-resolution anime portraits: design references only (pixel portraits live in public/art/pixel/).
 public/art/portraits/
+# Preview files the art AI leaves next to deliveries.
+public/art/pixel/_*
