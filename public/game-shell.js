@@ -9,14 +9,24 @@ import { SCENES } from "./scenes.js";
 
 const WEB_KEY = "rea-wb-web-mode";
 
-/** Where each building sits on the 320x180 town map (left/top of its footprint, in map pixels). */
+/**
+ * The buildings on the 320x180 town map (town.png), in map pixels: the footprint (x, y, w, h) blocks
+ * walking and is the click target, `door` is where walking in enters. Measured from the delivered map;
+ * the drawn stand-in uses the same places.
+ */
 const TOWN = {
-  home: { x: 132, y: 34, w: 58, kind: "office" },
-  learn: { x: 30, y: 30, w: 52, kind: "library" },
-  engines: { x: 236, y: 34, w: 50, kind: "workshop" },
-  clients: { x: 44, y: 104, w: 48, kind: "post" },
-  doctor: { x: 226, y: 104, w: 50, kind: "clinic" },
+  learn: { x: 30, y: 6, w: 58, h: 44, door: { x: 61, y: 49 }, kind: "library" },
+  home: { x: 128, y: 3, w: 62, h: 47, door: { x: 162, y: 49 }, kind: "office" },
+  engines: { x: 240, y: 10, w: 50, h: 43, door: { x: 265, y: 52 }, kind: "workshop" },
+  clients: { x: 37, y: 86, w: 48, h: 40, door: { x: 61, y: 121 }, kind: "post" },
+  doctor: { x: 243, y: 82, w: 50, h: 44, door: { x: 267, y: 121 }, kind: "clinic" },
 };
+/** Other things you cannot walk through: the pond, and the river except at the bridge. */
+const OBSTACLES = [
+  { x: 142, y: 73, w: 46, h: 28 },
+  { x: 0, y: 150, w: 146, h: 30 },
+  { x: 174, y: 150, w: 146, h: 30 },
+];
 
 /** What can be done in each place. `target` is scrolled into view inside the window. */
 const ACTIONS = {
@@ -130,19 +140,20 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     const picture = has("town");
     stage.dataset.view = "town";
     stage.replaceChildren(
-      picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" })),
+      picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
       ...Object.entries(TOWN).map(([id, spot]) => {
         const scene = SCENES[id];
         return h(
           "button",
-          { class: `game-building ${picture ? "over-art" : spot.kind}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w}`, onclick: () => enter(id), "aria-label": `进入${scene.place}（${scene.purpose}）` },
+          { class: `game-building ${picture ? "over-art" : spot.kind}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id), () => enter(id)), "aria-label": `进入${scene.place}（${scene.purpose}）` },
           !picture && h("span", { class: "roof", "aria-hidden": "true" }),
           !picture && h("span", { class: "wall", "aria-hidden": "true" }, h("span", { class: "door" })),
           h("span", { class: "game-label" }, scene.place, h("small", {}, scene.purpose)),
         );
       }),
-      sprite("lumi", 172, "town"),
+      (playerEl = sprite("lumi", 0, "player")),
     );
+    placePlayer();
   }
 
   function drawRoom(id) {
@@ -157,8 +168,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   }
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
-  const portrait = () => {
-    const name = art().portraits.has("lumi-normal") ? "lumi-normal" : null;
+  // A line is "text" or { text, face }: the face picks Lumi's expression for that line.
+  const portrait = (face = "normal") => {
+    const name = [`lumi-${face}`, "lumi-normal"].find((n) => art().portraits.has(n));
     return name
       ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }))
       : h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
@@ -174,10 +186,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
 
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
+    const line = typeof lines[lineIndex] === "string" ? { text: lines[lineIndex] } : lines[lineIndex];
     dialogue.hidden = false;
     dialogue.replaceChildren(
-      portrait(),
-      h("div", { class: "case-say-text" }, h("b", {}, "路米"), h("p", {}, lines[lineIndex]), !last && h("span", { class: "game-more" }, "点击继续")),
+      portrait(line.face),
+      h("div", { class: "case-say-text" }, h("b", {}, "路米"), h("p", {}, line.text), !last && h("span", { class: "game-more" }, "点击继续")),
     );
     if (last) after?.();
   }
@@ -197,21 +210,182 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     menu.querySelector("button")?.focus({ preventScroll: true });
   }
 
+  /* ----- walking on the town map: WASD / arrow keys, right-click a spot, or the on-screen stick ----- */
+  const SPEED = 72; // map pixels per second
+  const player = { x: 160, y: 132, left: false, walking: false };
+  let playerEl = null;
+  let target = null; // { x, y, then }
+  let lastPlace = null;
+  let movedSinceSpawn = 0;
+  const keys = new Set();
+  const stick = { x: 0, y: 0 };
+  const KEY_DIRS = { w: [0, -1], arrowup: [0, -1], s: [0, 1], arrowdown: [0, 1], a: [-1, 0], arrowleft: [-1, 0], d: [1, 0], arrowright: [1, 0] };
+
+  const doorOf = (id) => TOWN[id].door;
+  const blocks = () => [...Object.values(TOWN).map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 2 })), ...OBSTACLES];
+  /** The feet (a small box at the bottom of the sprite) would hit a building, the pond or the edge. */
+  function blocked(x, y) {
+    if (x < 6 || x > 314 || y < 14 || y > 178) return true;
+    return blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h);
+  }
+
+  function placePlayer() {
+    if (!playerEl) return;
+    playerEl.style.left = `calc(${player.x.toFixed(2)}px * var(--px))`;
+    playerEl.style.top = `calc(${player.y.toFixed(2)}px * var(--px))`;
+    playerEl.classList.toggle("walking", player.walking);
+    playerEl.classList.toggle("face-left", player.left);
+  }
+
+  function walkTo(point, then) {
+    if (stage.dataset.view !== "town") return then?.();
+    target = { x: point.x, y: point.y, then };
+    startWalking();
+  }
+
+  /** Any movement starts the walk: the dialogue box steps aside so the map is visible. */
+  function startWalking() {
+    dialogue.hidden = true;
+  }
+
+  let lastTime = 0;
+  function tick(now) {
+    requestAnimationFrame(tick);
+    const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
+    lastTime = now;
+    if (!enabled || windowOpen || stage.dataset.view !== "town") return;
+    let dx = 0;
+    let dy = 0;
+    for (const key of keys) {
+      const dir = KEY_DIRS[key];
+      if (dir) [dx, dy] = [dx + dir[0], dy + dir[1]];
+    }
+    dx += stick.x;
+    dy += stick.y;
+    if (dx || dy) target = null; // steering by hand cancels a click-to-walk
+    else if (target) {
+      const tx = target.x - player.x;
+      const ty = target.y - player.y;
+      const dist = Math.hypot(tx, ty);
+      if (dist < 1.5) {
+        const then = target.then;
+        target = null;
+        player.walking = false;
+        placePlayer();
+        then?.();
+        return;
+      }
+      [dx, dy] = [tx / dist, ty / dist];
+    }
+    const length = Math.hypot(dx, dy);
+    player.walking = length > 0;
+    if (length) {
+      const step = (SPEED * dt) / Math.max(1, length);
+      const nx = player.x + dx * step;
+      const ny = player.y + dy * step;
+      let moved = false;
+      if (!blocked(nx, player.y)) [player.x, moved] = [nx, true];
+      if (!blocked(player.x, ny)) [player.y, moved] = [ny, true];
+      if (!moved && target) target = { ...target, x: player.x, y: player.y }; // stuck: stop here, still arrive
+      if (dx) player.left = dx < 0;
+      movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);
+      // Walking into a doorway goes inside.
+      if (movedSinceSpawn > 6 && !target) {
+        const door = Object.keys(TOWN).find((id) => Math.hypot(player.x - doorOf(id).x, player.y - doorOf(id).y) < 5);
+        if (door) {
+          player.walking = false;
+          keys.clear();
+          placePlayer();
+          enter(door);
+          return;
+        }
+      }
+    }
+    placePlayer();
+  }
+  requestAnimationFrame(tick);
+
+  // Right-click on the map: walk there.
+  stage.addEventListener("contextmenu", (event) => {
+    if (!enabled || stage.dataset.view !== "town") return;
+    event.preventDefault();
+    const box = stage.getBoundingClientRect();
+    const scale = box.width / 320;
+    walkTo({ x: (event.clientX - box.left) / scale, y: (event.clientY - box.top) / scale });
+  });
+
+  // Phones: a stick in the lower left.
+  const knob = h("span", { class: "game-stick-knob" });
+  const stickEl = h("div", { class: "game-stick", "aria-label": "移动轮盘", role: "application" }, knob);
+  const moveStick = (event) => {
+    const box = stickEl.getBoundingClientRect();
+    const r = box.width / 2;
+    let x = (event.clientX - box.left - r) / r;
+    let y = (event.clientY - box.top - r) / r;
+    const length = Math.hypot(x, y);
+    if (length > 1) [x, y] = [x / length, y / length];
+    stick.x = Math.abs(x) < 0.15 ? 0 : x;
+    stick.y = Math.abs(y) < 0.15 ? 0 : y;
+    knob.style.translate = `${x * r * 0.6}px ${y * r * 0.6}px`;
+    if (stick.x || stick.y) startWalking();
+  };
+  const releaseStick = () => {
+    stick.x = 0;
+    stick.y = 0;
+    knob.style.translate = "0 0";
+  };
+  let dragging = null;
+  stickEl.addEventListener("pointerdown", (event) => {
+    dragging = event.pointerId;
+    try {
+      stickEl.setPointerCapture(event.pointerId);
+    } catch {}
+    moveStick(event);
+  });
+  const follow = (event) => {
+    if (dragging === event.pointerId) moveStick(event);
+  };
+  const stop = (event) => {
+    if (dragging !== event.pointerId) return;
+    dragging = null;
+    releaseStick();
+  };
+  window.addEventListener("pointermove", follow);
+  window.addEventListener("pointerup", stop);
+  window.addEventListener("pointercancel", stop);
+  shell.append(stickEl);
+
+  const touch = window.matchMedia("(pointer: coarse)").matches;
+
   /* ----- navigation ----- */
   function goTown() {
     closeWindow();
+    if (place) lastPlace = place;
     place = null;
     menu.hidden = true;
+    if (lastPlace) Object.assign(player, { x: doorOf(lastPlace).x, y: doorOf(lastPlace).y + 10 });
+    movedSinceSpawn = 0;
+    target = null;
     drawTown();
-    say(["这里是我们的小镇。每栋房子都能帮你做一件事。", "点一栋房子走进去看看吧。第一次来的话，推荐先去中间的侦探事务所。"]);
+    say([
+      { text: "这里是我们的小镇。每栋房子都能帮你做一件事。", face: "happy" },
+      {
+        text: touch
+          ? "用左下角的轮盘走路，走到门口就能进去；直接点房子也行。第一次来的话，推荐先去中间的侦探事务所。"
+          : "用 WASD 或方向键走路，也可以用鼠标右键点地面走过去；走到门口就能进去，左键点房子也行。第一次来的话，推荐先去中间的侦探事务所。",
+        face: "normal",
+      },
+    ]);
   }
 
   function enter(id) {
     closeWindow();
+    target = null;
+    keys.clear();
     place = id;
     menu.hidden = true;
     drawRoom(id);
-    say([SCENES[id].line, EXTRA_LINES[id]], () =>
+    say([{ text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () =>
       showMenu([
         ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
         { label: "回小镇地图", run: goTown },
@@ -258,8 +432,17 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   }
 
   // Keyboard: Enter/Space continue the dialogue, Escape closes the window or leaves the building.
+  document.addEventListener("keyup", (event) => keys.delete(event.key.toLowerCase()));
+  window.addEventListener("blur", () => keys.clear());
   document.addEventListener("keydown", (event) => {
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
+    const key = event.key.toLowerCase();
+    if (KEY_DIRS[key] && !windowOpen && stage.dataset.view === "town") {
+      event.preventDefault();
+      if (!keys.has(key)) startWalking();
+      keys.add(key);
+      return;
+    }
     if (event.key === "Escape") {
       if (windowOpen) closeWindow();
       else if (place) goTown();

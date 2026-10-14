@@ -204,7 +204,8 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     return [
       h("p", { class: "case-kicker" }, "案例馆 · 新委托"),
       h("h3", { id: "case-quest-title" }, item.title),
-      ...client.lines.map((line, i) => bubble(`${client.name}（${client.role}）`, line, "client", i === 0 ? "normal" : "thinking")),
+      // A line is "text" or { text, face } so the story can pick each expression.
+      ...client.lines.map((line, i) => bubble(`${client.name}（${client.role}）`, line.text ?? line, "client", line.face || (i === 0 ? "normal" : "thinking"))),
       bubble("路米", "报告已经拿到了，它就是我们的调查现场。我会一条条给你线索，你在报告里点出证据。少犯错、少用提示，评价就越高。"),
       h("div", { class: "case-actions" },
         h("button", { class: "btn primary", type: "button", onclick: () => {
