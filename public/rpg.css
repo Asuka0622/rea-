@@ -501,3 +501,5 @@ details.section.case-flash {animation:case-flash 1.8s ease-out;}
 .save-lab-result {display:flex;gap:8px;align-items:center;padding:8px 12px;font-weight:600;}
 .save-lab-result.ok {background:var(--ok-wash);color:var(--ok);}
 .save-lab-result.bad {background:var(--warn-wash);color:var(--warn);}
+/* 兴趣拓展: optional extras sit below the teaching path and look secondary. */
+.demo-library.extras {margin-top:28px;border-style:dashed;}

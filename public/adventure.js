@@ -112,7 +112,7 @@ export function createAdventure(actions) {
         el('details',{class:'simple-samples'},el('summary',{},'分析自己的文件或文件夹'),
           el('div',{class:'simple-actions'},button('选择文件',actions.pickFile),button('选择文件夹',actions.pickFolder)),
           el('label',{class:'simple-label',for:'task-path-input'},'或直接输入路径'),pathForm),
-        el('details',{class:'simple-samples'},el('summary',{},'查看开源案例与制作指南'),el('div',{class:'simple-actions'},button('ArtCraft 软件案例',actions.demos),button('游戏与 Mod 案例',actions.gameMods),button('人物模型 Mod',actions.modelMods))),
+        el('details',{class:'simple-samples'},el('summary',{},'查看开源案例与制作指南'),el('div',{class:'simple-actions'},button('ArtCraft 软件案例',actions.demos),button('游戏与 Mod 案例',actions.gameMods))),
         el('p',{class:'simple-note'},'也可拖入文件。只读取文件，不运行软件，不上传。'));
       return;
     }
@@ -122,7 +122,6 @@ export function createAdventure(actions) {
       button('案例馆：亲手发现软件的秘密', actions.cases, { iconName: 'scan' }),
       button('探索 ArtCraft 开源演示', actions.demos, { iconName: 'learn', small: true }),
       button('探索游戏与 Mod 真实案例', actions.gameMods, { iconName: 'wrench', small: true }),
-      button('人物模型 Mod · 工具与 MCP', actions.modelMods, { iconName: 'wrench', small: true }),
       el('div', { class: 'task-divider' }, el('span', {}, '或者看看你自己的软件')),
       el('p', { class: 'task-label' }, '你电脑上能直接分析的软件'),
       appList,

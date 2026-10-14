@@ -69,7 +69,7 @@ export function buildCandidates(reports) {
   if (!reports?.length) return { supported: false, reason: "还没有报告。先完成一次探索，再来做复刻练习。", groups: [] };
   if (reports.every((report) => NOT_SOFTWARE.includes(report.title))) {
     const unity=reports.some(report=>report.title==="Unity 资源包 · 真实读取与导出");
-    return { supported: false, reason: unity ? "本次得到的是资源与参数证据，尚未读取游戏行为。先查看导出的贴图和参数来源；需要脚本或玩法证据后，再生成游戏复刻说明书。" : "这份报告是人物模型的文件检查，不是软件功能。想练习改模型，请看首页的「人物模型 Mod」指南。", groups: [] };
+    return { supported: false, reason: unity ? "本次得到的是资源与参数证据，尚未读取游戏行为。先查看导出的贴图和参数来源；需要脚本或玩法证据后，再生成游戏复刻说明书。" : "这份报告是人物模型的文件检查，不是软件功能。想练习改模型，请看首页底部的「兴趣拓展 · 人物模型 Mod」指南。", groups: [] };
   }
   const groups = [];
   let index = 0;

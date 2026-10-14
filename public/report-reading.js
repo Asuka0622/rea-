@@ -51,7 +51,7 @@ export function beginnerReading(report = {}, command = '') {
     result.title = '模型与贴图文件检查';
     result.finding = `本次只检查文件和配置的连接：${fact('未找到的引用')} 处静态引用未找到。模型或贴图存在，也不代表它能在游戏里正确显示。`;
     result.structure = '配置文件负责指向资源，模型文件记录形状，贴图文件记录外观。本次没有读取完整模型形状、检查骨骼适配或运行游戏。';
-    result.learn = '先展开资源引用检查，核对未找到的文件；动态或目录外引用需要另行确认。制作步骤和工具请看首页“人物模型 Mod”指南。';
+    result.learn = '先展开资源引用检查，核对未找到的文件；动态或目录外引用需要另行确认。制作步骤和工具请看首页底部的“兴趣拓展 · 人物模型 Mod”指南。';
   } else if (command === 'inspect-game-source') {
     result.title = report.title || '游戏与 Mod 源码报告';
     result.finding = `这是“${fact('案例类型')}”的本地源码阅读结果。可以用它寻找学习入口，本次没有运行游戏或验证修改效果。`;

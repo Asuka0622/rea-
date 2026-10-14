@@ -49,7 +49,7 @@ export function mountModelMods({h,api,analyze,busy,toast,showHome,isPro,isSimple
       h('details',{class:'model-setup',open:true},h('summary',{},'Blender 官方 MCP 接入与验证'),h('ol',{},data.mcpSetup.map(text=>h('li',{},text))),h('p',{},link('Blender 官方说明',data.tools.find(x=>x.id==='blender').mcpUrl),' · ',link('官方 Setup 文档',data.mcpSetupUrl)),h('p',{class:'demo-note'},data.communityAlternative.note+' '+data.communityAlternative.name),link('社区替代项目',data.communityAlternative.url)),
       h('details',{class:'model-production'},h('summary',{},'模型制作与导出检查清单'),h('ol',{class:'model-stages'},data.stages.map(x=>h('li',{},h('strong',{},x.title),h('p',{},x.text))))),taskBlock(withBoundary(data.aiTask),'复制给 AI 的技术任务',true),h('p',{class:'demo-note'},data.limitations.join(' ')),sources());
   }
-  function refresh(){if(!data)return;body.dataset.guideMode=isPro()?'pro':'beginner';const summary=library.querySelector('summary');summary.replaceChildren('人物模型 Mod ',h('span',{},isPro()?'资源检查 · 工具链 · MCP 接入':'新手步骤 · 简单说明 · 文件检查'));isPro()?renderPro():renderNovice();}
+  function refresh(){if(!data)return;body.dataset.guideMode=isPro()?'pro':'beginner';const summary=library.querySelector('summary');summary.replaceChildren('兴趣拓展 · 人物模型 Mod ',h('span',{},isPro()?'不属于教学主线 · 资源检查 · 工具链':'不属于教学主线 · 只在本地学习 · 联网游戏有封号风险'));isPro()?renderPro():renderNovice();}
   async function load(){try{data=await api('/api/model-mods/guide');refresh();}catch(error){body.replaceChildren(h('p',{role:'alert'},'模型 Mod 指南加载失败：'+error.message),h('button',{class:'btn',onclick:load},'重试'));}}
   load();return {open,refresh};
 }
