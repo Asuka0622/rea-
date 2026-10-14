@@ -6,6 +6,7 @@ import { createAdventure } from "./adventure.js";
 import { mountReplicate } from "./replicate.js";
 import { mountCases } from "./cases.js";
 import { mountScenes } from "./scenes.js";
+import { createGameShell } from "./game-shell.js";
 import { beginnerReading } from "./report-reading.js";
 import { recommendExercise } from "./exercise-recommendation.js";
 import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
@@ -192,6 +193,7 @@ function applyMode(next, { announce = false } = {}) {
   // Professional mode has no task panel: always leave it something to act on.
   if (isPro() && $("#run").hidden && !adventure.busy) $("#home-start").hidden = false;
   if (announce) toast(isPro() ? "专业模式：显示全部细节和命令" : "新手模式：只显示重点，配有说明");
+  gameShell?.sync();
 }
 for (const button of document.querySelectorAll(".mode-switch button")) button.addEventListener("click", () => applyMode(button.dataset.mode, { announce: true }));
 
@@ -296,6 +298,7 @@ function showTab(name) {
   window.scrollTo({ top: 0 });
   loaders[name]?.();
   updateSea();
+  gameShell?.onTab(name);
 }
 for (const button of document.querySelectorAll(".tabs button")) button.addEventListener("click", () => showTab(button.dataset.tab));
 window.addEventListener("resize", moveInk);
@@ -1295,12 +1298,16 @@ applyPresentation();
 
 /* ================= town scenes ================= */
 // Each page is a place in town: a scene banner and a line from the guide (hidden in pro mode).
+const artSets = { portraits: new Set(), pixel: new Set() };
 async function loadScenes() {
   let art = { portraits: [], pixel: [] };
   try {
     art = await api("/api/art");
   } catch {}
   const portraits = new Set(art.portraits || []);
+  artSets.portraits = portraits;
+  artSets.pixel = new Set(art.pixel || []);
+  gameShell?.redraw();
   const say = (text) =>
     h("div", { class: "case-say scene-say" },
       portraits.has("lumi-normal")
@@ -1310,4 +1317,10 @@ async function loadScenes() {
   mountScenes({ h, icon, say, have: new Set(art.pixel || []) });
 }
 loadScenes();
+
+/* ================= game shell ================= */
+// Beginners get the town-map game; professionals and "网页模式" keep the plain page.
+var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets });
+document.querySelector("#game-toggle")?.addEventListener("click", () => gameShell.leaveWebMode());
+gameShell.sync();
 // The map guides first-time users; the full guide is available on demand.

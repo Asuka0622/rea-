@@ -1,0 +1,143 @@
+/* 游戏外壳: a full-screen pixel town (beginner mode). The world is 320x180 map pixels drawn at --px
+   screen pixels each; everything in it is positioned and sized in map pixels so it scales together.
+   The dialogue box, choice menu and windows are normal-size UI on top, like a game's interface. */
+.game-shell {display:none;}
+html[data-game="on"] body {overflow:hidden;}
+html[data-game="on"] :is(.topbar,.rpg-footer) {display:none;}
+html[data-game="on"] .game-shell {display:grid;position:fixed;inset:0;z-index:40;place-items:center;background:#1b1410;
+  background-image:repeating-linear-gradient(90deg,#20170f 0 24px,#1b1410 24px 26px);}
+html[data-game="on"] .game-shell[hidden] {display:none;}
+#toast {z-index:70;}
+
+.game-stage {--px:4;position:relative;width:calc(320px * var(--px));height:calc(180px * var(--px));overflow:hidden;image-rendering:pixelated;
+  box-shadow:0 0 0 4px #5e3415,0 0 0 8px #2a170b;}
+.game-bg {position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;}
+
+/* ----- drawn town (until town.png exists) ----- */
+.game-bg.drawn.town {background-color:#8cc45a;
+  background-image:linear-gradient(45deg,#7fb84e 25%,transparent 25%,transparent 75%,#7fb84e 75%),linear-gradient(45deg,#7fb84e 25%,transparent 25%,transparent 75%,#7fb84e 75%);
+  background-size:calc(8px * var(--px)) calc(8px * var(--px));background-position:0 0,calc(4px * var(--px)) calc(4px * var(--px));}
+.game-bg.drawn .path {position:absolute;background:#d9b67a;box-shadow:inset 0 calc(1px * var(--px)) #c49a5c,inset 0 calc(-1px * var(--px)) #c49a5c;}
+.game-bg.drawn .path.h {left:0;right:0;top:calc(88px * var(--px));height:calc(12px * var(--px));}
+.game-bg.drawn .path.v {left:calc(155px * var(--px));width:calc(12px * var(--px));top:calc(80px * var(--px));bottom:0;box-shadow:inset calc(1px * var(--px)) 0 #c49a5c,inset calc(-1px * var(--px)) 0 #c49a5c;}
+.game-bg.drawn .pond {position:absolute;left:calc(120px * var(--px));top:calc(132px * var(--px));width:calc(30px * var(--px));height:calc(18px * var(--px));background:#5fb0e0;
+  box-shadow:0 0 0 calc(2px * var(--px)) #3f86b8;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,90% 100%,10% 100%,0 75%,0 25%);}
+
+/* ----- buildings: clickable, with a wooden name plate ----- */
+.game-building {position:absolute;left:calc(var(--bx) * var(--px) * 1px);top:calc(var(--by) * var(--px) * 1px);width:calc(var(--bw) * var(--px) * 1px);height:calc(46px * var(--px));
+  padding:0;border:0;background:none;cursor:pointer;--roof:#b5523b;--wall:#f0d9a8;}
+.game-building .roof {position:absolute;left:calc(-3px * var(--px));right:calc(-3px * var(--px));top:0;height:calc(20px * var(--px));background:var(--roof);
+  clip-path:polygon(0 100%,10% 60%,20% 60%,30% 30%,40% 30%,50% 0,60% 30%,70% 30%,80% 60%,90% 60%,100% 100%);}
+.game-building .wall {position:absolute;left:calc(2px * var(--px));right:calc(2px * var(--px));top:calc(19px * var(--px));bottom:0;background:var(--wall);border:calc(1px * var(--px)) solid #5e3415;}
+.game-building .wall::before,.game-building .wall::after {content:"";position:absolute;top:calc(5px * var(--px));width:calc(8px * var(--px));height:calc(7px * var(--px));background:#8fd0f0;border:calc(1px * var(--px)) solid #5e3415;}
+.game-building .wall::before {left:calc(3px * var(--px));}
+.game-building .wall::after {right:calc(3px * var(--px));}
+.game-building .door {position:absolute;bottom:0;left:50%;width:calc(9px * var(--px));height:calc(14px * var(--px));transform:translateX(-50%);background:#7a4a24;border:calc(1px * var(--px)) solid #3b2312;border-bottom:0;}
+.game-building.library {--roof:#7a63c9;--wall:#ece4f4;}
+.game-building.workshop {--roof:#c96f2d;--wall:#dcb680;}
+.game-building.post {--roof:#3f6fb5;--wall:#f4efe3;}
+.game-building.clinic {--roof:#3f9c7f;--wall:#f7f3ea;}
+.game-label {position:absolute;left:50%;top:calc(100% + 2px * var(--px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;padding:4px 10px 3px;
+  background:#f6cf8e;border:3px solid #5e3415;box-shadow:inset 0 -3px 0 #d79a52;color:#3b2312;font:15px/1.3 var(--font-display,"Fusion Pixel");white-space:nowrap;z-index:2;}
+.game-label small {font-size:11px;color:#6b4626;}
+.game-building:hover .game-label,.game-building:focus-visible .game-label {background:#a6d96a;border-color:#2f5418;color:#1f3310;}
+.game-building:hover .game-label small,.game-building:focus-visible .game-label small {color:#1f3310;}
+.game-building:hover,.game-building:focus-visible {transform:translateY(calc(-2px * var(--px)));outline:none;}
+.game-building.over-art .game-label {top:auto;bottom:calc(-6px * var(--px));}
+
+/* ----- drawn rooms (until room-<place>.png exists) ----- */
+.game-bg.drawn.room {--wall-1:#f3d9a4;--wall-2:#ecca8c;background:repeating-linear-gradient(90deg,var(--wall-1) 0 calc(8px * var(--px)),var(--wall-2) calc(8px * var(--px)) calc(10px * var(--px)));}
+.game-bg.drawn.room::after {content:"";position:absolute;left:0;right:0;bottom:0;height:calc(44px * var(--px));border-top:calc(2px * var(--px)) solid #5e3415;
+  background:repeating-linear-gradient(90deg,#b8763a 0 calc(24px * var(--px)),#9a5f2c calc(24px * var(--px)) calc(25px * var(--px)));}
+.game-bg.drawn.room .window {position:absolute;left:calc(36px * var(--px));top:calc(28px * var(--px));width:calc(56px * var(--px));height:calc(40px * var(--px));border:calc(3px * var(--px)) solid #5e3415;
+  background:linear-gradient(90deg,transparent calc(26px * var(--px)),#5e3415 calc(26px * var(--px)) calc(28px * var(--px)),transparent calc(28px * var(--px))),linear-gradient(180deg,transparent calc(19px * var(--px)),#5e3415 calc(19px * var(--px)) calc(21px * var(--px)),transparent calc(21px * var(--px))),linear-gradient(180deg,#7cc6ee,#c4e9f8);}
+.game-bg.drawn.room .shelf {position:absolute;right:calc(36px * var(--px));top:calc(38px * var(--px));width:calc(64px * var(--px));height:calc(62px * var(--px));background:#8a5228;border:calc(2px * var(--px)) solid #5e3415;
+  background-image:linear-gradient(180deg,transparent calc(18px * var(--px)),#5e3415 calc(18px * var(--px)) calc(20px * var(--px)),transparent calc(20px * var(--px)) calc(38px * var(--px)),#5e3415 calc(38px * var(--px)) calc(40px * var(--px)),transparent calc(40px * var(--px))),
+    repeating-linear-gradient(90deg,#c0504d 0 calc(4px * var(--px)),#4f7ec0 calc(4px * var(--px)) calc(8px * var(--px)),#e0b34a calc(8px * var(--px)) calc(11px * var(--px)),transparent calc(11px * var(--px)) calc(14px * var(--px)));}
+.game-bg.drawn.room .desk {position:absolute;left:calc(112px * var(--px));top:calc(112px * var(--px));width:calc(84px * var(--px));height:calc(20px * var(--px));background:#a8642e;border:calc(2px * var(--px)) solid #5e3415;}
+.game-bg.drawn.room .desk::before {content:"";position:absolute;left:calc(26px * var(--px));bottom:100%;width:calc(26px * var(--px));height:calc(18px * var(--px));background:#3d4a5c;border:calc(2px * var(--px)) solid #22303f;box-shadow:inset 0 0 0 calc(2px * var(--px)) #7fd3c0;}
+.game-bg.drawn.room.learn {--wall-1:#e3d4ef;--wall-2:#d2bfe3;}
+.game-bg.drawn.room.engines {--wall-1:#e4c49a;--wall-2:#d6b080;}
+.game-bg.drawn.room.clients {--wall-1:#d8e6f6;--wall-2:#c4d6ee;}
+.game-bg.drawn.room.doctor {--wall-1:#d6efe4;--wall-2:#c2e3d4;}
+html[data-camp-theme="dark"] .game-bg.drawn.room {--wall-1:#6b5640;--wall-2:#5d4a36;}
+html[data-camp-theme="dark"] .game-bg.drawn.town {background-color:#3e6b3a;}
+html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;inset:0;background:#0b1640;opacity:.28;pointer-events:none;}
+
+.game-place-sign {position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;padding:6px 16px;background:#f6cf8e;border:3px solid #5e3415;
+  box-shadow:inset 0 -3px 0 #d79a52;color:#3b2312;font:18px var(--font-display,"Fusion Pixel");z-index:2;}
+
+/* ----- characters (sprite-<name>.png, or a drawn stand-in), sized in map pixels ----- */
+.game-sprite {position:absolute;left:calc(var(--sx) * var(--px) * 1px);bottom:calc(30px * var(--px));height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
+.game-sprite.town {bottom:auto;top:calc(104px * var(--px));}
+.game-sprite.drawn {width:calc(16px * var(--px));display:block;}
+.game-sprite.drawn i,.game-sprite.drawn b,.game-sprite.drawn u {position:absolute;display:block;}
+.game-sprite.drawn i {left:calc(3px * var(--px));top:0;width:calc(10px * var(--px));height:calc(12px * var(--px));background:linear-gradient(180deg,#7ad3c0 0 45%,#f0c8a0 45%);box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}
+.game-sprite.drawn b {left:calc(2px * var(--px));top:calc(12px * var(--px));width:calc(12px * var(--px));height:calc(12px * var(--px));background:#f3efe3;box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}
+.game-sprite.drawn u {left:calc(4px * var(--px));top:calc(24px * var(--px));width:calc(8px * var(--px));height:calc(8px * var(--px));background:repeating-linear-gradient(90deg,#4b3a2e 0 calc(3px * var(--px)),transparent calc(3px * var(--px)) calc(5px * var(--px)));}
+@keyframes game-bob {50% {translate:0 calc(-1px * var(--px));}}
+.game-sprite {animation:game-bob 1.2s steps(2) infinite;}
+
+/* ----- interface on top: menu bar, dialogue, choices, window ----- */
+.game-hud {position:fixed;top:12px;left:12px;z-index:45;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100vw - 24px);}
+.game-dialogue {position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:46;width:min(900px,calc(100vw - 24px));display:flex;flex-direction:row-reverse;gap:12px;align-items:stretch;cursor:pointer;}
+.game-dialogue .case-say-text {flex:1;margin-top:0;position:relative;min-height:120px;}
+.game-dialogue .case-portrait,.game-dialogue .guide-avatar {margin-top:0;}
+.game-more {position:absolute;right:30px;bottom:6px;font:12px var(--font-display,"Fusion Pixel");color:#a8642e;}
+.game-menu {position:fixed;right:max(12px,calc(50vw - 450px));bottom:196px;z-index:47;display:flex;flex-direction:column;min-width:260px;padding:10px 8px;
+  background:#fff0c8;border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);}
+.game-choice {position:relative;text-align:left;padding:9px 12px 9px 30px;border:0;background:none;color:#3b2312;font:16px var(--font-display,"Fusion Pixel");cursor:pointer;}
+.game-choice:hover,.game-choice:focus-visible {background:#f6cf8e;outline:none;}
+.game-cursor {position:absolute;left:10px;visibility:hidden;color:#a8642e;}
+.game-choice:hover .game-cursor,.game-choice:focus-visible .game-cursor {visibility:visible;animation:game-nudge .6s steps(2) infinite;}
+@keyframes game-nudge {50% {translate:3px 0;}}
+.game-window {position:fixed;top:max(60px,7vh);bottom:16px;left:50%;transform:translateX(-50%);width:min(1100px,calc(100vw - 24px));z-index:48;display:flex;flex-direction:column;
+  background:var(--sheet,#fff4d8);color:var(--ink,#3b2312);border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 8px 0 rgba(0,0,0,.35);}
+.game-window-head {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:3px solid #5e3415;background:#f6cf8e;}
+.game-window-title {margin:0;font:18px var(--font-display,"Fusion Pixel");color:#3b2312;}
+.game-window-body {flex:1;min-height:0;overflow:auto;padding:16px 18px;}
+.game-window-body main {max-width:none;margin:0;padding:0;}
+.game-window .panel:not(#tab-home) {border:0;box-shadow:none;padding:0;background:none;}
+
+@media(max-width:700px) {
+  .game-dialogue .case-portrait {width:88px;height:88px;}
+  .game-dialogue .case-portrait img {width:80px;height:80px;}
+  .game-dialogue .case-say-text {min-height:96px;}
+  .game-menu {left:12px;right:12px;bottom:150px;min-width:0;}
+  .game-label {font-size:12px;padding:2px 6px;}
+  .game-label small {display:none;}
+  .game-window {top:56px;bottom:8px;}
+}
+@media(prefers-reduced-motion:reduce) {.game-sprite,.game-cursor {animation:none!important;}}
+html[data-game="on"] .panel > .scene-wrap {display:none!important;}
+
+/* ----- phones: landscape only ----- */
+.game-rotate {display:none;}
+@media (orientation:portrait) and (max-width:900px) {
+  html[data-game="on"] .game-rotate {display:flex;position:fixed;inset:0;z-index:80;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;
+    background:#1b1410;color:#fff0c8;}
+  .game-rotate p {margin:0;font:22px var(--font-display,"Fusion Pixel");}
+  .game-rotate small {max-width:280px;font-size:13px;line-height:1.7;color:#e8cfa0;}
+  .game-rotate-actions {display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+  .game-rotate-phone {width:44px;height:76px;border:5px solid #f6cf8e;border-radius:8px;box-shadow:inset 0 -10px 0 -6px #f6cf8e;animation:game-turn 2.4s steps(6) infinite;}
+}
+@keyframes game-turn {0%,30% {rotate:0deg;} 60%,100% {rotate:-90deg;}}
+/* Short landscape screens: compact interface so the scene stays visible. */
+@media (max-height:500px) {
+  html[data-game="on"][data-skin][data-presentation] .game-hud {top:6px;left:6px;gap:4px;}
+  html[data-game="on"][data-skin][data-presentation] .game-hud .btn {min-height:30px;padding:4px 8px;font-size:12px;}
+  html[data-game="on"][data-skin][data-presentation] .game-dialogue {bottom:6px;gap:8px;width:min(760px,calc(100vw - 12px));}
+  html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-portrait {width:72px;height:72px;}
+  html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-portrait img {width:80px;height:80px;margin:-4px;}
+  html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text {min-height:64px;padding:16px 12px 10px;}
+  html[data-game="on"][data-skin][data-presentation] .game-dialogue .case-say-text p {font-size:13px;line-height:1.6;}
+  html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:96px;right:8px;min-width:200px;padding:4px;}
+  html[data-game="on"][data-skin][data-presentation] .game-choice {padding:6px 10px 6px 26px;font-size:14px;}
+  html[data-game="on"][data-skin][data-presentation] .game-window {top:44px;bottom:6px;width:calc(100vw - 12px);}
+  html[data-game="on"][data-skin][data-presentation] .game-window-head {padding:6px 10px;}
+  html[data-game="on"][data-skin][data-presentation] .game-window-title {font-size:15px;}
+  html[data-game="on"][data-skin][data-presentation] .game-place-sign {top:42px;padding:3px 10px;font-size:14px;}
+  html[data-game="on"][data-skin][data-presentation] .game-label {font-size:11px;padding:2px 6px;}
+  html[data-game="on"][data-skin][data-presentation] .game-label small {display:none;}
+}
+@media(prefers-reduced-motion:reduce) {.game-rotate-phone {animation:none;}}
