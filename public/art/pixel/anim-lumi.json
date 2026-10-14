@@ -1,8 +1,14 @@
 {
   "frame": [
-    16,
-    32
+    96,
+    192
   ],
+  "sheet": [
+    4,
+    5
+  ],
+  "smooth": true,
+  "side": "right",
   "animations": {
     "idle": {
       "row": 0,
@@ -12,10 +18,25 @@
         160
       ]
     },
-    "walk": {
+    "walk-down": {
       "row": 1,
       "frames": 4,
       "ms": 140
+    },
+    "walk-up": {
+      "row": 2,
+      "frames": 4,
+      "ms": 140
+    },
+    "walk-side": {
+      "row": 3,
+      "frames": 4,
+      "ms": 140
+    },
+    "talk": {
+      "row": 4,
+      "frames": 2,
+      "ms": 250
     }
   }
 }

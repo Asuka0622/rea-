@@ -195,3 +195,6 @@ html[data-game="on"] .panel > .scene-wrap {display:none!important;}
 /* The player drawn from a sprite sheet: one 16x32 frame shown, the sheet moved by the animation. */
 .game-sprite.player.sheet {display:block;width:calc(16px * var(--px));height:calc(32px * var(--px));background-repeat:no-repeat;
   background-size:calc(64px * var(--px)) calc(64px * var(--px));image-rendering:pixelated;animation:none;}
+/* High-resolution sheets (the art AI's originals) are scaled smoothly instead of as hard pixels. */
+.game-sprite.player.sheet.smooth {image-rendering:auto;}
+img.game-sprite,img.scene-sprite {image-rendering:auto;}

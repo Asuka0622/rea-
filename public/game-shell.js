@@ -261,20 +261,36 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   }
 
   /* Sprite-sheet animation (anim-<name>.png + .json): idle frames while standing, walk frames while moving. */
-  let animation = { frame: [16, 32], animations: { idle: { row: 0, frames: 2, ms: [2200, 160] }, walk: { row: 1, frames: 4, ms: 140 } } };
+  // The sheet is drawn at any resolution; on the map one frame is always 16x32 map pixels.
+  let animation = { frame: [16, 32], sheet: [4, 2], side: "right", animations: { idle: { row: 0, frames: 2, ms: [2200, 160] }, walk: { row: 1, frames: 4, ms: 140 } } };
   fetch("/art/pixel/anim-lumi.json").then((r) => (r.ok ? r.json() : null)).then((data) => data && (animation = data)).catch(() => {});
   let animClock = 0;
-  function animate(dt) {
+  let facing = "down"; // down | up | side
+  let lastClip = "";
+  function animate(dt, dx, dy) {
     if (!playerEl?.classList.contains("sheet")) return;
-    const clip = animation.animations[player.walking ? "walk" : "idle"] || animation.animations.idle;
+    const clips = animation.animations;
+    if (player.walking) facing = Math.abs(dy) > Math.abs(dx) ? (dy < 0 ? "up" : "down") : "side";
+    // Older sheets have one "walk" row; newer ones have a row per direction.
+    const name = !player.walking ? "idle" : clips[`walk-${facing}`] ? `walk-${facing}` : "walk";
+    const clip = clips[name] || clips.idle;
+    if (name !== lastClip) {
+      animClock = 0;
+      lastClip = name;
+    }
     const durations = Array.isArray(clip.ms) ? clip.ms : Array(clip.frames).fill(clip.ms);
     const total = durations.reduce((a, b) => a + b, 0);
     animClock = (animClock + dt * 1000) % total;
     let t = animClock;
     let index = 0;
     while (t >= durations[index] && index < clip.frames - 1) t -= durations[index++];
-    const [fw, fh] = animation.frame;
-    playerEl.style.backgroundPosition = `calc(${-index * fw}px * var(--px)) calc(${-clip.row * fh}px * var(--px))`;
+    const [cols, rows] = animation.sheet || [4, 2];
+    playerEl.style.backgroundSize = `calc(${cols * 16}px * var(--px)) calc(${rows * 32}px * var(--px))`;
+    playerEl.style.backgroundPosition = `calc(${-index * 16}px * var(--px)) calc(${-clip.row * 32}px * var(--px))`;
+    // Mirror the side view when walking the other way; front and back views are never mirrored.
+    const sideFacesLeft = animation.side === "left";
+    playerEl.classList.toggle("face-left", name.includes("side") ? player.left !== sideFacesLeft : name === "walk" && player.left);
+    playerEl.classList.toggle("smooth", Boolean(animation.smooth));
   }
 
   function placePlayer() {
@@ -421,7 +437,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
       movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);
     }
     placePlayer();
-    animate(dt);
+    animate(dt, dx, dy);
     showDoorPrompt();
   }
 

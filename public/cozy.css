@@ -161,7 +161,7 @@
 /* Scenes and the characters in them share one pixel size (--px screen pixels per art pixel): the
    384x64 picture is shown at an exact multiple and cropped, never stretched. Portraits are finer (2x). */
 :root[data-skin="cozy"][data-presentation] .scene-art {position:absolute;left:50%;bottom:0;width:calc(384px * var(--px));height:calc(64px * var(--px));max-width:none;transform:translateX(-50%);image-rendering:pixelated;}
-:root[data-skin="cozy"][data-presentation] .scene-sprite {position:absolute;bottom:calc(5px * var(--px));left:var(--x,30%);height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
+:root[data-skin="cozy"][data-presentation] .scene-sprite {position:absolute;bottom:calc(5px * var(--px));left:var(--x,30%);height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:auto;z-index:1;}
 :root[data-skin="cozy"][data-presentation] .scene-drawn {position:absolute;inset:0;background:linear-gradient(180deg,var(--sky-1) 0 34%,var(--sky-2) 34% 58%,var(--sky-3) 58% 100%);}
 /* Stepped hills behind, a darker row in front. */
 :root[data-skin="cozy"][data-presentation] .scene-drawn::before,:root[data-skin="cozy"][data-presentation] .scene-drawn::after {content:"";position:absolute;left:0;right:0;bottom:24px;height:62px;background:var(--hill-1);
