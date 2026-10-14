@@ -99,6 +99,7 @@
   },
   "scene": {
     "place": "周姐的办公室",
-    "look": "room"
+    "look": "room",
+    "client": "zhoujie"
   }
 }

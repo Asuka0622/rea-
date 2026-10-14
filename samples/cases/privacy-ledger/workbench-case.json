@@ -130,6 +130,7 @@
   },
   "scene": {
     "place": "小林的宿舍",
-    "look": "room"
+    "look": "room",
+    "client": "kobayashi"
   }
 }

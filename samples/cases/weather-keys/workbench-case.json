@@ -83,6 +83,7 @@
   },
   "scene": {
     "place": "学长的机房",
-    "look": "room"
+    "look": "room",
+    "client": "azhe"
   }
 }

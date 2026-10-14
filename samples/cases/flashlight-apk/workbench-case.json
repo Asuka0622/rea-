@@ -93,6 +93,7 @@
   "note": "这个教学安装包由 scripts/build-case-apk.mjs 生成，只有清单文件，没有代码，也不能安装。",
   "scene": {
     "place": "王奶奶家",
-    "look": "room"
+    "look": "room",
+    "client": "grandma"
   }
 }

@@ -79,6 +79,7 @@
   },
   "scene": {
     "place": "小雨的游戏角",
-    "look": "room"
+    "look": "room",
+    "client": "xiaoyu"
   }
 }

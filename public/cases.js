@@ -183,7 +183,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   function sceneOf(item) {
     const scene = item.scene;
     if (!scene) return null;
-    return sceneBanner({ h, icon, id: `case-${item.id}`, place: scene.place, purpose: `案例 ${item.order}`, iconName: item.type === "stories" ? "learn" : "scan", art: `case-scene-${item.id}`, look: scene.look, have: pixelArt, compact: true });
+    return sceneBanner({ h, icon, id: `case-${item.id}`, place: scene.place, purpose: `案例 ${item.order}`, iconName: item.type === "stories" ? "learn" : "scan", art: `case-scene-${item.id}`, look: scene.look, sprites: [["lumi", "26%"], ...(scene.client ? [[scene.client, "70%"]] : [])], have: pixelArt, compact: true });
   }
 
   function lab(item) {

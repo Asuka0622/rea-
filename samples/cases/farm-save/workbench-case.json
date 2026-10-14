@@ -92,6 +92,7 @@
   },
   "scene": {
     "place": "朵朵的农场",
-    "look": "town"
+    "look": "town",
+    "client": "duoduo"
   }
 }
