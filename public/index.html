@@ -8,7 +8,7 @@
 <script>
   // Apply the saved theme before first paint to avoid a flash.
   try {
-    document.documentElement.dataset.presentation = localStorage.getItem("rea-wb-presentation") === "simple" ? "simple" : "pixel";
+    document.documentElement.dataset.presentation = "simple";
     const theme = localStorage.getItem("rea-wb-theme");
     if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
   } catch {}
@@ -36,7 +36,6 @@
         <button role="radio" data-mode="beginner" aria-checked="true"><i data-icon="seed" data-size="16"></i>新手</button>
         <button role="radio" data-mode="pro" aria-checked="false"><i data-icon="wrench" data-size="16"></i>专业</button>
       </div>
-      <button class="tool-btn" id="presentation-toggle" type="button" aria-pressed="false">切换到简洁</button>
       <button class="tool-btn" id="theme-toggle" type="button" aria-label="切换浅色/深色" title="外观：跟随系统"><i data-icon="auto" data-size="18"></i></button>
       <button class="tool-btn" id="open-glossary" type="button" title="小词典：看不懂的词都在这里"><i data-icon="glossary" data-size="18"></i><span class="beginner-only label">小词典</span></button>
     </div>
@@ -60,20 +59,6 @@
         <div class="task-guide"><div class="guide-avatar" aria-hidden="true"><span></span></div><p id="task-say" role="status" aria-live="polite"></p></div>
         <div id="task-body" class="task-body"></div>
       </aside>
-      <div class="adventure-main">
-        <div class="world-map" aria-label="四阶段冒险地图">
-          <img src="/assets/adventure-map.png" alt="像素森林地图：营地、遗迹入口、木桥与宝箱" width="1536" height="1024" fetchpriority="high">
-          <div class="map-caption"><span id="world-name">迷雾森林</span> <span>REA 探索区域</span></div>
-          <div class="map-stage stage-1 active" data-stage="1"><span class="marker-number">01</span><span>选一个软件</span><small>营地</small></div>
-          <div class="map-stage stage-2" data-stage="2"><span class="marker-number">02</span><span>认出它是什么</span><small>自动</small></div>
-          <div class="map-stage stage-3" data-stage="3"><span class="marker-number">03</span><span>查看它的内部</span><small>自动</small></div>
-          <div class="map-stage stage-4" data-stage="4"><span class="marker-number">04</span><span>打开宝箱</span><small>领取报告</small></div>
-          <section id="treasure-gate" class="treasure-gate" hidden aria-labelledby="treasure-title"><div id="treasure-art" class="treasure-art" title="点击打开宝箱"></div><div class="treasure-copy"><h2 id="treasure-title">发现了一个宝箱！</h2><p id="treasure-description"></p><button class="btn primary" id="open-treasure"><i data-icon="box" data-size="18"></i>打开宝箱</button></div></section>
-          <span class="traveler" aria-hidden="true"><span class="traveler-head"></span><span class="traveler-body"></span><span class="traveler-feet"></span></span>
-          <span class="map-direction" aria-hidden="true">N <span>↑</span></span>
-        </div>
-        
-      </div>
     </section>
     
     <details id="case-library" class="demo-library case-library parchment" open>

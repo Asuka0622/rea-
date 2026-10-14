@@ -1,5 +1,4 @@
 /* REA pixel RPG: a forest map, parchment journal, and real exploration stages. */
-@font-face {font-family:"Fusion Pixel";src:url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
 :root, :root[data-theme="dark"], :root[data-theme="light"] {
   --paper:#111722; --sheet:#f0e3bf; --sheet-2:#e7d7ac;
   --ink:#282b26; --ink-soft:#4f4f41; --rule:#b19b69;
@@ -10,7 +9,7 @@
   --radius:0px; --radius-s:0px; --radius-l:0px;
   --shadow-lift:none; --scrim:#060e19d9;
   --night-text:#e6ddc3; --gold:#d6aa57; --pine:#263e37;
-  --parchment:#f0e3bf; --frame:#907a50; --font-display:"Fusion Pixel", "Microsoft YaHei", sans-serif;
+  --parchment:#f0e3bf; --frame:#907a50; --font-display:"Microsoft YaHei", sans-serif;
   color-scheme:dark;
 }
 body {background:var(--paper); color:var(--night-text); font-size:14px; line-height:1.7;}
@@ -73,32 +72,10 @@ main {max-width:1536px;padding:22px 30px 45px;margin:auto;}
 .journal-notes li {display:flex;align-items:center;gap:9px;}
 .journal-save {font-size:11px;color:#6d6b50;margin-top:auto;padding-top:21px;}
 .adventure-main {min-width:0;display:flex;flex-direction:column;gap:12px;}
-.world-map {position:relative;aspect-ratio:1.72;flex:1;min-height:0;overflow:hidden;border:3px solid #26382f;outline:1px solid #977e4b;background:#233d35;}
-.world-map>img {width:100%;height:100%;object-fit:cover;object-position:center;display:block;image-rendering:pixelated;}
-.world-map::after {content:"";position:absolute;inset:3px;border:1px solid #d2c37b80;pointer-events:none;}
-.map-caption {position:absolute;top:14px;left:15px;background:#14221fdd;color:#dfd9b7;padding:6px 12px;border:1px solid #869066;font-size:12px;letter-spacing:.08em;}
-.map-caption span {color:#bdc5a9;font-size:10px;margin-left:10px;}
-.map-stage {position:absolute;display:grid;grid-template-columns:25px auto;gap:1px 6px;align-items:center;background:#172820ee;color:#d8dec3;border:2px solid #a2ad7c;padding:7px 10px;font:500 12px var(--font-body);white-space:nowrap;cursor:pointer;min-height:46px;box-shadow:inset 0 0 0 2px #304836;transform:translate(-50%,-100%);}
-.map-stage small {grid-column:2;font-size:10px;color:#becbaa;}
-.map-stage::after {content:"";position:absolute;left:calc(50% - 5px);bottom:-7px;width:8px;height:8px;background:#172820;border-right:2px solid #a2ad7c;border-bottom:2px solid #a2ad7c;transform:rotate(45deg);}
-.map-stage .marker-number {font:500 16px var(--font-mono);grid-row:span 2;}
-.map-stage.active {color:#ffe29c;border-color:#f4cb6b;background:#273629;box-shadow:inset 0 0 0 2px #725e30;}
-.map-stage.active small {color:#ddcf9a;}
-.map-stage.active::after {background:#273629;border-color:#f4cb6b;}
-.map-stage.complete .marker-number {color:#a8d194;}
-.map-stage:disabled {cursor:default;color:#d5dcca;opacity:.8;}
-.map-stage:hover:not(:disabled) {background:#34432a;border-color:#ffe29c;}
 .stage-1 {left:20%;top:74%;}
 .stage-2 {left:41%;top:41%;}
 .stage-3 {left:65%;top:62%;}
 .stage-4 {left:85%;top:24%;}
-.map-direction {position:absolute;bottom:15px;right:18px;color:#f2e3b0;display:flex;flex-direction:column;align-items:center;font:12px var(--font-mono);}
-.map-direction span {font-size:28px;line-height:1.2;}
-.traveler {position:absolute;left:22%;top:79%;width:22px;height:30px;transition:left 1s steps(10),top 1s steps(10);filter:drop-shadow(2px 4px 0 #102b22);}
-.traveler[data-stage="2"] {left:42%;top:47%;}.traveler[data-stage="3"] {left:62%;top:62%;}.traveler[data-stage="4"] {left:84%;top:30%;}
-.traveler-head {position:absolute;left:6px;top:0;width:14px;height:13px;background:#e4bb83;border:3px solid #303b2f;border-top:5px solid #687c4e;}
-.traveler-body {position:absolute;left:3px;top:12px;width:15px;height:12px;background:#92a777;border:3px solid #2a4036;box-shadow:-5px 2px #b89b62;}
-.traveler-feet {position:absolute;left:5px;top:24px;width:6px;height:6px;background:#3a332b;box-shadow:8px 0 #3a332b;}
 .quest-dialogue {display:flex;gap:16px;align-items:center;min-height:85px;padding:13px 23px;}
 .quest-dialogue>div:nth-child(2) {min-width:0;}
 .quest-dialogue b {font-size:11px;color:#766642;letter-spacing:.04em;}
@@ -169,7 +146,7 @@ input::placeholder {color:#716b53;opacity:1;}
 #home-start .page-title {color:var(--ink);}
 input[type="checkbox"],input[type="radio"] {min-height:0;height:16px;width:16px;accent-color:#687c4d;background:transparent!important;border:none!important;}
 .fold>summary::after {color:#d6c28a;}
-.journal-title,.journal-help,.map-stage,.map-caption,.quest-stages,.tabs button,.btn,.topbar-tools button {font-family:"Fusion Pixel",var(--font-body);font-weight:400;}
+.journal-title,.journal-help,.map-stage,.map-caption,.quest-stages,.tabs button,.btn,.topbar-tools button {font-family:var(--font-body);font-weight:400;}
 .journal-title,.journal-help,.map-stage,.map-caption,.quest-stages li,.tabs button,.btn {font-size:12px;}
 .run-head {color:#d6e0c6;border-color:#617253;}.run-kind {font:600 27px var(--font-display);color:#e9d59b;}
 .run-target {color:#becfb8;}.run-meta {font-size:12px;}.signature {border-radius:0;background:#2d3c32;color:#d8d5ac;border-color:#637654;}
@@ -179,23 +156,6 @@ input[type="checkbox"],input[type="radio"] {min-height:0;height:16px;width:16px;
 .quest-loading span {display:block;width:30%;height:100%;background:#728654;animation:quest-walk 1.8s steps(12) infinite;}
 @keyframes quest-walk {from {transform:translateX(-100%);}to {transform:translateX(340%);}}
 body[data-quest-state="exploring"] .run-actions #explain-ai,body[data-quest-state="reward"] .run-actions #explain-ai,body[data-quest-state="exploring"] .run-actions #copy-md,body[data-quest-state="reward"] .run-actions #copy-md {display:none;}
-.treasure-gate {display:flex;align-items:center;gap:35px;padding:30px 40px;overflow:hidden;}
-.treasure-art {position:relative;width:200px;height:168px;flex:none;display:grid;place-items:center;}
-.pixel-chest {width:180px;height:150px;overflow:visible;image-rendering:pixelated;}
-.chest-lid {transform-origin:60px 60px;}.chest-treasure {opacity:0;}
-.treasure-copy h2 {font:600 28px/1.5 var(--font-display);}.treasure-copy p {color:#66644a;font-size:13px;margin:6px 0 17px;}
-.treasure-copy .treasure-note {font-size:11px;margin:12px 0 0;color:#736846;}
-.loot-particles {position:absolute;left:50%;top:50%;pointer-events:none;}
-.loot-particles span {width:7px;height:7px;background:#e8bb53;position:absolute;opacity:0;}
-.treasure-gate.opening .chest-lid {animation:chest-unlock 1s steps(8) both;}
-.treasure-gate.opening .chest-treasure {animation:treasure-shine .7s steps(5) .25s both;}
-.treasure-gate.opening .loot-particles span {animation:loot-pop .8s steps(9) var(--delay) both;}
-.treasure-gate.opened .chest-lid {transform:translateY(-28px) rotate(-15deg);}
-.treasure-gate.opened .chest-treasure {opacity:1;}
-.treasure-gate.opened {padding:18px 30px;gap:25px;}.treasure-gate.opened .treasure-art {width:100px;height:86px;}.treasure-gate.opened .pixel-chest {width:100px;height:84px;}.treasure-gate.opened .treasure-copy h2 {font-size:23px;}.treasure-gate.opened .treasure-copy p {margin-bottom:0;}
-@keyframes chest-unlock {0% {transform:translateY(0);}15% {transform:translateX(-4px);}30% {transform:translateX(4px);}45% {transform:translateX(-3px);}60% {transform:translateY(-8px) rotate(-5deg);}100% {transform:translateY(-28px) rotate(-15deg);}}
-@keyframes treasure-shine {from {opacity:0;transform:translateY(12px);}to {opacity:1;transform:translateY(0);}}
-@keyframes loot-pop {0% {opacity:0;transform:translate(0,0);}20% {opacity:1;}100% {opacity:0;transform:translate(var(--x),var(--y));}}
 .report {background:#f0e3bf;border:2px solid #758461;border-radius:0;box-shadow:none;animation:none;}
 .report-head {padding:23px 25px 0;}.report-head h3 {font-size:23px;}.report-body {padding:15px 25px 25px;}.headline {font-size:19px;line-height:1.8;}.headline .hl {background:#ddcf9d;}
 .layer-tag {font:11px var(--font-body);color:#556440;}.fingerprint {font-size:11px;}.facts {border-radius:0;}.fact {background:#e5d9b6;}.fact .value {color:#425637;}
@@ -227,9 +187,6 @@ dialog::backdrop {background:#070f1bd9;backdrop-filter:blur(3px);}.ob-art {borde
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after {animation:none!important;transition:none!important;scroll-behavior:auto!important;}
   .quest-loading span {transform:none;width:100%;opacity:.65;}
-  .treasure-gate.opening .chest-lid {transform:translateY(-28px) rotate(-15deg);}
-  .treasure-gate.opening .chest-treasure {opacity:1;}
-  .loot-particles {display:none;}
 }
 
 body[data-quest-state="error"] .quest-loading {display:none;}
@@ -274,40 +231,13 @@ body.mode-pro .adventure-shell {display:none;}
 .task-hint.bad {background:#e9cdb1;color:#813d2d;border-color:#ad7c56;}
 #task-card.drop-over {outline:3px dashed var(--gold);outline-offset:-10px;}
 
-/* map markers only show where you are: no fake buttons */
-.map-stage {cursor:default;pointer-events:none;}
-.map-stage.blocked {border-color:#d47a5e;color:#f6cdb8;}
-.map-stage.blocked::after {border-color:#d47a5e;}
 
-/* the chest appears on the map itself, over stop 4's world */
-.world-map .treasure-gate {position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px;text-align:center;background:radial-gradient(circle at 50% 46%,#0d161266 0,#0a110ee6 72%);animation:gate-in .45s steps(5) both;}
-.world-map .treasure-gate[hidden] {display:none;}
-@keyframes gate-in {from {opacity:0;}to {opacity:1;}}
-.world-map .treasure-art {width:200px;height:168px;cursor:pointer;}
-.world-map .pixel-chest {width:180px;height:150px;}
-body[data-quest-state="reward"] .world-map .pixel-chest {animation:chest-bob 1.1s steps(3) infinite;}
-@keyframes chest-bob {50% {transform:translateY(-6px);}}
-.world-map .treasure-copy h2 {font:400 28px/1.4 var(--font-display);color:#f4dc95;text-shadow:3px 3px 0 #1a2218;}
-.world-map .treasure-copy p {color:#e6dfc3;font-size:13px;margin:2px 0 12px;}
-.world-map .treasure-gate.opened {flex-direction:column;text-align:center;padding:20px;gap:4px;}
-.world-map .treasure-gate.opened .treasure-art {width:200px;height:168px;}
-.world-map .treasure-gate.opened .pixel-chest {width:180px;height:150px;}
-.world-map .treasure-gate.opened .treasure-copy h2 {font-size:28px;}
-@media(max-width:900px) {.world-map .treasure-art,.world-map .treasure-gate.opened .treasure-art {width:150px;height:126px;}.world-map .pixel-chest,.world-map .treasure-gate.opened .pixel-chest {width:134px;height:112px;}.world-map .treasure-copy h2,.world-map .treasure-gate.opened .treasure-copy h2 {font-size:22px;}}
 @media(max-width:650px) {
   #task-card {display:flex;flex-direction:column;}
   .task-guide p {font-size:13px;}
-  .world-map .treasure-art,.world-map .treasure-gate.opened .treasure-art {width:104px;height:88px;}
-  .world-map .pixel-chest,.world-map .treasure-gate.opened .pixel-chest {width:96px;height:80px;}
-  .world-map .treasure-copy h2,.world-map .treasure-gate.opened .treasure-copy h2 {font-size:18px;}
-  .world-map .treasure-copy p {font-size:11px;margin-bottom:8px;}
-  .world-map .treasure-gate .btn {min-height:36px;}
 }
-@media(prefers-reduced-motion:reduce) {body[data-quest-state="reward"] .world-map .pixel-chest {animation:none;}}
 .task-row .btn {padding:8px 6px;gap:5px;white-space:nowrap;}
 #task-step {font-size:11px;line-height:1.5;}
-.map-stage {z-index:2;}
-.traveler {z-index:1;}
 
 /* Open-source demonstration shelf follows the parchment task system. */
 .demo-library {margin:24px 0;scroll-margin-top:18px;}

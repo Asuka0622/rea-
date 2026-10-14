@@ -158,24 +158,14 @@ $("#theme-toggle").addEventListener("click", () => {
 });
 
 /* ================= presentation ================= */
-let presentation = store.get("rea-wb-presentation") === "simple" ? "simple" : "pixel";
-const isSimple = () => presentation === "simple";
-function applyPresentation(next, {announce=false}={}) {
-  const typedPath = $("#task-path-input")?.value || "";
-  presentation=next;
-  document.documentElement.dataset.presentation=next;
-  store.set("rea-wb-presentation",next);
-  const button=$("#presentation-toggle");
-  button.textContent=isSimple()?"切换到像素":"切换到简洁";
-  button.setAttribute("aria-pressed",String(isSimple()));
-  button.title=isSimple()?"当前：简洁模式":"当前：像素模式";
+// One clean look for now (the pixel style was retired); an anime-style skin will build on it.
+const isSimple = () => true;
+function applyPresentation() {
+  document.documentElement.dataset.presentation = "simple";
   adventure.refresh();
-  if($("#task-path-input")) $("#task-path-input").value=typedPath;
   modelWorkshop.refresh();
   requestAnimationFrame(moveInk);
-  if(announce) toast(isSimple()?"已切换到简洁模式":"已切换到像素模式");
 }
-$("#presentation-toggle").addEventListener("click",()=>applyPresentation(isSimple()?"pixel":"simple",{announce:true}));
 
 /* ================= mode ================= */
 
@@ -1300,5 +1290,5 @@ renderTasks();
 loadCommands();
 loadDemos();
 applyMode(mode);
-applyPresentation(presentation);
+applyPresentation();
 // The map guides first-time users; the full guide is available on demand.

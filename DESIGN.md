@@ -63,6 +63,8 @@ components:
     rounded: "{rounded.square}"
 ---
 
+> 2026-10-14：像素冒险风格已停用（地图、宝箱、像素字体已移除），当前界面为简洁风格；下文保留为历史记录。新的方向是二次元动漫风格，见 docs/anime-style/prompts.md。
+
 # Design System: REA 像素冒险工作台
 
 ## Overview

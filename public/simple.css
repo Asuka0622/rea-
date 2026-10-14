@@ -122,3 +122,7 @@
 :root[data-presentation="simple"] .case-tale h4,:root[data-presentation="simple"] .save-lab h4 {font-family:var(--font-body);}
 :root[data-presentation="simple"] .case-say-text,:root[data-presentation="simple"] .case-bag-item,:root[data-presentation="simple"] .case-hud {border-radius:var(--radius-s);border-width:1px;}
 :root[data-presentation="simple"] .case-hud {box-shadow:0 6px 24px rgba(0,0,0,.18);}
+.link-btn {padding:0;border:0;background:none;color:var(--cyan);font:inherit;text-decoration:underline;cursor:pointer;}
+/* Selected buttons sit on the accent colour; the explain bar sits on the page colour. */
+:root[data-presentation="simple"] #model-mods .mod-controls [aria-pressed="true"],:root[data-presentation="simple"] #game-mods [data-case][aria-pressed="true"] {color:var(--on-cyan);}
+:root[data-presentation="simple"] .seabed small {color:var(--ink-soft);opacity:1;}
