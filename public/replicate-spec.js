@@ -21,7 +21,7 @@ const FEATURE_SECTIONS = [
 const CONTEXT_SECTIONS = ["用到的外部能力", "用到的现成能力", "申请的权限", "暴露给界面的接口", "依赖清单", "依赖的程序集", "界面、图形与基础库线索", "代码入口", "命名空间"];
 
 /** Report types that are not software features (asset mods); the exercise points elsewhere. */
-const NOT_SOFTWARE = ["人物模型 Mod · 文件与资源"];
+const NOT_SOFTWARE = ["人物模型 Mod · 文件与资源", "Unity 资源包 · 真实读取与导出"];
 
 const clip = (text, max = 60) => {
   const value = String(text ?? "").replace(/\s+/g, " ").trim();
@@ -68,7 +68,8 @@ function rowsOf(section) {
 export function buildCandidates(reports) {
   if (!reports?.length) return { supported: false, reason: "还没有报告。先完成一次探索，再来做复刻练习。", groups: [] };
   if (reports.every((report) => NOT_SOFTWARE.includes(report.title))) {
-    return { supported: false, reason: "这份报告是人物模型的文件检查，不是软件功能。想练习改模型，请看首页的「人物模型 Mod」指南。", groups: [] };
+    const unity=reports.some(report=>report.title==="Unity 资源包 · 真实读取与导出");
+    return { supported: false, reason: unity ? "本次得到的是资源与参数证据，尚未读取游戏行为。先查看导出的贴图和参数来源；需要脚本或玩法证据后，再生成游戏复刻说明书。" : "这份报告是人物模型的文件检查，不是软件功能。想练习改模型，请看首页的「人物模型 Mod」指南。", groups: [] };
   }
   const groups = [];
   let index = 0;
@@ -108,7 +109,7 @@ export const PLATFORMS = [
 
 export const ROUTES = [
   { id: "web-ai", label: "我不会编程：交给网页版 AI", detail: "豆包、Kimi、DeepSeek、通义千问都可以。AI 写好代码，你照着步骤保存、打开。" },
-  { id: "coding-tool", label: "我在用 AI 编程工具", detail: "Trae、Cursor、通义灵码等。AI 会直接在文件夹里写代码并帮你运行。" },
+  { id: "coding-tool", label: "我在用 AI 编程工具", detail: "优先 Trae CN、CodeBuddy 国内站、Qoder CN（原通义灵码），确认实际使用的国模。AI 会在项目里写代码。" },
 ];
 
 /** Where the analysed thing came from decides the reuse wording. */
@@ -181,7 +182,7 @@ export function buildPrompt({ spec, route, platform }) {
   return [
     "我是完全不会编程的新手，在做一个学习练习：按下面的「复刻说明书」，自己做一个类似的小工具给自己用。",
     web
-      ? "请帮我做成【一个单独的 HTML 文件】：把 HTML、CSS、JavaScript 都写在同一个文件里，不需要安装任何东西，双击就能在浏览器里打开。需要保存数据的话用浏览器的 localStorage。"
+      ? "请帮我做成【一个单独的 HTML 文件】：把 HTML、CSS、JavaScript 都写在同一个文件里，不需要安装任何东西，双击就能在浏览器里打开。需要保存数据的话用浏览器的 localStorage；访问失败时暂存在内存并提示下载后测试。不要使用外部库或联网请求。"
       : "请一步一步教我：先告诉我需要安装什么、怎么新建项目，再给出完整代码，最后告诉我怎么运行。",
     "要求：",
     "1. 一次给出完整代码，不要省略任何部分；",

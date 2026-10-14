@@ -99,3 +99,20 @@
 :root[data-presentation="simple"] .replicate {border-radius:var(--radius);}
 :root[data-presentation="simple"] .rep-head h3 {font-family:var(--font-body);}
 :root[data-presentation="simple"] .rep-option,:root[data-presentation="simple"] .rep-group,:root[data-presentation="simple"] .rep-progress li {border-radius:var(--radius-s);}
+
+/* First-use guidance shares the plain theme instead of the pixel speech bubble. */
+:root[data-presentation="simple"] .task-guide p {background:transparent;border:0;padding:0;margin:0;color:var(--ink-soft);}
+:root[data-presentation="simple"] .task-guide p::before {display:none;}
+:root[data-presentation="simple"] .journal-title {color:var(--ink-soft);}
+:root[data-presentation="simple"] .first-try-copy {max-width:65ch;margin:0 0 18px;color:var(--ink);}
+:root[data-presentation="simple"] #hero-sample {width:auto;min-height:44px;font-size:14px;}
+:root[data-presentation="simple"] #hero-sample + .task-caption {max-width:65ch;margin:10px 0 0;}
+:root[data-presentation="simple"] #task-step {color:var(--ink-soft);font:400 13px/1.5 var(--font-body);letter-spacing:0;}
+
+:root[data-presentation="simple"] .fact .value {color:var(--ink);}
+:root[data-presentation="simple"] .fact .hint {color:var(--ink-soft);}
+:root[data-presentation="simple"] .headline .hl {background:var(--cyan-wash);color:var(--ink);}
+
+:root[data-presentation="simple"] .practice-frame {border-color:var(--rule);}
+:root[data-presentation="simple"] .practice-input textarea {font-size:14px!important;}
+@media(max-width:650px){:root[data-presentation="simple"] .practice-input textarea {font-size:16px!important;}}

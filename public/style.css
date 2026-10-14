@@ -716,3 +716,54 @@ dialog.sheet-dialog[open] { animation: sheet-in 0.45s var(--ease) both; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* Plain-language report reading, before the original technical evidence. */
+.report-reading {color:var(--ink);max-width:70ch;}
+.report-reading h4 {font:600 16px/1.5 var(--font-body);margin:24px 0 8px;}
+.report-reading h4:first-child {margin-top:0;}
+.report-reading p {margin:0;line-height:1.8;}
+.reading-clues {margin:12px 0 0;padding-left:20px;}
+.reading-clues li {margin:8px 0;overflow-wrap:anywhere;}
+.reading-clues strong {font-weight:500;}
+.reading-clues small {display:block;font-size:12px;color:var(--ink-soft);}
+.report-technical {border-top:1px solid var(--rule);margin-top:6px;}
+.report-technical>summary {cursor:pointer;padding:14px 0;color:var(--ink);font-weight:600;}
+.report-technical[open]>.headline {margin:8px 0 16px;}
+.report-technical .facts {margin-bottom:14px;}
+
+.reading-recommendation {font-weight:500;}
+.report-reading .reading-reason {font-size:12px;line-height:1.7;color:var(--ink-soft);margin-top:8px;}
+.reading-actions {display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;}
+.rep-recommended-goal {overflow-wrap:anywhere;}
+@media(max-width:650px) {.reading-actions {align-items:stretch;flex-direction:column;}.reading-actions .btn {white-space:normal;}}
+
+.practice-workbench {border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:12px;min-width:0;}
+.practice-workbench h4 {font:600 17px/1.5 var(--font-body);margin:0;color:var(--ink);}
+.practice-input {display:flex;flex-direction:column;gap:8px;color:var(--ink);}
+.practice-input textarea {width:100%;resize:vertical;min-height:150px;box-sizing:border-box;font:13px/1.65 var(--font-mono);}
+.practice-frame {width:100%;min-width:0;height:440px;border:1px solid var(--rule);background:white;color-scheme:light;}
+.practice-location {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.practice-location>span {width:100%;font-size:12px;overflow-wrap:anywhere;}
+.practice-status[role="alert"] {color:var(--bad);}
+@media(max-width:650px) {.practice-input textarea {font-size:16px;}.practice-frame {height:420px;}.practice-workbench .rep-actions .btn {flex:1 1 auto;}}
+
+.practice-location .practice-path {width:100%;font-size:12px;}
+.practice-path summary {cursor:pointer;color:var(--ink-soft);}
+.practice-path .mono {display:block;margin-top:8px;overflow-wrap:anywhere;}
+
+.ai-service-guide {margin:16px 0 20px;padding:16px 0;border-top:1px solid var(--rule);color:var(--ink);min-width:0;}
+.ai-service-guide h3,.ai-service-guide h4 {font:600 17px/1.5 var(--font-body);margin:0 0 10px;}
+.ai-service-guide p {font-size:13px;line-height:1.8;margin:8px 0;max-width:75ch;}
+.ai-service-guide a {color:var(--cyan);text-underline-offset:3px;overflow-wrap:anywhere;}
+.ai-service-guide .ai-account-warning {background:var(--warn-wash);color:var(--warn);padding:10px 12px;max-width:none;}
+.ai-service-guide summary {cursor:pointer;font-size:13px;margin-top:12px;color:var(--ink);}
+.ai-service-guide ul {padding-left:20px;}
+.ai-service-guide li {margin:12px 0;}
+.ai-service-guide .ai-guide-date {font-size:12px;color:var(--ink-soft);}
+.ai-client-preferred {font-size:12px;color:var(--ok);}
+.ai-client-risk {font-size:12px;line-height:1.7;color:var(--warn);}
+#tab-clients .ai-service-guide {color:var(--night-text);}
+#tab-clients .ai-service-guide summary {color:var(--night-text);}
+
+/* Keep paired quantities legible in resource reports. */
+.table-count-pair {white-space:nowrap;}

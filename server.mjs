@@ -16,6 +16,7 @@ import {gameCaseCatalog,gameCaseGuide} from "./lib/game-cases.mjs";
 import {gameModCatalog,buildModFiles,writeModFiles,modZip} from "./lib/game-mods.mjs";
 import { demoCatalog } from "./lib/demos.mjs";
 import { findInstalledApps } from "./lib/apps.mjs";
+import { openPractice, revealPractice, savePractice } from "./lib/practice.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "public");
@@ -36,11 +37,11 @@ function sendJson(res, status, value) {
   res.end(JSON.stringify(value));
 }
 
-async function readJson(req) {
+async function readJson(req, limit = 1_000_000) {
   let text = "";
   for await (const chunk of req) {
     text += chunk;
-    if (text.length > 1_000_000) throw new Error("请求太大");
+    if (text.length > limit) throw new Error("请求太大");
   }
   return text ? JSON.parse(text) : {};
 }
@@ -132,6 +133,18 @@ const routes = {
   "GET /api/sample": async (_req, res) => sendJson(res, 200, { path: path.join(here, "samples", "notes-demo") }),
 
   "GET /api/installed-apps": async (_req, res) => sendJson(res, 200, { apps: findInstalledApps() }),
+
+  // Replicate exercise (desktop only): save the learner's AI-made page, then open it in their own browser.
+  "POST /api/practice/save": async (req, res) => {
+    try {
+      const { html, title, open } = await readJson(req, 3_000_000);
+      const saved = savePractice(html, title);
+      if (open) openPractice(saved.path);
+      sendJson(res, 200, saved);
+    } catch(error) { sendJson(res, 400, {error:error.message}); }
+  },
+  "POST /api/practice/open": async (req, res) => sendJson(res, 200, openPractice((await readJson(req)).path)),
+  "POST /api/practice/reveal": async (req, res) => sendJson(res, 200, revealPractice((await readJson(req)).path)),
 
   "POST /api/pick": async (req, res) => {
     const { kind } = await readJson(req);

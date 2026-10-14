@@ -254,3 +254,16 @@ test("model guide and inert model analysis use authenticated API and project rep
   const result=await api("/api/analyze",{path:dir});assert.equal(result.data.find(x=>x.type==="detected").kind,"modelmod");const step=result.data.find(x=>x.type==="step-done");assert.ok(step.ok,JSON.stringify(step.error));assert.equal(step.command,"inspect-model-mod");assert.match(step.report.headline,/1 处静态引用未找到/);
   assert.ok(fs.existsSync(path.join(sandbox,"game-mods","results",step.rawId+".json")));const raw=await fetch(base+"/api/raw?id="+step.rawId,{headers:{"X-Workbench-Token":token}});assert.equal((await raw.json()).scanner,"rea-workbench/inert-model-mod-scan");
 });
+
+
+test('practice save is authenticated, extracts HTML, and writes unique files inside the sandbox',async()=>{
+  const html='<!doctype html><html><body><h1>学习网页</h1></body></html>';
+  assert.equal((await fetch(base+'/api/practice/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({html})})).status,403);
+  const a=await api('/api/practice/save',{html:'说明\n'+html+'\n结束',title:'我的练习'});
+  const b=await api('/api/practice/save',{html,title:'我的练习'});
+  assert.equal(a.status,200);assert.equal(b.status,200);assert.notEqual(a.data.path,b.data.path);
+  const relative=path.relative(sandbox,a.data.path);assert.ok(!relative.startsWith('..')&&!path.isAbsolute(relative));
+  assert.equal(fs.readFileSync(a.data.path,'utf8'),html);
+  assert.equal((await api('/api/practice/save',{html:'仅有说明'})).status,400);
+  assert.notEqual((await api('/api/practice/reveal',{path:path.join(root,'README.md')})).status,200);
+});

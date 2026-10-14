@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/K0lb3/UnityPy",
+  "commit": "417d59522a998fdee9a9c2b29fe35f3063222457",
+  "upstreamPath": "tests/samples/atlas_test",
+  "downloadUrl": "https://media.githubusercontent.com/media/K0lb3/UnityPy/417d59522a998fdee9a9c2b29fe35f3063222457/tests/samples/atlas_test",
+  "file": "atlas_test.bundle",
+  "size": 76771,
+  "sha256": "61ee5afb5f5c64f0a4f65f039d09b2509198363e713423289c895067ac215177",
+  "purpose": "Local parser and texture-export verification using an upstream binary test fixture; not a playable game or gameplay-parameter test.",
+  "redistribution": "The binary sample and extracted artwork are ignored by Git. Repository code licensing does not establish ownership of every sample image."
+}

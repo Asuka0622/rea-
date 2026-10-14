@@ -103,17 +103,21 @@ export function createAdventure(actions) {
       button(simple()?'分析':'出发', null, { small: true, type: 'submit' }),
     );
     if(simple()) {
-      say('选择文件或文件夹，查看中文分析报告。');
-      body(el('h2',{},'分析文件'),
-        el('div',{class:'simple-actions'},button('选择文件',actions.pickFile,{primary:true}),button('选择文件夹',actions.pickFolder),button('试用示例',actions.sample)),
-        el('label',{class:'simple-label',for:'task-path-input'},'或直接输入路径'),pathForm,
+      say('看看软件有哪些功能，再跟着步骤做一个自己的小工具。');
+      body(el('h2',{},'先试一个笔记软件'),
+        el('p',{class:'first-try-copy'},'从自带示例开始：了解查看、保存、导出笔记这些功能是怎么做的。不用准备文件，也不用安装分析引擎。'),
+        button('试用笔记示例',actions.sample,{primary:true,id:'hero-sample'}),
+        el('p',{class:'task-caption'},'点击后自动分析，通常约 10 秒。先看报告，再按需要跟着说明做一个自己的小工具。'),
+        el('details',{class:'simple-samples'},el('summary',{},'分析自己的文件或文件夹'),
+          el('div',{class:'simple-actions'},button('选择文件',actions.pickFile),button('选择文件夹',actions.pickFolder)),
+          el('label',{class:'simple-label',for:'task-path-input'},'或直接输入路径'),pathForm),
         el('details',{class:'simple-samples'},el('summary',{},'查看开源案例与制作指南'),el('div',{class:'simple-actions'},button('ArtCraft 软件案例',actions.demos),button('游戏与 Mod 案例',actions.gameMods),button('人物模型 Mod',actions.modelMods))),
         el('p',{class:'simple-note'},'也可拖入文件。只读取文件，不运行软件，不上传。'));
       return;
     }
     body(
-      button('用示例软件试一次', actions.sample, { primary: true, iconName: 'play', id: 'hero-sample' }),
-      el('p', { class: 'task-caption' }, '示例是一个小小的笔记软件，大约 10 秒出结果。'),
+      button('试用笔记示例', actions.sample, { primary: true, iconName: 'play', id: 'hero-sample' }),
+      el('p', { class: 'task-caption' }, '示例可以查看、保存、导出笔记。不用准备文件，通常约 10 秒出报告；之后可跟着说明做一个自己的小工具。'),
       button('探索 ArtCraft 开源演示', actions.demos, { iconName: 'learn', small: true }),
       button('探索游戏与 Mod 真实案例', actions.gameMods, { iconName: 'wrench', small: true }),
       button('人物模型 Mod · 工具与 MCP', actions.modelMods, { iconName: 'wrench', small: true }),

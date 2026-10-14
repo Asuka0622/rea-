@@ -2,14 +2,25 @@ import { buildCandidates, buildPrompt, buildSpec, PLATFORMS, ROUTES } from "./re
 
 // "自己动手做一个": a five-step exercise after the report. Beginners get one step at a time;
 // professionals get every control and the spec on one screen.
+import { resolveExercise } from "./exercise-recommendation.js";
+import { mountPractice } from "./practice.js";
+import { aiServiceGuide } from "./ai-services.js";
+
 const STEPS = ["选一个功能", "决定怎么做", "看说明书", "交给 AI 来做", "对照检查"];
 
-export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTarget, webAis }) {
+export function mountReplicate({ h, icon, toast, copy, api, isPro, getReports, getTarget, webAis }) {
   const root = document.querySelector("#replicate");
   let state = null; // { step, choice, platform, route, goal, checks, signature }
 
   const signatureOf = () => `${getTarget() || ""}|${getReports().length}`;
-  const fresh = () => ({ step: 0, choice: "whole", platform: "web", route: "web-ai", goal: "", checks: {}, signature: signatureOf() });
+  const fresh = () => {
+    state?.practice?.dispose();
+    return {step:0,choice:'whole',platform:'web',route:'web-ai',goal:'',checks:{},recommendation:null,practice:null,signature:signatureOf()};
+  };
+  const practiceView=()=>{
+    state.practice ??= mountPractice({h,api,copy,getTitle:()=>state?.recommendation?.title||state?.goal||'我的工具'});
+    return state.practice.element;
+  };
   const spec = () => buildSpec({ reports: getReports(), target: getTarget(), choice: state.choice, platform: state.platform, goal: state.goal });
   const prompt = () => buildPrompt({ spec: spec(), route: state.route, platform: state.platform });
   const go = (step) => {
@@ -33,9 +44,18 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
     );
   }
 
+  function chooseFeature(id) {
+    if (state.choice !== id) {
+      state.checks = {};
+      if (state.recommendation && state.goal === state.recommendation.goal) state.goal = '';
+      state.recommendation = null;
+    }
+    state.choice = id;
+  }
+
   function featurePicker(candidates) {
     return candidates.groups.map((group) =>
-      h("fieldset", { class: "rep-group" }, h("legend", {}, group.title, h("small", {}, group.hint)), radioList("rep-feature", group.options, state.choice, (id) => (state.choice = id))),
+      h("fieldset", { class: "rep-group" }, h("legend", {}, group.title, h("small", {}, group.hint)), radioList("rep-feature", group.options, state.choice, chooseFeature)),
     );
   }
 
@@ -55,8 +75,9 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
 
   function handOff() {
     const web = state.route === "web-ai";
-    const steps = web
-      ? [
+    const steps = web && state.platform === 'web'
+      ? ['点下面的“复制给 AI”，打开一个 AI 网站粘贴并发送。','AI 给出完整网页代码后，复制代码或整段回答。','回到这里，粘贴到下方输入框，点“预览作品”。','试用作品，保存到工作台或下载 HTML，再单独打开测试。']
+      : web ? [
           "点下面的「复制给 AI」",
           "打开一个 AI 网站，在输入框里粘贴（Ctrl + V），发送",
           "AI 回答里会有一大段代码。点代码框右上角的「复制」",
@@ -67,13 +88,14 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
         ]
       : [
           "新建一个空文件夹，比如「我的复刻练习」",
-          "用 Trae、Cursor 等 AI 编程工具打开这个文件夹",
+          "优先用 Trae CN、CodeBuddy 国内站或 Qoder CN 等国产工作台打开这个文件夹，并选择官方国模服务",
           "点下面的「复制给 AI」，粘贴到 AI 对话框里发送",
           "AI 会先说方案，你确认后让它写代码",
           "让 AI 告诉你怎么运行，运行起来看看效果",
           "哪里不对，直接告诉 AI 现象，让它改",
         ];
     return [
+      aiServiceGuide(h,{compact:true}),
       h("ol", { class: "steps" }, steps.map((text) => h("li", {}, text))),
       h(
         "div",
@@ -86,17 +108,17 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
   }
 
   function checklist() {
-    const items = spec()
-      .split("\n")
-      .filter((line) => line.startsWith("- [ ] "))
-      .map((line) => line.slice(6));
-    const done = items.filter((item) => state.checks[item]).length;
-    return [
-      h("ul", { class: "rep-checks" }, items.map((item) => h("li", {}, h("label", {}, h("input", { type: "checkbox", checked: !!state.checks[item], onchange: (event) => ((state.checks[item] = event.target.checked), render()) }), item)))),
-      done === items.length
-        ? h("p", { class: "rep-done", role: "status" }, icon("check", { size: 16 }), "全部完成！你已经用自己的代码做出了一个类似的功能。可以换一个功能再练一次。")
-        : h("p", { class: "rep-note" }, `已完成 ${done} / ${items.length} 项。做不到的项目，把情况告诉 AI，让它帮你补上。`),
-    ];
+    const items=spec().split('\n').filter(line=>line.startsWith('- [ ] ')).map(line=>line.slice(6));
+    const completion=h('p',{});
+    const update=()=>{
+      const done=items.filter(item=>state.checks[item]).length;
+      completion.className=done===items.length?'rep-done':'rep-note';
+      completion.replaceChildren(...(done===items.length
+        ? [icon('check',{size:16}),'检查项已全部勾选。可以换一个功能再练一次。']
+        : [`已完成 ${done} / ${items.length} 项。请实际试用，再勾选通过的项目。`]));
+    };
+    const list=h('ul',{class:'rep-checks'},items.map(item=>h('li',{},h('label',{},h('input',{type:'checkbox',checked:!!state.checks[item],onchange:event=>{state.checks[item]=event.target.checked;update();}}),item))));
+    update();return [list,completion];
   }
 
   function nav(back, next, nextLabel = "下一步") {
@@ -111,7 +133,7 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
   function renderBeginner(candidates) {
     const progress = h("ol", { class: "rep-progress", "aria-label": "复刻练习进度" }, STEPS.map((title, index) => h("li", { class: index === state.step ? "active" : index < state.step ? "done" : "" }, h("span", {}, index + 1), title)));
     const pages = [
-      () => [h("p", {}, "从报告里挑一个你想学着自己做的功能。第一次推荐选「做一个整体的简化版」。"), ...featurePicker(candidates), nav(null, 1)],
+      () => [h("p", {}, "从报告里挑一个你想学着自己做的功能。也可以返回报告，从推荐的小练习开始。"), ...featurePicker(candidates), nav(null, 1)],
       () => [
         h("p", {}, "先选做成什么，再选怎么做。不确定就用默认的：网页小工具 + 网页版 AI。"),
         h("h4", {}, "做成什么"),
@@ -122,13 +144,17 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
         nav(0, 2, "生成说明书"),
       ],
       () => [
+        ...(state.recommendation ? [
+          h('p', {class:'rep-recommended-goal'}, '当前练习：', h('strong', {}, state.goal)),
+          h('p', {class:'rep-note'}, '已选：' + PLATFORMS.find(option => option.id === state.platform).label + ' / ' + (state.route === 'web-ai' ? '网页版 AI' : 'AI 编程工具') + '。想换形式或修改目标，可以点“上一步”。')
+        ] : []),
         h("p", {}, "这是给 AI 看的「复刻说明书」：只写这个功能做什么、怎么分工，不包含原软件的代码。你可以先读一遍，确认是你想要的。"),
         specView(),
         h("div", { class: "rep-actions" }, h("button", { class: "btn small", type: "button", onclick: () => copy(spec(), "说明书已复制") }, icon("copy", { size: 15 }), "只复制说明书")),
         nav(1, 3),
       ],
-      () => [...handOff(), nav(2, 4, "我做好了，去检查")],
-      () => [h("p", {}, "对照说明书，逐项确认你做出来的东西。"), ...checklist(), nav(3, null), h("button", { class: "btn ghost", type: "button", onclick: () => ((state = fresh()), go(0)) }, "换一个功能再练一次")],
+      () => [...handOff(), state.platform === "web" && practiceView(), nav(2, 4, "去对照检查")],
+      () => [h("p", {}, "对照说明书，逐项确认你做出来的东西。"), state.platform === "web" && practiceView(), ...checklist(), nav(3, null), h("button", { class: "btn ghost", type: "button", onclick: () => ((state = fresh()), go(0)) }, "换一个功能再练一次")],
     ];
     return [progress, h("div", { class: "rep-page", "aria-live": "polite" }, pages[state.step]())];
   }
@@ -138,9 +164,11 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
     const select = (label, items, value, onPick) =>
       h("label", { class: "rep-field" }, h("b", {}, label), h("select", { onchange: (event) => (onPick(event.target.value), render()) }, items.map((item) => h("option", { value: item.id, selected: item.id === value }, item.group ? `${item.group} · ${item.label}` : item.label))));
     return [
-      h("div", { class: "rep-pro-grid" }, select("功能", options, state.choice, (id) => (state.choice = id)), select("形式", PLATFORMS, state.platform, (id) => (state.platform = id)), select("路线", ROUTES, state.route, (id) => (state.route = id))),
+      h("div", { class: "rep-pro-grid" }, select("功能", options, state.choice, chooseFeature), select("形式", PLATFORMS, state.platform, (id) => (state.platform = id)), select("路线", ROUTES, state.route, (id) => (state.route = id))),
       goalField(),
+      aiServiceGuide(h,{compact:true}),
       specView(),
+      state.platform === "web" && practiceView(),
       h(
         "div",
         { class: "rep-actions" },
@@ -161,7 +189,7 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
     const candidates = buildCandidates(reports);
     root.hidden = false;
     root.replaceChildren(
-      h("div", { class: "rep-head" }, h("h3", { id: "replicate-title" }, isPro() ? "复刻练习 · 功能说明书" : "自己动手做一个"), h("p", {}, isPro() ? "从报告生成净室式功能说明书与提示词。说明书只含功能与分工，不含原始代码。" : "看懂了它是怎么做的，接下来用你自己的代码做一个类似的。五步，跟着走就行。")),
+      h("div", { class: "rep-head" }, h("h3", { id: "replicate-title" }, !candidates.supported ? "资源学习与下一步" : isPro() ? "复刻练习 · 功能说明书" : "自己动手做一个"), h("p", {}, !candidates.supported ? "先核对资源文件和来源，再决定下一步练习。" : isPro() ? "从报告生成净室式功能说明书与提示词。说明书只含功能与分工，不含原始代码。" : "看懂了它是怎么做的，接下来用你自己的代码做一个类似的。五步，跟着走就行。")),
       ...(candidates.supported ? (isPro() ? renderPro(candidates) : renderBeginner(candidates)) : [h("p", { class: "rep-note" }, candidates.reason)]),
     );
   }
@@ -169,9 +197,32 @@ export function mountReplicate({ h, icon, toast, copy, isPro, getReports, getTar
   return {
     refresh: render,
     reset() {
+      state?.practice?.dispose();
       state = null;
       root.hidden = true;
       root.replaceChildren();
+    },
+    openSelection() {
+      render();
+      if (!root.hidden) go(0);
+    },
+    openRecommended(recommendation) {
+      render();
+      if (root.hidden) return;
+      const option = resolveExercise(getReports(), recommendation);
+      if (!option) { toast('报告已变化，请重新选择要练习的功能。'); go(0); return; }
+      if (state.step > 0 || state.choice !== 'whole' || state.goal.trim() || state.platform !== 'web' || state.route !== 'web-ai') {
+        toast('已回到当前练习，保留你的输入和进度。要换功能可点“上一步”。');
+        root.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
+      state.choice = option.id;
+      state.goal = recommendation.goal;
+      state.platform = 'web';
+      state.route = 'web-ai';
+      state.recommendation = recommendation;
+      state.checks = {};
+      go(2);
     },
     open() {
       render();

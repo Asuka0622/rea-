@@ -4,6 +4,9 @@ import {mountModelMods} from "./model-mods.js";
 import {mountGameCases} from "./game-cases.js";
 import { createAdventure } from "./adventure.js";
 import { mountReplicate } from "./replicate.js";
+import { beginnerReading } from "./report-reading.js";
+import { recommendExercise } from "./exercise-recommendation.js";
+import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
 
 const TOKEN = document.querySelector('meta[name="workbench-token"]').content;
 const $ = (selector) => document.querySelector(selector);
@@ -461,7 +464,7 @@ async function openTask(id) {
           "div",
           { class: "card" },
           h("div", { class: "card-head" }, h("h3", {}, "AI 编程工具")),
-          h("p", {}, withTerms("适合用 Trae、Cursor、通义灵码等 AI 工具的人。接入后，直接对 AI 说「帮我分析某某软件」，它会自己调用 REA。")),
+          h("p", {}, withTerms("适合用 Trae CN、CodeBuddy 国内站、Qoder CN 等 AI 工具的人。接入后，直接对 AI 说「帮我分析某某软件」，它会自己调用 REA。")),
           h("div", { class: "card-actions" }, h("button", { class: "btn", onclick: () => showTab("clients") }, "去接入 AI 工具")),
         ),
       ),
@@ -493,7 +496,7 @@ function renderSection(section, index) {
       h(
         "div",
         { class: "table-wrap" },
-        h("table", {}, h("thead", {}, h("tr", {}, section.table.columns.map((c) => h("th", {}, c)))), h("tbody", {}, section.table.rows.map((row) => h("tr", {}, row.map((cell) => h("td", {}, cell ?? 0)))))),
+        h("table", {}, h("thead", {}, h("tr", {}, section.table.columns.map((c) => h("th", {}, c)))), h("tbody", {}, section.table.rows.map((row) => h("tr", {}, row.map((cell) => h("td", {class: typeof cell === "string" && /^\d+ \/ \d+$/.test(cell) ? "table-count-pair" : ""}, cell ?? 0)))))),
       ),
   );
   const count = section.items?.length ?? section.table?.rows.length;
@@ -507,7 +510,14 @@ function headline(text) {
   return h("p", { class: "headline" }, h("span", { class: "hl" }, withTerms(text.slice(0, cut))), withTerms(text.slice(cut)));
 }
 
-function commandLine(command) {
+function commandLine(command, report) {
+  if (command === "inspect-unity-bundle") {
+    const windows=navigator.platform.startsWith('Win');
+    const quote=value=>"'"+String(value).replaceAll('\\','/').replaceAll("'",windows?"''":"'\\''")+"'";
+    const python=report?.execution?.pythonPath||(windows?'./data/tools/unitypy/venv/Scripts/python.exe':'./data/tools/unitypy/venv/bin/python');
+    const script=report?.execution?.scriptPath||'./scripts/inspect-unity.py';
+    return (windows?'& ':'')+quote(python)+' '+quote(script)+' --input '+quote(current.target)+" --output './exports/unity/my-run'";
+  }
   if (command === "inspect-model-mod") return `node lib/model-mods.mjs "${current.target}"`;
   if (command === "inspect-game-source") return `node lib/game-cases.mjs "${current.target}"`;
   if (command === "inspect-game-mod") return `node lib/game-mods.mjs "${current.target}"`;
@@ -520,6 +530,23 @@ function setStatus(card, kind, text) {
   const status = card.querySelector(".status");
   status.className = `status ${kind}`;
   status.textContent = text;
+}
+
+function renderReading(reading, recommendation) {
+  return h('section', {class:'report-reading', 'aria-label':'报告的大白话解读'},
+    h('h4', {}, '发现了什么'), h('p', {}, reading.finding),
+    reading.clues.length > 0 && h('ul', {class:'reading-clues'}, reading.clues.map(clue => h('li', {}, h('strong', {}, clue.label), h('small', {class:'mono'}, clue.evidence)))),
+    h('h4', {}, '这些部分怎么配合'), h('p', {}, reading.structure),
+    h('h4', {}, '我可以学着做什么'),
+    recommendation ? [
+      h('p', {class:'reading-recommendation'}, '推荐先练：', h('strong', {}, recommendation.title)),
+      h('p', {}, recommendation.expectation),
+      h('p', {class:'reading-reason'}, recommendation.reason),
+      h('div', {class:'reading-actions'},
+        h('button', {class:'btn primary',type:'button',onclick:()=>replicate.openRecommended(recommendation)}, '开始这个练习'),
+        h('button', {class:'btn',type:'button',onclick:()=>replicate.openSelection()}, '自己选其他功能')),
+      h('p', {class:'reading-reason'}, '首次进入会选好网页小工具和网页版 AI；已有练习则保留进度。')
+    ] : h('p', {}, reading.learn));
 }
 
 function renderReport(card, event) {
@@ -538,14 +565,15 @@ function renderReport(card, event) {
           error.engine && h("button", { class: "btn small primary", onclick: () => showTab("engines") }, "去安装引擎", icon("arrow", { size: 15 })),
           h("details", { open: isPro() }, h("summary", {}, "原始错误信息（可以复制给 AI 帮你看）"), h("pre", { class: "code" }, error.original)),
         ),
-        isPro() && h("details", { class: "cli" }, h("summary", {}, "等价命令"), h("pre", { class: "code" }, commandLine(event.command))),
+        isPro() && h("details", { class: "cli" }, h("summary", {}, "等价命令"), h("pre", { class: "code" }, commandLine(event.command, event.report))),
       ),
     );
     return;
   }
   setStatus(card, "ok", "完成");
   const report = event.report;
-  card.querySelector("h3").textContent = report.title;
+  const reading = beginnerReading(report, event.command);
+  card.querySelector("h3").textContent = isPro() ? report.title : reading.title;
   const head = card.querySelector(".report-head");
   head.querySelector(".fingerprint")?.remove();
   head.querySelector(".layer-tag")?.remove();
@@ -561,9 +589,9 @@ function renderReport(card, event) {
   const rawPreview = h("pre", { class: "code" }, "加载中…");
   body.replaceChildren(
     ...nodes(
-      headline(report.headline),
-      factGrid(report.facts),
-      h("div", {}, report.sections.map(renderSection)),
+      !isPro() && renderReading(reading, recommendExercise([report])),
+      isPro() ? [headline(report.headline), factGrid(report.facts), h('div', {}, report.sections.map(renderSection))]
+        : h('details', {class:'report-technical'}, h('summary', {}, '查看专业细节与数据'), headline(report.headline), factGrid(report.facts), h('div', {}, report.sections.map(renderSection))),
       report.cautions.length > 0 &&
         h("details", { class: "cautions", open: isPro() }, h("summary", {}, icon("alert", { size: 16 }), `需要知道的局限 · ${report.cautions.length} 条`), h("ul", {}, report.cautions.map((c) => h("li", {}, c)))),
       (nextSteps.length > 0 || isPro()) &&
@@ -581,7 +609,7 @@ function renderReport(card, event) {
           ),
           isPro() && h("a", { class: "btn small", href: `/api/raw?id=${event.rawId}`, onclick: (e) => downloadRaw(e, event.rawId) }, icon("download", { size: 15 }), "下载原始 JSON"),
         ),
-      isPro() && h("details", { class: "cli" }, h("summary", {}, "等价命令"), h("pre", { class: "code" }, commandLine(event.command))),
+      isPro() && h("details", { class: "cli" }, h("summary", {}, "等价命令"), h("pre", { class: "code" }, commandLine(event.command, event.report))),
       isPro() &&
         h(
           "details",
@@ -672,6 +700,7 @@ async function explainWithAi() {
         h("li", {}, "点发送，等 AI 用大白话给你解释"),
         h("li", {}, "还有疑问？接着问它，比如「这个软件会不会上传我的数据？」"),
       ),
+      aiServiceGuide(h,{compact:true}),
       h("div", { class: "ai-links" }, WEB_AIS.map(([name, url]) => h("a", { class: "btn", href: url, target: "_blank", rel: "noreferrer" }, name))),
       h("p", { class: "muted" }, "粘贴后，报告内容会发送给那个 AI 网站。"),
     ],
@@ -1076,6 +1105,7 @@ loaders.engines = loadEngines;
 /* ================= clients ================= */
 
 async function loadClients() {
+  $("#clients-ai-guidance").replaceChildren(aiServiceGuide(h));
   const boxes = ["#clients-detected", "#clients-extra", "#clients-native", "#clients-manual"].map($);
   boxes[0].replaceChildren(h("p", { class: "muted" }, "检测中…"));
   let data;
@@ -1100,6 +1130,8 @@ async function loadClients() {
       { class: "card" },
       h("div", { class: "card-head" }, h("h3", {}, client.name), h("span", { class: `status ${state[0]}` }, state[1])),
       client.vendor && h("p", {}, client.vendor),
+      preferredDomesticClient(client) && h("p",{class:"ai-client-preferred"},"推荐国产入口：确认使用国内站与官方国模服务。"),
+      overseasAccountClient(client) && h("p",{class:"ai-client-risk"},"海外账号：使用前确认地区、授权和使用条款；不符合规则可能导致账号受限或停用。"),
       isPro() && h("div", { class: "detail muted mono" }, client.configPath),
       h(
         "div",
@@ -1109,17 +1141,18 @@ async function loadClients() {
       ),
     );
   };
-  const detected = [...data.extra, ...data.native].filter((c) => c.installed || c.configured);
+  const detected = prioritizeDomesticClients([...data.extra, ...data.native].filter((c) => c.installed || c.configured));
   boxes[0].replaceChildren(...detected.map(card));
   $("#detected-note").textContent = detected.length ? "点「一键接入」，完成后重启那个 AI 工具即可。" : "没有在你的电脑上找到常见的 AI 编程工具。只用网页版 AI 的话，不需要这一页。";
-  boxes[1].replaceChildren(...data.extra.filter((c) => !detected.includes(c)).map(card));
+  boxes[1].replaceChildren(...prioritizeDomesticClients(data.extra.filter((c) => !detected.includes(c))).map(card));
   boxes[2].replaceChildren(...data.native.filter((c) => !detected.includes(c)).map(card));
   boxes[3].replaceChildren(
-    ...data.manual.map((client) =>
+    ...prioritizeDomesticClients(data.manual).map((client) =>
       h(
         "div",
         { class: "card" },
         h("div", { class: "card-head" }, h("h3", {}, client.name), h("span", { class: "status plain" }, client.vendor)),
+        preferredDomesticClient(client) && h("p",{class:"ai-client-preferred"},"推荐国内站；新版本 MCP 设置请按官方说明操作。"),
         h("ol", { class: "steps-list" }, client.steps.map((s) => h("li", {}, s))),
         h(
           "div",
@@ -1252,7 +1285,7 @@ const adventure = createAdventure({
   isSimple,
   notice: toast,
 });
-const replicate = mountReplicate({ h, icon, toast, copy, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
+const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();

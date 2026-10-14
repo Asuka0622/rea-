@@ -11,3 +11,13 @@ data/game-mods/results/
 samples/games/*/
 
 data/*.log
+
+dist/
+
+# Unity real-test runtime and extracted local assets
+data/tools/
+exports/unity/
+samples/unity/*.bundle
+samples/unity/*.obj
+
+__pycache__/

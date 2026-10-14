@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/K0lb3/UnityPy",
+  "commit": "417d59522a998fdee9a9c2b29fe35f3063222457",
+  "source": {
+    "upstreamPath": "tests/samples/xinzexi_2_n_tex",
+    "file": "mesh_test.bundle",
+    "size": 634283,
+    "sha256": "a9f6e6bba7110cce647ef752d66655d13ce5850b013a60d80d4e8b08953e02ea"
+  },
+  "reference": {
+    "upstreamPath": "tests/samples/xinzexi_2_n_tex_mesh",
+    "file": "mesh_expected.obj",
+    "size": 44643,
+    "sha256": "8bb2082b9586b3f8f3bad2d22d33346ec0492053f2a76323aa8b4b4047368ca8"
+  },
+  "purpose": "Local Mesh export verification against upstream coordinates, UVs and triangle vertex indices. The test mesh is planar, not a fully rigged 3D character.",
+  "note": "The upstream OBJ reference includes normal indices without normal records. Compare actual geometry and write only available channels."
+}

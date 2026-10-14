@@ -200,7 +200,7 @@ export const LESSONS = [
 /** Where beginners paste a copied report. */
 export const WEB_AIS = [
   ["豆包", "https://www.doubao.com/chat/"],
-  ["Kimi", "https://kimi.moonshot.cn/"],
+  ["Kimi", "https://www.kimi.com/"],
   ["DeepSeek", "https://chat.deepseek.com/"],
-  ["通义千问", "https://tongyi.aliyun.com/qianwen/"],
+  ["通义千问", "https://www.qianwen.com/"],
 ];
