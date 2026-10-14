@@ -14,7 +14,8 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   const progress = new Map(); // case id -> { index, picked: Set, feedback, solved: Set }
   const labs = new Map(); // case id -> lab element, kept so its progress survives re-renders
   let reading = null; // id of the stories case being read
-  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean) });
+  let portraits = new Set();
+  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));
@@ -238,7 +239,9 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
 
   async function load() {
     try {
-      catalog = (await api("/api/cases")).cases;
+      const data = await api("/api/cases");
+      catalog = data.cases;
+      portraits = new Set(data.portraits || []);
       renderList();
       render();
     } catch (error) {

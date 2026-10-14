@@ -1,7 +1,7 @@
-/* 温馨像素皮肤 (data-skin="cozy"): a Japanese-indie look on top of the simple layout. The world is warm
-   pixel craft (grass, wooden signboard, paper windows, plank buttons, pixel headings); conversations use
-   an RPG message window with a name plate, where anime-style portraits will sit. Body text stays in a
-   normal font so long reports remain easy to read. Original styling; no game assets are copied. */
+/* 温馨像素皮肤 (data-skin="cozy"): a cozy farm-life pixel look on top of the simple layout — grass,
+   a wooden signboard, paper windows in wooden frames, plank buttons, pixel headings, and dialogue boxes
+   with framed pixel portraits. Body text stays in a normal font so long reports remain easy to read.
+   Original styling in the spirit of cozy pixel games; no game assets are copied. */
 @font-face {font-family:"Fusion Pixel";src:url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');font-display:swap;}
 
 :root[data-skin="cozy"][data-presentation] {
@@ -81,36 +81,47 @@
 :root[data-skin="cozy"][data-presentation] :is(input,select,textarea) {border:2px solid var(--wood-dark)!important;border-radius:0!important;background:#fffaf0!important;color:#3b2312!important;}
 :root[data-skin="cozy"][data-presentation] .tag {border-radius:0;font-family:var(--font-display);}
 
-/* ----- RPG message windows for conversations (portraits slot in on the left) ----- */
-:root[data-skin="cozy"][data-presentation] .case-say {gap:14px;align-items:flex-end;}
-:root[data-skin="cozy"][data-presentation] .case-say-text {
-  background:linear-gradient(180deg,var(--window),var(--window-2));color:var(--window-ink);
-  border:3px solid #fff;border-radius:6px;box-shadow:0 0 0 3px var(--window-2),0 6px 0 rgba(0,0,0,.25);padding:20px 18px 14px;margin-top:14px;
+/* ----- dialogue boxes: paper in a wooden frame, pixel portrait framed on the right ----- */
+/* Fixed colours: the dialogue paper stays light in both day and night themes. */
+:root[data-skin="cozy"][data-presentation] .case-say {flex-direction:row-reverse;gap:14px;align-items:flex-start;}
+:root[data-skin="cozy"][data-presentation] :is(.case-say-text,.case-hud) {
+  background:#fff0c8;color:#3b2312;border:4px solid #5e3415;border-radius:0;
+  box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);
 }
+:root[data-skin="cozy"][data-presentation] .case-say-text {padding:22px 18px 16px;margin-top:14px;}
 :root[data-skin="cozy"][data-presentation] .case-say-text::before {display:none;}
 :root[data-skin="cozy"][data-presentation] .case-say-text b {
-  position:absolute;top:-15px;left:12px;padding:2px 12px;background:var(--window-2);border:2px solid #fff;border-radius:4px;
-  color:var(--plate);font:13px/1.5 var(--font-display);
+  position:absolute;top:-16px;left:12px;padding:2px 12px;background:#a6d96a;border:3px solid #2f5418;color:#1f3310;font:13px/1.5 var(--font-display);
 }
-:root[data-skin="cozy"][data-presentation] .case-say-text p {color:var(--window-ink);font-size:15px;}
-:root[data-skin="cozy"][data-presentation] .case-say.client .case-say-text {background:linear-gradient(180deg,#5a2f4f,#3a1c33);box-shadow:0 0 0 3px #3a1c33,0 6px 0 rgba(0,0,0,.25);}
-:root[data-skin="cozy"][data-presentation] .case-say.client .case-say-text b {background:#3a1c33;color:#ffd1e4;}
-:root[data-skin="cozy"][data-presentation] .case-say.right .case-say-text {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #7fd36a,0 6px 0 rgba(0,0,0,.25);}
-:root[data-skin="cozy"][data-presentation] .case-say.wrong .case-say-text {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #ffb347,0 6px 0 rgba(0,0,0,.25);}
-:root[data-skin="cozy"][data-presentation] :is(.case-say,.case-hud) .guide-avatar {display:block!important;flex:none;width:56px;height:64px;transform:none;border-width:4px;}
-:root[data-skin="cozy"][data-presentation] .case-hud {
-  background:linear-gradient(180deg,var(--window),var(--window-2));color:var(--window-ink);border:3px solid #fff;border-radius:6px;
-  box-shadow:0 0 0 3px var(--window-2),0 8px 0 rgba(0,0,0,.3);
-}
-:root[data-skin="cozy"][data-presentation] .case-hud.right {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #7fd36a;}
-:root[data-skin="cozy"][data-presentation] .case-hud.wrong {box-shadow:0 0 0 3px var(--window-2),0 0 0 6px #ffb347;}
-:root[data-skin="cozy"][data-presentation] .case-hud-text b {color:var(--plate);font:13px var(--font-display);}
-:root[data-skin="cozy"][data-presentation] .case-hud-text p {color:var(--window-ink);font-size:15px;}
-:root[data-skin="cozy"][data-presentation] .case-hud-count {background:var(--window-2);color:var(--plate);border:2px solid #fff;font-family:var(--font-display);}
-:root[data-skin="cozy"][data-presentation] body .case-hud .btn.ghost.case-hud-bag {color:var(--plate);}
-/* A blinking "more" marker, like a message window waiting for you. */
-:root[data-skin="cozy"][data-presentation] .case-say-text::after {content:"▼";position:absolute;right:12px;bottom:4px;font-size:10px;color:var(--plate);animation:cozy-blink 1s steps(2) infinite;}
+:root[data-skin="cozy"][data-presentation] .case-say.client .case-say-text b {background:#f6cf8e;border-color:#5e3415;color:#3b2312;}
+:root[data-skin="cozy"][data-presentation] .case-say-text p {color:#3b2312;font-size:15px;}
+:root[data-skin="cozy"][data-presentation] .case-say.right .case-say-text {box-shadow:inset 0 0 0 3px #e8a95b,0 0 0 4px #7fc75a,0 5px 0 rgba(50,25,8,.35);}
+:root[data-skin="cozy"][data-presentation] .case-say.wrong .case-say-text {box-shadow:inset 0 0 0 3px #e8a95b,0 0 0 4px #f29a3a,0 5px 0 rgba(50,25,8,.35);}
+/* A blinking "more" marker. */
+:root[data-skin="cozy"][data-presentation] .case-say-text::after {content:"▼";position:absolute;right:12px;bottom:4px;font-size:10px;color:#a8642e;animation:cozy-blink 1s steps(2) infinite;}
 @keyframes cozy-blink {50% {opacity:0;}}
+/* Portrait frame: a 64px pixel portrait shown at exactly 2x. */
+:root[data-skin="cozy"][data-presentation] .case-portrait {flex:none;width:128px;height:128px;margin-top:14px;background:linear-gradient(180deg,#bfe3f0,#e6f4d6);border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);overflow:hidden;}
+:root[data-skin="cozy"][data-presentation] .case-portrait img {display:block;width:128px;height:128px;image-rendering:pixelated;}
+:root[data-skin="cozy"][data-presentation] :is(.case-say,.case-hud) .guide-avatar {display:block!important;flex:none;width:56px;height:64px;transform:none;border-width:4px;margin-top:14px;}
+/* The bottom dialogue box while hunting in the report. */
+:root[data-skin="cozy"][data-presentation] .case-hud {padding:12px 14px;}
+:root[data-skin="cozy"][data-presentation] .case-hud > .case-portrait,:root[data-skin="cozy"][data-presentation] .case-hud > .guide-avatar {order:3;margin-top:0;width:96px;height:96px;}
+:root[data-skin="cozy"][data-presentation] .case-hud > .case-portrait img {width:128px;height:128px;margin:-16px;}
+:root[data-skin="cozy"][data-presentation] .case-hud-text {order:1;}
+:root[data-skin="cozy"][data-presentation] .case-hud-actions {order:2;}
+:root[data-skin="cozy"][data-presentation] .case-hud.right {box-shadow:inset 0 0 0 3px #e8a95b,0 0 0 4px #7fc75a,0 6px 0 rgba(50,25,8,.35);}
+:root[data-skin="cozy"][data-presentation] .case-hud.wrong {box-shadow:inset 0 0 0 3px #e8a95b,0 0 0 4px #f29a3a,0 6px 0 rgba(50,25,8,.35);}
+:root[data-skin="cozy"][data-presentation] .case-hud-text b {color:#7a3f12;font:13px var(--font-display);}
+:root[data-skin="cozy"][data-presentation] .case-hud-text p {color:#3b2312;font-size:15px;}
+:root[data-skin="cozy"][data-presentation] .case-hud-count {background:#f6cf8e;color:#3b2312;border:3px solid #5e3415;font-family:var(--font-display);}
+:root[data-skin="cozy"][data-presentation] body .case-hud .btn.ghost.case-hud-bag {color:#2f6b2a;}
+:root[data-skin="cozy"][data-presentation] .case-hud .btn {color:#3b2312;}
+@media(max-width:650px) {
+  :root[data-skin="cozy"][data-presentation] .case-portrait {width:64px;height:64px;}
+  :root[data-skin="cozy"][data-presentation] .case-portrait img {width:64px;height:64px;}
+  :root[data-skin="cozy"][data-presentation] .case-hud > .case-portrait {display:none;}
+}
 
 /* ----- case library touches ----- */
 :root[data-skin="cozy"][data-presentation] .case-no {font-family:var(--font-display);font-size:16px;}
@@ -140,4 +151,4 @@
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.btn,body.mode-pro .btn,.tool-btn,.mode-switch button,.mode-switch button[aria-checked="true"]) {color:#24130a;}
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] .mode-switch::before {background:#f0c98a;}
 :root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] :is(.btn.ghost,.btn.link,body.mode-pro .btn.ghost) {color:var(--cyan);}
-:root[data-skin="cozy"][data-presentation] body .case-hud .btn.ghost.case-hud-bag {color:var(--plate);}
+:root[data-skin="cozy"][data-presentation][data-camp-theme="dark"] body .case-hud .btn.ghost.case-hud-bag {color:#2f6b2a;}

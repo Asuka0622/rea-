@@ -24,7 +24,7 @@ function saveStars(id, stars) {
 
 export const starText = (n) => "★".repeat(n) + "☆".repeat(3 - n);
 
-export function createDetective({ h, icon, toast, panel, showSection, rerender, extras }) {
+export function createDetective({ h, icon, toast, panel, showSection, rerender, extras, portraits = () => new Set() }) {
   const reportsEl = document.querySelector("#reports");
   const hud = h("div", { class: "case-hud", role: "region", "aria-label": "调查助手" });
   hud.hidden = true;
@@ -39,8 +39,17 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     return games.get(id);
   };
 
-  const avatar = (kind = "guide") => h("div", { class: `guide-avatar ${String(kind).includes("client") ? "client-avatar" : ""}`, "aria-hidden": "true" }, h("span", {}));
-  const bubble = (who, text, kind) => h("div", { class: `case-say ${kind || ""}` }, avatar(kind), h("div", { class: "case-say-text" }, h("b", {}, who), h("p", {}, text)));
+  /** A pixel portrait (public/art/pixel/portraits/<character>-<expression>.png), or a drawn stand-in. */
+  const avatar = (kind = "guide", expression) => {
+    const client = String(kind).includes("client");
+    const character = client ? active?.item.game.client.portrait : "lumi";
+    const mood = expression || (/right/.test(kind) ? "happy" : /(wrong|hint)/.test(kind) ? (client ? "surprised" : "thinking") : "normal");
+    const have = portraits();
+    const name = character && [`${character}-${mood}`, `${character}-normal`].find((n) => have.has(n));
+    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/pixel/portraits/${name}.png`, alt: "", width: 64, height: 64 }));
+    return h("div", { class: `guide-avatar ${client ? "client-avatar" : ""}`, "aria-hidden": "true" }, h("span", {}));
+  };
+  const bubble = (who, text, kind, expression) => h("div", { class: `case-say ${kind || ""}` }, avatar(kind, expression), h("div", { class: "case-say-text" }, h("b", {}, who), h("p", {}, text)));
 
   /** Rows of the report that belong to a section title, with their first-cell text. */
   function rowsIn(sectionTitle) {
@@ -169,7 +178,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     hud.hidden = false;
     hud.className = `case-hud ${game.mood}`;
     hud.replaceChildren(
-      avatar(),
+      avatar(`guide ${game.mood}`),
       h("div", { class: "case-hud-text", role: "status", "aria-live": "polite" }, h("b", {}, `路米 · 线索 ${game.clue + 1} / ${total}`), h("p", {}, text)),
       h("div", { class: "case-hud-actions" },
         counter,
@@ -195,7 +204,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     return [
       h("p", { class: "case-kicker" }, "案例馆 · 新委托"),
       h("h3", { id: "case-quest-title" }, item.title),
-      ...client.lines.map((line) => bubble(`${client.name}（${client.role}）`, line, "client")),
+      ...client.lines.map((line, i) => bubble(`${client.name}（${client.role}）`, line, "client", i === 0 ? "normal" : "thinking")),
       bubble("路米", "报告已经拿到了，它就是我们的调查现场。我会一条条给你线索，你在报告里点出证据。少犯错、少用提示，评价就越高。"),
       h("div", { class: "case-actions" },
         h("button", { class: "btn primary", type: "button", onclick: () => {
@@ -244,7 +253,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
           h("h3", { id: "case-quest-title" }, item.title),
           h("p", { class: "case-stars", "aria-label": `评价 ${game.stars} 星` }, starText(game.stars)),
           h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 零失误、不看提示可以拿满三星" : " · 完美破案！"),
-          bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client")),
+          bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
         ...extras(item),
       ];
     }
@@ -266,7 +275,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
       h("h3", { id: "case-quest-title" }, item.title),
       game.claim === 0 && !game.line && bubble("路米", verdict.intro),
       game.presented.length > 0 && h("ul", { class: "case-presented" }, game.presented.map((p) => h("li", {}, icon("check", { size: 14 }), h("span", {}, p.claim), h("b", {}, p.evidence)))),
-      bubble(item.game.client.name, claim.text, "client"),
+      bubble(item.game.client.name, claim.text, "client", "thinking"),
       game.line && bubble(item.game.client.name, game.line.replace(/^[^：]+：/, ""), `client ${game.mood}`),
       h("p", { class: "case-hunt-tip" }, "从证据袋里挑一件证据，反驳这句话："),
       bagView(game, { selectable: true, onPick: pick }),

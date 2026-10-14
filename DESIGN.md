@@ -63,7 +63,7 @@ components:
     rounded: "{rounded.square}"
 ---
 
-> 2026-10-14：旧版像素冒险风格（地图、宝箱）已停用。当前方向是日式独立游戏风格：温馨像素界面（public/cozy.css）加二次元对话立绘，提示词见 docs/art/prompts.md。下文保留为历史记录。
+> 2026-10-14：旧版像素冒险风格（地图、宝箱）已停用。当前方向是全像素风、参考温馨农场生活类像素游戏：界面皮肤 public/cozy.css，对话为木框对话框加像素头像，美术需求见 docs/art/prompts.md。下文保留为历史记录。
 
 # Design System: REA 像素冒险工作台
 
