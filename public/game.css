@@ -159,3 +159,8 @@ html[data-game="on"] .panel > .scene-wrap {display:none!important;}
 @media (pointer:coarse) {
   html[data-game="on"][data-skin][data-presentation] .game-shell:has(.game-stage[data-view="town"]) .game-dialogue {left:auto;right:8px;transform:none;width:calc(100vw - 168px);}
 }
+
+/* The town is a world layer moved by the camera (translate set from JS in whole screen pixels). */
+.game-world {position:absolute;left:0;top:0;transition:translate .08s linear;}
+.game-world .game-bg {width:100%;height:100%;}
+@media(prefers-reduced-motion:reduce) {.game-world {transition:none;}}

@@ -119,15 +119,32 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     } catch {}
   }
 
-  /* ----- scale: the 320x180 world is drawn at a whole-number size that fits the screen ----- */
+  /* ----- scale: the stage is 320x180 room pixels at a whole-number size that fits the screen. The town
+     is drawn one whole step closer (townPx) and the camera follows the player, so the town can be larger
+     than the screen: its size comes from town.png (320x180 now, bigger maps scroll). ----- */
+  let roomPx = 1;
+  let townPx = 1;
+  const world = { w: 320, h: 180 };
+  const camera = { x: 0, y: 0 };
   function fit() {
-    const scale = Math.max(1, Math.floor(Math.min(window.innerWidth / 320, window.innerHeight / 180)));
     const fractional = Math.min(window.innerWidth / 320, window.innerHeight / 180);
     // Phones are narrower than 2x: fill the width instead (pixels then scale unevenly, which is fine there).
-    const px = fractional < 2 ? fractional : scale;
-    stage.style.setProperty("--px", String(px));
+    roomPx = fractional < 2 ? fractional : Math.floor(fractional);
+    townPx = fractional < 2 ? roomPx * 1.5 : roomPx + 1;
+    stage.style.setProperty("--px", String(roomPx));
+    worldEl?.style.setProperty("--px", String(townPx));
+    placePlayer();
   }
   window.addEventListener("resize", fit);
+  const viewW = () => (320 * roomPx) / townPx; // how much of the town (in map pixels) fits on screen
+  const viewH = () => (180 * roomPx) / townPx;
+  let worldEl = null;
+  function followCamera() {
+    if (!worldEl) return;
+    camera.x = Math.max(0, Math.min(world.w - viewW(), player.x - viewW() / 2));
+    camera.y = Math.max(0, Math.min(world.h - viewH(), player.y - 16 - viewH() / 2));
+    worldEl.style.translate = `${(-camera.x * townPx).toFixed(1)}px ${(-camera.y * townPx).toFixed(1)}px`;
+  }
 
   /* ----- drawing ----- */
   const has = (name) => art().pixel.has(name);
@@ -139,8 +156,20 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   function drawTown() {
     const picture = has("town");
     stage.dataset.view = "town";
-    stage.replaceChildren(
-      picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
+    const background = picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : null;
+    if (background) {
+      background.addEventListener("load", () => {
+        world.w = background.naturalWidth;
+        world.h = background.naturalHeight;
+        worldEl.style.width = `calc(${world.w}px * var(--px))`;
+        worldEl.style.height = `calc(${world.h}px * var(--px))`;
+        followCamera();
+      });
+    }
+    worldEl = h("div", { class: "game-world", style: `--px:${townPx};width:calc(${world.w}px * var(--px));height:calc(${world.h}px * var(--px))` });
+    stage.replaceChildren(worldEl);
+    worldEl.append(
+      background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
       ...Object.entries(TOWN).map(([id, spot]) => {
         const scene = SCENES[id];
         return h(
@@ -157,6 +186,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   }
 
   function drawRoom(id) {
+    worldEl = null;
     const scene = SCENES[id];
     const picture = has(`room-${id}`);
     stage.dataset.view = id;
@@ -225,7 +255,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
   const blocks = () => [...Object.values(TOWN).map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 2 })), ...OBSTACLES];
   /** The feet (a small box at the bottom of the sprite) would hit a building, the pond or the edge. */
   function blocked(x, y) {
-    if (x < 6 || x > 314 || y < 14 || y > 178) return true;
+    if (x < 6 || x > world.w - 6 || y < 14 || y > world.h - 2) return true;
     return blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h);
   }
 
@@ -235,6 +265,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     playerEl.style.top = `calc(${player.y.toFixed(2)}px * var(--px))`;
     playerEl.classList.toggle("walking", player.walking);
     playerEl.classList.toggle("face-left", player.left);
+    followCamera();
   }
 
   function walkTo(point, then) {
@@ -310,8 +341,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art }) {
     if (!enabled || stage.dataset.view !== "town") return;
     event.preventDefault();
     const box = stage.getBoundingClientRect();
-    const scale = box.width / 320;
-    walkTo({ x: (event.clientX - box.left) / scale, y: (event.clientY - box.top) / scale });
+    walkTo({ x: camera.x + (event.clientX - box.left) / townPx, y: camera.y + (event.clientY - box.top) / townPx });
   });
 
   // Phones: a stick in the lower left.
