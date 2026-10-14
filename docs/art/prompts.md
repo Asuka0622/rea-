@@ -21,7 +21,7 @@
 
 | # | 界面里的位置 | 文件 | 原始尺寸 | 数量 | 状态 |
 |---|---|---|---|---|---|
-| A | 对话框右侧的人物头像 | `public/art/pixel/portraits/<角色>-<表情>.png` | 128 × 128 | 7 人 × 4 表情 + 1 | 已接入（路米、小林暂用自动转换版） |
+| A | 对话框右侧的人物头像 | `public/art/pixel/portraits/<角色>-<表情>.png` | 80 × 80 | 7 人 × 4 表情 + 1 | 已接入（路米、小林暂用自动转换版） |
 | B | 五个地点页面顶部的场景横幅 | `public/art/pixel/scene-<地点>.png` | 384 × 64 | 5 | 已接入（现用 CSS 画的场景） |
 | C | 每个案例调查面板顶部的场景横幅 | `public/art/pixel/case-scene-<案例>.png` | 384 × 64 | 7 | 已接入（现用 CSS 画的场景） |
 | D | 案例馆里每张案例卡片的插图 | `public/art/pixel/case-<案例>.png` | 160 × 90 | 7 | 待接入 |
@@ -37,17 +37,17 @@
 ### 统一风格词
 
 中文：
-> 温馨农场生活类像素游戏的角色对话头像，像素画，原始尺寸 128×128 像素，头部到肩膀，正面略侧身，清晰的方形像素点，无抗锯齿，有限调色板（约 32 色），深棕色像素描边，脸部和眼睛清楚，暖色柔和光照，表情清楚易读，透明背景
+> 温馨农场生活类像素游戏的角色对话头像，像素画，原始尺寸 80×80 像素，头部到肩膀，正面略侧身，清晰的方形像素点，无抗锯齿，有限调色板（约 20 色），深棕色像素描边，脸部和眼睛清楚，暖色柔和光照，表情清楚易读，透明背景
 
 English：
-> character dialogue portrait for a cozy farm-life pixel game, pixel art, native 128x128 pixels, head and shoulders, front view slightly turned, crisp square pixels, no anti-aliasing, limited palette of about 32 colors, dark brown pixel outline, clear face and eyes, warm soft lighting, readable expression, transparent background
+> character dialogue portrait for a cozy farm-life pixel game, pixel art, native 80x80 pixels, head and shoulders, front view slightly turned, crisp square pixels, no anti-aliasing, limited palette of about 20 colors, dark brown pixel outline, clear face and eyes, warm soft lighting, readable expression, transparent background
 
 负面词：
 > 二次元高清插画、写实、3D、模糊、抗锯齿、渐变噪点、文字、水印、背景杂物 ／ high-res anime illustration, realistic, 3d, blurry, anti-aliasing, gradient noise, text, watermark, cluttered background
 
 ### 规格
 
-- **原始尺寸 128 × 128**（画成 64 × 64 也可以，界面会精确放大 2 倍）。透明背景。
+- **原始尺寸 80 × 80**，透明背景。界面会精确放大 2 倍（160 × 160）显示在木框里。脸要占画面的大部分：从头顶到肩膀，不要画到胸口以下。
 - 同一角色的所有表情：同一套衣服、同一角度、头在画面里的位置和大小一致，只换表情和手势。
 - 文件名：`<角色>-<表情>.png`
 

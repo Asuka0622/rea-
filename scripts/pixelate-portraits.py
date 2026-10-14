@@ -1,6 +1,6 @@
 """Turn high-resolution character portraits into small pixel-art portraits for the dialogue windows.
 
-Usage: python -I scripts/pixelate-portraits.py <source dir> <output dir> [--size 128] [--colors 32]
+Usage: python -I scripts/pixelate-portraits.py <source dir> <output dir> [--size 80] [--colors 20] [--zoom 0.82]
 
 For each PNG in the source dir: crop the head-and-shoulders square from the top, shrink it with an
 area filter, reduce the palette (no dithering), make the alpha hard-edged and add a one-pixel dark
@@ -15,13 +15,16 @@ from PIL import Image, ImageEnhance, ImageFilter
 OUTLINE = (42, 26, 16, 255)
 
 
-def pixelate(source: Path, size: int, colors: int) -> Image.Image:
+def pixelate(source: Path, size: int, colors: int, zoom: float = 1.0) -> Image.Image:
     image = Image.open(source).convert("RGBA")
     width, height = image.size
-    side = min(width, height)
-    # Head and shoulders: a square from the top, centred horizontally.
+    # Head and shoulders: a square from the top, centred horizontally. zoom < 1 crops closer to the face,
+    # so the face gets more of the few pixels available.
+    side = int(min(width, height) * zoom)
     left = (width - side) // 2
     image = image.crop((left, 0, left + side, side))
+    # Crisp edges survive the shrink better.
+    image = image.filter(ImageFilter.UnsharpMask(radius=4, percent=120, threshold=2))
     small = image.resize((size, size), Image.Resampling.BOX)
     # Small images lose contrast; give faces and eyes a little back before reducing colours.
     alpha_raw = small.getchannel("A")
@@ -48,13 +51,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--size", type=int, default=128)
-    parser.add_argument("--colors", type=int, default=32)
+    parser.add_argument("--size", type=int, default=80)
+    parser.add_argument("--colors", type=int, default=20)
+    parser.add_argument("--zoom", type=float, default=0.82, help="crop closer to the face (e.g. 0.8)")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     for source in sorted(args.source.glob("*.png")):
         target = args.output / source.name
-        pixelate(source, args.size, args.colors).save(target, optimize=True)
+        pixelate(source, args.size, args.colors, args.zoom).save(target, optimize=True)
         print(f"{source.name} -> {target} ({target.stat().st_size} bytes)")
 
 
