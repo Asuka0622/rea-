@@ -31,7 +31,10 @@ def pixelate(source: Path, size: int, colors: int, zoom: float = 1.0, lines: int
         # Averaging washes out thin dark lines (eye outlines, lashes, hair strands). Thicken the dark
         # parts first and blend that in, so the lines survive the shrink.
         dark = rgb.filter(ImageFilter.MinFilter(lines)).resize((size, size), Image.Resampling.BOX)
-        small = Image.blend(small, dark, 0.5)
+        # Only where the result is genuinely dark (lines), not mid tones such as blush on the cheeks,
+        # which the per-channel minimum would turn into blotchy red patches.
+        only_lines = dark.convert("L").point(lambda v: 255 if v < 90 else 0 if v > 140 else int((140 - v) * 255 / 50))
+        small = Image.composite(Image.blend(small, dark, 0.5), small, only_lines)
     # Small images lose contrast; give faces and eyes a little back before reducing colours.
     small = ImageEnhance.Color(ImageEnhance.Contrast(small).enhance(1.15)).enhance(1.1)
     alpha = alpha_full.resize((size, size), Image.Resampling.BOX).point(lambda a: 255 if a >= 128 else 0)
