@@ -577,3 +577,23 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .code-results {margin:8px 0 0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
 .code-results li.ok {color:#2f7a3a;}
 .code-results li.bad {color:#b4432a;}
+
+/* ----- 卡片编程 (game-cards.js) ----- */
+.cards {display:flex;flex-direction:column;gap:8px;}
+.cards-palette {display:flex;flex-wrap:wrap;gap:6px;}
+.cards-card {padding:5px 10px;font:13px var(--font-display,"Fusion Pixel");color:#1b120c;cursor:pointer;background:#cfe3f7;border:3px solid #1b120c;box-shadow:inset -2px -2px 0 #7fa7cf;}
+.cards-card.while,.cards-card.until {background:#c9ecc0;box-shadow:inset -2px -2px 0 #6faa62;}
+.cards-card.end {background:#e6dccb;box-shadow:inset -2px -2px 0 #a8987c;}
+.cards-card:hover,.cards-card:focus-visible {transform:translateY(-2px);outline:none;}
+.cards-program {min-height:120px;margin:0;padding:8px 8px 8px 30px;background:#1d2a20;border:3px solid #0d0906;color:#e8f0e0;font:13px var(--font-display,"Fusion Pixel");}
+.cards-row {display:flex;align-items:center;justify-content:space-between;margin:3px 0 3px calc(var(--depth) * 22px);padding:4px 8px;background:#2c3e30;border:2px solid #0d0906;}
+.cards-row.while,.cards-row.until {background:#355a33;}
+.cards-row.end {background:#3a3428;}
+.cards-row.active {background:#e8b14a;color:#1b120c;}
+.cards-row .link-btn {color:#c9e0c4;padding:0 4px;}
+.cards-row.active .link-btn {color:#1b120c;}
+.cards-empty {list-style:none;color:#8fa58c;}
+.cards-status {min-height:1.4em;margin:0;font:13px ui-monospace,Consolas,monospace;}
+.cards-results {margin:0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
+.cards-results li.ok {color:#2f7a3a;}
+.cards-results li.bad {color:#b4432a;}
