@@ -597,3 +597,10 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .cards-results {margin:0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
 .cards-results li.ok {color:#2f7a3a;}
 .cards-results li.bad {color:#b4432a;}
+
+/* ----- choosing a language for real code ----- */
+.code-tabs {display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+.code-tab {padding:4px 12px;font:13px var(--font-display,"Fusion Pixel");cursor:pointer;color:#c9a36b;background:#3a2c22;border:3px solid #0d0906;}
+.code-tab[aria-selected="true"] {color:#1b120c;background:#e8cf98;}
+.code-tab.cards-tab {margin-left:auto;}
+.code-status {min-height:1.4em;margin:6px 0 0;font-size:12px;color:#6b4626;}

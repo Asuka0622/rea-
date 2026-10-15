@@ -9,6 +9,7 @@
 // Running out of lives starts the game over. Pictures come later (docs/art/prompts.md); CSS for now.
 
 import { cardProgram } from "./game-cards.js";
+import { LANGUAGES, createRunner, sameOutput } from "./game-code-runner.js";
 
 const shuffle = (items) => {
   const out = [...items];
@@ -722,122 +723,139 @@ function escapement({ h, difficulty, onWin, sound }) {
   return { title: "水运仪象台 · 调天衡", el: ui.el };
 }
 
-/* ----- 拆数 (硬核): the rods' idea once more, as a program. Built from instruction cards by default
-   (game-cards.js); real JavaScript is an optional challenge, run in a worker with a time limit.
-   Most "code" in the game is cards, circuits, punch cards or queries; a programming language only rarely. ----- */
+/* ----- 拆数 (硬核): the rods' idea once more, as a real program in the language the player picks
+   (Python, C, C++ or JavaScript; game-code-runner.js), judged like an online judge: read n, print its
+   digits. Instruction cards (game-cards.js) are there too, for anyone who prefers blocks. ----- */
 function codeDigits({ h, onWin, sound }) {
   const ui = frame(h, {
     sound,
     difficulty: "hard",
-    note: "柳娘子的算筹是一位一位摆的。用指令卡拼一个程序，把一个数 n 拆成每一位，从高位到低位放进「结果」。比如 1088 要得到 [1, 0, 8, 8]。注意：0 也是一位。",
+    note: "柳娘子的算筹是一位一位摆的。用你会的语言写一个程序：从输入读一个整数 n（0 到 9999），从高位到低位输出它的每一位，用空格隔开。例如输入 1088，输出 1 0 8 8。注意：0 也是一位。",
   });
-  const TESTS = [[1088, [1, 0, 8, 8]], [7, [7]], [205, [2, 0, 5]], [0, [0]], [9999, [9, 9, 9, 9]]];
-  const CARDS = {
-    front: { label: "取出 n 的个位，放到结果最前面", kind: "do", run: (st) => st.result.unshift(st.n % 10) },
-    back: { label: "取出 n 的个位，放到结果最后面", kind: "do", run: (st) => st.result.push(st.n % 10) },
-    drop: { label: "去掉 n 的个位", kind: "do", run: (st) => (st.n = Math.floor(st.n / 10)) },
-    minus: { label: "n 减 1", kind: "do", run: (st) => (st.n -= 1) },
-    whileNot0: { label: "当 n 不是 0 时，重复：", kind: "while", test: (st) => st.n !== 0 },
-    untilZero: { label: "先做一遍，直到 n 变成 0 才停：", kind: "until", test: (st) => st.n === 0 },
-    end: { label: "结束重复", kind: "end" },
+  const TESTS = [["1088", "1 0 8 8"], ["7", "7"], ["205", "2 0 5"], ["0", "0"], ["9999", "9 9 9 9"]];
+  const TASK = "把 n 拆成每一位，从高位到低位输出，用空格隔开";
+  const STARTERS = {
+    python: `n = int(input())\n# ${TASK}\n\n`,
+    c: `#include <stdio.h>\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    // ${TASK}\n\n    return 0;\n}\n`,
+    cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    // ${TASK}\n\n    return 0;\n}\n`,
+    javascript: `const n = Number(input());\n// ${TASK}（用 console.log 输出）\n\n`,
   };
+  const code = { ...STARTERS };
+  const runners = {};
+  let language = "python";
   let mistakes = 0;
   const win = () => ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "给铁叔看"));
+
+  const tabs = h("div", { class: "code-tabs", role: "tablist" });
+  const body = h("div", { class: "code-body" });
+  const status = h("p", { class: "code-status", "aria-live": "polite" });
+  ui.area.replaceChildren(tabs, body);
+  function paintTabs() {
+    tabs.replaceChildren(
+      ...Object.entries(LANGUAGES).map(([id, lang]) => h("button", { class: "code-tab", type: "button", role: "tab", "aria-selected": String(language === id), title: lang.note, onclick: () => choose(id) }, lang.label)),
+      h("button", { class: "code-tab cards-tab", type: "button", role: "tab", "aria-selected": String(language === "cards"), onclick: () => choose("cards") }, "指令卡"),
+    );
+  }
+  function runner(id) {
+    const key = id === "cpp" ? "c" : id;
+    return (runners[key] ||= createRunner(id, {
+      onStatus: (state) => {
+        if (language !== id && !(key === "c" && language === "cpp")) return;
+        status.textContent = state === "loading" ? (id === "python" ? "正在准备 Python 运行环境（第一次要下载约 10 MB，请稍等）……" : `正在准备 ${LANGUAGES[id].label} 运行环境……`) : state === "offline" ? `没连上网，暂时用不了 ${LANGUAGES[id].label}。可以换 JavaScript，或者用「指令卡」拼。` : `${LANGUAGES[id].label} 准备好了。`;
+      },
+    }));
+  }
+  function choose(id) {
+    const editor = body.querySelector(".code-editor");
+    if (editor && LANGUAGES[language]) code[language] = editor.value;
+    language = id;
+    paintTabs();
+    ui.tell("");
+    if (id === "cards") return cardsMode();
+    ui.setProgress(`真正的代码 · ${LANGUAGES[id].label}`);
+    const editorEl = h("textarea", { class: "code-editor", spellcheck: "false", rows: "12", "aria-label": `${LANGUAGES[id].label} 代码` });
+    editorEl.value = code[id];
+    editorEl.addEventListener("keydown", (event) => {
+      event.stopPropagation();
+      if (event.key === "Tab") {
+        event.preventDefault();
+        const at = editorEl.selectionStart;
+        editorEl.value = `${editorEl.value.slice(0, at)}    ${editorEl.value.slice(editorEl.selectionEnd)}`;
+        editorEl.selectionStart = editorEl.selectionEnd = at + 4;
+      }
+    });
+    const results = h("ul", { class: "code-results" });
+    body.replaceChildren(editorEl, status, results);
+    runner(id);
+    ui.buttons.replaceChildren(
+      h("button", { class: "btn primary", type: "button", onclick: () => run(editorEl, results) }, "运行"),
+      h("button", { class: "link-btn", type: "button", onclick: () => { editorEl.value = code[id] = STARTERS[id]; results.replaceChildren(); } }, "重来"),
+    );
+  }
+  async function run(editorEl, results) {
+    const id = language;
+    code[id] = editorEl.value;
+    const r = runner(id);
+    try {
+      await r.ready;
+    } catch {
+      return ui.tell(`${LANGUAGES[id].label} 的运行环境没准备好（可能没联网）。换一种语言或用指令卡试试。`, "bad");
+    }
+    ui.tell("运行中……");
+    let passed = 0;
+    const rows = [];
+    for (const [input, want] of TESTS) {
+      const got = await r.run(editorEl.value, input);
+      if (language !== id) return;
+      const ok = got.ok && sameOutput(got.out, want);
+      if (ok) passed += 1;
+      rows.push(h("li", { class: ok ? "ok" : "bad" }, `输入 ${input} → ${got.timeout ? "两秒还没跑完（停不下来的循环？）" : got.ok ? `输出「${got.out.trim()}」` : `出错：${got.error}`}　${ok ? "✓" : `应该输出「${want}」`}`));
+      if (got.timeout || (!got.ok && passed === 0 && rows.length === 1)) break;
+    }
+    if (language !== id) return; // the player switched language while it ran
+    results.replaceChildren(...rows);
+    if (passed === TESTS.length) {
+      ui.tell("全部通过！", "good");
+      win();
+    } else {
+      mistakes += 1;
+      ui.tell(`通过 ${passed} / ${TESTS.length} 个。`, "bad");
+    }
+  }
+
   const editor = cardProgram({
     h,
-    cards: CARDS,
-    tests: TESTS.map(([n, want]) => ({ input: n, want, label: `拆 ${n}` })),
+    cards: {
+      front: { label: "取出 n 的个位，放到结果最前面", kind: "do", run: (st) => st.result.unshift(st.n % 10) },
+      back: { label: "取出 n 的个位，放到结果最后面", kind: "do", run: (st) => st.result.push(st.n % 10) },
+      drop: { label: "去掉 n 的个位", kind: "do", run: (st) => (st.n = Math.floor(st.n / 10)) },
+      minus: { label: "n 减 1", kind: "do", run: (st) => (st.n -= 1) },
+      whileNot0: { label: "当 n 不是 0 时，重复：", kind: "while", test: (st) => st.n !== 0 },
+      untilZero: { label: "先做一遍，直到 n 变成 0 才停：", kind: "until", test: (st) => st.n === 0 },
+      end: { label: "结束重复", kind: "end" },
+    },
+    tests: TESTS.map(([input, want]) => ({ input: Number(input), want: want.split(" ").map(Number), label: `拆 ${input}` })),
     start: (n) => ({ n, result: [] }),
     result: (st) => st.result,
     show: (st) => `n = ${st.n}，结果 = [${st.result.join(", ")}]`,
     sound,
     tell: (text, mood) => {
       if (mood === "bad") mistakes += 1;
-      ui.tell(mood === "bad" && /4 \/ 5/.test(text) ? `${text} 拆 0 没通过：「当 n 不是 0 时」这张卡，遇到 0 一次都不会做。` : text, mood);
+      ui.tell(mood === "bad" && text.startsWith("通过 4 / 5") ? `${text} 拆 0 没通过：「当 n 不是 0 时」这张卡，遇到 0 一次都不会做。` : text, mood);
     },
     onPass: win,
   });
   function cardsMode() {
     ui.setProgress("指令卡编程");
-    ui.area.replaceChildren(editor.el);
+    body.replaceChildren(editor.el);
     ui.buttons.replaceChildren(
       h("button", { class: "btn primary", type: "button", onclick: () => editor.run() }, "运行"),
       h("button", { class: "link-btn", type: "button", onclick: () => editor.reset() }, "清空"),
-      h("button", { class: "link-btn", type: "button", onclick: jsMode }, "改用真正的 JavaScript（选做）"),
     );
   }
 
-  function jsMode() {
-    const starter = `function digits(n) {
-  const result = [];
-  // 在这里写：一位一位地取出来（n % 10 是个位，Math.floor(n / 10) 去掉个位）
-
-  return result;
-}`;
-    const code = h("textarea", { class: "code-editor", spellcheck: "false", rows: "10", "aria-label": "代码" });
-    code.value = starter;
-    code.addEventListener("keydown", (event) => {
-      event.stopPropagation();
-      if (event.key === "Tab") {
-        event.preventDefault();
-        const at = code.selectionStart;
-        code.value = `${code.value.slice(0, at)}  ${code.value.slice(code.selectionEnd)}`;
-        code.selectionStart = code.selectionEnd = at + 2;
-      }
-    });
-    const results = h("ul", { class: "code-results" });
-    ui.setProgress("真正的代码 · JavaScript");
-    ui.area.replaceChildren(code, results);
-    function run() {
-      // The player's own code runs in a worker: it cannot touch the page, and a loop that never ends is stopped.
-      const source = `${code.value}
-self.onmessage = () => { const out = ${JSON.stringify(TESTS)}.map(([n]) => { try { return { ok: true, value: digits(n) }; } catch (e) { return { ok: false, value: String(e && e.message || e) }; } }); self.postMessage(out); };`;
-      let worker;
-      try {
-        worker = new Worker(URL.createObjectURL(new Blob([source], { type: "text/javascript" })));
-      } catch (error) {
-        return ui.tell(`代码有错：${error.message}`, "bad");
-      }
-      const stop = setTimeout(() => {
-        worker.terminate();
-        mistakes += 1;
-        ui.tell("代码跑了一秒还没停，是不是写了停不下来的循环？", "bad");
-      }, 1000);
-      worker.onerror = (event) => {
-        clearTimeout(stop);
-        worker.terminate();
-        mistakes += 1;
-        ui.tell(`代码有错：${event.message}`, "bad");
-        event.preventDefault();
-      };
-      worker.onmessage = ({ data }) => {
-        clearTimeout(stop);
-        worker.terminate();
-        let passed = 0;
-        results.replaceChildren(...TESTS.map(([n, want], i) => {
-          const got = data[i];
-          const ok = got.ok && JSON.stringify(got.value) === JSON.stringify(want);
-          if (ok) passed += 1;
-          return h("li", { class: ok ? "ok" : "bad" }, `digits(${n}) → ${got.ok ? JSON.stringify(got.value) : `出错：${got.value}`}　${ok ? "✓" : `应该是 ${JSON.stringify(want)}`}`);
-        }));
-        if (passed === TESTS.length) {
-          ui.tell("全部通过！", "good");
-          win();
-        } else {
-          mistakes += 1;
-          ui.tell(`通过 ${passed} / ${TESTS.length} 个。${data[3]?.value?.length === 0 ? "注意 0 也是一位。" : ""}`, "bad");
-        }
-      };
-      worker.postMessage(null);
-    }
-    ui.buttons.replaceChildren(
-      h("button", { class: "btn primary", type: "button", onclick: run }, "运行"),
-      h("button", { class: "link-btn", type: "button", onclick: () => { code.value = starter; results.replaceChildren(); } }, "重来"),
-      h("button", { class: "link-btn", type: "button", onclick: cardsMode }, "回到指令卡"),
-    );
-  }
-
-  cardsMode();
+  paintTabs();
+  choose("python");
   return { title: "铁叔的工作台 · 拆数程序", el: ui.el };
 }
 
