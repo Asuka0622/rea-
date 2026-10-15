@@ -5,7 +5,7 @@
     "time": "noon",
     "label": "autumn-clear-noon"
   },
-  "stateNote": "Complete composed art for all five region maps and all ten required interiors covers autumn-clear-noon, spring-clear-morning, and spring-clear-noon. The other 45 combinations are not covered; no reusable weather/time overlays exist yet.",
+  "stateNote": "Complete composed art for all five region maps and all ten required interiors covers autumn-clear-noon, spring-clear-morning, spring-clear-noon, and spring-clear-sunset. The other 44 combinations are not covered; no reusable weather/time overlays exist yet.",
   "regionMapSize": [
     960,
     540
@@ -30,6 +30,11 @@
           "file": "town-center-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/town-center-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "town-center-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/town-center-spring-clear-sunset-generated.png"
         }
       ]
     },
@@ -47,6 +52,11 @@
           "file": "town-homes-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/town-homes-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "town-homes-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/town-homes-spring-clear-sunset-generated.png"
         }
       ]
     },
@@ -64,6 +74,11 @@
           "file": "town-craft-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/town-craft-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "town-craft-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/town-craft-spring-clear-sunset-generated.png"
         }
       ]
     },
@@ -81,6 +96,11 @@
           "file": "town-north-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/town-north-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "town-north-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/town-north-spring-clear-sunset-generated.png"
         }
       ]
     },
@@ -98,6 +118,11 @@
           "file": "town-south-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/town-south-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "town-south-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/town-south-spring-clear-sunset-generated.png"
         }
       ]
     }
@@ -117,6 +142,11 @@
           "file": "../room-home-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-home-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-home-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-home-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "Existing base-state art retained."
@@ -135,6 +165,11 @@
           "file": "../room-learn-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-learn-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-learn-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-learn-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "Existing base-state art retained."
@@ -153,6 +188,11 @@
           "file": "../room-engines-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-engines-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-engines-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-engines-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "Existing base-state art retained."
@@ -171,6 +211,11 @@
           "file": "../room-clients-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-clients-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-clients-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-clients-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "Existing base-state art retained."
@@ -189,6 +234,11 @@
           "file": "../room-doctor-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-doctor-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-doctor-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-doctor-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "Existing base-state art retained."
@@ -208,6 +258,11 @@
           "file": "../room-art-studio-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-art-studio-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-art-studio-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-art-studio-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "New generated art; original generation retained in public/art/source/."
@@ -227,6 +282,11 @@
           "file": "../room-arcade-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-arcade-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-arcade-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-arcade-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "New generated art; original generation retained in public/art/source/."
@@ -246,6 +306,11 @@
           "file": "../room-woodshop-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-woodshop-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-woodshop-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-woodshop-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "New generated art; original generation retained in public/art/source/."
@@ -265,6 +330,11 @@
           "file": "../room-zhoujie-office-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-zhoujie-office-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-zhoujie-office-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-zhoujie-office-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "New generated art; original generation retained in public/art/source/."
@@ -284,6 +354,11 @@
           "file": "../room-archive-spring-clear-noon.png",
           "state": "spring-clear-noon",
           "sourceFile": "public/art/source/room-archive-spring-clear-noon-generated.png"
+        },
+        {
+          "file": "../room-archive-spring-clear-sunset.png",
+          "state": "spring-clear-sunset",
+          "sourceFile": "public/art/source/room-archive-spring-clear-sunset-generated.png"
         }
       ],
       "sourceStatus": "New generated art; original generation retained in public/art/source/."
@@ -312,10 +387,11 @@
     "representedCombinations": [
       "autumn-clear-noon",
       "spring-clear-morning",
-      "spring-clear-noon"
+      "spring-clear-noon",
+      "spring-clear-sunset"
     ],
-    "missingCombinations": 45,
-    "stateNote": "Complete composed art for all five region maps and all ten required interiors covers autumn-clear-noon, spring-clear-morning, and spring-clear-noon. The other 45 combinations are not covered; no reusable weather/time overlays exist yet."
+    "missingCombinations": 44,
+    "stateNote": "Complete composed art for all five region maps and all ten required interiors covers autumn-clear-noon, spring-clear-morning, spring-clear-noon, and spring-clear-sunset. The other 44 combinations are not covered; no reusable weather/time overlays exist yet."
   },
   "stateCoverage": {
     "autumn-clear-noon": {
@@ -333,8 +409,13 @@
       "interiors": 10,
       "status": "All five region maps and all ten required interiors are available as generated art for this state."
     },
+    "spring-clear-sunset": {
+      "regionMaps": 5,
+      "interiors": 10,
+      "status": "All five region maps and all ten required interiors are available as generated art for this state."
+    },
     "otherCombinations": {
-      "count": 45,
+      "count": 44,
       "status": "Not covered by region or room variants; no reusable weather/time overlays are available."
     },
     "weatherTimeOverlays": []
