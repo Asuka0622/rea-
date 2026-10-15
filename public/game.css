@@ -439,3 +439,19 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 
 /* Long lines wrap before the "点击继续" hint in the corner. */
 .game-dialogue .case-say-text p {padding-right:72px;}
+
+/* Achievements page and trophy notices. */
+.st-tab.trophy {margin-left:auto;}
+.st-trophies {display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+.st-trophy {display:grid;grid-template-columns:30px 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:8px;text-align:left;font-family:inherit;cursor:pointer;
+  color:#7a6c5e;background:#2a211b;border:3px solid #0d0906;box-shadow:inset 2px 2px 0 #3a2f27;}
+.st-trophy .st-cup {grid-row:1 / 3;width:30px;height:28px;}
+.st-trophy b {font-size:13px;font-weight:400;}
+.st-trophy small {font-size:11px;line-height:1.4;}
+.st-trophy.got {color:#ffe8b0;background:#3a2c1a;box-shadow:inset 2px 2px 0 #6b4a2b;}
+.st-trophy.got small {color:#c9a36b;}
+.st-trophy.selected,.st-trophy:focus-visible {outline:3px solid #ffcf3d;outline-offset:-3px;}
+.st-card-gem .st-cup {width:72px;height:66px;}
+.game-toast.trophy {background:#3a2614;border-color:#0d0906;box-shadow:0 4px 0 #0d0906,inset 0 0 0 3px #e0a03a;}
+.game-toast.trophy b {color:#ffcf3d;}
+.game-toast.trophy small {color:#f4e4c4;}

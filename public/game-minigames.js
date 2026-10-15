@@ -1,6 +1,7 @@
 // 小游戏: the hands-on part of each lesson (docs/story.md 第 4 节「动手」). The way a game is played is
 // the idea it teaches: lighting lamps is binary, sorting parts is input / processing / storage / output.
-// Each game builds its own panel: createMinigame(id, { h, difficulty, onWin }) returns { title, el }.
+// Each game builds its own panel: createMinigame(id, { h, difficulty, onWin, sound }) returns { title, el };
+// onWin({ mistakes }) is called when it is won.
 // Difficulty (轻松 / 标准 / 硬核, game-quests.js): easy shows every number and lets you see the answer,
 // normal shows numbers but totals only on 检查, hard hides the numbers and adds a challenge round.
 // Pictures come later (docs/art/prompts.md 第 S 节); for now everything is drawn with CSS.
@@ -47,6 +48,7 @@ function binary({ h, difficulty, onWin, sound }) {
   });
   let index = 0;
   let lamps = [];
+  let mistakes = 0;
   const total = () => lamps.reduce((sum, on, i) => sum + (on ? VALUES[i] : 0), 0);
   const bitsNow = () => lamps.map((on) => (on ? "1" : "0")).join("");
 
@@ -106,11 +108,14 @@ function binary({ h, difficulty, onWin, sound }) {
     ui.tell(`答案：${round.bits ? `${round.bits} = ${parseInt(round.bits, 2)}` : `${round.target} = ${hint(round).split("，")[0].split(" = ")[1]}`}`);
   }
   function answer(right, why) {
-    if (!right) return ui.tell(why, "bad");
+    if (!right) {
+      mistakes += 1;
+      return ui.tell(why, "bad");
+    }
     index += 1;
     if (index >= rounds.length) {
       ui.tell("咔哒一声，门开了！", "good");
-      ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: onWin }, "进入钟楼"));
+      ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "进入钟楼"));
       return;
     }
     ui.tell("对了！", "good");
@@ -211,7 +216,7 @@ function parts({ h, difficulty, onWin, sound }) {
       return;
     }
     ui.tell(mistakes ? `全部归好了（错了 ${mistakes} 次，没关系）。` : "一次都没错，厉害！", "good");
-    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: onWin }, "继续"));
+    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "继续"));
   }
   draw();
   return { title: "钟楼内部 · 零件归类", el: ui.el };
@@ -291,7 +296,7 @@ function drawers({ h, difficulty, onWin, sound }) {
       return;
     }
     ui.tell(`都放好了${mistakes ? `（错了 ${mistakes} 次）` : ""}！钟楼忘了时间，是因为「现在几点」放在断电就忘的那一格。`, "good");
-    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: onWin }, "把时间重新拨好"));
+    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "把时间重新拨好"));
   }
   draw();
   return { title: "记事板下的两个抽屉", el: ui.el };

@@ -59,6 +59,9 @@ function gem(state, color) {
   };
   return pixelArt(GEM_ROWS, palettes[state], "st-gem-art");
 }
+/** A 13x12 pixel trophy cup. */
+const CUP_ROWS = ["..ooooooooo..", "ooolllllbbooo", "o.olllllbbo.o", "o.olllllbbo.o", ".ooolllbbooo.", "...olllbbo...", "....olbbo....", ".....obo.....", ".....obo.....", "....ooooo....", "...olllbbo...", "...ooooooo..."];
+const cup = (got) => pixelArt(CUP_ROWS, got ? { o: "#1b120c", l: "#fff2a8", b: "#e0a03a" } : { o: "#1b120c", l: "#5d5750", b: "#4a4540" }, "st-cup");
 const LOCK_ROWS = ["..ooo..", ".o...o.", ".o...o.", "ooooooo", "obbybbo", "obbybbo", "obbbbbo", "ooooooo"];
 const lock = () => pixelArt(LOCK_ROWS, { o: "#1b120c", b: "#c9a36b", y: "#1b120c" }, "st-lock");
 
@@ -71,7 +74,7 @@ let lastBranch = null; // the page shown last time, while the game is open
  * @param whereOf    (stepId) => "主线 · 第一章 …：goal" or ""
  * @param onClose    () => void
  */
-export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
+export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null }) {
   const states = new Map();
   for (const branch of SKILL_TREE) {
     const lit = (id) => states.get(id) === "lit";
@@ -115,6 +118,42 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
 
   const board = h("div", { class: "st-board-wrap" });
   const tabs = h("div", { class: "st-tabs", role: "tablist" });
+  /** The achievements page: every trophy, unlocked ones in gold; secret ones hidden until unlocked. */
+  function trophies() {
+    lastBranch = "achievements";
+    tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === "achievements")));
+    const got = achievements.list.filter((a) => achievements.got(a.id));
+    const date = (time) => new Date(time).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" });
+    const showTrophy = (a) => {
+      const when = achievements.got(a.id);
+      const hidden = a.secret && !when;
+      card.style.setProperty("--c", "#e0a03a");
+      card.replaceChildren(
+        ...[
+          h("div", { class: "st-card-gem" }, cup(Boolean(when))),
+          h("p", { class: "st-card-branch" }, "【成就】"),
+          h("h3", {}, hidden ? "？？？" : a.title),
+          h("p", { class: `st-card-status ${when ? "lit" : "locked"}` }, when ? `▶ ${date(when)} 解锁` : "▶ 还没解锁"),
+          h("p", { class: "st-card-note" }, hidden ? "隐藏成就：做了某件特别的事就会解锁。" : a.note),
+        ],
+      );
+      board.querySelectorAll(".st-trophy.selected").forEach((el) => el.classList.remove("selected"));
+      board.querySelector(`.st-trophy[data-id="${a.id}"]`)?.classList.add("selected");
+    };
+    board.style.setProperty("--c", "#e0a03a");
+    board.replaceChildren(
+      h("p", { class: "st-motto" }, h("b", {}, `成就 ${got.length}/${achievements.list.length}`), "技能用的是正式的名字；做到了特别的事，会在这里拿到一个好玩的称号。"),
+      h("div", { class: "st-trophies" },
+        ...achievements.list.map((a) => {
+          const when = achievements.got(a.id);
+          const hidden = a.secret && !when;
+          return h("button", { class: `st-trophy ${when ? "got" : ""}`, type: "button", "data-id": a.id, onclick: () => showTrophy(a), onfocus: () => showTrophy(a) },
+            cup(Boolean(when)), h("b", {}, hidden ? "？？？" : a.title), h("small", {}, hidden ? "隐藏成就" : a.note));
+        })),
+    );
+    showTrophy(got[got.length - 1] || achievements.list[0]);
+  }
+
   function page(branch) {
     lastBranch = branch.id;
     tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === branch.id)));
@@ -169,6 +208,14 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
     );
   }
 
+  if (achievements) {
+    const count = achievements.list.filter((a) => achievements.got(a.id)).length;
+    tabs.append(
+      h("button", { class: "st-tab trophy", type: "button", role: "tab", "data-branch": "achievements", style: "--c:#e0a03a", onclick: () => trophies() },
+        h("span", { class: "st-tab-mark", "aria-hidden": "true" }, "★"), h("span", {}, "成就"), h("small", {}, `${count}/${achievements.list.length}`)),
+    );
+  }
+
   const blocks = Array.from({ length: r.per }, (_, i) => h("i", { class: i < r.into ? "full" : "" }));
   const root = h("div", { class: "st" },
     h("header", { class: "st-head" },
@@ -185,6 +232,10 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
   );
 
   // Open on the page shown last time, else the branch with something to learn next.
+  if (lastBranch === "achievements" && achievements) {
+    trophies();
+    return root;
+  }
   const first = SKILL_TREE.find((branch) => branch.id === lastBranch) || SKILL_TREE.find((branch) => branch.skills.some((skill) => states.get(skill.id) === "next")) || SKILL_TREE[0];
   page(first);
   return root;

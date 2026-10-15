@@ -92,3 +92,18 @@ test("each skill tree page is a proper tree: unique cells, needs above in the sa
     }
   }
 });
+
+test("achievements point at real steps, chapters, games and regions", async () => {
+  const { ACHIEVEMENTS } = await import("../public/game-achievements.js");
+  const { REGIONS } = await import("../public/game-regions.js");
+  const steps = new Set(QUEST_LINES.flatMap((line) => line.chapters.flatMap((chapter) => chapter.steps.map((step) => step.id))));
+  const chapters = new Set(QUEST_LINES.flatMap((line) => line.chapters.map((chapter) => chapter.id)));
+  assert.equal(new Set(ACHIEVEMENTS.map((a) => a.id)).size, ACHIEVEMENTS.length, "ids are unique");
+  for (const { id, when } of ACHIEVEMENTS) {
+    if (when.step) assert.ok(steps.has(when.step), `${id}: ${when.step}`);
+    if (when.chapter) assert.ok(chapters.has(when.chapter), `${id}: ${when.chapter}`);
+    if (when.perfect) assert.ok(MINIGAME_IDS.includes(when.perfect), `${id}: ${when.perfect}`);
+    if (when.region) assert.ok(REGIONS[when.region], `${id}: ${when.region}`);
+    if (when.regions) assert.ok(when.regions <= Object.keys(REGIONS).length, id);
+  }
+});

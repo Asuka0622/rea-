@@ -3,7 +3,8 @@ import { DIFFICULTIES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
 import { createMinigame } from "./game-minigames.js";
 import { createWaterLayer } from "./game-water.js";
-import { skillsFrom } from "./game-skills.js";
+import { SKILL_TREE, skillsFrom } from "./game-skills.js";
+import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
 import { renderSkillTree } from "./game-skilltree.js";
 import { createSound } from "./game-sound.js";
 
@@ -129,7 +130,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     h("button", { class: "btn small", type: "button", onclick: () => { setWebMode(true); sync(); } }, icon("monitor", { size: 14 }), "网页模式"),
   );
   const sound = createSound();
-  const soundButton = h("button", { class: "btn small game-sound-toggle", type: "button", onclick: () => paintSound(sound.toggle()) });
+  const soundButton = h("button", { class: "btn small game-sound-toggle", type: "button", onclick: () => {
+    const on = sound.toggle();
+    paintSound(on);
+    achievements.note({ type: "sound", on });
+  } });
   const paintSound = (on) => {
     soundButton.textContent = on ? "♪" : "♪̸";
     soundButton.title = on ? "音效：开（点一下关闭）" : "音效：关（点一下打开）";
@@ -137,7 +142,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     soundButton.setAttribute("aria-pressed", String(on));
   };
   paintSound(sound.on);
-  if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能（K）"));
+  const achievements = createAchievements({
+    onUnlock: (a) => {
+      toast(`成就解锁：${a.title}`, a.note, "trophy");
+      sound.unlock();
+    },
+  });
+  const skillCount = () => SKILL_TREE.flatMap((branch) => branch.skills).filter((skill) => skill.from && quests?.stepDone(skill.from)).length;
+  // Old saves: grant what was already done, quietly.
+  if (quests) {
+    for (const line of quests.lines) {
+      for (const chapter of line.chapters) {
+        for (const step of chapter.steps) if (quests.isDone(line.id, step.id)) achievements.note({ type: "step", id: step.id }, { quiet: true });
+        if (chapter.steps.length && quests.chapterDone(line, chapter)) achievements.note({ type: "chapter", id: chapter.id }, { quiet: true });
+      }
+    }
+    achievements.note({ type: "skills", count: skillCount() }, { quiet: true });
+  }
+  if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能·成就（K）"));
   hud.append(soundButton);
   // The town clock (docs/story.md 第 8 节): stopped, drifting or running with the main story.
   const clockFace = h("span", { class: "game-clock-face", "aria-hidden": "true" }, h("i", { class: "hour" }), h("i", { class: "minute" }));
@@ -644,6 +666,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   let lastTime = 0;
   let stepClock = 0;
+  let walkedSince = 0;
 
   /* Falling autumn leaves over the town: a few small pixels drifting down across the camera's view. */
   const LEAF_COLORS = ["#d9622b", "#e8a53a", "#b8452a", "#f0c25a"];
@@ -738,6 +761,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     placePlayer();
     animate(dt, dx, dy);
+    if (player.walking) walkedSince += SPEED * dt;
+    if (walkedSince > 300) {
+      achievements.note({ type: "walked", by: Math.round(walkedSince) });
+      walkedSince = 0;
+    }
     if (player.walking && (stepClock += dt) > 0.3) {
       stepClock = 0;
       sound.step();
@@ -754,6 +782,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   function switchRegion(name, at = REGIONS[name].spawn) {
     arrive();
     region = name;
+    achievements.note({ type: "region", id: name });
     regionStarted = true;
     Object.assign(player, at);
     target = null;
@@ -969,6 +998,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   quests?.onChange(({ step, finishedChapter, story }) => {
     questLines.push(...story);
+    achievements.note({ type: "step", id: step.id });
+    if (finishedChapter) achievements.note({ type: "chapter", id: finishedChapter.id, difficulty: quests.difficulty });
+    achievements.note({ type: "skills", count: skillCount() });
     const learned = skillsFrom(step.id);
     learned.forEach((skill, i) => setTimeout(() => toast(`学会了：${skill.label}`, skill.note), 300 + i * 900));
     if (learned.length || finishedChapter) sound.unlock();
@@ -1051,9 +1083,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h,
       sound,
       difficulty: quests.difficulty || "normal",
-      onWin: () => {
+      onWin: ({ mistakes = 0 } = {}) => {
         closeOverlay();
         quests.event("play", step.game);
+        if (!mistakes) achievements.note({ type: "perfect", id: step.game });
       },
     });
     overlay.replaceChildren(
@@ -1066,8 +1099,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /** A short notice in the top middle (a skill learned, …); several stack up. */
   const toasts = h("div", { class: "game-toasts", role: "status", "aria-live": "polite" });
   shell.append(toasts);
-  function toast(title, note = "") {
-    const el = h("div", { class: "game-toast" }, h("b", {}, "✦ ", title), note && h("small", {}, note));
+  function toast(title, note = "", kind = "") {
+    const el = h("div", { class: `game-toast ${kind}` }, h("b", {}, kind === "trophy" ? "★ " : "✦ ", title), note && h("small", {}, note));
     toasts.append(el);
     setTimeout(() => el.classList.add("leaving"), 3200);
     setTimeout(() => el.remove(), 3700);
@@ -1082,7 +1115,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return "";
     };
     overlay.classList.add("skilltree");
-    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay }));
+    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay, achievements: { list: ACHIEVEMENTS, got: achievements.got } }));
     overlay.hidden = false;
     requestAnimationFrame(() => overlay.querySelector(".st-node.selected")?.focus({ preventScroll: true }));
   }
