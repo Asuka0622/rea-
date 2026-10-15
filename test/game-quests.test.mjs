@@ -24,12 +24,10 @@ test("the prologue opens the detective line, which ends with a badge", () => {
   quests.event("enter", "clocktower");
   assert.deepEqual(finished, ["prologue"]);
   assert.ok(quests.unlocked(REA_QUEST));
-  assert.equal(quests.waitingAt(MAIN_QUEST).id, "ch1", "chapter 1 waits for the first case");
-  assert.match(quests.waitReason(MAIN_QUEST.chapters[1]), /委托一/);
-  assert.equal(quests.current().id, "solve-privacy", "with the main line waiting, the tracker follows the open side line");
-  assert.ok(said.some((line) => line.text.includes("小林")), "the next step's lines are said");
+  assert.equal(quests.current().id, "meet-smith", "the prologue leads straight into chapter 1: the main story goes first");
+  assert.equal(quests.lineCurrent(REA_QUEST).id, "solve-privacy", "the detective side line is open alongside");
+  assert.ok(said.some((line) => line.text.includes("铁叔")), "the next step's lines are said");
   quests.event("solve", "privacy-ledger");
-  assert.equal(quests.current().id, "meet-smith", "the first case brings 铁叔 back: the main story goes first");
   // Chapter 1: meet 铁叔, then three mini-games at the clock tower.
   quests.event("enter", "engines");
   assert.equal(quests.playAt("clocktower").game, "binary");

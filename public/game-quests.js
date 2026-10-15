@@ -51,18 +51,16 @@ export const MAIN_QUEST = {
       ],
       done: [
         { text: "钟楼的门锁得紧紧的，门上刻着一串 0 和 1……这钟楼，好像不只是一座钟？", face: "surprised" },
-        { text: "要打开它，得请工具铺的铁叔帮忙。他出门进货了，要过一阵子才回来。", face: "thinking" },
-        { text: "在那之前，事务所的委托板上已经有人来求助了。我们先帮帮大家吧！", face: "happy" },
+        { text: "要打开它，得请工具铺的铁叔帮忙。他最懂机器了。", face: "thinking" },
       ],
     },
     {
       id: "ch1",
       title: "第一章 · 打开钟楼（电脑是什么）",
-      after: { line: "rea", chapter: "case-1" },
       steps: [
         {
           id: "meet-smith", type: "enter", spot: "engines", goal: "铁叔回来了！去工具铺找他",
-          say: [{ text: "听说铁叔进货回来了！我们去工具铺找他，请他帮忙打开钟楼。", face: "happy" }],
+          say: [{ text: "工具铺在广场东北边。我们去找铁叔，请他帮忙打开钟楼。", face: "happy" }],
           done: [
             { who: "smith", text: "哈哈，你们想进钟楼？那可不是一座普通的钟。", face: "happy" },
             { who: "smith", text: "门上那串 0 和 1 就是密码。钟楼里面的东西只认两种状态：开和关，记成 1 和 0。", face: "normal" },
