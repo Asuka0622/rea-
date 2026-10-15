@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createQuests, QUEST_LINES, REA_QUEST, MAIN_QUEST, DIFFICULTIES } from "../public/game-quests.js";
+import { createQuests, QUEST_LINES, REA_QUEST, MAIN_QUEST, DIFFICULTIES, FOCUSES } from "../public/game-quests.js";
 import { caseCatalog } from "../lib/cases.mjs";
 import { MINIGAME_IDS } from "../public/game-minigames.js";
 
@@ -115,6 +115,7 @@ test("lines written for a difficulty only use the known levels", () => {
         if (typeof said === "string") continue;
         assert.ok(said.text, "every line has a normal text");
         if (said.only) for (const level of said.only.split(" ")) assert.ok(levels.has(level), `only: ${level}`);
+        if (said.focus) for (const focus of said.focus.split(" ")) assert.ok(focus in FOCUSES, `focus: ${focus}`);
       }
     }
   }

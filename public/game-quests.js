@@ -5,10 +5,21 @@
 
 const KEY = "rea-game-progress";
 
+/** Knowledge level, chosen by asking about the player's background. */
 export const DIFFICULTIES = {
-  easy: { label: "轻松", note: "大白话讲解，提示随便用、不扣分，卡住了可以直接看答案。适合完全没接触过技术的人。" },
-  normal: { label: "标准", note: "跟着线索自己找答案，提示会影响评价。适合大多数人。" },
-  hard: { label: "硬核", note: "直接看专业报告，没有提示，每个案子多一道挑战题。适合有基础、想学深一点的人。" },
+  easy: { label: "零基础", level: "轻松", note: "从来没接触过。全用大白话和比喻讲，题目小，卡住了可以直接看答案。" },
+  normal: { label: "学过一点", level: "标准", note: "用过电脑、听说过一些词。比喻加上真正的术语，要自己算答案，有提示。" },
+  hard: { label: "有基础", level: "硬核", note: "学过编程或计算机。直接讲原理、看真实的数字和代码，题目更难，没有提示。" },
+};
+
+/**
+ * What the player came for: it sets how deep the story goes. Lines can be kept to some focuses
+ * (`focus: "story"`, `focus: "story balanced"` …), the same way `only` keeps them to some levels.
+ */
+export const FOCUSES = {
+  story: { label: "偏剧情", note: "多一些角色的故事和对话，知识点讲到够用就好。" },
+  balanced: { label: "平衡", note: "故事和知识各占一半。推荐第一次玩选这个。", recommended: true },
+  knowledge: { label: "偏知识", note: "对话精简，讲解更多；每学会一样东西，都有一张复盘卡帮你记住。" },
 };
 
 /*
@@ -63,6 +74,9 @@ export const MAIN_QUEST = {
           say: [{ text: "工具铺在广场东北边。我们去找铁叔，请他帮忙打开钟楼。", face: "happy" }],
           done: [
             { who: "smith", text: "哈哈，你们想进钟楼？那可不是一座普通的钟。", face: "happy" },
+            { who: "smith", focus: "story", text: "我小时候常爬到钟楼底下听它走，咔、咔、咔，一秒不差。后来我当了铁匠，镇长让我管它的齿轮，一管就是二十年。", face: "normal" },
+            { focus: "story", text: "二十年都没停过，偏偏今天停了……铁叔，你一定很难过吧。", face: "thinking" },
+            { who: "smith", focus: "story", text: "难过？我是好奇！它停得这么干脆，不像是零件坏了，倒像是……有人让它停的。", face: "thinking" },
             {
               who: "smith", face: "normal",
               text: "门上那串 0 和 1 就是密码。钟楼里面的东西只认两种状态：开和关，记成 1 和 0。",
@@ -71,6 +85,7 @@ export const MAIN_QUEST = {
             },
             { who: "smith", only: "hard", text: "顺带一提，用 0 和 1 计数的想法很早就有了：三百多年前，德国学者莱布尼茨专门写文章讲过二进制。", face: "happy" },
             { who: "smith", text: "门边有 8 盏小灯，每盏灯代表一个数。把对的灯点亮，门就开了。去试试吧！", face: "normal" },
+            { who: "smith", focus: "knowledge", text: "先记住一个规律：每多一盏灯，能表示的数就翻一倍。1 盏灯 2 种，2 盏灯 4 种，8 盏灯就是 256 种。", face: "normal" },
           ],
         },
         {
@@ -104,6 +119,7 @@ export const MAIN_QUEST = {
           hard: "停电时内存清空，「现在几点」这个运行中的状态丢了；写在硬盘里的时间表还在。电脑也一样，所以主板上有块小电池，专门让时钟断电也继续走。",
         },
         { text: "我们把时间重新拨好了！可是……钟走得一会儿快一会儿慢。", face: "surprised" },
+        { focus: "story balanced", text: "指针转动的那一刻，钟楼深处传来一声很轻的「嗡」，像是什么东西醒了过来。", face: "surprised" },
         { who: "smith", text: "零件都没坏。毛病出在它的「指令」上：有人改过它的程序。", face: "thinking" },
         { text: "程序？那得找手艺街的阿木了，他最会做东西。不过阿木最近忙，下一章我们再去找他！", face: "normal" },
       ],
@@ -196,12 +212,14 @@ export function createQuests(lines = QUEST_LINES) {
   const done = Object.fromEntries(lines.map((line) => [line.id, new Set(saved.done?.[line.id] || [])]));
   // Saves from before the main line: the prologue's first two steps were the REA line's.
   if (!saved.done?.main && done.main && saved.done?.rea) for (const id of ["visit-office", "visit-library"]) if (saved.done.rea.includes(id)) done.main.add(id);
-  const state = { difficulty: saved.difficulty || null, badges: new Set(saved.badges || []), tracked: saved.tracked || null };
+  // Saves from before the focus question count as balanced.
+  const state = { difficulty: saved.difficulty || null, focus: saved.focus || (saved.difficulty ? "balanced" : null), badges: new Set(saved.badges || []), tracked: saved.tracked || null };
   const listeners = new Set();
   const save = () => {
     try {
       const all = load();
       all.difficulty = state.difficulty;
+      all.focus = state.focus;
       all.done = { ...(all.done || {}), ...Object.fromEntries(lines.map((line) => [line.id, [...done[line.id]]])) };
       all.badges = [...state.badges];
       all.tracked = state.tracked;
@@ -280,6 +298,13 @@ export function createQuests(lines = QUEST_LINES) {
     },
     setDifficulty(value) {
       state.difficulty = value;
+      save();
+    },
+    get focus() {
+      return state.focus;
+    },
+    setFocus(value) {
+      state.focus = value;
       save();
     },
     current,

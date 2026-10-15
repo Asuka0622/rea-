@@ -1,5 +1,5 @@
 import { SCENES } from "./scenes.js";
-import { DIFFICULTIES } from "./game-quests.js";
+import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
 import { createMinigame } from "./game-minigames.js";
 import { createWaterLayer } from "./game-water.js";
@@ -359,9 +359,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
    * `only: "hard"` (or "easy", "easy normal" …) keeps a line to those levels. Plain strings always show.
    */
   const level = () => quests?.difficulty || "normal";
+  const focus = () => quests?.focus || "balanced";
   function forLevel(line) {
     if (typeof line === "string") return line;
     if (line.only && !line.only.split(" ").includes(level())) return null;
+    if (line.focus && !line.focus.split(" ").includes(focus())) return null;
     return line[level()] ? { ...line, text: line[level()] } : line;
   }
   function say(texts, after) {
@@ -1016,6 +1018,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (finishedChapter) achievements.note({ type: "chapter", id: finishedChapter.id, difficulty: quests.difficulty });
     achievements.note({ type: "skills", count: skillCount() });
     const learned = skillsFrom(step.id);
+    if (focus() === "knowledge") questLines.push(...learned.filter((skill) => skill.recap).map((skill) => ({ text: `【复盘卡 · ${skill.label}】${skill.recap}`, face: "normal" })));
     learned.forEach((skill, i) => setTimeout(() => toast(`学会了：${skill.label}`, skill.note), 300 + i * 900));
     if (learned.length || finishedChapter) sound.unlock();
     renderTracker();
@@ -1034,24 +1037,46 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   };
 
   /** Pick a difficulty; the first time, the story starts afterwards. */
+  /**
+   * Before the story: two questions. First what the player came for (story, balanced, knowledge: how
+   * deep the story goes), then their background (none, a little, some: the knowledge level).
+   */
   function chooseDifficulty(first = false) {
-    overlay.replaceChildren(
-      h("div", { class: "game-panel-head" }, h("h2", {}, first ? "选择难度" : "更换难度"), !first && h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭")),
-      h("p", { class: "game-panel-note" }, first ? "随时可以在任务日志里更换。不确定的话，选「轻松」或「标准」。" : "更换难度不会影响已经完成的进度。"),
+    if (first) dialogue.hidden = true; // the welcome starts after the questions
+    const choices = (entries, chosen, pick) =>
       h("div", { class: "game-difficulties" },
-        ...Object.entries(DIFFICULTIES).map(([id, d]) =>
-          h("button", { class: `game-difficulty ${quests.difficulty === id ? "chosen" : ""}`, type: "button", onclick: () => {
-            quests.setDifficulty(id);
-            closeOverlay();
-            if (first) {
-              shownControls = false;
-              goTown();
-            }
-            else renderLog();
-          } }, h("b", {}, d.label), h("small", {}, d.note)))),
+        ...entries.map(([id, d]) =>
+          h("button", { class: `game-difficulty ${chosen === id ? "chosen" : ""} ${d.recommended ? "recommended" : ""}`, type: "button", onclick: () => pick(id) },
+            h("b", {}, d.label, d.recommended ? h("i", { class: "game-recommended" }, "推荐") : null, d.level ? h("small", { class: "game-level" }, ` · ${d.level}`) : null),
+            h("small", {}, d.note))));
+    const finish = () => {
+      closeOverlay();
+      if (first) {
+        shownControls = false;
+        goTown();
+      } else renderLog();
+    };
+    const askBackground = () => {
+      overlay.replaceChildren(
+        h("div", { class: "game-panel-head" }, h("h2", {}, "第 2 步 · 你有计算机基础吗？"), !first ? h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭") : null),
+        h("p", { class: "game-panel-note" }, "这决定讲得多深、题目多难。随时可以在任务日志（J）里更换，已完成的进度不受影响。"),
+        choices(Object.entries(DIFFICULTIES), quests.difficulty, (id) => {
+          quests.setDifficulty(id);
+          finish();
+        }),
+      );
+      overlay.querySelector(".game-difficulty")?.focus({ preventScroll: true });
+    };
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, "第 1 步 · 你更想体验什么？"), !first ? h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭") : null),
+      h("p", { class: "game-panel-note" }, "这决定剧情铺得多深。不确定的话，选「平衡」。"),
+      choices(Object.entries(FOCUSES), quests.focus || "balanced", (id) => {
+        quests.setFocus(id);
+        askBackground();
+      }),
     );
     overlay.hidden = false;
-    overlay.querySelector(".game-difficulty")?.focus({ preventScroll: true });
+    overlay.querySelector(".game-difficulty.recommended, .game-difficulty")?.focus({ preventScroll: true });
   }
 
   function renderLog() {
@@ -1076,7 +1101,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     };
     overlay.replaceChildren(
       h("div", { class: "game-panel-head" }, h("h2", {}, "任务日志"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（J）")),
-      h("p", { class: "game-panel-note" }, "难度：", h("b", {}, DIFFICULTIES[quests.difficulty]?.label || "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
+      h("p", { class: "game-panel-note" }, "偏好：", h("b", {}, FOCUSES[quests.focus]?.label || "平衡"), " · 基础：", h("b", {}, DIFFICULTIES[quests.difficulty] ? `${DIFFICULTIES[quests.difficulty].label}（${DIFFICULTIES[quests.difficulty].level}）` : "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
       step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, `${step.line.title} · ${step.chapter.title}`)),
       ...quests.lines.map(lineBlock),
       ...quests.badges().map((badge) => h("p", { class: "game-badge" }, `🏅 已获得徽章：${badge.label}`)),
@@ -1264,7 +1289,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       shell.hidden = false;
       fit();
       goTown();
-      if (quests && !quests.difficulty) chooseDifficulty(true);
+      if (quests && (!quests.difficulty || !quests.focus)) chooseDifficulty(true);
     } else {
       mainHome.parent.insertBefore(main, mainHome.next);
       shell.hidden = true;

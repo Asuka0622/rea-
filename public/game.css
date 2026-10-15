@@ -465,3 +465,8 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .mg-input:focus-visible {outline:3px solid #ffcf3d;}
 .mg-sum {display:flex;flex-direction:column;align-items:center;margin:4px 0 8px;font:22px var(--font-display,"Fusion Pixel");letter-spacing:.35em;color:#5e3415;}
 .mg-sum-line {width:220px;border-top:3px solid #5e3415;margin-top:2px;}
+
+/* Setup questions: the recommended choice is marked. */
+.game-recommended {margin-left:6px;padding:0 6px;font-style:normal;font-size:11px;color:#fff;background:#3f8f3a;border:2px solid #1b120c;vertical-align:middle;}
+.game-level {font-weight:400;color:#8a5a2b;}
+.game-difficulty.recommended {box-shadow:0 0 0 3px #3f8f3a;}
