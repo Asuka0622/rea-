@@ -1,0 +1,56 @@
+{
+  "style": "original pixel art matching the supplied high-detail pixel-scene direction",
+  "sourceCropSize": [
+    1672,
+    940
+  ],
+  "runtimeSize": [
+    160,
+    90
+  ],
+  "resampling": "nearest-neighbor",
+  "assets": [
+    {
+      "id": "privacy-ledger",
+      "label": "隐私体检",
+      "file": "case-privacy-ledger.png",
+      "description": "书桌记账本与带隐私警示图形的电脑"
+    },
+    {
+      "id": "weather-keys",
+      "label": "代码里的钥匙",
+      "file": "case-weather-keys.png",
+      "description": "天气装置、键盘和黄铜钥匙"
+    },
+    {
+      "id": "calculator-eggs",
+      "label": "隐藏的彩蛋",
+      "file": "case-calculator-eggs.png",
+      "description": "复古计算器、彩蛋与掌机"
+    },
+    {
+      "id": "farm-save",
+      "label": "看懂存档",
+      "file": "case-farm-save.png",
+      "description": "番茄胡萝卜菜地、软盘木牌与金币"
+    },
+    {
+      "id": "notes-versions",
+      "label": "版本侦探",
+      "file": "case-notes-versions.png",
+      "description": "两版记录便签与放大镜"
+    },
+    {
+      "id": "flashlight-apk",
+      "label": "手电筒",
+      "file": "case-flashlight-apk.png",
+      "description": "夜间手机照亮联系人与定位线索"
+    },
+    {
+      "id": "real-stories",
+      "label": "真实世界故事",
+      "file": "case-real-stories.png",
+      "description": "档案、旧电脑和复古掌机"
+    }
+  ]
+}

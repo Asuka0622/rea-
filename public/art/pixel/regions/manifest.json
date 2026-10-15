@@ -5,7 +5,7 @@
     "time": "noon",
     "label": "autumn-clear-noon"
   },
-  "stateNote": "This first asset batch covers only the autumn / clear / noon base state. Other season, weather, and time variants have not been generated.",
+  "stateNote": "All five region maps and ten interiors have four seasonal clear-noon pixel-art baselines. Runtime supports all 48 season/weather/time combinations with pixel outdoor rain/snow, precipitation confined to interior window panes, and shared time-of-day lighting. The 44 non-clear-noon combinations per scene are layered at runtime rather than separately painted; fully bespoke state art would require 660 additional images across 15 scenes.",
   "regionMapSize": [
     960,
     540
@@ -18,46 +18,430 @@
   "regions": [
     {
       "file": "town-center.png",
-      "purpose": "Public facilities and central plaza"
+      "purpose": "Public facilities and central plaza",
+      "variants": [
+        {
+          "file": "town-center-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "town-center-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "town-center-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "town-homes.png",
-      "purpose": "Client homes"
+      "purpose": "Client homes",
+      "variants": [
+        {
+          "file": "town-homes-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "town-homes-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "town-homes-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "town-craft.png",
-      "purpose": "Craft street"
+      "purpose": "Craft street",
+      "variants": [
+        {
+          "file": "town-craft-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "town-craft-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "town-craft-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "town-north.png",
-      "purpose": "North office"
+      "purpose": "North office",
+      "variants": [
+        {
+          "file": "town-north-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "town-north-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "town-north-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "town-south.png",
-      "purpose": "South bank, bridge, pier, and picnic clearing"
+      "purpose": "South bank, bridge, pier, and picnic clearing",
+      "variants": [
+        {
+          "file": "town-south-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "town-south-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "town-south-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     }
   ],
   "interiors": [
     {
       "file": "../room-home.png",
-      "purpose": "Detective office, retained existing art"
+      "purpose": "Detective office, retained existing art",
+      "variants": [
+        {
+          "file": "../room-home-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-home-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-home-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "../room-learn.png",
-      "purpose": "Library"
+      "purpose": "Library",
+      "variants": [
+        {
+          "file": "../room-learn-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-learn-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-learn-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "../room-engines.png",
-      "purpose": "Tool and engine shop"
+      "purpose": "Tool and engine shop",
+      "variants": [
+        {
+          "file": "../room-engines-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-engines-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-engines-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "../room-clients.png",
-      "purpose": "Post office"
+      "purpose": "Post office",
+      "variants": [
+        {
+          "file": "../room-clients-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-clients-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-clients-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     },
     {
       "file": "../room-doctor.png",
-      "purpose": "Clinic"
+      "purpose": "Clinic",
+      "variants": [
+        {
+          "file": "../room-doctor-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-doctor-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-doctor-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
+    },
+    {
+      "file": "../room-studio.png",
+      "label": "美术工作室",
+      "purpose": "Digital art studio",
+      "variants": [
+        {
+          "file": "../room-studio-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-studio-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-studio-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
+    },
+    {
+      "file": "../room-arcade.png",
+      "label": "游戏街机厅",
+      "purpose": "Game arcade",
+      "variants": [
+        {
+          "file": "../room-arcade-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-arcade-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-arcade-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
+    },
+    {
+      "file": "../room-woodshop.png",
+      "label": "木工坊",
+      "purpose": "Woodworking workshop",
+      "variants": [
+        {
+          "file": "../room-woodshop-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-woodshop-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-woodshop-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
+    },
+    {
+      "file": "../room-office.png",
+      "label": "周姐的办公室",
+      "purpose": "Version detective office",
+      "variants": [
+        {
+          "file": "../room-office-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-office-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-office-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
+    },
+    {
+      "file": "../room-archive.png",
+      "label": "小镇档案馆",
+      "purpose": "Local history archive",
+      "variants": [
+        {
+          "file": "../room-archive-spring-clear-noon.png",
+          "state": "spring-clear-noon"
+        },
+        {
+          "file": "../room-archive-summer-clear-noon.png",
+          "state": "summer-clear-noon"
+        },
+        {
+          "file": "../room-archive-winter-clear-noon.png",
+          "state": "winter-clear-noon"
+        }
+      ]
     }
   ],
-  "integration": "Region maps are standalone art assets. Runtime region navigation and connector coordinates still need integration."
+  "integration": "Integrated in public/game-shell.js: the region picker opens five spacious region maps, map markers open existing scenes/cases, new interiors or short resident tips, and season/weather/time state is shared by map and room rendering. The art studio, arcade, woodshop, office and archive are enterable from their assigned NPCs and each has four clear-noon seasonal images. Indoor precipitation is clipped to each room's window areas. Nine pixel teacher sprites (librarian, smith, postman, doctor, painter, gamer, carpenter, archivist, clerk) and five pixel townspeople (fisher, kid, vendor, jogger, musician) use staggered short patrols with six-frame side-walk cycles in their assigned open areas. Six transparent pixel animal sheets each contain three four-frame action rows; the idle loop runs by default and clicking briefly plays that animal’s reaction row. Regional maps use click-to-travel hotspots; collision/pathfinding remains available only on the retained legacy town map. Pixel character sprites render with pixelated sampling.",
+  "stateSpace": {
+    "seasons": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "weather": [
+      "clear",
+      "rain",
+      "snow"
+    ],
+    "times": [
+      "morning",
+      "noon",
+      "sunset",
+      "night"
+    ],
+    "possibleCombinations": 48,
+    "representedCombinations": [
+      "spring-clear-noon",
+      "summer-clear-noon",
+      "autumn-clear-noon",
+      "winter-clear-noon"
+    ],
+    "completeCombinations": [
+      "spring-clear-noon",
+      "summer-clear-noon",
+      "autumn-clear-noon",
+      "winter-clear-noon"
+    ],
+    "missingCombinations": 44,
+    "partialCombinations": {},
+    "runtimeSupportedCombinations": [
+      "spring-clear-morning",
+      "spring-clear-noon",
+      "spring-clear-sunset",
+      "spring-clear-night",
+      "spring-rain-morning",
+      "spring-rain-noon",
+      "spring-rain-sunset",
+      "spring-rain-night",
+      "spring-snow-morning",
+      "spring-snow-noon",
+      "spring-snow-sunset",
+      "spring-snow-night",
+      "summer-clear-morning",
+      "summer-clear-noon",
+      "summer-clear-sunset",
+      "summer-clear-night",
+      "summer-rain-morning",
+      "summer-rain-noon",
+      "summer-rain-sunset",
+      "summer-rain-night",
+      "summer-snow-morning",
+      "summer-snow-noon",
+      "summer-snow-sunset",
+      "summer-snow-night",
+      "autumn-clear-morning",
+      "autumn-clear-noon",
+      "autumn-clear-sunset",
+      "autumn-clear-night",
+      "autumn-rain-morning",
+      "autumn-rain-noon",
+      "autumn-rain-sunset",
+      "autumn-rain-night",
+      "autumn-snow-morning",
+      "autumn-snow-noon",
+      "autumn-snow-sunset",
+      "autumn-snow-night",
+      "winter-clear-morning",
+      "winter-clear-noon",
+      "winter-clear-sunset",
+      "winter-clear-night",
+      "winter-rain-morning",
+      "winter-rain-noon",
+      "winter-rain-sunset",
+      "winter-rain-night",
+      "winter-snow-morning",
+      "winter-snow-noon",
+      "winter-snow-sunset",
+      "winter-snow-night"
+    ],
+    "renderingNote": "Runtime presentation is supported for all combinations using the matching seasonal clear-noon baseline plus pixel weather and lighting layers. Interior rain/snow is confined to window panes. Only the four seasonal clear-noon combinations have dedicated full-scene art."
+  },
+  "townspeopleSprites": [
+    {
+      "id": "fisher",
+      "label": "钓鱼的老人",
+      "region": "south",
+      "file": "../anim-fisher.png"
+    },
+    {
+      "id": "kid",
+      "label": "放风筝的孩子",
+      "region": "center",
+      "file": "../anim-kid.png"
+    },
+    {
+      "id": "vendor",
+      "label": "卖菜的大婶",
+      "region": "center",
+      "file": "../anim-vendor.png"
+    },
+    {
+      "id": "jogger",
+      "label": "晨跑的姐姐",
+      "region": "homes",
+      "file": "../anim-jogger.png"
+    },
+    {
+      "id": "musician",
+      "label": "街头吉他手",
+      "region": "south",
+      "file": "../anim-musician.png"
+    }
+  ],
+  "caseResidentSprites": [
+    {
+      "id": "kobayashi",
+      "label": "小林",
+      "region": "homes",
+      "file": "../anim-kobayashi.png"
+    },
+    {
+      "id": "azhe",
+      "label": "阿哲",
+      "region": "homes",
+      "file": "../anim-azhe.png"
+    },
+    {
+      "id": "xiaoyu",
+      "label": "小雨",
+      "region": "homes",
+      "file": "../anim-xiaoyu.png"
+    },
+    {
+      "id": "duoduo",
+      "label": "朵朵",
+      "region": "homes",
+      "file": "../anim-duoduo.png"
+    },
+    {
+      "id": "grandma",
+      "label": "王奶奶",
+      "region": "homes",
+      "file": "../anim-grandma.png"
+    }
+  ]
 }

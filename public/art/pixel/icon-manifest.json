@@ -1,0 +1,35 @@
+{
+  "style": "crisp pixel art, transparent backgrounds, nearest-neighbor sampling",
+  "size": [
+    32,
+    32
+  ],
+  "icons": [
+    {
+      "id": "evidence",
+      "file": "icon-evidence.png",
+      "purpose": "detective evidence bag"
+    },
+    {
+      "id": "magnifier",
+      "file": "icon-magnifier.png",
+      "purpose": "start investigation"
+    },
+    {
+      "id": "star",
+      "file": "icon-star.png",
+      "purpose": "case rating"
+    },
+    {
+      "id": "stamp",
+      "file": "icon-stamp.png",
+      "purpose": "case closing stamp"
+    },
+    {
+      "id": "chest",
+      "file": "icon-chest.png",
+      "purpose": "case reward"
+    }
+  ],
+  "integration": "Pixel icons are used in the detective evidence bag, investigation action, case rating and closing/reward panel."
+}
