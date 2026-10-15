@@ -69,6 +69,22 @@ export const REGIONS = {
     open: [{ x: 445, y: 290, w: 95, h: 250 }], // the road south runs through deep shade
     exits: [{ x: 440, y: 530, w: 100, h: 10, to: "center", at: { x: 480, y: 80 } }],
   },
+  /* ----- era maps: reached by the clock tower's time machine, not by roads (docs/concept.md) ----- */
+  "era-china": {
+    name: "汴京 · 约 1088 年",
+    era: "china",
+    image: "eras/china/bianjing", // a stand-in drawn by scripts/make-placeholder-era.py until the real map arrives
+    leaves: ["#f6c6d4", "#ffffff", "#f2a9bf"], // peach petals in late spring
+    spawn: { x: 480, y: 440 },
+    spots: {
+      teahouse: { x: 296, y: 398, w: 128, h: 76, door: { x: 360, y: 490 }, label: { place: "柳娘子的茶铺", purpose: "州桥边的茶铺" } },
+      "tower-site": { x: 646, y: 52, w: 64, h: 176, door: { x: 678, y: 242 }, label: { place: "水运仪象台工地", purpose: "苏颂、韩公廉在这里造钟楼" } },
+      mathhall: { x: 220, y: 128, w: 140, h: 88, door: { x: 290, y: 226 }, soon: { place: "算学斋", purpose: "完整版开放" } },
+      bookshop: { x: 560, y: 398, w: 120, h: 76, door: { x: 620, y: 490 }, soon: { place: "书坊", purpose: "完整版开放" } },
+    },
+    obstacles: [],
+    exits: [],
+  },
   south: {
     name: "南岸",
     spawn: { x: 430, y: 80 },
@@ -77,6 +93,9 @@ export const REGIONS = {
     exits: [{ x: 395, y: 0, w: 70, h: 10, to: "center", at: { x: 480, y: 500 } }],
   },
 };
+
+/** The regions of Bit Town (no era) or of one era. */
+export const regionsOf = (era = undefined) => Object.keys(REGIONS).filter((name) => REGIONS[name].era === era);
 
 /** Which region a spot (building or case home) is in. */
 export function regionOf(id) {

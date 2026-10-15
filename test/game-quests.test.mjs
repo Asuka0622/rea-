@@ -33,7 +33,11 @@ test("the prologue opens the detective line, which ends with a badge", () => {
   assert.equal(quests.playAt("clocktower").game, "binary");
   for (const game of ["binary", "parts", "drawers"]) assert.equal(quests.event("play", game), true, game);
   assert.equal(quests.clockState(), "drifting", "after chapter 1 the clock runs, but wrong");
-  assert.equal(quests.waitingAt(MAIN_QUEST).id, "ch2");
+  // The time machine opens ancient China; the chapter ends back in Bit Town (the coding task only on 硬核).
+  assert.deepEqual(quests.erasOpen(), ["china"]);
+  assert.equal(quests.current().id, "to-china");
+  for (const [kind, id] of [["travel", "china"], ["play", "rods"], ["play", "escapement"], ["travel", "home"], ["enter", "engines"]]) assert.equal(quests.event(kind, id), true, `${kind} ${id}`);
+  assert.equal(quests.waitingAt(MAIN_QUEST).id, "medieval", "on 标准 the chapter is done without the coding task");
   quests.track("rea");
   for (const id of ["weather-keys", "calculator-eggs"]) quests.event("solve", id);
   assert.equal(quests.current().id, "solve-versions", "farm-save was already done, so case 5 is next");

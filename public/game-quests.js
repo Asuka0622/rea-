@@ -29,7 +29,9 @@ export const FOCUSES = {
  * A chapter: { id, title, steps, done?, badge?, ready?, after? } — ready: false = still being made (shown
  *   in the log as 制作中; the line waits there). after: { line, chapter } — the chapter starts only once
  *   that chapter of another line is done (the line waits there too).
- * A step: { id, type: "enter" | "solve" | "play", spot, case?, game?, goal, say, done? }
+ * A step: { id, type: "enter" | "solve" | "play" | "travel", spot, case?, game?, era?, only?, goal, say, done? }
+ *   travel: arrive in an era by the time machine (era "home" = back in Bit Town).
+ *   only: the step exists only at those levels ("hard", "easy normal" …).
  *   enter: walk into a building (spot); solve: finish a case; play: win a mini-game (game-minigames.js)
  *   started at the spot. `say` is what the guide says when the step
  *   becomes current, `done` when it is finished; a chapter's `done` follows its last step.
@@ -120,14 +122,71 @@ export const MAIN_QUEST = {
         },
         { text: "我们把时间重新拨好了！可是……钟走得一会儿快一会儿慢。", face: "surprised" },
         { focus: "story balanced", text: "指针转动的那一刻，钟楼深处传来一声很轻的「嗡」，像是什么东西醒了过来。", face: "surprised" },
-        { who: "smith", text: "零件都没坏。毛病出在它的「指令」上：有人改过它的程序。", face: "thinking" },
-        { text: "程序？那得找手艺街的阿木了，他最会做东西。不过阿木最近忙，下一章我们再去找他！", face: "normal" },
+        { who: "smith", text: "零件都没坏，可它的节拍就是稳不住……咦，记事板后面怎么还有一扇小门？", face: "thinking" },
+        { text: "门后面是一个黄铜大表盘，上面刻着好多年份……铁叔，这不是钟，这是一台能穿越时间的机器！", face: "surprised" },
+        { who: "smith", text: "表盘上只有一格亮着：「汴京 · 约 1088 年」。九百多年前，那里也有人在造一座钟楼。也许，答案在那儿。", face: "thinking" },
       ],
     },
-    { id: "ch2", title: "第二章 · 重写指令（编程）", ready: false, steps: [] },
-    { id: "ch3", title: "第三章 · 对时（网络）", ready: false, steps: [] },
-    { id: "ch4", title: "第四章 · 谁动了钟（安全与逆向）", ready: false, steps: [] },
-    { id: "ch5", title: "第五章 · 小故障（AI）", ready: false, steps: [] },
+    {
+      id: "china",
+      title: "时代一 · 古代中国：汴京的钟楼",
+      steps: [
+        {
+          id: "to-china", type: "travel", era: "china", spot: "clocktower", goal: "进钟楼，启动时光机",
+          say: [{ text: "进钟楼，转动时光机的表盘，去汴京看看！", face: "happy" }],
+          done: [
+            { text: "……哎哟！我们这是……落在了一座石桥边？", face: "surprised" },
+            { who: "ayan", text: "两位是外地来的书生吧？这是汴河上的州桥！我叫阿砚，在书坊当学徒。", face: "happy" },
+            { who: "ayan", only: "normal hard", text: "你们穿得好怪呀……要找人？柳娘子的茶铺就在桥南，来往的人她全认得。", face: "normal" },
+            { who: "ayan", only: "easy", text: "要找人？去桥南柳娘子的茶铺问问吧！", face: "normal" },
+          ],
+        },
+        {
+          id: "teahouse-bill", type: "play", game: "rods", spot: "teahouse", goal: "去茶铺，帮柳娘子算账",
+          say: [{ who: "ayan", text: "柳娘子的茶铺今天客人多，账都算不过来了。你们帮帮她，她一高兴，什么都肯告诉你们！", face: "happy" }],
+          done: [
+            { who: "liuniangzi", text: "好俊的手法！一纵十横，摆得又快又对。", face: "happy" },
+            { who: "liuniangzi", text: "你们问钟楼？城北韩官人的工地，正为一座「水运仪象台」发愁呢，说是怎么也走不稳。", face: "thinking" },
+          ],
+        },
+        {
+          id: "tower-beat", type: "play", game: "escapement", spot: "tower-site", goal: "去城北工地，帮韩公廉调好天衡",
+          say: [{ text: "水运仪象台……一座会自己走的钟楼！和我们的钟楼一样，节拍也稳不住。去工地看看！", face: "happy" }],
+          done: [
+            { who: "hangonglian", text: "枢轮一格一格，稳稳地走起来了。多谢二位。", face: "happy" },
+            { who: "hangonglian", only: "hard", text: "天衡靠受水壶的重量自己控制节奏：水满一壶就放行一格，不满就拦住。不必有人看着，机器自己会守时。", face: "normal" },
+            { text: "听，报时木人敲钟了！……我的怀表也跟着「滴答」一声，时光机的节拍稳住了！", face: "surprised" },
+            { text: "按一下怀表，我们回比特镇，把这件事告诉铁叔。", face: "happy" },
+          ],
+        },
+        {
+          id: "home-from-china", type: "travel", era: "home", goal: "按怀表，回比特镇",
+          say: [{ text: "怀表在导航栏上，按一下就能回家。", face: "normal" }],
+          done: [{ text: "回来了！先去工具铺找铁叔吧。", face: "happy" }],
+        },
+        {
+          id: "smith-china", type: "enter", spot: "engines", goal: "去工具铺，把天衡的事讲给铁叔听",
+          say: [{ text: "工具铺在广场东北边。", face: "normal" }],
+          done: [
+            { who: "smith", text: "一壶水满了才放行一格……这不就是「节拍」嘛！", face: "happy" },
+            { who: "smith", text: "你们的电脑里也有这么一个节拍，叫时钟信号。CPU 每一拍做一步，一秒钟拍几十亿下，这就是「主频」。", easy: "你们的电脑里也有这么一个节拍。电脑里的「大脑」每拍一下就做一步，一秒钟能拍几十亿下！", hard: "电脑里也有这么一个节拍：时钟信号。CPU 每个时钟周期推进一步，主频 3 GHz 就是每秒 30 亿个周期。主频越高越快，也越费电、越热。", face: "normal" },
+          ],
+        },
+        {
+          id: "code-digits", type: "play", game: "code-digits", spot: "engines", only: "hard", goal: "在铁叔这儿，用代码把一个数拆成每一位",
+          say: [{ who: "smith", text: "既然你有基础，来试试用真正的代码，把柳娘子摆算筹的那件事再做一遍？", face: "happy" }],
+          done: [{ who: "smith", text: "对喽！算筹一位一位地摆，代码一位一位地拆，道理是一样的：位值制。", face: "happy" }],
+        },
+      ],
+      done: [
+        { text: "表盘上又亮了一格……下一站是中世纪的欧洲！不过那边的时空还不太稳，得再等等。", face: "surprised" },
+      ],
+    },
+    { id: "medieval", title: "时代二 · 中世纪欧洲：城堡与密码", ready: false, steps: [] },
+    { id: "industrial", title: "时代三 · 工业革命：织布机与差分机", ready: false, steps: [] },
+    { id: "forties", title: "时代四 · 1940 年代：破译与第一台电脑", ready: false, steps: [] },
+    { id: "internet", title: "时代五 · 1960–90 年代：连接世界", ready: false, steps: [] },
+    { id: "modern", title: "时代六 · 现代都市：比比", ready: false, steps: [] },
     { id: "finale", title: "终章 · 钟声响起", ready: false, steps: [] },
   ],
 };
@@ -228,7 +287,9 @@ export function createQuests(lines = QUEST_LINES) {
   };
 
   const lineById = (id) => lines.find((line) => line.id === id);
-  const chapterDone = (line, chapter) => chapter.ready !== false && chapter.steps.every((step) => done[line.id].has(step.id));
+  // A step with `only` exists only at those levels (e.g. a coding task on 硬核).
+  const applies = (step) => !step.only || step.only.split(" ").includes(state.difficulty || "normal");
+  const chapterDone = (line, chapter) => chapter.ready !== false && chapter.steps.filter(applies).every((step) => done[line.id].has(step.id));
   const unlocked = (line) => {
     if (!line.unlock) return true;
     const other = lineById(line.unlock.line);
@@ -248,7 +309,7 @@ export function createQuests(lines = QUEST_LINES) {
     const out = [];
     for (const chapter of line.chapters) {
       if (blocked(chapter)) break;
-      for (const step of chapter.steps) out.push({ ...step, chapter, line });
+      for (const step of chapter.steps) if (applies(step)) out.push({ ...step, chapter, line });
     }
     return out;
   }
@@ -338,9 +399,16 @@ export function createQuests(lines = QUEST_LINES) {
         const chapter = main.chapters.find((c) => c.id === id);
         return chapter ? chapterDone(main, chapter) : false;
       };
-      if (doneAt("ch5")) return "running";
+      if (doneAt("modern")) return "running";
       if (doneAt("ch1")) return "drifting";
       return "stopped";
+    },
+    /** Eras the time machine can take you to now: the first one whose chapter has begun or is next. */
+    erasOpen() {
+      const main = lineById("main");
+      if (!main) return [];
+      const eraChapters = main.chapters.filter((c) => c.steps.some((s) => s.type === "travel" && s.era !== "home"));
+      return eraChapters.filter((c, i) => (i === 0 ? chapterDone(main, main.chapters.find((x) => x.id === "ch1")) : chapterDone(main, eraChapters[i - 1]))).map((c) => c.steps.find((s) => s.type === "travel").era);
     },
     /** Report what happened in the game; completes the matching current step of every open line. */
     event(kind, id) {
@@ -348,7 +416,11 @@ export function createQuests(lines = QUEST_LINES) {
       for (const line of lines) {
         const step = lineCurrent(line);
         if (!step) continue;
-        const match = (step.type === "enter" && kind === "enter" && step.spot === id) || (step.type === "solve" && kind === "solve" && step.case === id) || (step.type === "play" && kind === "play" && step.game === id);
+        const match =
+          (step.type === "enter" && kind === "enter" && step.spot === id) ||
+          (step.type === "solve" && kind === "solve" && step.case === id) ||
+          (step.type === "play" && kind === "play" && step.game === id) ||
+          (step.type === "travel" && kind === "travel" && step.era === id);
         if (match) {
           complete(step);
           matched = true;

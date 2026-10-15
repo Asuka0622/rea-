@@ -10,7 +10,7 @@ const inExit = (exit, p, pad = 16) => p.x > exit.x - pad && p.x < exit.x + exit.
 
 test("every region has its picture, and exits lead to real regions without bouncing back", () => {
   for (const [name, region] of Object.entries(REGIONS)) {
-    assert.ok(fs.existsSync(new URL(`../public/art/pixel/regions/town-${name}.png`, import.meta.url)), name);
+    assert.ok(fs.existsSync(new URL(`../public/art/pixel/${region.image || `regions/town-${name}`}.png`, import.meta.url)), name);
     assert.ok(inside(region.spawn), `${name} spawn`);
     for (const exit of region.exits) {
       const to = REGIONS[exit.to];
@@ -29,5 +29,5 @@ test("buildings sit on their map and every quest place is somewhere in town", ()
       assert.ok(spot.door.y > spot.y, `${id} door is below its building`);
     }
   }
-  for (const line of QUEST_LINES) for (const chapter of line.chapters) for (const step of chapter.steps) assert.ok(regionOf(step.spot), `${step.id}: ${step.spot}`);
+  for (const line of QUEST_LINES) for (const chapter of line.chapters) for (const step of chapter.steps) if (step.spot) assert.ok(regionOf(step.spot), `${step.id}: ${step.spot}`);
 });

@@ -20,7 +20,21 @@ const SPEAKERS = {
   archivist: "老秦",
   bibi: "比比",
   xingbo: "星博士",
+  ayan: "阿砚",
+  liuniangzi: "柳娘子",
+  hangonglian: "韩公廉",
+  susong: "苏颂",
 };
+
+/** The time machine's dial (docs/concept.md): the eras in story order, and the map each one opens on. */
+const ERAS = [
+  { id: "china", title: "古代中国", place: "汴京", year: "约 1088 年", region: "era-china" },
+  { id: "medieval", title: "中世纪欧洲", place: "城堡与修道院", year: "约 13 世纪" },
+  { id: "industrial", title: "工业革命", place: "英国的工厂", year: "19 世纪" },
+  { id: "forties", title: "1940 年代", place: "破译小组", year: "1940 年代" },
+  { id: "internet", title: "连接世界", place: "大学机房", year: "1960–90 年代" },
+  { id: "modern", title: "现代都市", place: "AI 研究所", year: "现在" },
+];
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
 // home screen; clicking a building enters it, the guide talks in a dialogue box at the bottom, and
@@ -162,6 +176,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能·成就（K）"));
   hud.append(soundButton);
+  const watchButton = h("button", { class: "btn small game-watch", type: "button", onclick: () => travelHome(), title: "按一下怀表，回比特镇的钟楼" }, "⌚ 回比特镇");
+  watchButton.hidden = true;
+  hud.append(watchButton);
   // The town clock (docs/story.md 第 8 节): stopped, drifting or running with the main story.
   const clockFace = h("span", { class: "game-clock-face", "aria-hidden": "true" }, h("i", { class: "hour" }), h("i", { class: "minute" }));
   const clockText = h("span", { class: "game-clock-text" });
@@ -242,7 +259,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let region = "center";
   let regionStarted = false;
   const regionData = () => REGIONS[region];
-  const townImage = () => (regional() ? `regions/town-${region}` : "town");
+  const townImage = () => (regional() ? REGIONS[region].image || `regions/town-${region}` : "town");
   const sprite = (name, x, extra = "") =>
     has(`sprite-${name}`)
       ? h("img", { class: `game-sprite ${extra}`, src: `/art/pixel/sprite-${name}.png`, alt: "", style: `--sx:${x}` })
@@ -276,6 +293,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     worldEl = h("div", { class: "game-world", style: `--px:${townPx};width:calc(${world.w}px * var(--px));height:calc(${world.h}px * var(--px))` });
     stage.replaceChildren(worldEl);
     if (regional()) stage.append(h("div", { class: "game-place-sign" }, icon("compass", { size: 16 }), regionData().name));
+    watchButton.hidden = !(regional() && regionData().era);
     fit();
     worldEl.append(
       background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
@@ -390,7 +408,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xingbo: 520 };
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280 };
   let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
@@ -467,7 +485,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // Built once per drawing of the town: collision checks run thousands of times per path search.
   let spotCache = null;
   /** A region's buildings that lead somewhere now or later (a case home only once its case exists). */
-  const regionSpots = (name) => Object.fromEntries(Object.entries(REGIONS[name].spots).filter(([id, spot]) => ACTIONS[id] || spot.soon || spot.placeholder || cases().some((c) => c.id === id)));
+  const regionSpots = (name) => Object.fromEntries(Object.entries(REGIONS[name].spots).filter(([id, spot]) => ACTIONS[id] || spot.soon || spot.placeholder || spot.label || cases().some((c) => c.id === id)));
   const spots = () => (spotCache ||= regional() ? regionSpots(region) : { ...TOWN, ...caseHouses() });
   const spotData = (id) => (regional() ? REGIONS[regionOf(id)]?.spots[id] : TOWN[id] || CASE_HOUSES[id]);
   /** Name and purpose shown on a spot's sign. */
@@ -475,6 +493,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (SCENES[id] && ACTIONS[id]) return { place: SCENES[id].place, purpose: SCENES[id].purpose };
     if (spotData(id)?.soon) return spotData(id).soon;
     if (spotData(id)?.placeholder) return spotData(id).placeholder;
+    if (spotData(id)?.label) return spotData(id).label;
     const item = cases().find((c) => c.id === id);
     return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : `委托 · 案例 ${item?.order ?? ""}` };
   }
@@ -682,7 +701,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
-  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script) };
+  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine() };
   function walkTo(point, then) {
     if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];
@@ -707,7 +726,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     leaves = [];
     if (reducedMotion || !worldEl) return;
     for (let i = 0; i < 14; i += 1) {
-      const el = h("span", { class: "game-leaf", "aria-hidden": "true", style: `background:${LEAF_COLORS[i % LEAF_COLORS.length]}` });
+      const colors = (regional() && regionData().leaves) || LEAF_COLORS;
+      const el = h("span", { class: "game-leaf", "aria-hidden": "true", style: `background:${colors[i % colors.length]}` });
       worldEl.append(el);
       leaves.push({ el, x: camera.x + Math.random() * viewW(), y: camera.y + Math.random() * viewH(), vx: 6 + Math.random() * 8, vy: 10 + Math.random() * 10, phase: Math.random() * 6 });
     }
@@ -954,7 +974,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           h("span", { class: "game-map-you", style: mark(player.x, player.y), "aria-label": "你在这里" }, "你")),
         regional()
           ? h("div", { class: "game-map-list" },
-            ...Object.entries(REGIONS).flatMap(([name, data]) => {
+            ...Object.entries(REGIONS).filter(([, data]) => data.era === regionData().era).flatMap(([name, data]) => {
               const ids = Object.keys(regionSpots(name));
               return [
                 h("b", {}, data.name, name === region ? "（你在这里）" : ""),
@@ -1099,6 +1119,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     binary: { spot: "clocktower", look: "door", title: "钟楼的门" },
     parts: { spot: "clocktower", look: "gears", title: "钟楼里的机关" },
     drawers: { spot: "clocktower", look: "drawers", title: "记事板下的抽屉" },
+    rods: { spot: "teahouse", look: "table", title: "柳娘子的账桌" },
+    escapement: { spot: "tower-site", look: "wheel", title: "枢轮与天衡" },
   };
   const closeupEl = h("section", { class: "game-closeup", role: "dialog", "aria-modal": "true" });
   closeupEl.hidden = true;
@@ -1109,6 +1131,28 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   /** What happens in the world when a mini-game is won, before the story goes on. */
   const AFTER_GAME = {
+    rods: (door) => [
+      { camera: { x: door.x, y: door.y - 40 }, ms: 400 },
+      { sound: "right" },
+      { emote: "♪" },
+      { wait: 700 },
+      { camera: "player", ms: 400 },
+    ],
+    // The jacks strike for the first time: three bells, the tower shakes, warm light.
+    escapement: (door) => [
+      { camera: { x: door.x, y: door.y - 110 }, ms: 600 },
+      { wait: 300 },
+      { sound: "blip", pitch: 880 }, { wait: 380 },
+      { sound: "blip", pitch: 880 }, { wait: 380 },
+      { sound: "blip", pitch: 660 }, { wait: 300 },
+      { shake: 500 },
+      { flash: 900, color: "#ffe9b0" },
+      { sound: "unlock" },
+      { wait: 900 },
+      { camera: "player", ms: 600 },
+      { emote: "!" },
+      { wait: 400 },
+    ],
     binary: (door) => [
       { camera: { x: door.x, y: door.y - 46 }, ms: 500 },
       ...Array.from({ length: 8 }, (_, i) => [{ call: () => towerLamp(i) }, { sound: "blip", pitch: 520 + i * 70 }, { wait: 170 }]).flat(),
@@ -1146,6 +1190,70 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       { wait: 400 },
     ],
   };
+  /** 时光机: the brass dial in the clock tower. Open eras can be chosen; the rest are silhouettes. */
+  function openTimeMachine() {
+    const open = quests?.erasOpen() || [];
+    overlay.classList.add("timemachine");
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, "钟楼时光机"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关上")),
+      h("p", { class: "game-panel-note" }, "转动表盘，选一个时代。亮着的格子可以去；其余的还在等待时机。"),
+      h("div", { class: "tm-dial" },
+        ...ERAS.map((era, i) => {
+          const ready = open.includes(era.id) && REGIONS[era.region];
+          return h("button", { class: `tm-era ${ready ? "open" : "closed"}`, type: "button", disabled: !ready, onclick: () => travelToEra(era) },
+            h("span", { class: "tm-era-no" }, String(i + 1)),
+            h("b", {}, ready ? era.title : "？？？"),
+            h("small", {}, ready ? `${era.place} · ${era.year}` : open.includes(era.id) ? "制作中" : "还没到时候"));
+        })),
+    );
+    overlay.hidden = false;
+    overlay.querySelector(".tm-era.open")?.focus({ preventScroll: true });
+  }
+  async function travelToEra(era) {
+    closeOverlay();
+    const door = spotData("clocktower")?.door;
+    await director.play([
+      ...(door ? [{ camera: { x: door.x, y: door.y - 60 }, ms: 500 }] : []),
+      { sound: "unlock" },
+      { shake: 700 },
+      { flash: 300, color: "#ffffff" },
+      { wait: 350 },
+      { flash: 300, color: "#d8f4ff" },
+      { wait: 350 },
+      { flash: 900, color: "#ffffff" },
+      { call: () => {
+        cameraFocus = null;
+        lastPlace = null;
+        switchRegion(era.region);
+      } },
+      { wait: 600 },
+      { emote: "?" },
+      { wait: 500 },
+    ]);
+    quests?.event("travel", era.id);
+  }
+  /** The pocket watch: from any era, straight back to the clock tower in Bit Town. */
+  async function travelHome() {
+    if (!regionData()?.era || windowOpen || director.playing) return;
+    closeOverlay();
+    closeCloseup();
+    await director.play([
+      { sound: "unlock" },
+      { flash: 300, color: "#ffffff" },
+      { wait: 300 },
+      { flash: 800, color: "#ffffff" },
+      { call: () => {
+        cameraFocus = null;
+        lastPlace = null;
+        const door = REGIONS.north.spots.clocktower.door;
+        switchRegion("north", { x: door.x, y: door.y + 6 });
+      } },
+      { wait: 500 },
+      { emote: "♥" },
+      { wait: 400 },
+    ]);
+    quests?.event("travel", "home");
+  }
   function towerLamp(i) {
     worldEl?.querySelectorAll(".game-building.tower .tower-lamps i")[i]?.classList.add("lit");
   }
@@ -1185,7 +1293,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   shell.append(overlay);
   const closeOverlay = () => {
     overlay.hidden = true;
-    overlay.classList.remove("skilltree");
+    overlay.classList.remove("skilltree", "timemachine");
   };
 
   /** Pick a difficulty; the first time, the story starts afterwards. */
@@ -1380,9 +1488,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const play = quests?.playAt(id);
     if (play) return openMinigame(play);
     if (ACTIONS[id]) return enter(id);
+    if (id === "clocktower" && quests?.erasOpen().length) return openTimeMachine();
     // A story step may be waiting here; otherwise the place says what it is.
-    if (spotData(id)?.soon || spotData(id)?.placeholder) {
+    if (spotData(id)?.soon || spotData(id)?.placeholder || spotData(id)?.label) {
       if (quests?.event("enter", id)) return;
+      if (spotData(id).label) return say([{ text: spotData(id).label.line || `这里是${info(id).place}。现在没什么要帮忙的。`, face: "normal" }]);
+      if (spotData(id).soon && regionData()?.era) return say([{ text: `「${info(id).place}」……现在进不去，以后再来看看吧。`, face: "thinking" }]);
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
     // A client's home: the case opens in the game window; closing it returns to this door.

@@ -512,3 +512,68 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-closeup.drawers {background:repeating-linear-gradient(90deg,#8a5a2b 0 60px,#7a4e24 60px 62px),#8a5a2b;}
 .game-closeup .mg {padding-top:0;}
 .game-closeup .mg-progress,.game-closeup .mg-feedback {padding:2px 8px;background:rgba(255,246,220,.9);}
+
+/* ----- the time machine dial ----- */
+.game-panel.timemachine {background:#2a1f18;border:4px solid #0d0906;border-radius:0;box-shadow:inset 0 0 0 3px #b8863a,inset 0 0 0 6px #3a2614,0 6px 0 #0d0906;}
+.game-panel.timemachine .game-panel-head {background:#b8863a;border-bottom:4px solid #0d0906;}
+.game-panel.timemachine .game-panel-note {color:#e8cf98;margin-top:10px;}
+.tm-dial {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px 18px;background:radial-gradient(circle at 50% 50%,#3a2c1e 0 40%,#241a12 41%);}
+.tm-era {display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;font-family:var(--font-display,"Fusion Pixel");cursor:pointer;color:#7a6c5e;background:#2a211b;border:3px solid #0d0906;box-shadow:inset 2px 2px 0 #3a2f27;}
+.tm-era.open {color:#1b120c;background:#e8cf98;box-shadow:inset 3px 3px 0 #fff2c8,inset -3px -3px 0 #b8863a;animation:st-blink 1.2s steps(2) infinite;}
+.tm-era.open:hover,.tm-era.open:focus-visible {background:#ffe7b0;outline:3px solid #ffcf3d;}
+.tm-era b {font-size:16px;font-weight:400;}
+.tm-era small {font-size:11px;}
+.tm-era-no {display:grid;place-items:center;width:26px;height:26px;font-size:13px;color:#e8cf98;background:#1b120c;border:2px solid #b8863a;}
+.game-watch {font-weight:700;}
+@media(prefers-reduced-motion:reduce) {.tm-era.open {animation:none;}}
+
+/* ----- 茶铺算账: the counting board ----- */
+.game-closeup.table {background:repeating-linear-gradient(0deg,#9a6a3a 0 18px,#8a5c30 18px 20px),#9a6a3a;}
+.rod-board {display:flex;justify-content:center;gap:6px;padding:10px;background:#efe2c2;border:3px solid #5e3415;}
+.rod-col {display:flex;flex-direction:column;align-items:center;gap:4px;min-width:74px;}
+.rod-col small {font-size:11px;color:#6b4626;}
+.rod-cell {display:grid;place-items:center;width:70px;height:70px;background:#fff8e6;border:2px dashed #c9a36b;}
+.rod-buttons {display:flex;gap:4px;}
+.rod-buttons .btn {min-width:30px;justify-content:center;}
+.rod-digit {display:flex;align-items:center;justify-content:center;gap:3px;}
+.rod-digit.up {flex-direction:column;}
+.rod-digit.up .rod-ones {display:flex;gap:4px;}
+.rod-digit.up .rod {display:block;width:5px;height:34px;}
+.rod-digit.up .rod.five {width:34px;height:5px;}
+.rod-digit.flat {flex-direction:row;}
+.rod-digit.flat .rod-ones {display:flex;flex-direction:column;gap:4px;}
+.rod-digit.flat .rod {display:block;width:34px;height:5px;}
+.rod-digit.flat .rod.five {width:5px;height:34px;}
+.rod {background:#c9a24a;box-shadow:inset 0 0 0 1px #6b4a1b;}
+.rod-bills {display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+.rod-bills .rod-board {padding:6px;}
+.rod-bills .rod-cell {width:56px;height:56px;}
+.rod-equals {margin:4px 0;text-align:center;font-size:20px;}
+.rod-patience {height:8px;margin:0 0 8px;background:#3a2614;border:2px solid #0d0906;}
+.rod-patience i {display:block;height:100%;background:#e0a03a;transition:width 1s linear;}
+
+/* ----- 调天衡: wheel, scoop, beat track ----- */
+.game-closeup.wheel {background:repeating-linear-gradient(90deg,#7a5434 0 30px,#6a482a 30px 32px),#7a5434;}
+.esc-machine {display:flex;gap:14px;align-items:center;padding:8px;background:rgba(255,246,220,.92);border:3px solid #3b2312;}
+.esc-left {display:flex;align-items:flex-end;gap:8px;}
+.esc-wheel {position:relative;width:110px;height:110px;border-radius:50%;background:#8a5c30;border:4px solid #3b2312;transition:rotate .25s steps(3);}
+.esc-wheel i {position:absolute;left:50%;top:50%;width:4px;height:52px;margin-left:-2px;background:#3b2312;transform-origin:50% 0;}
+.esc-wheel i::after {content:"";position:absolute;bottom:-8px;left:-6px;width:16px;height:10px;background:#c9a24a;border:2px solid #3b2312;}
+.esc-scoop {position:relative;width:26px;height:60px;background:#fff;border:3px solid #3b2312;display:flex;align-items:flex-end;}
+.esc-scoop i {display:block;width:100%;height:0;background:#4d9fd6;}
+.esc-right {flex:1;}
+.esc-track {position:relative;display:flex;align-items:center;gap:6px;height:56px;padding:0 8px;background:#2a211b;border:3px solid #0d0906;}
+.esc-track::before {content:"";position:absolute;left:0;right:0;top:50%;border-top:2px dashed #7fd06a;}
+.esc-track i {position:relative;width:14px;height:14px;top:calc(var(--off) * 20px);background:#c9573e;border:2px solid #0d0906;}
+.esc-track i.ok {background:#7fd06a;}
+.esc-readout {margin:6px 0 0;font-size:13px;}
+.esc-controls {display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;padding:8px;background:rgba(255,246,220,.92);border:3px solid #3b2312;}
+.esc-slider {display:flex;align-items:center;gap:8px;font-weight:700;}
+.esc-slider input {width:180px;accent-color:#a5512b;}
+.esc-slider b {min-width:1.5em;}
+
+/* ----- 用代码拆数 ----- */
+.code-editor {width:100%;box-sizing:border-box;padding:10px;font:14px/1.6 ui-monospace,Consolas,monospace;color:#e8f0e0;background:#1d2a20;border:3px solid #0d0906;tab-size:2;}
+.code-results {margin:8px 0 0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
+.code-results li.ok {color:#2f7a3a;}
+.code-results li.bad {color:#b4432a;}

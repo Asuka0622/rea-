@@ -460,7 +460,341 @@ function drawers({ h, difficulty, onWin, sound }) {
   return { title: "记事板下的两个抽屉", el: ui.el };
 }
 
-const GAMES = { binary, parts, drawers };
+/* ----- 茶铺算账: rod numerals (算筹). Customers queue with their bills; lay the rods on the counting board.
+   Units stand upright (纵), tens lie flat (横), hundreds upright, thousands flat: 「一纵十横，百立千僵」.
+   A digit up to 5 is that many rods; 6–9 is one crossing rod for five plus the rest. An empty column is 0. ----- */
+function rodDigit(h, digit, upright) {
+  // Upright: 1–5 vertical rods, 6–9 a flat rod on top (five) and vertical rods below. Flat is the opposite.
+  const el = h("span", { class: `rod-digit ${upright ? "up" : "flat"}`, "aria-hidden": "true" });
+  if (!digit) return el;
+  const five = digit > 5;
+  const ones = five ? digit - 5 : digit;
+  if (five) el.append(h("i", { class: "rod five" }));
+  const group = h("span", { class: "rod-ones" });
+  for (let i = 0; i < ones; i += 1) group.append(h("i", { class: "rod" }));
+  el.append(group);
+  return el;
+}
+
+function rods({ h, difficulty, onWin, sound }) {
+  const easy = difficulty === "easy";
+  const hard = difficulty === "hard";
+  const PLACES = ["个", "十", "百", "千"];
+  const TASKS = {
+    easy: [
+      { kind: "place", n: 23, who: "挑担的货郎", order: "两碗茶、三块糕" },
+      { kind: "place", n: 48, who: "赶考的书生", order: "一壶好茶、四碟点心" },
+      { kind: "place", n: 70, who: "船家", order: "七碗大碗茶" },
+    ],
+    normal: [
+      { kind: "place", n: 105, who: "赶考的书生", order: "一壶龙团茶" },
+      { kind: "place", n: 230, who: "绸缎庄的伙计", order: "包下二楼雅座" },
+      { kind: "add", a: 47, b: 58, who: "两位船家", order: "合在一起结账" },
+      { kind: "read", n: 406, who: "老主顾", order: "「上回的账是多少来着？」" },
+    ],
+    hard: [
+      { kind: "place", n: 1088, who: "太史局的小吏", order: "记下今年的年份" },
+      { kind: "add", a: 378, b: 645, who: "两家商号", order: "合账" },
+      { kind: "read", n: 2307, who: "钱庄掌柜", order: "「这笔账你给念念？」" },
+      { kind: "add", a: 999, b: 1, who: "小孩儿", order: "「再加一文，是多少？」" },
+    ],
+  };
+  const tasks = TASKS[difficulty] || TASKS.normal;
+  const columns = hard ? 4 : easy ? 2 : 3;
+  const patience = hard ? 30 : easy ? Infinity : 45; // seconds before a customer gives up
+  const ui = frame(h, {
+    sound,
+    difficulty,
+    note: {
+      easy: "算筹就是小竹棍。最右边一格是个位，竹棍竖着摆；往左一格是十位，竹棍横着摆。1 到 5 就摆几根；6 到 9 先放一根横过来的当作「5」，再补上剩下的。点格子下面的 ＋ 和 －。",
+      normal: "算筹记数用的是「位值制」：同样几根竹棍，放在不同的位置，大小就不同，往左一位大十倍。个位竖摆、十位横摆、百位又竖摆，纵横交替才不会看混；空着的位就是 0。6 到 9 用一根横筹当作 5，再加上竖筹。",
+      hard: "《孙子算经》：「凡算之法，先识其位，一纵十横，百立千僵，千十相望，万百相当。」个、百位纵摆，十、千位横摆；空位为 0。这一关不标位名，不给图示；加法要自己进位。",
+    },
+  });
+  let index = 0;
+  let mistakes = 0;
+  let digits = [];
+  let timer = null;
+  const value = () => digits.reduce((sum, d, i) => sum + d * 10 ** i, 0);
+  const upright = (i) => i % 2 === 0; // 个、百 upright; 十、千 flat
+  function board(values, editable) {
+    const row = h("div", { class: "rod-board" });
+    for (let i = columns - 1; i >= 0; i -= 1) {
+      const col = h("div", { class: "rod-col" },
+        h("div", { class: "rod-cell" }, rodDigit(h, values[i] || 0, upright(i))),
+        !hard ? h("small", {}, easy ? `${PLACES[i]}位 · ${upright(i) ? "竖摆" : "横摆"}` : `${PLACES[i]}位`) : null,
+        editable ? h("div", { class: "rod-buttons" },
+          h("button", { class: "btn small", type: "button", "aria-label": `${PLACES[i]}位加一根`, onclick: () => change(i, 1) }, "＋"),
+          h("button", { class: "btn small", type: "button", "aria-label": `${PLACES[i]}位拿掉一根`, onclick: () => change(i, -1) }, "－")) : null);
+      row.append(col);
+    }
+    return row;
+  }
+  const split = (n) => Array.from({ length: columns }, (_, i) => Math.floor(n / 10 ** i) % 10);
+  function change(i, by) {
+    digits[i] = Math.max(0, Math.min(9, (digits[i] || 0) + by));
+    sound?.blip?.(500 + digits[i] * 40);
+    draw(true);
+  }
+  function startPatience() {
+    clearInterval(timer);
+    if (!Number.isFinite(patience)) return;
+    let left = patience;
+    timer = setInterval(() => {
+      left -= 1;
+      const bar = ui.area.querySelector(".rod-patience i");
+      if (bar) bar.style.width = `${(left / patience) * 100}%`;
+      if (left <= 0) {
+        clearInterval(timer);
+        miss("客人等不及，摇着头走了……", true);
+      }
+    }, 1000);
+  }
+  function draw(keep = false) {
+    const task = tasks[index];
+    ui.setProgress(`第 ${index + 1} / ${tasks.length} 位客人`);
+    if (!keep) digits = Array(columns).fill(0);
+    const ask =
+      task.kind === "place" ? `${task.who}：${task.order}，一共 ${task.n} 文。把 ${task.n} 摆在算板上。`
+        : task.kind === "add" ? `${task.who}${task.order}：一笔 ${hard ? "（看算筹）" : task.a} 文，一笔 ${hard ? "（看算筹）" : task.b} 文。在算板上摆出合计。`
+          : `${task.who}${task.order} 算板上摆着上回的账，念出它是多少文。`;
+    const parts = [h("p", { class: "mg-ask" }, ask)];
+    if (Number.isFinite(patience)) parts.push(h("div", { class: "rod-patience", title: "客人的耐心" }, h("i", { style: `width:${keep ? ui.area.querySelector(".rod-patience i")?.style.width || "100%" : "100%"}` })));
+    if (task.kind === "add") parts.push(h("div", { class: "rod-bills" }, board(split(task.a), false), h("b", {}, "＋"), board(split(task.b), false)), h("p", { class: "rod-equals" }, "＝"));
+    if (task.kind === "read") parts.push(board(split(task.n), false));
+    else parts.push(board(digits, true));
+    if (easy && task.kind !== "read") parts.push(h("p", { class: "mg-total" }, `算板上现在是 ${value()}`));
+    ui.area.replaceChildren(...parts);
+    const buttons = task.kind === "read" ? numberAnswer(h, (n) => answer(n === task.n)) : [h("button", { class: "btn primary", type: "button", onclick: () => answer(value() === (task.kind === "add" ? task.a + task.b : task.n)) }, "收钱")];
+    if (easy) buttons.push(h("button", { class: "link-btn", type: "button", onclick: () => { digits = split(task.kind === "add" ? task.a + task.b : task.n); draw(true); ui.tell("照着摆好了，点「收钱」。"); } }, "看答案"));
+    else if (!hard) buttons.push(h("button", { class: "link-btn", type: "button", onclick: () => ui.tell(task.kind === "add" ? "从个位加起：个位满十，就往十位进一根。" : "从最高位开始，一位一位地摆；中间是 0 的位就空着。") }, "提示"));
+    ui.buttons.replaceChildren(...buttons);
+    if (!keep) startPatience();
+  }
+  function miss(why, leave = false) {
+    mistakes += 1;
+    if (ui.miss()) {
+      clearInterval(timer);
+      ui.tell("客人都被吓跑了……柳娘子叹了口气：「重新来吧。」", "bad");
+      index = 0;
+      setTimeout(() => {
+        ui.refill();
+        draw();
+      }, 1800);
+      return;
+    }
+    ui.tell(why, "bad");
+    if (leave) {
+      index += 1;
+      if (index >= tasks.length) return finish();
+      setTimeout(() => draw(), 1400);
+    }
+  }
+  function answer(right) {
+    const task = tasks[index];
+    if (!right) return miss(hard ? "不对。" : task.kind === "add" ? "合计不对。个位加起来满十了吗？满了要进一位。" : task.kind === "read" ? "不对。先认出每一位：竖摆的是个位和百位，横摆的是十位和千位。" : `摆出来的是 ${value()} 文，不是 ${task.n} 文。`);
+    clearInterval(timer);
+    sound?.right?.();
+    index += 1;
+    if (index >= tasks.length) return finish();
+    ui.tell("「多谢！」客人放下铜钱走了。", "good");
+    setTimeout(() => draw(), 900);
+  }
+  function finish() {
+    clearInterval(timer);
+    ui.tell(mistakes ? `今天的账都算完了（错了 ${mistakes} 次）。` : "一笔都没算错！柳娘子竖起了大拇指。", "good");
+    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "打烊"));
+  }
+  draw();
+  return { title: "柳娘子的茶铺 · 摆算筹", el: ui.el };
+}
+
+/* ----- 调天衡: the escapement of the water-driven clock tower. Water runs into a scoop on the big wheel;
+   when it is heavy enough to beat the counterweight, the balance lets the wheel turn one step. The time
+   between steps is weight / flow; too light a weight makes the balance shake (uneven steps), too heavy
+   and the scoop overflows (uneven too). Tune it until eight steps in a row keep the beat. ----- */
+function escapement({ h, difficulty, onWin, sound }) {
+  const easy = difficulty === "easy";
+  const hard = difficulty === "hard";
+  const beat = hard ? 0.75 : 1; // seconds between steps wanted
+  const stable = hard ? [5, 7] : [4, 7]; // counterweights that let the balance work cleanly
+  const ui = frame(h, {
+    sound,
+    difficulty,
+    note: {
+      easy: "水一滴滴流进枢轮上的小水斗。水斗装满、比秤杆另一头的配重还重时，秤杆就放行，枢轮转一格。把水流调到刚好：每一下「咔」都踩在鼓点上。",
+      normal: "天衡像一杆秤：一头是配重，一头是正在接水的水斗。水流越快，水斗越早压过配重，枢轮就越早走一格；配重越重，就要等更多的水。两格之间的时间 ≈ 配重 ÷ 水流。配重太轻秤杆会抖，太重水斗会溢出，节拍都会乱。让枢轮连续 8 格都踩在鼓点上。",
+      hard: "这是一套靠反馈自己控制节奏的机构：水斗的重量决定什么时候放行。两格间隔 ≈ 配重 ÷ 水流；配重只有在 5 到 7 之间秤杆才稳。这一回韩公廉要的节拍是 0.75 秒一格，只能用整数刻度，自己算出搭配。只看曲线，不显示数字。",
+    },
+  });
+  let weight = easy ? 5 : 3;
+  let flow = easy ? 2 : 6;
+  let fill = 0;
+  let last = performance.now();
+  let lastStep = null;
+  let gaps = [];
+  let angle = 0;
+  let streak = 0;
+  let mistakesNoted = 0;
+  let done = false;
+  const wheel = h("div", { class: "esc-wheel", "aria-hidden": "true" }, ...Array.from({ length: 12 }, (_, i) => h("i", { style: `rotate:${i * 30}deg` })));
+  const scoop = h("div", { class: "esc-scoop", "aria-hidden": "true" }, h("i", {}));
+  const track = h("div", { class: "esc-track", "aria-label": "节拍记录" });
+  const readout = h("p", { class: "esc-readout" });
+  const slider = (label, get, set, min, max) => {
+    const input = h("input", { type: "range", min: String(min), max: String(max), step: "1", value: String(get()), "aria-label": label });
+    const shown = h("b", {}, hard ? "" : String(get()));
+    input.addEventListener("input", () => {
+      set(Number(input.value));
+      shown.textContent = hard ? "" : input.value;
+      gaps = [];
+      streak = 0;
+      paintTrack();
+    });
+    return h("label", { class: "esc-slider" }, h("span", {}, label), input, shown);
+  };
+  const controls = h("div", { class: "esc-controls" },
+    !easy ? slider("配重", () => weight, (v) => (weight = v), 1, 10) : null,
+    slider("水流", () => flow, (v) => (flow = v), 1, 10));
+  ui.area.replaceChildren(h("div", { class: "esc-machine" }, h("div", { class: "esc-left" }, wheel, scoop), h("div", { class: "esc-right" }, h("p", { class: "mg-ask" }, `让枢轮每 ${beat} 秒走一格，连续 8 格都踩在鼓点上。`), track, readout)), controls);
+  ui.setProgress("连续 0 / 8 格");
+  ui.buttons.replaceChildren(!hard ? h("button", { class: "link-btn", type: "button", onclick: () => ui.tell(easy ? "鼓点是 1 秒一下。配重是 5，那水流调到多少，水斗刚好 1 秒装满？" : `间隔 ≈ 配重 ÷ 水流。想要 ${beat} 秒一格，配重和水流要差不多大；配重还得在 ${stable[0]} 到 ${stable[1]} 之间。`) }, "提示") : "");
+
+  function paintTrack() {
+    track.replaceChildren(...gaps.slice(-8).map((gap) => {
+      const off = Math.max(-1, Math.min(1, (gap - beat) / beat));
+      return h("i", { class: Math.abs(gap - beat) / beat <= 0.06 ? "ok" : "off", style: `--off:${off}` });
+    }));
+    if (!hard) {
+      const mean = gaps.length ? gaps.slice(-4).reduce((a, b) => a + b, 0) / Math.min(4, gaps.length) : 0;
+      readout.textContent = gaps.length ? `最近的间隔约 ${mean.toFixed(2)} 秒（目标 ${beat} 秒）` : "等枢轮走起来……";
+    }
+  }
+  let shown = false; // the panel is put on the page a moment after it is built (the camera moves first)
+  function step(now) {
+    if (done) return;
+    if (!ui.el.isConnected) {
+      if (shown) return; // closed: stop
+      last = now;
+      return requestAnimationFrame(step);
+    }
+    shown = true;
+    requestAnimationFrame(step);
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    fill += flow * dt;
+    scoop.firstChild.style.height = `${Math.min(100, (fill / Math.max(weight, 0.1)) * 100)}%`;
+    // Too heavy: the scoop overflows while the balance hesitates; too light: the balance trembles.
+    const wobble = weight < stable[0] ? 0.35 * (stable[0] - weight) : weight > stable[1] ? 0.3 * (weight - stable[1]) : 0;
+    const need = weight * (1 + (wobble ? (Math.random() - 0.5) * wobble : 0));
+    if (fill >= need) {
+      fill = 0;
+      angle += 30;
+      wheel.style.rotate = `${angle}deg`;
+      sound?.step?.();
+      if (lastStep !== null) {
+        const gap = (now - lastStep) / 1000;
+        gaps.push(gap);
+        const good = Math.abs(gap - beat) / beat <= 0.06;
+        streak = good ? streak + 1 : 0;
+        if (!good && gaps.length > 3 && gaps.length % 6 === 0) mistakesNoted += 1;
+        ui.setProgress(`连续 ${streak} / 8 格`);
+        paintTrack();
+        if (streak >= 8) return win();
+        if (!good && gaps.length % 4 === 0 && !hard) ui.tell(wobble ? (weight < stable[0] ? "秤杆在抖，间隔忽长忽短：配重太轻了。" : "水斗溢出来了，节拍乱了：配重太重了。") : gap > beat ? "走得太慢了。" : "走得太快了。");
+      }
+      lastStep = now;
+    }
+  }
+  requestAnimationFrame((now) => {
+    last = now;
+    step(now);
+  });
+  function win() {
+    done = true;
+    sound?.unlock?.();
+    ui.tell("枢轮一格一格，稳稳地踩在鼓点上！", "good");
+    controls.querySelectorAll("input").forEach((input) => (input.disabled = true));
+    ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes: mistakesNoted }) }, "让报时木人敲钟"));
+  }
+  return { title: "水运仪象台 · 调天衡", el: ui.el };
+}
+
+/* ----- 用代码拆数 (硬核): the same idea as the rods, in real JavaScript, run in a worker with a time limit. ----- */
+function codeDigits({ h, onWin, sound }) {
+  const ui = frame(h, {
+    sound,
+    difficulty: "hard",
+    note: "柳娘子的算筹是一位一位摆的。用 JavaScript 写一个函数 digits(n)，把一个整数拆成每一位，从高位到低位放进数组。n % 10 得到个位，Math.floor(n / 10) 去掉个位。",
+  });
+  const starter = `function digits(n) {
+  const result = [];
+  // 在这里写：一位一位地取出来
+
+  return result;
+}`;
+  const editor = h("textarea", { class: "code-editor", spellcheck: "false", rows: "10", "aria-label": "代码" });
+  editor.value = starter;
+  editor.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const at = editor.selectionStart;
+      editor.value = `${editor.value.slice(0, at)}  ${editor.value.slice(editor.selectionEnd)}`;
+      editor.selectionStart = editor.selectionEnd = at + 2;
+    }
+  });
+  const results = h("ul", { class: "code-results" });
+  ui.area.replaceChildren(editor, results);
+  ui.setProgress("用真正的代码");
+  const TESTS = [[1088, [1, 0, 8, 8]], [7, [7]], [205, [2, 0, 5]], [0, [0]], [9999, [9, 9, 9, 9]]];
+  let mistakes = 0;
+  function run() {
+    // The player's own code runs in a worker: it cannot touch the page, and a loop that never ends is stopped.
+    const source = `${editor.value}\nself.onmessage = () => { const out = ${JSON.stringify(TESTS)}.map(([n]) => { try { return { ok: true, value: digits(n) }; } catch (e) { return { ok: false, value: String(e && e.message || e) }; } }); self.postMessage(out); };`;
+    let worker;
+    try {
+      worker = new Worker(URL.createObjectURL(new Blob([source], { type: "text/javascript" })));
+    } catch (error) {
+      return ui.tell(`代码有错：${error.message}`, "bad");
+    }
+    const stop = setTimeout(() => {
+      worker.terminate();
+      mistakes += 1;
+      ui.tell("代码跑了一秒还没停，是不是写了停不下来的循环？", "bad");
+    }, 1000);
+    worker.onerror = (event) => {
+      clearTimeout(stop);
+      worker.terminate();
+      mistakes += 1;
+      ui.tell(`代码有错：${event.message}`, "bad");
+      event.preventDefault();
+    };
+    worker.onmessage = ({ data }) => {
+      clearTimeout(stop);
+      worker.terminate();
+      let passed = 0;
+      results.replaceChildren(...TESTS.map(([n, want], i) => {
+        const got = data[i];
+        const ok = got.ok && JSON.stringify(got.value) === JSON.stringify(want);
+        if (ok) passed += 1;
+        return h("li", { class: ok ? "ok" : "bad" }, `digits(${n}) → ${got.ok ? JSON.stringify(got.value) : `出错：${got.value}`}　${ok ? "✓" : `应该是 ${JSON.stringify(want)}`}`);
+      }));
+      if (passed === TESTS.length) {
+        ui.tell("全部通过！", "good");
+        ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: () => onWin({ mistakes }) }, "给铁叔看"));
+      } else {
+        mistakes += 1;
+        ui.tell(`通过 ${passed} / ${TESTS.length} 个。${data[3]?.value?.length === 0 ? "注意 0 也是一位。" : ""}`, "bad");
+      }
+    };
+    worker.postMessage(null);
+  }
+  ui.buttons.replaceChildren(h("button", { class: "btn primary", type: "button", onclick: run }, "运行"), h("button", { class: "link-btn", type: "button", onclick: () => { editor.value = starter; results.replaceChildren(); } }, "重来"));
+  return { title: "铁叔的工作台 · 用代码拆数", el: ui.el };
+}
+
+const GAMES = { binary, parts, drawers, rods, escapement, "code-digits": codeDigits };
 
 export const MINIGAME_IDS = Object.keys(GAMES);
 
