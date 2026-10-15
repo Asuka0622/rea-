@@ -1,7 +1,7 @@
-// 任务系统: quest chains made of chapters and steps, the player's difficulty, and saved progress.
-// Game-agnostic on purpose: a quest line (REA's detective branch now, programming / network / AI
-// districts later) is plain data, and the game reports what happened ("entered a building",
-// "solved a case") through event(). Progress lives in this browser's localStorage.
+// 任务系统: quest lines (the main story and district side lines) made of chapters and steps, the
+// player's difficulty, and saved progress. Game-agnostic on purpose: a line is plain data, and the game
+// reports what happened ("entered a building", "solved a case") through event(). The story itself is
+// designed in docs/story.md. Progress lives in this browser's localStorage.
 
 const KEY = "rea-game-progress";
 
@@ -11,29 +11,64 @@ export const DIFFICULTIES = {
   hard: { label: "硬核", note: "直接看专业报告，没有提示，每个案子多一道挑战题。适合有基础、想学深一点的人。" },
 };
 
-/**
- * The REA side quest (侦探事务所支线). Steps:
- *   { id, type: "enter", spot }  enter a building or walk into a client's home
- *   { id, type: "solve", case }  finish a case (its conclusion is shown)
- * `say` is what the guide says when the step becomes current; `done` when the chapter ends.
+/*
+ * A line: { id, title, subtitle, unlock?, intro?, chapters }.
+ *   unlock: { line, chapter } — the line opens when that chapter of another line is done.
+ *   intro: what the guide says when the line opens.
+ * A chapter: { id, title, steps, done?, badge?, ready? } — ready: false = still being made (shown in the
+ *   log as 制作中; the line waits there).
+ * A step: { id, type: "enter" | "solve", spot, case?, goal, say, done? }
+ *   enter: walk into a building (spot); solve: finish a case. `say` is what the guide says when the step
+ *   becomes current, `done` when it is finished; a chapter's `done` follows its last step.
  */
-export const REA_QUEST = {
-  id: "rea",
-  title: "侦探事务所支线",
-  subtitle: "学会拆开软件，看清它在做什么",
+
+/** 主线「停摆的钟楼」(docs/story.md). Only the prologue is playable so far. */
+export const MAIN_QUEST = {
+  id: "main",
+  title: "主线 · 停摆的钟楼",
+  subtitle: "修好钟楼，一路弄懂电脑、编程、网络、安全和 AI",
   chapters: [
     {
       id: "prologue",
-      title: "序章 · 新来的侦探助手",
-      steps: [{ id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所找路米", say: [{ text: "欢迎来到比特镇！我是路米，在镇上开了一家侦探事务所，专门帮大家查软件。", face: "happy" }, { text: "你愿意当我的助手吗？先跟我回事务所看看吧，就在广场正北边。", face: "normal" }] }],
-      done: [{ text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" }, { text: "不过开工之前，你得先学点基础。图书馆的书奶奶最会讲这些了。", face: "normal" }],
+      title: "序章 · 新来的助手",
+      steps: [
+        {
+          id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所找路米",
+          say: [{ text: "欢迎来到比特镇！我是路米，在镇上开了一家侦探事务所，专门帮大家查软件。", face: "happy" }, { text: "你愿意当我的助手吗？先跟我回事务所看看吧，就在广场正北边。", face: "normal" }],
+          done: [{ text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" }, { text: "……咦，都中午了，钟楼怎么没响？算了，先办正事。开工之前，你得先学点基础。", face: "thinking" }],
+        },
+        {
+          id: "visit-library", type: "enter", spot: "learn", goal: "去图书馆找书奶奶上第一课",
+          say: [{ text: "图书馆在广场西北边，紫色屋顶、石头砌的那栋。书奶奶最会讲基础了。", face: "normal" }],
+          done: [{ text: "书奶奶说，钟楼从她小时候起就没停过一天。今天中午它却一声都没响……", face: "thinking" }],
+        },
+        {
+          id: "visit-tower", type: "enter", spot: "clocktower", goal: "去北区看看停摆的钟楼",
+          say: [{ text: "走，去北区看看钟楼！从广场一直往北走就到了。", face: "normal" }],
+        },
+      ],
+      done: [
+        { text: "钟楼的门锁得紧紧的，门上刻着一串 0 和 1……这钟楼，好像不只是一座钟？", face: "surprised" },
+        { text: "要打开它，得请工具铺的铁叔帮忙。他出门进货了，过几天才回来。", face: "thinking" },
+        { text: "在那之前，事务所的委托板上已经有人来求助了。我们先帮帮大家吧！", face: "happy" },
+      ],
     },
-    {
-      id: "basics",
-      title: "第一课 · 书奶奶的图书馆",
-      steps: [{ id: "visit-library", type: "enter", spot: "learn", goal: "去图书馆上第一课", say: [{ text: "图书馆在小镇西北边，石头砌的那栋。", face: "normal" }] }],
-      done: [{ text: "基础课的书都在书架上了，随时可以回来翻。现在，镇上已经有人来找我们帮忙了！", face: "happy" }],
-    },
+    { id: "ch1", title: "第一章 · 打开钟楼（电脑是什么）", ready: false, steps: [] },
+    { id: "ch2", title: "第二章 · 重写指令（编程）", ready: false, steps: [] },
+    { id: "ch3", title: "第三章 · 对时（网络）", ready: false, steps: [] },
+    { id: "ch4", title: "第四章 · 谁动了钟（安全与逆向）", ready: false, steps: [] },
+    { id: "ch5", title: "第五章 · 小故障（AI）", ready: false, steps: [] },
+    { id: "finale", title: "终章 · 钟声响起", ready: false, steps: [] },
+  ],
+};
+
+/** 侦探事务所支线: REA's six cases and the real stories. */
+export const REA_QUEST = {
+  id: "rea",
+  title: "支线 · 侦探事务所",
+  subtitle: "学会拆开软件，看清它在做什么",
+  unlock: { line: "main", chapter: "prologue" },
+  chapters: [
     {
       id: "case-1",
       title: "委托一 · 小林的记账软件",
@@ -66,8 +101,8 @@ export const REA_QUEST = {
     },
     {
       id: "tools",
-      title: "准备工具 · 铁叔的工具铺",
-      steps: [{ id: "visit-tools", type: "enter", spot: "engines", goal: "去工具铺，准备分析手机 App 的工具", say: [{ text: "下一个委托是手机 App，要用专门的工具才能拆开。去工具铺看看吧，在小镇东北边。", face: "normal" }] }],
+      title: "准备工具 · 工具铺",
+      steps: [{ id: "visit-tools", type: "enter", spot: "engines", goal: "去工具铺，准备分析手机 App 的工具", say: [{ text: "下一个委托是手机 App，要用专门的工具才能拆开。去工具铺看看吧，在广场东北边。", face: "normal" }] }],
       done: [{ text: "工具备好了（如果还没装，随时可以回来装）。王奶奶在等我们呢。", face: "normal" }],
     },
     {
@@ -79,17 +114,20 @@ export const REA_QUEST = {
     {
       id: "stories",
       title: "尾声 · 档案馆的故事",
-      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去小镇档案馆，听听真实发生过的故事", say: [{ text: "你已经破了六个案子。住宅区档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
+      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去档案馆，听听真实发生过的故事", say: [{ text: "你已经破了六个案子。住宅区档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
       done: [{ text: "这些都是真事。你学到的方法，真正的安全研究员每天都在用。", face: "thinking" }],
     },
     {
       id: "finale",
-      title: "结局 · 见习侦探",
+      title: "结案 · 见习侦探",
+      badge: { id: "rea-detective", label: "见习侦探" },
       steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所向路米报告", say: [{ text: "回事务所来吧，我有东西要给你。", face: "happy" }] }],
-      done: [{ text: "这枚「见习侦探」徽章是你的了！逆向分析的基础，你已经全部学会。", face: "happy" }, { text: "小镇里还有很多地方等你去学：编程、网络、电脑、AI……我们下次见！", face: "happy" }],
+      done: [{ text: "这枚「见习侦探」徽章是你的了！逆向分析的基础，你已经全部学会。", face: "happy" }, { text: "以后钟楼的案子，也要靠你这双侦探的眼睛了。", face: "happy" }],
     },
   ],
 };
+
+export const QUEST_LINES = [MAIN_QUEST, REA_QUEST];
 
 function load() {
   try {
@@ -99,40 +137,75 @@ function load() {
   }
 }
 
-export function createQuests(quest = REA_QUEST) {
+export function createQuests(lines = QUEST_LINES) {
   const saved = load();
-  const state = {
-    difficulty: saved.difficulty || null,
-    done: new Set(saved.done?.[quest.id] || []),
-    badges: new Set(saved.badges || []),
-  };
+  const done = Object.fromEntries(lines.map((line) => [line.id, new Set(saved.done?.[line.id] || [])]));
+  // Saves from before the main line: the prologue's first two steps were the REA line's.
+  if (!saved.done?.main && done.main && saved.done?.rea) for (const id of ["visit-office", "visit-library"]) if (saved.done.rea.includes(id)) done.main.add(id);
+  const state = { difficulty: saved.difficulty || null, badges: new Set(saved.badges || []), tracked: saved.tracked || null };
   const listeners = new Set();
   const save = () => {
     try {
       const all = load();
       all.difficulty = state.difficulty;
-      all.done = { ...(all.done || {}), [quest.id]: [...state.done] };
+      all.done = { ...(all.done || {}), ...Object.fromEntries(lines.map((line) => [line.id, [...done[line.id]]])) };
       all.badges = [...state.badges];
+      all.tracked = state.tracked;
       localStorage.setItem(KEY, JSON.stringify(all));
     } catch {}
   };
 
-  const steps = () => quest.chapters.flatMap((chapter) => chapter.steps.map((step) => ({ ...step, chapter })));
-  /** The first step not done yet, with its chapter; null when the whole line is finished. */
-  const current = () => steps().find((step) => !state.done.has(step.id)) || null;
-  const chapterDone = (chapter) => chapter.steps.every((step) => state.done.has(step.id));
+  const lineById = (id) => lines.find((line) => line.id === id);
+  const chapterDone = (line, chapter) => chapter.ready !== false && chapter.steps.every((step) => done[line.id].has(step.id));
+  const unlocked = (line) => {
+    if (!line.unlock) return true;
+    const other = lineById(line.unlock.line);
+    const chapter = other?.chapters.find((c) => c.id === line.unlock.chapter);
+    return Boolean(other && chapter && chapterDone(other, chapter));
+  };
+  /** Playable steps, in order: a line stops at its first chapter still being made. */
+  function steps(line) {
+    const out = [];
+    for (const chapter of line.chapters) {
+      if (chapter.ready === false) break;
+      for (const step of chapter.steps) out.push({ ...step, chapter, line });
+    }
+    return out;
+  }
+  const lineCurrent = (line) => (unlocked(line) ? steps(line).find((step) => !done[line.id].has(step.id)) || null : null);
+  /** The step the tracker shows: the tracked line's, else the main story's, else the first open side line's. */
+  function current() {
+    const tracked = lineById(state.tracked);
+    if (tracked && lineCurrent(tracked)) return lineCurrent(tracked);
+    for (const line of lines) {
+      const step = lineCurrent(line);
+      if (step) return step;
+    }
+    return null;
+  }
+  /** A line's first chapter still being made, once everything before it is done (where the line waits). */
+  const waitingAt = (line) => {
+    const index = line.chapters.findIndex((chapter) => chapter.ready === false);
+    return index >= 0 && line.chapters.slice(0, index).every((c) => chapterDone(line, c)) ? line.chapters[index] : null;
+  };
 
   function complete(step) {
-    state.done.add(step.id);
-    const finishedChapter = chapterDone(step.chapter) ? step.chapter : null;
-    if (finishedChapter?.id === "finale") state.badges.add("rea-detective");
+    const before = current();
+    const wasUnlocked = new Set(lines.filter(unlocked).map((line) => line.id));
+    done[step.line.id].add(step.id);
+    const finishedChapter = chapterDone(step.line, step.chapter) ? step.chapter : null;
+    if (finishedChapter?.badge) state.badges.add(finishedChapter.badge.id);
     save();
+    const opened = lines.filter((line) => unlocked(line) && !wasUnlocked.has(line.id));
     const next = current();
-    for (const listen of listeners) listen({ finishedChapter, next });
+    // What the guide says, in order: this step's ending, the chapter's ending, new lines opening, the next step.
+    const story = [...(step.done || []), ...(finishedChapter?.done || []), ...opened.flatMap((line) => line.intro || [])];
+    if (next && next.id !== before?.id) story.push(...(next.say || []));
+    for (const listen of listeners) listen({ step, finishedChapter, opened, next, story });
   }
 
   return {
-    quest,
+    lines,
     get difficulty() {
       return state.difficulty;
     },
@@ -141,31 +214,67 @@ export function createQuests(quest = REA_QUEST) {
       save();
     },
     current,
+    lineCurrent,
+    unlocked,
+    waitingAt,
     chapterDone,
-    isDone: (stepId) => state.done.has(stepId),
-    badges: () => [...state.badges],
-    /** Report what happened in the game; completes the current step when it matches. */
+    isDone: (lineId, stepId) => done[lineId]?.has(stepId) || false,
+    get tracked() {
+      return state.tracked;
+    },
+    track(lineId) {
+      state.tracked = lineId;
+      save();
+    },
+    /** Earned badges with their names. */
+    badges: () => lines.flatMap((line) => line.chapters.filter((c) => c.badge && state.badges.has(c.badge.id)).map((c) => c.badge)),
+    /**
+     * The town clock follows the main story (docs/story.md 第 8 节): stopped until the tower is opened
+     * (chapter 1), wrong until the AI chapter is solved, then right.
+     */
+    clockState() {
+      const main = lineById("main");
+      if (!main) return "running";
+      const doneAt = (id) => {
+        const chapter = main.chapters.find((c) => c.id === id);
+        return chapter ? chapterDone(main, chapter) : false;
+      };
+      if (doneAt("ch5")) return "running";
+      if (doneAt("ch1")) return "drifting";
+      return "stopped";
+    },
+    /** Report what happened in the game; completes the matching current step of every open line. */
     event(kind, id) {
-      const step = current();
-      if (!step) return false;
-      const match = (step.type === "enter" && kind === "enter" && step.spot === id) || (step.type === "solve" && kind === "solve" && step.case === id);
-      if (match) complete(step);
-      // A case solved out of order still counts, so free exploration is never wasted.
-      else if (kind === "solve") {
-        const later = steps().find((s) => s.type === "solve" && s.case === id && !state.done.has(s.id));
-        if (later) {
-          state.done.add(later.id);
-          save();
+      let matched = false;
+      for (const line of lines) {
+        const step = lineCurrent(line);
+        if (!step) continue;
+        const match = (step.type === "enter" && kind === "enter" && step.spot === id) || (step.type === "solve" && kind === "solve" && step.case === id);
+        if (match) {
+          complete(step);
+          matched = true;
         }
       }
-      return match;
+      // A case solved out of order still counts, so free exploration is never wasted.
+      if (kind === "solve") {
+        for (const line of lines) {
+          const later = steps(line).find((s) => s.type === "solve" && s.case === id && !done[line.id].has(s.id));
+          if (later) {
+            done[line.id].add(later.id);
+            save();
+          }
+        }
+      }
+      return matched;
     },
     onChange(listen) {
       listeners.add(listen);
     },
+    /** Start every line over (difficulty and finished cases' stars are kept). */
     reset() {
-      state.done.clear();
-      state.badges.delete("rea-detective");
+      for (const line of lines) done[line.id].clear();
+      state.badges.clear();
+      state.tracked = null;
       save();
     },
   };

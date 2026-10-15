@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
 import { REGIONS, REGION_SIZE, regionOf } from "../public/game-regions.js";
-import { REA_QUEST } from "../public/game-quests.js";
+import { QUEST_LINES } from "../public/game-quests.js";
 
 const inside = (p) => p.x > 0 && p.x < REGION_SIZE.w && p.y > 0 && p.y < REGION_SIZE.h;
 // Same trigger as the game: an exit fires a little inside its zone.
@@ -29,5 +29,5 @@ test("buildings sit on their map and every quest place is somewhere in town", ()
       assert.ok(spot.door.y > spot.y, `${id} door is below its building`);
     }
   }
-  for (const chapter of REA_QUEST.chapters) for (const step of chapter.steps) assert.ok(regionOf(step.spot), `${step.id}: ${step.spot}`);
+  for (const line of QUEST_LINES) for (const chapter of line.chapters) for (const step of chapter.steps) assert.ok(regionOf(step.spot), `${step.id}: ${step.spot}`);
 });

@@ -55,7 +55,8 @@ def kind(r, g, b):
 def region_buildings(public: Path, region: str):
     script = "import(process.argv[1]).then((m) => console.log(JSON.stringify(m.REGIONS[process.argv[2]])))"
     data = json.loads(subprocess.run(["node", "-e", script, (public / "game-regions.js").as_uri(), region], capture_output=True, text=True, encoding="utf8", check=True).stdout)
-    return [(s["x"], s["y"], s["w"], s["h"]) for s in data["spots"].values()]
+    # Stand-ins drawn by the game (placeholder) are not in the picture.
+    return [(s["x"], s["y"], s["w"], s["h"]) for s in data["spots"].values() if not s.get("placeholder")]
 
 
 def main() -> None:

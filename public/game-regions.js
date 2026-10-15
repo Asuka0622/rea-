@@ -5,6 +5,7 @@
 // spots: buildings, keyed by what they lead to: a place in SCENES (learn, home…), a case id (a client's
 //   home), or a building that is not open yet (`soon`, with its own name). Footprint x, y, w, h in map
 //   pixels (the roof's top 45% can be walked behind); `door` is where the player stands to go in.
+//   `placeholder`: a place in the story whose picture is not drawn yet; the game draws a stand-in.
 // exits: an edge zone (x, y, w, h); stepping into it moves to region `to`, arriving at `at`.
 // obstacles: things the picture-based collision misses (fountain, signboards).
 // open: ground the picture-based collision takes for trees (a road in deep shade); always walkable.
@@ -61,6 +62,8 @@ export const REGIONS = {
     spawn: { x: 492, y: 500 },
     spots: {
       office: { x: 405, y: 45, w: 220, h: 165, door: { x: 505, y: 236 }, soon: { place: "周姐的办公楼", purpose: "上班族的大楼（即将开放）" } },
+      // Drawn as a stand-in until its picture is in the region map (docs/story.md 第 11 节).
+      clocktower: { x: 712, y: 150, w: 48, h: 108, door: { x: 736, y: 270 }, kind: "tower", placeholder: { place: "钟楼", purpose: "停摆了", line: "钟楼的门锁着，门上刻着一串 0 和 1。等铁叔回来，我们再想办法打开它。" } },
     },
     obstacles: [{ x: 585, y: 270, w: 56, h: 24 }],
     open: [{ x: 445, y: 290, w: 95, h: 250 }], // the road south runs through deep shade

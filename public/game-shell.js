@@ -110,6 +110,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     h("button", { class: "btn small", type: "button", onclick: () => setMode("pro") }, icon("wrench", { size: 14 }), "专业模式"),
     h("button", { class: "btn small", type: "button", onclick: () => { setWebMode(true); sync(); } }, icon("monitor", { size: 14 }), "网页模式"),
   );
+  // The town clock (docs/story.md 第 8 节): stopped, drifting or running with the main story.
+  const clockFace = h("span", { class: "game-clock-face", "aria-hidden": "true" }, h("i", { class: "hour" }), h("i", { class: "minute" }));
+  const clockText = h("span", { class: "game-clock-text" });
+  const clockEl = h("div", { class: "game-clock", role: "timer" }, clockFace, clockText);
+  hud.append(clockEl);
   // The current quest, right of the menu bar; clicking it (or J) opens the quest log.
   const tracker = h("button", { class: "game-quest-tracker", type: "button", onclick: () => openLog() });
   if (quests) hud.append(tracker);
@@ -215,9 +220,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         const objective = quests?.current()?.spot === id;
         return h(
           "button",
-          { class: `game-building ${picture ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
-          !picture && h("span", { class: "roof", "aria-hidden": "true" }),
-          !picture && h("span", { class: "wall", "aria-hidden": "true" }, h("span", { class: "door" })),
+          { class: `game-building ${picture && !spot.placeholder ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
+          (!picture || spot.placeholder) && h("span", { class: "roof", "aria-hidden": "true" }),
+          (!picture || spot.placeholder) && h("span", { class: "wall", "aria-hidden": "true" }, spot.kind === "tower" && h("span", { class: "clockface", "data-state": quests?.clockState() || "running" }), h("span", { class: "door" })),
           h("span", { class: "game-label" }, objective && h("span", { class: "game-objective", "aria-hidden": "true" }, "!"), scene.place, h("small", {}, scene.purpose)),
         );
       }),
@@ -323,13 +328,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // Built once per drawing of the town: collision checks run thousands of times per path search.
   let spotCache = null;
   /** A region's buildings that lead somewhere now or later (a case home only once its case exists). */
-  const regionSpots = (name) => Object.fromEntries(Object.entries(REGIONS[name].spots).filter(([id, spot]) => ACTIONS[id] || spot.soon || cases().some((c) => c.id === id)));
+  const regionSpots = (name) => Object.fromEntries(Object.entries(REGIONS[name].spots).filter(([id, spot]) => ACTIONS[id] || spot.soon || spot.placeholder || cases().some((c) => c.id === id)));
   const spots = () => (spotCache ||= regional() ? regionSpots(region) : { ...TOWN, ...caseHouses() });
   const spotData = (id) => (regional() ? REGIONS[regionOf(id)]?.spots[id] : TOWN[id] || CASE_HOUSES[id]);
   /** Name and purpose shown on a spot's sign. */
   function info(id) {
     if (SCENES[id] && ACTIONS[id]) return { place: SCENES[id].place, purpose: SCENES[id].purpose };
     if (spotData(id)?.soon) return spotData(id).soon;
+    if (spotData(id)?.placeholder) return spotData(id).placeholder;
     const item = cases().find((c) => c.id === id);
     return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : `委托 · 案例 ${item?.order ?? ""}` };
   }
@@ -662,7 +668,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     nearDoor = id;
     prompt.hidden = !id;
     if (!id) return;
-    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon || spotData(id)?.placeholder ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
     worldEl?.append(prompt);
     positionPrompt();
   }
@@ -791,18 +797,58 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     walkTo(doorOf(id));
   }
 
+  /* ----- the clock: a game minute per real second while it runs; stopped at 11:58 until the tower is opened ----- */
+  const CLOCK_KEY = "rea-game-clock";
+  const clock = (() => {
+    try {
+      return { day: 1, minutes: 11 * 60 + 58, ...JSON.parse(localStorage.getItem(CLOCK_KEY) || "{}") };
+    } catch {
+      return { day: 1, minutes: 11 * 60 + 58 };
+    }
+  })();
+  let clockShown = -1;
+  function renderClock() {
+    const state = quests?.clockState() || "running";
+    clockEl.dataset.state = state;
+    let shown = clock.minutes;
+    // Drifting: the hands jump around the true time, as if someone keeps changing it.
+    if (state === "drifting") shown = (clock.minutes + Math.round(Math.sin(clock.minutes / 7) * 23) + 1440) % 1440;
+    if (shown === clockShown && clockEl.dataset.shown === state) return;
+    clockShown = shown;
+    clockEl.dataset.shown = state;
+    const hh = Math.floor(shown / 60);
+    const mm = shown % 60;
+    clockFace.style.setProperty("--h", `${(hh % 12) * 30 + mm / 2}deg`);
+    clockFace.style.setProperty("--m", `${mm * 6}deg`);
+    const status = state === "stopped" ? "停摆" : state === "drifting" ? "不准" : "";
+    // Narrow screens hide the day and the status (CSS); the title and label always have everything.
+    clockText.replaceChildren(h("span", { class: "game-clock-day" }, `第 ${clock.day} 天 `), `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`, status && h("span", { class: "game-clock-status" }, ` · ${status}`));
+    clockEl.title = `第 ${clock.day} 天 · ${state === "stopped" ? "钟楼停摆了，镇上的钟都停在 11:58" : state === "drifting" ? "钟楼的时间被人改乱了" : "比特镇的时间"}`;
+    clockEl.setAttribute("aria-label", `${clockText.textContent}（${clockEl.title}）`);
+  }
+  setInterval(() => {
+    if (!enabled || !quests || quests.clockState() === "stopped") return renderClock();
+    clock.minutes += 1;
+    if (clock.minutes >= 1440) [clock.minutes, clock.day] = [0, clock.day + 1];
+    try {
+      localStorage.setItem(CLOCK_KEY, JSON.stringify(clock));
+    } catch {}
+    renderClock();
+  }, 1000);
+
   /* ----- quests: difficulty, the quest log, and the guide's story lines ----- */
   let questLines = []; // waiting to be said the next time the player is free (not in a window)
   const takeQuestLines = () => questLines.splice(0);
   function renderTracker() {
     if (!quests) return;
     const step = quests.current();
-    tracker.replaceChildren(icon("learn", { size: 14 }), h("span", {}, step ? step.goal : "支线完成！"));
-    tracker.title = step ? `${step.chapter.title}：${step.goal}（J 打开任务日志）` : "侦探事务所支线已完成（J 打开任务日志）";
+    const waiting = quests.waitingAt(quests.lines[0]);
+    tracker.replaceChildren(icon("learn", { size: 14 }), h("span", {}, step ? step.goal : waiting ? "主线下一章制作中" : "全部完成！"));
+    tracker.title = step ? `${step.line.title} · ${step.chapter.title}：${step.goal}（J 打开任务日志）` : "J 打开任务日志";
+    renderClock();
   }
-  quests?.onChange(({ finishedChapter, next }) => {
-    questLines.push(...(finishedChapter?.done || []));
-    if (next && next.chapter !== finishedChapter && next.say) questLines.push(...next.say);
+  quests?.onChange(({ story }) => {
+    questLines.push(...story);
     renderTracker();
     if (enabled && !windowOpen && stage.dataset.view === "town") {
       drawTown();
@@ -840,24 +886,40 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   function renderLog() {
     const step = quests.current();
+    const lineBlock = (line) => {
+      const open = quests.unlocked(line);
+      const now = quests.lineCurrent(line);
+      const waiting = quests.waitingAt(line);
+      const lock = line.unlock && quests.lines.find((l) => l.id === line.unlock.line)?.chapters.find((c) => c.id === line.unlock.chapter);
+      return h("section", { class: `game-log-line ${open ? "" : "locked"}` },
+        h("div", { class: "game-log-line-head" },
+          h("b", {}, line.title),
+          open && now && (step?.line.id === line.id ? h("small", { class: "game-log-tracking" }, "追踪中") : h("button", { class: "link-btn", type: "button", onclick: () => { quests.track(line.id); renderTracker(); drawTownIfFree(); renderLog(); } }, "追踪这条"))),
+        h("p", { class: "game-panel-note" }, open ? line.subtitle : `🔒 完成「${lock?.title || "前面的章节"}」后解锁`),
+        open && h("ol", { class: "game-log" },
+          ...line.chapters.map((chapter) => {
+            const done = quests.chapterDone(line, chapter);
+            const current = now?.chapter === chapter;
+            const making = chapter.ready === false;
+            return h("li", { class: done ? "done" : current ? "now" : making ? "making" : "" }, h("span", { class: "game-log-mark", "aria-hidden": "true" }, done ? "✓" : current ? "▶" : "·"), chapter.title, making && h("small", {}, waiting === chapter ? " 制作中，敬请期待" : " 制作中"));
+          })));
+    };
     overlay.replaceChildren(
-      h("div", { class: "game-panel-head" }, h("h2", {}, quests.quest.title), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（J）")),
-      h("p", { class: "game-panel-note" }, quests.quest.subtitle, " · 难度：", h("b", {}, DIFFICULTIES[quests.difficulty]?.label || "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
-      step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, step.chapter.title)),
-      h("ol", { class: "game-log" },
-        ...quests.quest.chapters.map((chapter) => {
-          const done = quests.chapterDone(chapter);
-          const now = step?.chapter === chapter;
-          return h("li", { class: done ? "done" : now ? "now" : "" }, h("span", { class: "game-log-mark", "aria-hidden": "true" }, done ? "✓" : now ? "▶" : "·"), chapter.title);
-        })),
-      quests.badges().includes("rea-detective") && h("p", { class: "game-badge" }, "🏅 已获得徽章：见习侦探"),
+      h("div", { class: "game-panel-head" }, h("h2", {}, "任务日志"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（J）")),
+      h("p", { class: "game-panel-note" }, "难度：", h("b", {}, DIFFICULTIES[quests.difficulty]?.label || "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
+      step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, `${step.line.title} · ${step.chapter.title}`)),
+      ...quests.lines.map(lineBlock),
+      ...quests.badges().map((badge) => h("p", { class: "game-badge" }, `🏅 已获得徽章：${badge.label}`)),
       h("div", { class: "game-panel-foot" }, h("button", { class: "btn small", type: "button", onclick: () => {
-        if (!window.confirm("要从头开始这条支线吗？已完成的案子成绩会保留。")) return;
+        if (!window.confirm("要从头开始全部剧情吗？已完成的案子成绩会保留。")) return;
         quests.reset();
         closeOverlay();
         goTown();
-      } }, "从头开始这条支线")),
+      } }, "从头开始全部剧情")),
     );
+  }
+  function drawTownIfFree() {
+    if (enabled && !windowOpen && stage.dataset.view === "town") drawTown();
   }
   function openLog() {
     if (!quests || windowOpen) return;
@@ -899,7 +961,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   function enterSpot(id) {
     if (ACTIONS[id]) return enter(id);
-    if (spotData(id)?.soon) return say([{ text: `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
+    // A story step may be waiting here; otherwise the place says what it is.
+    if (spotData(id)?.soon || spotData(id)?.placeholder) {
+      if (quests?.event("enter", id)) return;
+      return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
+    }
     // A client's home: the case opens in the game window; closing it returns to this door.
     closeWindow();
     target = null;
