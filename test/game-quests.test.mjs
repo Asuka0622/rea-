@@ -105,3 +105,17 @@ test("achievements point at real steps, chapters, games and regions", async () =
     if (when.regions) assert.ok(when.regions <= Object.keys(REGIONS).length, id);
   }
 });
+
+test("lines written for a difficulty only use the known levels", () => {
+  const levels = new Set(Object.keys(DIFFICULTIES));
+  for (const line of QUEST_LINES) {
+    for (const chapter of line.chapters) {
+      const all = [...(chapter.done || []), ...chapter.steps.flatMap((step) => [...(step.say || []), ...(step.done || [])])];
+      for (const said of all) {
+        if (typeof said === "string") continue;
+        assert.ok(said.text, "every line has a normal text");
+        if (said.only) for (const level of said.only.split(" ")) assert.ok(levels.has(level), `only: ${level}`);
+      }
+    }
+  }
+});

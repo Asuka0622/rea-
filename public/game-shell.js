@@ -354,8 +354,22 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
   };
 
+  /*
+   * Lines follow the chosen difficulty: a line's `easy` / `hard` text replaces `text` at that level, and
+   * `only: "hard"` (or "easy", "easy normal" …) keeps a line to those levels. Plain strings always show.
+   */
+  const level = () => quests?.difficulty || "normal";
+  function forLevel(line) {
+    if (typeof line === "string") return line;
+    if (line.only && !line.only.split(" ").includes(level())) return null;
+    return line[level()] ? { ...line, text: line[level()] } : line;
+  }
   function say(texts, after) {
-    lines = texts;
+    lines = texts.map(forLevel).filter(Boolean);
+    if (!lines.length) {
+      dialogue.hidden = true;
+      return after?.();
+    }
     lineIndex = 0;
     lineAfter = after;
     dialogue.onclick = () => advance(after);

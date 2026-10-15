@@ -16,7 +16,9 @@ const shuffle = (items) => {
 };
 
 /** Shared frame: a teaching note, the play area, a feedback line and the buttons. */
-function frame(h, { note, sound }) {
+function frame(h, { note, sound, difficulty = "normal" }) {
+  // A note can differ by difficulty: { easy, normal, hard } (轻松 plain words, 硬核 real terms and numbers).
+  if (typeof note === "object") note = note[difficulty] || note.normal;
   const feedback = h("p", { class: "mg-feedback", role: "status" });
   const area = h("div", { class: "mg-area" });
   const buttons = h("div", { class: "mg-buttons" });
@@ -44,7 +46,12 @@ function binary({ h, difficulty, onWin, sound }) {
   ];
   const ui = frame(h, {
     sound,
-    note: "电脑里的东西都只有两种状态：开和关，记成 1 和 0。一盏灯就是一「位」，8 盏灯是一个「字节」。每盏灯代表一个数，从右往左是 1、2、4、8……每次翻一倍；亮着的灯加起来，就是这一串 0 和 1 表示的数。",
+    difficulty,
+    note: {
+      easy: "钟楼里只认两种样子：灯亮和灯灭。每盏灯代表一个数，从右往左是 1、2、4、8……每次翻一倍。把亮着的灯下面的数加起来，就是答案。",
+      normal: "电脑里的东西都只有两种状态：开和关，记成 1 和 0。一盏灯就是一「位」，8 盏灯是一个「字节」。每盏灯代表一个数，从右往左是 1、2、4、8……每次翻一倍；亮着的灯加起来，就是这一串 0 和 1 表示的数。",
+      hard: "电脑用二进制表示一切：每一位（bit）只有 0 和 1，从右数第 n 位（从 0 数起）的权重是 2 的 n 次方。8 位是一个字节（byte），共 2⁸ = 256 种组合，能表示 0 到 255。十进制换成二进制：从最高位开始，放得下这一位的权重就记 1 并减掉，放不下记 0。这一关灯下不标权重，自己算。",
+    },
   });
   let index = 0;
   let lamps = [];
@@ -165,7 +172,12 @@ function parts({ h, difficulty, onWin, sound }) {
   ];
   const ui = frame(h, {
     sound,
-    note: "不管是钟楼还是电脑，零件都只有四种活：输入（接收消息）、处理（按指令计算）、存储（记住东西）、输出（把结果交出去）。先点一个零件，再点它该去的格子。",
+    difficulty,
+    note: {
+      easy: "钟楼的零件分四种活：有的听消息，有的干活，有的记东西，有的告诉大家结果。先点一个零件，再点它该去的格子。",
+      normal: "不管是钟楼还是电脑，零件都只有四种活：输入（接收消息）、处理（按指令计算）、存储（记住东西）、输出（把结果交出去）。先点一个零件，再点它该去的格子。",
+      hard: "今天的电脑大多是「冯·诺依曼结构」：输入设备、处理器（运算器和控制器）、存储器、输出设备；程序和数据都放在存储器里，处理器一条条取出指令执行。把零件分进这四类，注意显卡和内存这类容易混的。",
+    },
   });
   let index = 0;
   let picked = null;
@@ -253,7 +265,12 @@ function drawers({ h, difficulty, onWin, sound }) {
   ];
   const ui = frame(h, {
     sound,
-    note: "电脑有两种「记性」：内存像一块小黑板，又快又方便，可一断电就全擦掉；硬盘像上锁的铁皮抽屉，慢一点，但东西一直都在。每样东西放进对的抽屉。",
+    difficulty,
+    note: {
+      easy: "电脑有两个抽屉：一个一断电就忘光，一个一直记得。每样东西放进对的抽屉。",
+      normal: "电脑有两种「记性」：内存像一块小黑板，又快又方便，可一断电就全擦掉；硬盘像上锁的铁皮抽屉，慢一点，但东西一直都在。每样东西放进对的抽屉。",
+      hard: "内存（RAM）断电就丢数据，但读写极快，以纳秒计；硬盘和固态硬盘断电也能保存，但慢得多，以微秒到毫秒计。程序运行时先从硬盘读进内存，「保存」就是把内存里的内容写回硬盘。判断每样东西在断电后还在不在。",
+    },
   });
   let index = 0;
   let mistakes = 0;
