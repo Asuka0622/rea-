@@ -7,6 +7,7 @@ import { SKILL_TREE, skillsFrom } from "./game-skills.js";
 import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
 import { renderSkillTree } from "./game-skilltree.js";
 import { createSound } from "./game-sound.js";
+import { createDirector } from "./game-director.js";
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
 const SPEAKERS = {
@@ -225,10 +226,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const viewW = () => stage.clientWidth / townPx; // how much of the town (in map pixels) fits on screen
   const viewH = () => stage.clientHeight / townPx;
   let worldEl = null;
+  let cameraFocus = null; // a point a cutscene looks at instead of the player
   function followCamera() {
     if (!worldEl) return;
-    camera.x = Math.max(0, Math.min(world.w - viewW(), player.x - viewW() / 2));
-    camera.y = Math.max(0, Math.min(world.h - viewH(), player.y - 16 - viewH() / 2));
+    const at = cameraFocus || player;
+    camera.x = Math.max(0, Math.min(world.w - viewW(), at.x - viewW() / 2));
+    camera.y = Math.max(0, Math.min(world.h - viewH(), at.y - 16 - viewH() / 2));
     worldEl.style.translate = `${(-camera.x * townPx).toFixed(1)}px ${(-camera.y * townPx).toFixed(1)}px`;
   }
 
@@ -282,9 +285,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         const objective = quests?.current()?.spot === id;
         return h(
           "button",
-          { class: `game-building ${picture && !spot.placeholder ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
+          { class: `game-building ${picture && !spot.placeholder ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""} ${spot.kind === "tower" && quests?.stepDone("open-door") ? "door-open" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}${spot.placeholder ? `;z-index:${spot.y + spot.h}` : ""}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
           (!picture || spot.placeholder) && h("span", { class: "roof", "aria-hidden": "true" }),
-          (!picture || spot.placeholder) && h("span", { class: "wall", "aria-hidden": "true" }, spot.kind === "tower" && h("span", { class: "clockface", "data-state": quests?.clockState() || "running" }), h("span", { class: "door" })),
+          (!picture || spot.placeholder) && h("span", { class: "wall", "aria-hidden": "true" },
+            spot.kind === "tower" && h("span", { class: "clockface", "data-state": quests?.clockState() || "running" }),
+            spot.kind === "tower" && h("span", { class: "tower-lamps" }, ...Array.from({ length: 8 }, () => h("i", { class: quests?.stepDone("open-door") ? "lit" : "" }))),
+            h("span", { class: "door" })),
           h("span", { class: "game-label" }, objective && h("span", { class: "game-objective", "aria-hidden": "true" }, "!"), scene.place, h("small", {}, scene.purpose)),
         );
       }),
@@ -366,11 +372,15 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (line.focus && !line.focus.split(" ").includes(focus())) return null;
     return line[level()] ? { ...line, text: line[level()] } : line;
   }
-  function say(texts, after) {
+  let lineDone = null; // set by sayAndWait: called when the last line is clicked away
+  function say(texts, after, done = null) {
     lines = texts.map(forLevel).filter(Boolean);
+    lineDone = done;
     if (!lines.length) {
       dialogue.hidden = true;
-      return after?.();
+      lineDone = null;
+      after?.();
+      return done?.();
     }
     lineIndex = 0;
     lineAfter = after;
@@ -424,8 +434,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (lineIndex < lines.length - 1) {
       lineIndex += 1;
       renderLine(after);
+    } else if (lineDone) {
+      const done = lineDone;
+      lineDone = null;
+      dialogue.hidden = true;
+      done();
     }
   }
+  const sayAndWait = (texts) => new Promise((resolve) => say(texts, null, resolve));
 
   function showMenu(items) {
     menu.hidden = false;
@@ -666,7 +682,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
-  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name) };
+  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script) };
   function walkTo(point, then) {
     if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];
@@ -717,12 +733,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (!enabled || windowOpen || (stage.dataset.view !== "town" && !room)) return;
     let dx = 0;
     let dy = 0;
-    for (const key of keys) {
-      const dir = KEY_DIRS[key];
-      if (dir) [dx, dy] = [dx + dir[0], dy + dir[1]];
+    if (!director.playing && closeupEl.hidden) {
+      for (const key of keys) {
+        const dir = KEY_DIRS[key];
+        if (dir) [dx, dy] = [dx + dir[0], dy + dir[1]];
+      }
+      dx += stick.x;
+      dy += stick.y;
     }
-    dx += stick.x;
-    dy += stick.y;
     if (dx || dy) target = null; // steering by hand cancels a click-to-walk
     else if (target) {
       const tx = target.x - player.x;
@@ -823,6 +841,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   prompt.hidden = true;
   function showDoorPrompt() {
+    if (director.playing || !closeupEl.hidden) {
+      prompt.hidden = true;
+      nearDoor = null;
+      return;
+    }
     if (room) return showRoomPrompt();
     const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
     if (id === nearDoor) {
@@ -1001,6 +1024,135 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     renderClock();
   }, 1000);
 
+  /* ----- cutscenes (game-director.js) ----- */
+  const flashEl = h("div", { class: "game-flash", "aria-hidden": "true" });
+  shell.append(flashEl);
+  const tween = (ms, step) =>
+    new Promise((resolve) => {
+      const start = performance.now();
+      const frame = (now) => {
+        const t = Math.min(1, (now - start) / Math.max(1, ms));
+        step(t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve();
+      };
+      requestAnimationFrame(frame);
+    });
+  const director = createDirector({
+    lock: (on) => {
+      shell.classList.toggle("cutscene", on);
+      if (on) {
+        keys.clear();
+        target = null;
+      }
+    },
+    say: (texts) => sayAndWait(texts),
+    walk: (x, y) => new Promise((resolve) => walkTo({ x, y }, resolve)),
+    focus: (x, y, ms) => {
+      const from = cameraFocus ? { ...cameraFocus } : { x: player.x, y: player.y };
+      return tween(ms, (t) => {
+        cameraFocus = { x: from.x + (x - from.x) * t, y: from.y + (y - from.y) * t };
+        followCamera();
+      });
+    },
+    release: (ms) => {
+      if (!cameraFocus) return Promise.resolve();
+      const from = { ...cameraFocus };
+      return tween(ms, (t) => {
+        cameraFocus = { x: from.x + (player.x - from.x) * t, y: from.y + (player.y - from.y) * t };
+        followCamera();
+      }).then(() => {
+        cameraFocus = null;
+        followCamera();
+      });
+    },
+    shake: (ms) => {
+      if (reducedMotion) return;
+      stage.classList.remove("shake");
+      void stage.offsetWidth;
+      stage.classList.add("shake");
+      setTimeout(() => stage.classList.remove("shake"), ms);
+    },
+    flash: (ms, color = "#fff8e0") => {
+      flashEl.style.background = color;
+      flashEl.style.transition = "none";
+      flashEl.style.opacity = reducedMotion ? "0.4" : "0.85";
+      void flashEl.offsetWidth;
+      flashEl.style.transition = `opacity ${ms}ms ease-out`;
+      flashEl.style.opacity = "0";
+    },
+    emote: (text, ms) => emote(text, ms),
+    sound: (name, pitch) => sound[name]?.(pitch),
+  });
+  /** A bubble over the player's head: ! ? ♪ … */
+  function emote(text, ms = 1400) {
+    const host = roomEl || worldEl;
+    if (!host) return;
+    const bubble = h("span", { class: "game-emote", "aria-hidden": "true", style: `left:calc(${player.x.toFixed(1)}px * var(--px));top:calc(${(player.y - (room ? 32 * indoorScale() : 34)).toFixed(1)}px * var(--px))` }, text);
+    host.append(bubble);
+    setTimeout(() => bubble.remove(), ms);
+  }
+
+  /* Close-ups: a mini-game played on the thing itself (the tower door, its gears, the drawers), with the
+     camera on that spot, instead of a parchment panel. Each game names its spot and look here. */
+  const CLOSEUPS = {
+    binary: { spot: "clocktower", look: "door", title: "钟楼的门" },
+    parts: { spot: "clocktower", look: "gears", title: "钟楼里的机关" },
+    drawers: { spot: "clocktower", look: "drawers", title: "记事板下的抽屉" },
+  };
+  const closeupEl = h("section", { class: "game-closeup", role: "dialog", "aria-modal": "true" });
+  closeupEl.hidden = true;
+  shell.append(closeupEl);
+  function closeCloseup() {
+    closeupEl.hidden = true;
+    closeupEl.replaceChildren();
+  }
+  /** What happens in the world when a mini-game is won, before the story goes on. */
+  const AFTER_GAME = {
+    binary: (door) => [
+      { camera: { x: door.x, y: door.y - 46 }, ms: 500 },
+      ...Array.from({ length: 8 }, (_, i) => [{ call: () => towerLamp(i) }, { sound: "blip", pitch: 520 + i * 70 }, { wait: 170 }]).flat(),
+      { wait: 250 },
+      { shake: 450 },
+      { flash: 500 },
+      { sound: "door" },
+      { call: () => openTowerDoor() },
+      { wait: 700 },
+      { camera: "player", ms: 500 },
+      { emote: "!" },
+      { wait: 500 },
+    ],
+    parts: (door) => [
+      { camera: { x: door.x, y: door.y - 70 }, ms: 500 },
+      { call: () => worldEl?.querySelector(".game-building.tower")?.classList.add("whirring") },
+      { sound: "step" }, { wait: 160 }, { sound: "step" }, { wait: 160 }, { sound: "step" },
+      { shake: 250 },
+      { wait: 700 },
+      { camera: "player", ms: 500 },
+      { emote: "♪" },
+      { wait: 400 },
+    ],
+    drawers: (door) => [
+      { camera: { x: door.x, y: door.y - 90 }, ms: 600 },
+      { call: () => worldEl?.querySelector(".game-building.tower .clockface")?.classList.add("spin") },
+      { wait: 900 },
+      { sound: "right" },
+      { wait: 300 },
+      { flash: 700, color: "#fff2c8" },
+      { sound: "unlock" },
+      { wait: 900 },
+      { camera: "player", ms: 600 },
+      { emote: "♥" },
+      { wait: 400 },
+    ],
+  };
+  function towerLamp(i) {
+    worldEl?.querySelectorAll(".game-building.tower .tower-lamps i")[i]?.classList.add("lit");
+  }
+  function openTowerDoor() {
+    worldEl?.querySelector(".game-building.tower")?.classList.add("door-open");
+  }
+
   /* ----- quests: difficulty, the quest log, and the guide's story lines ----- */
   let questLines = []; // waiting to be said the next time the player is free (not in a window)
   const takeQuestLines = () => questLines.splice(0);
@@ -1114,20 +1266,43 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     );
   }
   /** A story step's mini-game in the panel; winning it completes the step (and the story goes on). */
-  function openMinigame(step) {
+  async function openMinigame(step) {
     target = null;
     keys.clear();
     dialogue.hidden = true;
+    const closeup = CLOSEUPS[step.game];
+    const door = closeup && spotData(closeup.spot)?.door;
     const game = createMinigame(step.game, {
       h,
       sound,
       difficulty: quests.difficulty || "normal",
-      onWin: ({ mistakes = 0 } = {}) => {
+      onWin: async ({ mistakes = 0 } = {}) => {
         closeOverlay();
+        closeCloseup();
+        cameraFocus = null;
+        if (AFTER_GAME[step.game] && door && !room) await director.play(AFTER_GAME[step.game](door));
         quests.event("play", step.game);
         if (!mistakes) achievements.note({ type: "perfect", id: step.game });
       },
     });
+    if (closeup && door && !room) {
+      // Look at the spot, then show the game on the thing itself.
+      // The close-up covers the lower half of the screen: keep the spot itself in the upper part.
+      await director.play([{ camera: { x: door.x, y: door.y + 70 }, ms: 450 }]);
+      cameraFocus = { x: door.x, y: door.y + 70 };
+      followCamera();
+      closeupEl.className = `game-closeup ${closeup.look}`;
+      closeupEl.replaceChildren(
+        h("div", { class: "game-closeup-head" }, h("b", {}, closeup.title), h("button", { class: "btn small", type: "button", onclick: () => {
+          closeCloseup();
+          director.play([{ camera: "player", ms: 400 }]);
+        } }, "先不玩了")),
+        game.el,
+      );
+      closeupEl.hidden = false;
+      closeupEl.querySelector(".mg-input, button.mg-lamp:not([disabled]), button")?.focus({ preventScroll: true });
+      return;
+    }
     overlay.replaceChildren(
       h("div", { class: "game-panel-head" }, h("h2", {}, game.title), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "先不玩了")),
       game.el,
@@ -1304,10 +1479,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keydown", (event) => {
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
     const key = event.key.toLowerCase();
-    if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden) {
+    if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && closeupEl.hidden && !director.playing) {
       event.preventDefault();
       if (!keys.has(key)) startWalking();
       keys.add(key);
+      return;
+    }
+    if (!closeupEl.hidden) {
+      if (event.key === "Escape") {
+        closeCloseup();
+        director.play([{ camera: "player", ms: 400 }]);
+      }
+      return;
+    }
+    if (director.playing) {
+      if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden) {
+        event.preventDefault();
+        dialogue.click();
+      }
       return;
     }
     if (!overlay.hidden) {
