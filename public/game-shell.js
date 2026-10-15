@@ -274,7 +274,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     water?.stop();
     const name = `${townImage()}-water`;
     if (!picture || !has(name)) return (water = null), [];
-    if (water?.name !== name) water = { name, ...createWaterLayer(`/art/pixel/${name}.png`, { width: (regional() ? REGION_SIZE : world).w, height: (regional() ? REGION_SIZE : world).h }) };
+    if (water?.name !== name) water = { name, ...createWaterLayer({ mask: `/art/pixel/${name}.png`, picture: `/art/pixel/${townImage()}.png`, width: (regional() ? REGION_SIZE : world).w, height: (regional() ? REGION_SIZE : world).h }) };
     water.start();
     return [water.canvas];
   }
