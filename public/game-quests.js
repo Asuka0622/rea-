@@ -37,7 +37,7 @@ export const REA_QUEST = {
     {
       id: "case-1",
       title: "委托一 · 小林的记账软件",
-      steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "第一个委托来自小林，他住在广场西边的宿舍。他说新装的记账软件有点不对劲。", face: "thinking" }] }],
+      steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "第一个委托来自小林，他住在住宅区的宿舍楼：从广场往西走就到。他说新装的记账软件有点不对劲。", face: "thinking" }] }],
       done: [{ text: "漂亮！你已经学会看软件往哪里发数据、用了哪些敏感能力了。", face: "happy" }],
     },
     {
@@ -55,7 +55,7 @@ export const REA_QUEST = {
     {
       id: "case-4",
       title: "委托四 · 朵朵的存档",
-      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "朵朵想知道她的种田游戏是怎么存档的。农场在小镇东北角。", face: "normal" }] }],
+      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "朵朵想知道她的种田游戏是怎么存档的。农场在住宅区，红色谷仓那里。", face: "normal" }] }],
       done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
     },
     {
@@ -79,7 +79,7 @@ export const REA_QUEST = {
     {
       id: "stories",
       title: "尾声 · 档案馆的故事",
-      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去小镇档案馆，听听真实发生过的故事", say: [{ text: "你已经破了六个案子。档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
+      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去小镇档案馆，听听真实发生过的故事", say: [{ text: "你已经破了六个案子。住宅区档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
       done: [{ text: "这些都是真事。你学到的方法，真正的安全研究员每天都在用。", face: "thinking" }],
     },
     {

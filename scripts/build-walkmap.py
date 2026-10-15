@@ -1,6 +1,10 @@
 """Build collision and depth data for the town from its picture.
 
-Usage: python -I scripts/build-walkmap.py [--preview out.png]
+Usage: python -I scripts/build-walkmap.py [--region NAME] [--preview out.png]
+
+With --region, works on a region map (public/art/pixel/regions/town-NAME.png, see public/game-regions.js)
+and writes town-NAME-walk.json and town-NAME-front.png next to it; building footprints come from
+game-regions.js (read through node).
 
 Reads public/art/pixel/town.png and writes:
 - public/art/pixel/town-walk.json: a grid of 4x4-pixel cells (1 = walkable, 0 = blocked) and a list
@@ -16,6 +20,7 @@ Buildings are handled by the game from measured footprints in the same way.
 import argparse
 import colorsys
 import json
+import subprocess
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -47,12 +52,26 @@ def kind(r, g, b):
     return "ground"
 
 
+def region_buildings(public: Path, region: str):
+    script = "import(process.argv[1]).then((m) => console.log(JSON.stringify(m.REGIONS[process.argv[2]])))"
+    data = json.loads(subprocess.run(["node", "-e", script, (public / "game-regions.js").as_uri(), region], capture_output=True, text=True, encoding="utf8", check=True).stdout)
+    return [(s["x"], s["y"], s["w"], s["h"]) for s in data["spots"].values()]
+
+
 def main() -> None:
-    root = Path(__file__).resolve().parent.parent / "public" / "art" / "pixel"
+    global BUILDINGS
+    public = Path(__file__).resolve().parent.parent / "public"
+    root = public / "art" / "pixel"
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--region")
     parser.add_argument("--preview", type=Path)
     args = parser.parse_args()
-    image = Image.open(root / "town.png").convert("RGB")
+    name = "town"
+    if args.region:
+        BUILDINGS = region_buildings(public, args.region)
+        root = root / "regions"
+        name = f"town-{args.region}"
+    image = Image.open(root / f"{name}.png").convert("RGB")
     width, height = image.size
     cols, rows = width // CELL, height // CELL
     px = image.load()
@@ -134,9 +153,9 @@ def main() -> None:
         fronts.append({"x": bx, "y": by, "w": bw, "h": bh, "base": by + bh, "building": True})
 
     out = {"cell": CELL, "size": [width, height], "rows": ["".join(str(v) for v in row) for row in walk], "fronts": fronts}
-    (root / "town-walk.json").write_text(json.dumps(out) + "\n", encoding="utf8")
-    front.save(root / "town-front.png", optimize=True)
-    print(f"town-walk.json: {cols}x{rows} cells, {sum(row.count(1) for row in walk)} walkable, {len(fronts)} fronts; town-front.png")
+    (root / f"{name}-walk.json").write_text(json.dumps(out) + "\n", encoding="utf8")
+    front.save(root / f"{name}-front.png", optimize=True)
+    print(f"{name}-walk.json: {cols}x{rows} cells, {sum(row.count(1) for row in walk)} walkable, {len(fronts)} fronts; {name}-front.png")
     if args.preview:
         big = image.resize((width * 2, height * 2), Image.Resampling.NEAREST).convert("RGBA")
         layer = Image.new("RGBA", big.size)
