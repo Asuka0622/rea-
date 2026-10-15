@@ -15,7 +15,7 @@ const shuffle = (items) => {
 };
 
 /** Shared frame: a teaching note, the play area, a feedback line and the buttons. */
-function frame(h, { note }) {
+function frame(h, { note, sound }) {
   const feedback = h("p", { class: "mg-feedback", role: "status" });
   const area = h("div", { class: "mg-area" });
   const buttons = h("div", { class: "mg-buttons" });
@@ -24,12 +24,14 @@ function frame(h, { note }) {
   const tell = (text, mood = "") => {
     feedback.textContent = text;
     feedback.dataset.mood = mood;
+    if (mood === "good") sound?.right();
+    else if (mood === "bad") sound?.wrong();
   };
   return { el, area, buttons, tell, progress };
 }
 
 /* ----- 二进制灯: eight lamps worth 128 … 1; lit lamps add up to the number ----- */
-function binary({ h, difficulty, onWin }) {
+function binary({ h, difficulty, onWin, sound }) {
   const VALUES = [128, 64, 32, 16, 8, 4, 2, 1];
   const showValues = difficulty !== "hard";
   const liveTotal = difficulty === "easy";
@@ -40,6 +42,7 @@ function binary({ h, difficulty, onWin }) {
     ...(difficulty === "hard" ? [{ kind: "write", target: 200, ask: "挑战：不看数值，拼出 200。" }] : []),
   ];
   const ui = frame(h, {
+    sound,
     note: "电脑里的东西都只有两种状态：开和关，记成 1 和 0。一盏灯就是一「位」，8 盏灯是一个「字节」。每盏灯代表一个数，从右往左是 1、2、4、8……每次翻一倍；亮着的灯加起来，就是这一串 0 和 1 表示的数。",
   });
   let index = 0;
@@ -118,7 +121,7 @@ function binary({ h, difficulty, onWin }) {
 }
 
 /* ----- 零件归类: input, processing, storage, output — the clock tower first, then a real computer ----- */
-function parts({ h, difficulty, onWin }) {
+function parts({ h, difficulty, onWin, sound }) {
   const BINS = {
     input: { label: "输入", note: "把外面的消息告诉机器" },
     process: { label: "处理", note: "按指令干活、做计算" },
@@ -156,6 +159,7 @@ function parts({ h, difficulty, onWin }) {
     },
   ];
   const ui = frame(h, {
+    sound,
     note: "不管是钟楼还是电脑，零件都只有四种活：输入（接收消息）、处理（按指令计算）、存储（记住东西）、输出（把结果交出去）。先点一个零件，再点它该去的格子。",
   });
   let index = 0;
@@ -214,7 +218,7 @@ function parts({ h, difficulty, onWin }) {
 }
 
 /* ----- 两个抽屉: what is lost when the power goes (memory) and what stays (storage) ----- */
-function drawers({ h, difficulty, onWin }) {
+function drawers({ h, difficulty, onWin, sound }) {
   const rounds = [
     {
       title: "钟楼记着的东西",
@@ -243,6 +247,7 @@ function drawers({ h, difficulty, onWin }) {
     },
   ];
   const ui = frame(h, {
+    sound,
     note: "电脑有两种「记性」：内存像一块小黑板，又快又方便，可一断电就全擦掉；硬盘像上锁的铁皮抽屉，慢一点，但东西一直都在。每样东西放进对的抽屉。",
   });
   let index = 0;

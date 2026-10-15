@@ -277,6 +277,8 @@ export function createQuests(lines = QUEST_LINES) {
     /** A mini-game step waiting at this spot (in any open line), or null. */
     playAt: (spot) => lines.map(lineCurrent).find((step) => step?.type === "play" && step.spot === spot) || null,
     isDone: (lineId, stepId) => done[lineId]?.has(stepId) || false,
+    /** A step finished in any line (skills are keyed by the step that teaches them). */
+    stepDone: (stepId) => lines.some((line) => done[line.id].has(stepId)),
     get tracked() {
       return state.tracked;
     },

@@ -65,3 +65,9 @@ test("every case step points at a real case, and playable chapters have story li
   }
   assert.deepEqual(Object.keys(DIFFICULTIES), ["easy", "normal", "hard"]);
 });
+
+test("every skill is taught by a real quest step", async () => {
+  const { SKILL_TREE } = await import("../public/game-skills.js");
+  const steps = new Set(QUEST_LINES.flatMap((line) => line.chapters.flatMap((chapter) => chapter.steps.map((step) => step.id))));
+  for (const branch of SKILL_TREE) for (const skill of branch.skills) if (skill.from) assert.ok(steps.has(skill.from), `${skill.id}: ${skill.from}`);
+});

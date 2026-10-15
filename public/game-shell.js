@@ -3,6 +3,8 @@ import { DIFFICULTIES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
 import { createMinigame } from "./game-minigames.js";
 import { createWaterLayer } from "./game-water.js";
+import { SKILL_TREE, skillsFrom } from "./game-skills.js";
+import { createSound } from "./game-sound.js";
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
 const SPEAKERS = {
@@ -125,6 +127,17 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     h("button", { class: "btn small", type: "button", onclick: () => setMode("pro") }, icon("wrench", { size: 14 }), "专业模式"),
     h("button", { class: "btn small", type: "button", onclick: () => { setWebMode(true); sync(); } }, icon("monitor", { size: 14 }), "网页模式"),
   );
+  const sound = createSound();
+  const soundButton = h("button", { class: "btn small game-sound-toggle", type: "button", onclick: () => paintSound(sound.toggle()) });
+  const paintSound = (on) => {
+    soundButton.textContent = on ? "♪" : "♪̸";
+    soundButton.title = on ? "音效：开（点一下关闭）" : "音效：关（点一下打开）";
+    soundButton.setAttribute("aria-label", soundButton.title);
+    soundButton.setAttribute("aria-pressed", String(on));
+  };
+  paintSound(sound.on);
+  if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能（K）"));
+  hud.append(soundButton);
   // The town clock (docs/story.md 第 8 节): stopped, drifting or running with the main story.
   const clockFace = h("span", { class: "game-clock-face", "aria-hidden": "true" }, h("i", { class: "hour" }), h("i", { class: "minute" }));
   const clockText = h("span", { class: "game-clock-text" });
@@ -144,9 +157,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h("button", { class: "btn primary", type: "button", onclick: () => landscape() }, "全屏横屏开始"),
       h("button", { class: "btn", type: "button", onclick: () => { setWebMode(true); sync(); } }, "用网页模式")),
   );
-  const shell = h("div", { class: "game-shell", hidden: true }, stage, hud, gameWindow, menu, dialogue, rotate);
+  const fade = h("div", { class: "game-fade", "aria-hidden": "true" });
+  const shell = h("div", { class: "game-shell", hidden: true }, stage, fade, hud, gameWindow, menu, dialogue, rotate);
   shell.hidden = true;
   document.body.append(shell);
+
+  /** Arriving somewhere (a room, the town, another region): the picture fades in from black. */
+  function arrive() {
+    fade.style.transition = "none";
+    fade.style.opacity = "1";
+    void fade.offsetWidth;
+    fade.style.transition = "";
+    fade.style.opacity = "0";
+  }
 
   /** Fullscreen, then lock landscape where the browser allows it (Android Chrome; not iOS Safari). */
   async function landscape() {
@@ -248,6 +271,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     );
     placePlayer();
     addFronts();
+    scatterLeaves();
   }
 
   /* Inside a building (room pixels, 320x180): where the floor starts, furniture the feet cannot cross,
@@ -315,18 +339,49 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     renderLine(after);
   }
 
+  // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xingbo: 520 };
+  let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
     const line = typeof lines[lineIndex] === "string" ? { text: lines[lineIndex] } : lines[lineIndex];
     dialogue.hidden = false;
-    dialogue.replaceChildren(
-      portrait(line.face, line.who),
-      h("div", { class: "case-say-text" }, h("b", {}, SPEAKERS[line.who || "lumi"] || line.who), h("p", {}, line.text), !last && h("span", { class: "game-more" }, "点击继续")),
-    );
+    const text = h("p", { "aria-label": line.text });
+    const more = !last && h("span", { class: "game-more" }, "点击继续");
+    dialogue.replaceChildren(portrait(line.face, line.who), h("div", { class: "case-say-text" }, h("b", {}, SPEAKERS[line.who || "lumi"] || line.who), text, more || ""));
+    stopTyping();
+    if (reducedMotion) text.textContent = line.text;
+    else {
+      let shown = 0;
+      if (more) more.hidden = true;
+      typing = {
+        finish: () => {
+          text.textContent = line.text;
+          if (more) more.hidden = false;
+          clearInterval(typing?.timer);
+          typing = null;
+        },
+      };
+      typing.timer = setInterval(() => {
+        shown += 1;
+        text.textContent = line.text.slice(0, shown);
+        if (shown % 2 === 1 && !/[，。！？、…「」（）\s]/.test(line.text[shown - 1] || "")) sound.blip(VOICE[line.who || "lumi"] || 520);
+        if (shown >= line.text.length) typing?.finish();
+      }, 28);
+    }
     if (last) after?.();
+  }
+  function stopTyping() {
+    if (typing) {
+      clearInterval(typing.timer);
+      typing = null;
+    }
   }
 
   function advance(after) {
+    // The first click finishes a line still being typed.
+    if (typing) return typing.finish();
     if (lineIndex < lines.length - 1) {
       lineIndex += 1;
       renderLine(after);
@@ -587,6 +642,34 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   let lastTime = 0;
+  let stepClock = 0;
+
+  /* Falling autumn leaves over the town: a few small pixels drifting down across the camera's view. */
+  const LEAF_COLORS = ["#d9622b", "#e8a53a", "#b8452a", "#f0c25a"];
+  let leaves = [];
+  function scatterLeaves() {
+    leaves = [];
+    if (reducedMotion || !worldEl) return;
+    for (let i = 0; i < 14; i += 1) {
+      const el = h("span", { class: "game-leaf", "aria-hidden": "true", style: `background:${LEAF_COLORS[i % LEAF_COLORS.length]}` });
+      worldEl.append(el);
+      leaves.push({ el, x: camera.x + Math.random() * viewW(), y: camera.y + Math.random() * viewH(), vx: 6 + Math.random() * 8, vy: 10 + Math.random() * 10, phase: Math.random() * 6 });
+    }
+  }
+  function blowLeaves(dt) {
+    for (const leaf of leaves) {
+      leaf.phase += dt * 2;
+      leaf.x += (leaf.vx + Math.sin(leaf.phase) * 10) * dt;
+      leaf.y += leaf.vy * dt;
+      if (leaf.y > camera.y + viewH() + 8 || leaf.x > camera.x + viewW() + 8) {
+        leaf.x = camera.x + Math.random() * viewW() - 20;
+        leaf.y = camera.y - 6;
+      }
+      leaf.el.style.left = `calc(${leaf.x.toFixed(1)}px * var(--px))`;
+      leaf.el.style.top = `calc(${leaf.y.toFixed(1)}px * var(--px))`;
+      leaf.el.style.transform = `rotate(${Math.round(Math.sin(leaf.phase) * 2) * 45}deg)`;
+    }
+  }
   function tick(now) {
     requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
@@ -654,6 +737,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     placePlayer();
     animate(dt, dx, dy);
+    if (player.walking && (stepClock += dt) > 0.3) {
+      stepClock = 0;
+      sound.step();
+    }
+    if (!room) blowLeaves(dt);
     if (regional() && !room) {
       const exit = regionData().exits.find((e) => inExit(e, player.x, player.y));
       if (exit) return switchRegion(exit.to, exit.at);
@@ -663,6 +751,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /** Walk into another region: its map is drawn and the player stands at `at`. */
   function switchRegion(name, at = REGIONS[name].spawn) {
+    arrive();
     region = name;
     regionStarted = true;
     Object.assign(player, at);
@@ -839,7 +928,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   function renderClock() {
     const state = quests?.clockState() || "running";
     clockEl.dataset.state = state;
-    let shown = clock.minutes;
+    // Stopped, every clock in town shows the minute the tower stopped.
+    let shown = state === "stopped" ? 11 * 60 + 58 : clock.minutes;
     // Drifting: the hands jump around the true time, as if someone keeps changing it.
     if (state === "drifting") shown = (clock.minutes + Math.round(Math.sin(clock.minutes / 7) * 23) + 1440) % 1440;
     if (shown === clockShown && clockEl.dataset.shown === state) return;
@@ -876,8 +966,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     tracker.title = step ? `${step.line.title} · ${step.chapter.title}：${step.goal}（J 打开任务日志）` : "J 打开任务日志";
     renderClock();
   }
-  quests?.onChange(({ story }) => {
+  quests?.onChange(({ step, finishedChapter, story }) => {
     questLines.push(...story);
+    const learned = skillsFrom(step.id);
+    learned.forEach((skill, i) => setTimeout(() => toast(`学会了：${skill.label}`, skill.note), 300 + i * 900));
+    if (learned.length || finishedChapter) sound.unlock();
     renderTracker();
     if (enabled && !windowOpen && stage.dataset.view === "town") {
       drawTown();
@@ -954,6 +1047,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     dialogue.hidden = true;
     const game = createMinigame(step.game, {
       h,
+      sound,
       difficulty: quests.difficulty || "normal",
       onWin: () => {
         closeOverlay();
@@ -966,6 +1060,39 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     );
     overlay.hidden = false;
     overlay.querySelector("button:not([disabled])")?.focus({ preventScroll: true });
+  }
+  /** A short notice in the top middle (a skill learned, …); several stack up. */
+  const toasts = h("div", { class: "game-toasts", role: "status", "aria-live": "polite" });
+  shell.append(toasts);
+  function toast(title, note = "") {
+    const el = h("div", { class: "game-toast" }, h("b", {}, "✦ ", title), note && h("small", {}, note));
+    toasts.append(el);
+    setTimeout(() => el.classList.add("leaving"), 3200);
+    setTimeout(() => el.remove(), 3700);
+  }
+
+  /** 技能树 (K): every branch, with what is learned, what is next and what is still being made. */
+  function openSkills() {
+    if (!quests || windowOpen) return;
+    if (!overlay.hidden && overlay.querySelector(".game-skills")) return closeOverlay();
+    const all = SKILL_TREE.flatMap((branch) => branch.skills);
+    const learned = all.filter((skill) => skill.from && quests.stepDone(skill.from)).length;
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, "技能树"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（K）")),
+      h("p", { class: "game-panel-note" }, `已点亮 ${learned} / ${all.length}。跟着主线和支线走，一格一格点亮它们。`),
+      h("div", { class: "game-skills" },
+        ...SKILL_TREE.map((branch) => {
+          const lit = branch.skills.filter((skill) => skill.from && quests.stepDone(skill.from)).length;
+          return h("section", { class: "game-skill-branch" },
+            h("h3", {}, branch.title, h("small", {}, ` ${lit}/${branch.skills.length}`)),
+            h("ol", {},
+              ...branch.skills.map((skill) => {
+                const done = skill.from && quests.stepDone(skill.from);
+                return h("li", { class: done ? "lit" : skill.from ? "todo" : "making", title: skill.from ? skill.note : `${skill.note}（制作中）` }, h("span", { class: "game-skill-gem", "aria-hidden": "true" }), h("b", {}, skill.label), h("small", {}, done ? skill.note : skill.from ? "还没学" : "制作中"));
+              })));
+        })),
+    );
+    overlay.hidden = false;
   }
   function drawTownIfFree() {
     if (enabled && !windowOpen && stage.dataset.view === "town") drawTown();
@@ -980,6 +1107,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* ----- navigation ----- */
   function goTown() {
     closeWindow();
+    if (place) sound.door();
+    arrive();
     if (place) lastPlace = place;
     place = null;
     menu.hidden = true;
@@ -1046,6 +1175,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   function enter(id) {
     closeWindow();
+    arrive();
+    sound.door();
     target = null;
     keys.clear();
     place = id;
@@ -1116,7 +1247,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     if (!overlay.hidden) {
-      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log"))) closeOverlay();
+      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || (key === "k" && overlay.querySelector(".game-skills"))) closeOverlay();
+      return;
+    }
+    if (key === "k" && !windowOpen && quests) {
+      event.preventDefault();
+      openSkills();
       return;
     }
     if (key === "j" && !windowOpen && quests) {
