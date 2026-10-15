@@ -23,7 +23,8 @@
       ],
       "answer": "修复了一些小问题，提升了稳定性",
       "hint": "看报告最上面的「更新说明」。",
-      "explain": "只有一句「修复了一些小问题，提升了稳定性」。记住这句话，接下来看看实际改了什么。"
+      "explain": "只有一句「修复了一些小问题，提升了稳定性」。记住这句话，接下来看看实际改了什么。",
+      "gamePrompt": "先看看开发者在更新说明里是怎么写的。"
     },
     {
       "id": "new-request",
@@ -37,7 +38,8 @@
         "https://api.notes-cloud.example/v1/sync",
         "https://update.quick-notes.example/check",
         "https://help.quick-notes.example/faq"
-      ]
+      ],
+      "gamePrompt": "新版本多了一处联网请求。去「新增 · 联网请求」里找到它。"
     },
     {
       "id": "new-ability",
@@ -51,7 +53,8 @@
         "读取剪贴板",
         "使用摄像头或麦克风",
         "获取位置"
-      ]
+      ],
+      "gamePrompt": "新版本多了哪项敏感能力？找到那一行。"
     },
     {
       "id": "how-often",
@@ -65,7 +68,8 @@
         "每 30 秒重复一次",
         "每 1 分钟重复一次",
         "每 1 小时重复一次"
-      ]
+      ],
+      "gamePrompt": "这项能力多久执行一次？去「新增 · 定时执行的代码」里找。"
     },
     {
       "id": "removed",
@@ -79,7 +83,8 @@
         "notes:list",
         "notes:add",
         "notes:pin"
-      ]
+      ],
+      "gamePrompt": "新版本还悄悄去掉了一个功能。在标着「去掉」的板块里找。"
     }
   ],
   "conclusion": {
@@ -101,5 +106,48 @@
     "place": "周姐的办公室",
     "look": "room",
     "client": "zhoujie"
+  },
+  "game": {
+    "client": {
+      "name": "周姐",
+      "role": "忙碌的上班族",
+      "portrait": "zhoujie",
+      "lines": [
+        {
+          "text": "便签软件提示我升级，更新说明就一句：「修复了一些小问题，提升了稳定性」。",
+          "face": "normal"
+        },
+        {
+          "text": "可升级以后总觉得哪里不对劲……你帮我把新旧两个版本对比一下？",
+          "face": "thinking"
+        }
+      ]
+    },
+    "verdict": {
+      "intro": "证据齐了。周姐放下咖啡：「真的假的？」周姐每说一句，你就挑一件证据给她看。",
+      "claims": [
+        {
+          "text": "「说明里写了，只是修复小问题而已。」",
+          "accept": [
+            "insight.notes-cloud",
+            "截取屏幕"
+          ]
+        },
+        {
+          "text": "「就算截图，也只是偶尔一次吧？」",
+          "accept": [
+            "10 分钟"
+          ]
+        },
+        {
+          "text": "「反正功能没少，升级总没坏处。」",
+          "accept": [
+            "notes:export-txt"
+          ]
+        }
+      ],
+      "objection": "周姐：「这个……和我说的好像没关系吧？」",
+      "closing": "周姐：「每 10 分钟截一次我的屏幕……我这就退回旧版本，再给开发者写信问清楚。」"
+    }
   }
 }
