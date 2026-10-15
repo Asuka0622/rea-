@@ -28,6 +28,7 @@ from PIL import Image, ImageDraw
 
 CELL = 4
 MIN_BLOB = 6        # cells; smaller specks are walkable and not drawn in front
+SHADE_BELOW = 30     # neighbourhood "busyness" under which dark green is shade on the ground, not a canopy
 BLOCKED_SHARE = 0.6  # the lower 60% of each column of a blob is solid, the top 40% can be walked behind
 
 
@@ -133,6 +134,32 @@ def main() -> None:
         return "ground"
 
     cells = [[cell_kind(r, c) for c in range(cols)] for r in range(rows)]
+
+    # Shade is not foliage. Tree shadows on grass have the colour of canopies but are flat; canopies are
+    # busy with leaf highlights. Measure how busy each cell's neighbourhood is (colour change between
+    # neighbouring pixels, averaged over 3x3 cells) and keep "foliage" only where it is busy enough.
+    def busy(r, c):
+        total = count = 0
+        for y in range(r * CELL, (r + 1) * CELL):
+            for x in range(c * CELL, (c + 1) * CELL):
+                a = px[x, y]
+                if x + 1 < width:
+                    b = px[x + 1, y]
+                    total += abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])
+                    count += 1
+                if y + 1 < height:
+                    b = px[x, y + 1]
+                    total += abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])
+                    count += 1
+        return total / max(1, count)
+    energy = [[busy(r, c) for c in range(cols)] for r in range(rows)]
+    for r in range(rows):
+        for c in range(cols):
+            if cells[r][c] != "foliage":
+                continue
+            near = [energy[rr][cc] for rr in range(max(0, r - 1), min(rows, r + 2)) for cc in range(max(0, c - 1), min(cols, c + 2))]
+            if sum(near) / len(near) < SHADE_BELOW:
+                cells[r][c] = "ground"
     walk = [[0 if cells[r][c] == "water" else 1 for c in range(cols)] for r in range(rows)]
 
     front = Image.new("RGBA", (width, height))
