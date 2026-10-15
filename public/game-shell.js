@@ -143,9 +143,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const world = { w: 640, h: 360 };
   const camera = { x: 0, y: 0 };
   function fit() {
-    // Cover the whole window: the 320x180 scene is scaled up until no border is left; what does not
-    // fit is cropped at the edges, and on the map the camera keeps the player in view.
-    roomPx = Math.max(window.innerWidth / 320, window.innerHeight / 180);
+    // A room is shown whole (the 320x180 picture fits the window; the rest is a dark border), so the
+    // player can walk anywhere in it. On the map the camera keeps the player in view instead.
+    roomPx = Math.min(window.innerWidth / 320, window.innerHeight / 180);
     // The town is scaled by its own size, so a bigger map shows more of the town instead of zooming in.
     townPx = Math.max(window.innerWidth / world.w, window.innerHeight / world.h);
     stage.style.setProperty("--px", String(roomPx));
@@ -173,6 +173,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   function drawTown() {
     const picture = has("town");
     stage.dataset.view = "town";
+    roomEl = null;
+    room = null;
     spotCache = null;
     nearDoor = null; // the prompt is re-attached to the new world layer when needed
     const background = picture ? h("img", { class: "game-bg", src: "/art/pixel/town.png", alt: "" }) : null;
@@ -207,17 +209,36 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     addFronts();
   }
 
+  /* Inside a building (room pixels, 320x180): where the floor starts, furniture the feet cannot cross,
+     the spot where the room's work happens (E opens its menu), the way out, and where you come in. */
+  const ROOM_DEFAULT = { top: 118, blocks: [], spot: { x: 160, y: 128 }, exit: { x: 160, y: 176 }, spawn: { x: 160, y: 160 } };
+  const ROOMS = {
+    home: { top: 112, spot: { x: 132, y: 118 }, exit: { x: 288, y: 116 }, spawn: { x: 270, y: 126 }, spotLabel: "查看委托板和办公桌" },
+    learn: { top: 100, blocks: [{ x: 104, y: 96, w: 118, h: 24 }], spot: { x: 162, y: 126 }, spotLabel: "和书奶奶说话" },
+    engines: { top: 108, blocks: [{ x: 0, y: 100, w: 66, h: 28 }, { x: 262, y: 100, w: 58, h: 32 }], spot: { x: 186, y: 120 }, spotLabel: "看看工作台" },
+    clients: { top: 122, spot: { x: 150, y: 128 }, spotLabel: "到柜台办事" },
+    doctor: { top: 120, blocks: [{ x: 0, y: 112, w: 48, h: 20 }], spot: { x: 234, y: 126 }, spotLabel: "找白医生" },
+  };
+  const roomOf = (id) => ({ ...ROOM_DEFAULT, ...ROOMS[id] });
+  const INDOOR = 1.8; // people are drawn this much bigger inside: rooms are a closer view than the town
+  let roomEl = null;
+  let room = null;
+
   function drawRoom(id) {
     worldEl = null;
+    nearDoor = null;
     const scene = SCENES[id];
     const picture = has(`room-${id}`);
     stage.dataset.view = id;
-    stage.replaceChildren(
-      h("div", { class: "game-room" },
-        picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
-        sprite("lumi", 110, "indoor")),
-      h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place),
-    );
+    room = roomOf(id);
+    Object.assign(player, { x: room.spawn.x, y: room.spawn.y, walking: false });
+    target = null;
+    roomEl = h("div", { class: "game-room" },
+      picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+    stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place));
+    placePlayer();
+    animate(0, 0, 0);
   }
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
@@ -333,6 +354,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const nearDoorway = (x, y) => Object.values(spots()).some((b) => Math.abs(x - b.door.x) < 7 && y >= b.door.y - 4 && y - b.door.y < 9);
   /** The feet (an 8x3 box at the bottom of the sprite) would hit something, or leave the map. */
   function blocked(x, y) {
+    if (room) return x < 10 || x > 310 || y < room.top || y > 178 || room.blocks.some((b) => x + 6 > b.x && x - 6 < b.x + b.w && y > b.y && y - 4 < b.y + b.h);
     if (x < 6 || x > world.w - 6 || y < 14 || y > world.h - 2) return true;
     if (nearDoorway(x, y)) return false;
     if (blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h)) return true;
@@ -364,8 +386,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     let index = 0;
     while (t >= durations[index] && index < clip.frames - 1) t -= durations[index++];
     const [cols, rows] = animation.sheet || [4, 2];
-    playerEl.style.backgroundSize = `calc(${cols * 16}px * var(--px)) calc(${rows * 32}px * var(--px))`;
-    playerEl.style.backgroundPosition = `calc(${-index * 16}px * var(--px)) calc(${-clip.row * 32}px * var(--px))`;
+    const k = room ? INDOOR : 1;
+    playerEl.style.backgroundSize = `calc(${cols * 16 * k}px * var(--px)) calc(${rows * 32 * k}px * var(--px))`;
+    playerEl.style.backgroundPosition = `calc(${-index * 16 * k}px * var(--px)) calc(${-clip.row * 32 * k}px * var(--px))`;
     // Mirror the side view when walking the other way; front and back views are never mirrored.
     const sideFacesLeft = animation.side === "left";
     playerEl.classList.toggle("face-left", name.includes("side") ? player.left !== sideFacesLeft : name === "walk" && player.left);
@@ -395,8 +418,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return true;
   }
   function findPath(from, to) {
-    const cols = Math.ceil(world.w / CELL);
-    const rows = Math.ceil(world.h / CELL);
+    const area = room ? { w: 320, h: 180 } : world;
+    const cols = Math.ceil(area.w / CELL);
+    const rows = Math.ceil(area.h / CELL);
     const cell = (p) => [Math.max(0, Math.min(cols - 1, Math.round(p.x / CELL))), Math.max(0, Math.min(rows - 1, Math.round(p.y / CELL)))];
     const center = (c, r) => ({ x: c * CELL, y: r * CELL });
     const [sc, sr] = cell(from);
@@ -461,7 +485,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
   if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player };
   function walkTo(point, then) {
-    if (stage.dataset.view !== "town") return then?.();
+    if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];
     target = { x: path[0].x, y: path[0].y, rest: path.slice(1), then };
     startWalking();
@@ -470,6 +494,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /** Any movement starts the walk: the dialogue box steps aside so the map is visible. */
   function startWalking() {
     dialogue.hidden = true;
+    if (room) menu.hidden = true;
   }
 
   let lastTime = 0;
@@ -477,7 +502,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
     lastTime = now;
-    if (!enabled || windowOpen || stage.dataset.view !== "town") return;
+    if (!enabled || windowOpen || (stage.dataset.view !== "town" && !room)) return;
     let dx = 0;
     let dy = 0;
     for (const key of keys) {
@@ -545,9 +570,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* At a doorway, a prompt appears; E / Enter / Space (or tapping it) goes inside. */
   let nearDoor = null;
-  const prompt = h("button", { class: "game-interact", type: "button", onclick: () => nearDoor && enterSpot(nearDoor) });
+  const prompt = h("button", { class: "game-interact", type: "button", onclick: () => usePrompt() });
+  function usePrompt() {
+    if (!nearDoor) return;
+    if (!room) return enterSpot(nearDoor);
+    const which = nearDoor;
+    nearDoor = null;
+    prompt.hidden = true;
+    if (which === "exit") goTown();
+    else roomMenu(place);
+  }
   prompt.hidden = true;
   function showDoorPrompt() {
+    if (room) return showRoomPrompt();
     const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
     if (id === nearDoor) {
       if (id) positionPrompt();
@@ -562,14 +597,34 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   function positionPrompt() {
     prompt.style.left = `calc(${player.x.toFixed(1)}px * var(--px))`;
-    prompt.style.top = `calc(${(player.y - 36).toFixed(1)}px * var(--px))`;
+    prompt.style.top = `calc(${(player.y - (room ? 32 * INDOOR + 4 : 36)).toFixed(1)}px * var(--px))`;
+  }
+  /** Indoors: "spot" (the room's work: opens its menu) or "exit" (back to town). */
+  function showRoomPrompt() {
+    const near = (p, r) => Math.hypot(player.x - p.x, player.y - p.y) < r;
+    const id = !menu.hidden || !dialogue.hidden ? null : near(room.spot, 18) ? "spot" : near(room.exit, 16) ? "exit" : null;
+    if (id === nearDoor) {
+      if (id) positionPrompt();
+      return;
+    }
+    nearDoor = id;
+    prompt.hidden = !id;
+    if (!id) return;
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), id === "exit" ? "回小镇" : room.spotLabel || SCENES[place]?.purpose || "看看");
+    roomEl?.append(prompt);
+    positionPrompt();
   }
   requestAnimationFrame(tick);
 
   // Right-click on the map: walk there.
   stage.addEventListener("contextmenu", (event) => {
-    if (!enabled || stage.dataset.view !== "town") return;
+    if (!enabled || (stage.dataset.view !== "town" && !room)) return;
     event.preventDefault();
+    startWalking();
+    if (room) {
+      const box = roomEl.getBoundingClientRect();
+      return walkTo({ x: (event.clientX - box.left) / roomPx, y: (event.clientY - box.top) / roomPx });
+    }
     const box = stage.getBoundingClientRect();
     walkTo({ x: camera.x + (event.clientX - box.left) / townPx, y: camera.y + (event.clientY - box.top) / townPx });
   });
@@ -796,12 +851,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     drawRoom(id);
     quests?.event("enter", id);
     const story = takeQuestLines();
-    say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () =>
-      showMenu([
-        ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
-        { label: "回小镇地图", run: goTown },
-      ]),
-    );
+    say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
+  }
+  function roomMenu(id) {
+    showMenu([
+      ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
+      { label: "随便走走", run: () => (menu.hidden = true) },
+      { label: "回小镇地图", run: goTown },
+    ]);
   }
 
   function openWindow(id, action = ACTIONS[id][0]) {
@@ -850,7 +907,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keydown", (event) => {
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
     const key = event.key.toLowerCase();
-    if (KEY_DIRS[key] && !windowOpen && stage.dataset.view === "town") {
+    if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden) {
       event.preventDefault();
       if (!keys.has(key)) startWalking();
       keys.add(key);
@@ -875,9 +932,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (event.key === "Escape") closeMap();
       return;
     }
-    if ((key === "e" || event.key === "Enter" || event.key === " ") && nearDoor && !windowOpen && stage.dataset.view === "town" && dialogue.hidden && !event.target.closest?.("button,a")) {
+    if ((key === "e" || event.key === "Enter" || event.key === " ") && nearDoor && !windowOpen && dialogue.hidden && !event.target.closest?.("button,a")) {
       event.preventDefault();
-      enterSpot(nearDoor);
+      usePrompt();
       return;
     }
     if (event.key === "Escape") {
