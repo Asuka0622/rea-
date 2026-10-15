@@ -71,3 +71,24 @@ test("every skill is taught by a real quest step", async () => {
   const steps = new Set(QUEST_LINES.flatMap((line) => line.chapters.flatMap((chapter) => chapter.steps.map((step) => step.id))));
   for (const branch of SKILL_TREE) for (const skill of branch.skills) if (skill.from) assert.ok(steps.has(skill.from), `${skill.id}: ${skill.from}`);
 });
+
+test("each skill tree page is a proper tree: unique cells, needs above in the same branch", async () => {
+  const { SKILL_TREE } = await import("../public/game-skills.js");
+  const ids = new Set();
+  for (const branch of SKILL_TREE) {
+    const here = new Map(branch.skills.map((skill) => [skill.id, skill]));
+    const cells = new Set();
+    for (const skill of branch.skills) {
+      assert.ok(!ids.has(skill.id), `duplicate id ${skill.id}`);
+      ids.add(skill.id);
+      const cell = skill.at.join(",");
+      assert.ok(!cells.has(cell), `${branch.id}: two skills at ${cell}`);
+      cells.add(cell);
+      assert.ok(skill.at[0] >= 0 && skill.at[0] < 5, `${skill.id} column`);
+      for (const need of skill.needs || []) {
+        assert.ok(here.has(need), `${skill.id} needs ${need}, not in ${branch.id}`);
+        assert.ok(here.get(need).at[1] < skill.at[1], `${skill.id} needs ${need}, which is not above it`);
+      }
+    }
+  }
+});

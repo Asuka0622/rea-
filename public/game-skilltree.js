@@ -1,13 +1,17 @@
-// 技能树界面: the skill tree as a pixel-art RPG screen. Five lanes on a dark tiled floor, one per branch
-// in its colour; each a path of pixel gems (drawn pixel by pixel as SVG squares, so they stay crisp at
-// any size) joined by dotted pixel paths that light up once learned. Node states: lit (learned), next
-// (can be learned now: the one after the last lit), locked (needs the one above first), making (not in
-// the game yet). Selecting a node shows its card: what you learned, or where in the story you learn it.
-// The header shows the player's level, title and a segmented XP bar (game-skills.js rank()).
+// 技能树界面: the skill tree as a pixel-art RPG screen. Five pages, one per branch, chosen with pixel
+// tabs. Each page is a talent tree on a dark tiled floor: pixel gems on a grid (game-skills.js `at`),
+// joined by right-angled pixel paths from every skill to the ones it opens. Gems are drawn square by
+// square as SVG so they stay crisp. States: lit (learned), next (every skill it needs is learned: can
+// be learned now), locked (needs others first), making (not in the game yet). Selecting a gem shows a
+// parchment card: what you learned, what it needs, or where in the story you learn it. The header has
+// the player's level, title and a segmented XP bar (game-skills.js rank()).
 
 import { SKILL_TREE, rank } from "./game-skills.js";
 
 const SVG = "http://www.w3.org/2000/svg";
+const CELL_W = 128; // board grid, in screen pixels
+const CELL_H = 100;
+const GEM = 52;
 
 const mix = (hex, other, amount) => {
   const a = parseInt(hex.slice(1), 16);
@@ -15,26 +19,16 @@ const mix = (hex, other, amount) => {
   const channel = (shift) => Math.round(((a >> shift) & 255) * (1 - amount) + ((b >> shift) & 255) * amount);
   return `#${((channel(16) << 16) | (channel(8) << 8) | channel(0)).toString(16).padStart(6, "0")}`;
 };
+const svgEl = (name, attrs = {}) => {
+  const el = document.createElementNS(SVG, name);
+  for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
+  return el;
+};
 
 /** Pixels → an SVG of 1x1 squares (crispEdges): rows of palette keys, "." for transparent. */
 function pixelArt(rows, palette, className) {
-  const svg = document.createElementNS(SVG, "svg");
-  svg.setAttribute("viewBox", `0 0 ${rows[0].length} ${rows.length}`);
-  svg.setAttribute("shape-rendering", "crispEdges");
-  svg.setAttribute("class", className);
-  svg.setAttribute("aria-hidden", "true");
-  rows.forEach((row, y) => {
-    [...row].forEach((key, x) => {
-      if (key === ".") return;
-      const rect = document.createElementNS(SVG, "rect");
-      rect.setAttribute("x", x);
-      rect.setAttribute("y", y);
-      rect.setAttribute("width", 1);
-      rect.setAttribute("height", 1);
-      rect.setAttribute("fill", palette[key]);
-      svg.append(rect);
-    });
-  });
+  const svg = svgEl("svg", { viewBox: `0 0 ${rows[0].length} ${rows.length}`, "shape-rendering": "crispEdges", class: className, "aria-hidden": "true" });
+  rows.forEach((row, y) => [...row].forEach((key, x) => key !== "." && svg.append(svgEl("rect", { x, y, width: 1, height: 1, fill: palette[key] }))));
   return svg;
 }
 
@@ -65,7 +59,11 @@ function gem(state, color) {
   };
   return pixelArt(GEM_ROWS, palettes[state], "st-gem-art");
 }
-const LOCK = pixelArt(["..ooo..", ".o...o.", ".o...o.", "ooooooo", "obbybbo", "obbybbo", "obbbbbo", "ooooooo"], { o: "#1b120c", b: "#c9a36b", y: "#1b120c" }, "st-lock");
+const LOCK_ROWS = ["..ooo..", ".o...o.", ".o...o.", "ooooooo", "obbybbo", "obbybbo", "obbbbbo", "ooooooo"];
+const lock = () => pixelArt(LOCK_ROWS, { o: "#1b120c", b: "#c9a36b", y: "#1b120c" }, "st-lock");
+
+const STATUS = { lit: "已点亮", next: "可以学了", locked: "未解锁", making: "制作中" };
+let lastBranch = null; // the page shown last time, while the game is open
 
 /**
  * @param h          element helper
@@ -76,63 +74,100 @@ const LOCK = pixelArt(["..ooo..", ".o...o.", ".o...o.", "ooooooo", "obbybbo", "o
 export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
   const states = new Map();
   for (const branch of SKILL_TREE) {
-    let before = true; // the previous skill in this lane is lit (the first has nothing before it)
+    const lit = (id) => states.get(id) === "lit";
+    for (const skill of branch.skills) states.set(skill.id, skill.from && stepDone(skill.from) ? "lit" : null);
     for (const skill of branch.skills) {
-      const lit = Boolean(skill.from && stepDone(skill.from));
-      states.set(skill.id, lit ? "lit" : !skill.from ? "making" : before ? "next" : "locked");
-      before = lit;
+      if (states.get(skill.id)) continue;
+      states.set(skill.id, !skill.from ? "making" : (skill.needs || []).every(lit) ? "next" : "locked");
     }
   }
   const all = SKILL_TREE.flatMap((branch) => branch.skills.map((skill) => ({ skill, branch })));
-  const lit = all.filter(({ skill }) => states.get(skill.id) === "lit").length;
-  const r = rank(lit);
+  const litCount = all.filter(({ skill }) => states.get(skill.id) === "lit").length;
+  const r = rank(litCount);
+  const byId = new Map(all.map((entry) => [entry.skill.id, entry]));
+  const face = (skill, state) => (state === "locked" ? lock() : h("span", { class: "st-glyph" }, state === "making" ? "?" : skill.glyph));
 
   const card = h("aside", { class: "st-card", "aria-live": "polite" });
-  const STATUS = { lit: "已点亮", next: "可以学了", locked: "未解锁", making: "制作中" };
-  const face = (skill, state) => (state === "locked" ? LOCK.cloneNode(true) : h("span", { class: "st-glyph" }, state === "making" ? "?" : skill.glyph));
-  function show({ skill, branch }, button) {
-    root.querySelectorAll(".st-node.selected").forEach((el) => el.classList.remove("selected"));
-    button?.classList.add("selected");
+  function show({ skill, branch }) {
+    board.querySelectorAll(".st-node.selected").forEach((el) => el.classList.remove("selected"));
+    board.querySelector(`.st-node[data-skill="${skill.id}"]`)?.classList.add("selected");
     const state = states.get(skill.id);
-    const index = branch.skills.indexOf(skill);
     const where = skill.from ? whereOf(skill.from) : "";
+    const needs = (skill.needs || []).map((id) => byId.get(id).skill);
+    const opens = branch.skills.filter((other) => other.needs?.includes(skill.id));
     card.style.setProperty("--c", branch.color);
     card.replaceChildren(
       ...[
         h("div", { class: `st-card-gem ${state}` }, gem(state, branch.color), face(skill, state)),
-        h("p", { class: "st-card-branch" }, `【${branch.title}】第 ${index + 1} 格`),
+        h("p", { class: "st-card-branch" }, `【${branch.title}】`),
         h("h3", {}, skill.label),
         h("p", { class: `st-card-status ${state}` }, `▶ ${STATUS[state]}`),
         h("p", { class: "st-card-note" }, skill.note),
         state === "lit" && skill.recap ? h("div", { class: "st-card-box" }, h("b", {}, "学到了"), h("p", {}, skill.recap)) : null,
-        state === "locked" ? h("p", { class: "st-card-hint" }, `先点亮上一格「${branch.skills[index - 1].label}」。`) : null,
         where && state !== "lit" ? h("div", { class: "st-card-box" }, h("b", {}, "在哪学"), h("p", {}, where)) : null,
+        needs.length ? h("p", { class: "st-card-hint" }, "需要：", ...needs.map((need) => h("span", { class: `st-chip ${states.get(need.id)}` }, need.label))) : null,
+        opens.length ? h("p", { class: "st-card-hint" }, "通往：", ...opens.map((next) => h("span", { class: `st-chip ${states.get(next.id)}` }, next.label))) : null,
         where && state === "lit" ? h("p", { class: "st-card-hint" }, `学自 ${where}`) : null,
-        state === "making" ? h("p", { class: "st-card-hint" }, "这一格所在的章节还在制作中，敬请期待。") : null,
+        state === "making" ? h("p", { class: "st-card-hint" }, "这一格的课程还在制作中，敬请期待。") : null,
       ].filter(Boolean),
     );
   }
 
-  const lanes = SKILL_TREE.map((branch) => {
-    const count = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
-    return h("section", { class: "st-lane", style: `--c:${branch.color}` },
-      h("h3", { class: "st-emblem" }, h("span", { class: "st-emblem-mark", "aria-hidden": "true" }, branch.emblem), h("span", {}, branch.title), h("small", {}, `${count}/${branch.skills.length}`)),
-      h("ol", {},
-        ...branch.skills.map((skill, i) => {
-          const state = states.get(skill.id);
-          const prev = i > 0 ? states.get(branch.skills[i - 1].id) : null;
-          const path = i === 0 ? "" : prev === "lit" && state === "lit" ? "path-lit" : prev === "lit" && state === "next" ? "path-next" : "path-dim";
-          const button = h("button", {
-            class: `st-node ${state}`,
-            type: "button",
-            "data-skill": skill.id,
-            "aria-label": `${skill.label}：${STATUS[state]}`,
-            onclick: () => show({ skill, branch }, button),
-            onfocus: () => show({ skill, branch }, button),
-          }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label));
-          return h("li", { class: path }, button);
-        })));
-  });
+  const board = h("div", { class: "st-board-wrap" });
+  const tabs = h("div", { class: "st-tabs", role: "tablist" });
+  function page(branch) {
+    lastBranch = branch.id;
+    tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === branch.id)));
+    const rows = Math.max(...branch.skills.map((skill) => skill.at[1])) + 1;
+    const width = CELL_W * 5;
+    const height = CELL_H * rows;
+    const center = (skill) => ({ x: skill.at[0] * CELL_W + CELL_W / 2, y: skill.at[1] * CELL_H + GEM / 2 + 8 });
+    // Paths: down from the parent, across, down into the child; pixel-snapped to 4px.
+    const snap = (v) => Math.round(v / 4) * 4;
+    const lines = svgEl("svg", { class: "st-lines", width, height, viewBox: `0 0 ${width} ${height}`, "shape-rendering": "crispEdges", "aria-hidden": "true" });
+    for (const skill of branch.skills) {
+      for (const id of skill.needs || []) {
+        const from = center(byId.get(id).skill);
+        const to = center(skill);
+        const mid = snap((from.y + GEM / 2 + to.y - GEM / 2) / 2);
+        const parent = states.get(id);
+        const kind = parent === "lit" && states.get(skill.id) === "lit" ? "lit" : parent === "lit" && states.get(skill.id) === "next" ? "next" : "dim";
+        lines.append(svgEl("path", { d: `M${snap(from.x)} ${snap(from.y + GEM / 2)}V${mid}H${snap(to.x)}V${snap(to.y - GEM / 2)}`, class: `st-path ${kind}`, style: `--c:${branch.color}` }));
+      }
+    }
+    const nodes = branch.skills.map((skill) => {
+      const state = states.get(skill.id);
+      const { x, y } = center(skill);
+      return h("button", {
+        class: `st-node ${state}`,
+        type: "button",
+        "data-skill": skill.id,
+        style: `left:${x}px;top:${y - GEM / 2}px`,
+        "aria-label": `${skill.label}：${STATUS[state]}`,
+        onclick: () => show({ skill, branch }),
+        onfocus: () => show({ skill, branch }),
+      }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label));
+    });
+    const lit = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
+    board.style.setProperty("--c", branch.color);
+    board.replaceChildren(
+      h("p", { class: "st-motto" }, h("b", {}, `${branch.title} ${lit}/${branch.skills.length}`), branch.motto),
+      h("div", { class: "st-board", style: `width:${width}px;height:${height}px` }, lines, ...nodes),
+    );
+    const start = branch.skills.find((skill) => states.get(skill.id) === "next") || [...branch.skills].reverse().find((skill) => states.get(skill.id) === "lit") || branch.skills[0];
+    show({ skill: start, branch });
+  }
+  for (const branch of SKILL_TREE) {
+    const lit = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
+    const ready = branch.skills.some((skill) => states.get(skill.id) === "next");
+    tabs.append(
+      h("button", { class: "st-tab", type: "button", role: "tab", "data-branch": branch.id, style: `--c:${branch.color}`, onclick: () => page(branch) },
+        h("span", { class: "st-tab-mark", "aria-hidden": "true" }, branch.emblem),
+        h("span", {}, branch.title),
+        h("small", {}, `${lit}/${branch.skills.length}`),
+        ready ? h("i", { class: "st-tab-new", title: "有可以学的技能" }, "!") : null),
+    );
+  }
 
   const blocks = Array.from({ length: r.per }, (_, i) => h("i", { class: i < r.into ? "full" : "" }));
   const root = h("div", { class: "st" },
@@ -143,13 +178,14 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose }) {
           h("p", { class: "st-title" }, r.title),
           h("div", { class: "st-xp", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(r.per), "aria-valuenow": String(r.into), "aria-label": "升级进度" }, ...blocks),
           h("small", {}, `再点亮 ${r.per - r.into} 格升到 Lv.${r.level + 1}`))),
-      h("p", { class: "st-count" }, "技能 ", h("b", {}, String(lit)), ` / ${all.length}`),
+      h("p", { class: "st-count" }, "技能 ", h("b", {}, String(litCount)), ` / ${all.length}`),
       h("button", { class: "btn small", type: "button", onclick: onClose }, "关闭（K）")),
-    h("div", { class: "st-body" }, h("div", { class: "st-lanes" }, ...lanes), card),
+    tabs,
+    h("div", { class: "st-body" }, board, card),
   );
 
-  // Start on the skill to learn next (or the last one learned).
-  const first = all.find(({ skill }) => states.get(skill.id) === "next" && skill.from) || [...all].reverse().find(({ skill }) => states.get(skill.id) === "lit") || all[0];
-  queueMicrotask(() => show(first, root.querySelector(`.st-node[data-skill="${first.skill.id}"]`)));
+  // Open on the page shown last time, else the branch with something to learn next.
+  const first = SKILL_TREE.find((branch) => branch.id === lastBranch) || SKILL_TREE.find((branch) => branch.skills.some((skill) => states.get(skill.id) === "next")) || SKILL_TREE[0];
+  page(first);
   return root;
 }
