@@ -5,7 +5,7 @@
     "time": "noon",
     "label": "autumn-clear-noon"
   },
-  "stateNote": "This first asset batch covers only the autumn / clear / noon base state. Other season, weather, and time variants have not been generated.",
+  "stateNote": "Complete composed art for all five region maps and all ten required interiors currently covers autumn-clear-noon only. The other 47 combinations are not covered; no reusable weather/time overlays exist yet.",
   "regionMapSize": [
     960,
     540
@@ -18,46 +18,148 @@
   "regions": [
     {
       "file": "town-center.png",
-      "purpose": "Public facilities and central plaza"
+      "purpose": "Public facilities and central plaza",
+      "state": "autumn-clear-noon",
+      "variants": []
     },
     {
       "file": "town-homes.png",
-      "purpose": "Client homes"
+      "purpose": "Client homes",
+      "state": "autumn-clear-noon",
+      "variants": []
     },
     {
       "file": "town-craft.png",
-      "purpose": "Craft street"
+      "purpose": "Craft street",
+      "state": "autumn-clear-noon",
+      "variants": []
     },
     {
       "file": "town-north.png",
-      "purpose": "North office"
+      "purpose": "North office",
+      "state": "autumn-clear-noon",
+      "variants": []
     },
     {
       "file": "town-south.png",
-      "purpose": "South bank, bridge, pier, and picnic clearing"
+      "purpose": "South bank, bridge, pier, and picnic clearing",
+      "state": "autumn-clear-noon",
+      "variants": []
     }
   ],
   "interiors": [
     {
       "file": "../room-home.png",
-      "purpose": "Detective office, retained existing art"
+      "purpose": "Detective office, retained existing art",
+      "state": "autumn-clear-noon",
+      "variants": [],
+      "sourceStatus": "Existing base-state art retained."
     },
     {
       "file": "../room-learn.png",
-      "purpose": "Library"
+      "purpose": "Library",
+      "state": "autumn-clear-noon",
+      "variants": [],
+      "sourceStatus": "Existing base-state art retained."
     },
     {
       "file": "../room-engines.png",
-      "purpose": "Tool and engine shop"
+      "purpose": "Tool and engine shop",
+      "state": "autumn-clear-noon",
+      "variants": [],
+      "sourceStatus": "Existing base-state art retained."
     },
     {
       "file": "../room-clients.png",
-      "purpose": "Post office"
+      "purpose": "Post office",
+      "state": "autumn-clear-noon",
+      "variants": [],
+      "sourceStatus": "Existing base-state art retained."
     },
     {
       "file": "../room-doctor.png",
-      "purpose": "Clinic"
+      "purpose": "Clinic",
+      "state": "autumn-clear-noon",
+      "variants": [],
+      "sourceStatus": "Existing base-state art retained."
+    },
+    {
+      "file": "../room-art-studio.png",
+      "purpose": "Painter's studio with easel, artwork, paints, wash cup, brushes, and tool storage",
+      "state": "autumn-clear-noon",
+      "sourceFile": "public/art/source/room-art-studio-autumn-clear-noon-generated.png",
+      "variants": [],
+      "sourceStatus": "New generated art; original generation retained in public/art/source/."
+    },
+    {
+      "file": "../room-arcade.png",
+      "purpose": "Arcade with distinct joystick, racing, claw, and rhythm cabinets; controls, screens, coin slots, and cables",
+      "state": "autumn-clear-noon",
+      "sourceFile": "public/art/source/room-arcade-autumn-clear-noon-generated.png",
+      "variants": [],
+      "sourceStatus": "New generated art; original generation retained in public/art/source/."
+    },
+    {
+      "file": "../room-woodshop.png",
+      "purpose": "Carpenter's workshop with bench, hand plane, lumber, saws, chisels, tools, and shavings",
+      "state": "autumn-clear-noon",
+      "sourceFile": "public/art/source/room-woodshop-autumn-clear-noon-generated.png",
+      "variants": [],
+      "sourceStatus": "New generated art; original generation retained in public/art/source/."
+    },
+    {
+      "file": "../room-zhoujie-office.png",
+      "purpose": "Zhou Jie's office with workstations, files, stationery, monitors, and drinking cups",
+      "state": "autumn-clear-noon",
+      "sourceFile": "public/art/source/room-zhoujie-office-autumn-clear-noon-generated.png",
+      "variants": [],
+      "sourceStatus": "New generated art; original generation retained in public/art/source/."
+    },
+    {
+      "file": "../room-archive.png",
+      "purpose": "Town archive with index drawers, files, scrolls, reading table, ledger, magnifier, stamp, and sorting cart",
+      "state": "autumn-clear-noon",
+      "sourceFile": "public/art/source/room-archive-autumn-clear-noon-generated.png",
+      "variants": [],
+      "sourceStatus": "New generated art; original generation retained in public/art/source/."
     }
   ],
-  "integration": "Region maps are standalone art assets. Runtime region navigation and connector coordinates still need integration."
+  "integration": "Region maps are standalone art assets. Runtime region navigation and connector coordinates still need integration.",
+  "stateSpace": {
+    "seasons": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "weather": [
+      "clear",
+      "rain",
+      "snow"
+    ],
+    "times": [
+      "morning",
+      "noon",
+      "sunset",
+      "night"
+    ],
+    "possibleCombinations": 48,
+    "representedCombinations": [
+      "autumn-clear-noon"
+    ],
+    "missingCombinations": 47,
+    "stateNote": "Complete composed art for all five region maps and all ten required interiors currently covers autumn-clear-noon only. The other 47 combinations are not covered; no reusable weather/time overlays exist yet."
+  },
+  "stateCoverage": {
+    "autumn-clear-noon": {
+      "regionMaps": 5,
+      "interiors": 10,
+      "status": "All five region maps and all ten required interiors are available for this base state."
+    },
+    "otherCombinations": {
+      "count": 47,
+      "status": "Not covered by region or room variants; no reusable weather/time overlays are available."
+    },
+    "weatherTimeOverlays": []
+  }
 }
