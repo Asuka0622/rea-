@@ -1,4 +1,5 @@
 import { SCENES } from "./scenes.js";
+import { DIFFICULTIES } from "./game-quests.js";
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
 // home screen; clicking a building enters it, the guide talks in a dialogue box at the bottom, and
@@ -62,7 +63,7 @@ const EXTRA_LINES = {
   doctor: "我来给你的装备做个检查。",
 };
 
-export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {} }) {
+export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null }) {
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -105,10 +106,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     { class: "game-hud", "aria-label": "游戏菜单" },
     h("button", { class: "btn small", type: "button", onclick: () => openMap() }, icon("compass", { size: 14 }), "地图（M）"),
     h("button", { class: "btn small", type: "button", onclick: () => document.querySelector("#open-glossary")?.click() }, icon("glossary", { size: 14 }), "小词典"),
-    h("button", { class: "btn small", type: "button", onclick: () => document.querySelector("#theme-toggle")?.click() }, icon("sun", { size: 14 }), "白天/夜晚"),
     h("button", { class: "btn small", type: "button", onclick: () => setMode("pro") }, icon("wrench", { size: 14 }), "专业模式"),
     h("button", { class: "btn small", type: "button", onclick: () => { setWebMode(true); sync(); } }, icon("monitor", { size: 14 }), "网页模式"),
   );
+  // The current quest, right of the menu bar; clicking it (or J) opens the quest log.
+  const tracker = h("button", { class: "game-quest-tracker", type: "button", onclick: () => openLog() });
+  if (quests) hud.append(tracker);
   // Phones play in landscape: held upright, ask to turn the phone (or go fullscreen and lock landscape).
   const rotate = h(
     "div",
@@ -188,12 +191,13 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
       ...Object.entries(spots()).map(([id, spot]) => {
         const scene = info(id);
+        const objective = quests?.current()?.spot === id;
         return h(
           "button",
-          { class: `game-building ${picture ? "over-art" : spot.kind || "office"} ${TOWN[id] ? "" : "case-home"}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）` },
+          { class: `game-building ${picture ? "over-art" : spot.kind || "office"} ${TOWN[id] ? "" : "case-home"} ${objective ? "objective" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
           !picture && h("span", { class: "roof", "aria-hidden": "true" }),
           !picture && h("span", { class: "wall", "aria-hidden": "true" }, h("span", { class: "door" })),
-          h("span", { class: "game-label" }, scene.place, h("small", {}, scene.purpose)),
+          h("span", { class: "game-label" }, objective && h("span", { class: "game-objective", "aria-hidden": "true" }, "!"), scene.place, h("small", {}, scene.purpose)),
         );
       }),
       ...[], // fronts are added by addFronts() below
@@ -211,7 +215,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     stage.replaceChildren(
       h("div", { class: "game-room" },
         picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
-        sprite("lumi", 110)),
+        sprite("lumi", 110, "indoor")),
       h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place),
     );
   }
@@ -380,7 +384,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* Path finding: A* over a 4-pixel grid of the town, then straightened so the walk looks natural. */
   const CELL = 4;
-  const free = (x, y) => !blocked(x, y);
+  // Paths keep a pixel of clearance, so rounding never leaves the player stuck on an obstacle's edge.
+  const free = (x, y) => !blocked(x, y) && !blocked(x - 1, y) && !blocked(x + 1, y) && !blocked(x, y - 1) && !blocked(x, y + 1);
   function lineClear(a, b) {
     const steps = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 2);
     for (let i = 1; i <= steps; i += 1) {
@@ -453,6 +458,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return null;
   }
 
+  // Development aid: open the page with ?debug to drive and inspect the player from the console.
+  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player };
   function walkTo(point, then) {
     if (stage.dataset.view !== "town") return then?.();
     const path = findPath(player, point) || [point];
@@ -624,7 +631,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h("div", { class: "game-map-body" },
         h("div", { class: "game-map-picture", style: `aspect-ratio:${world.w} / ${world.h}` },
           picture ? h("img", { src: "/art/pixel/town.png", alt: "" }) : h("div", { class: "game-map-blank" }),
-          ...Object.entries(spots()).map(([id, spot]) => h("button", { class: `game-map-pin ${TOWN[id] ? "" : "case"}`, type: "button", style: mark(spot.door.x, spot.door.y), onclick: () => travel(id), title: info(id).place }, TOWN[id] ? "▼" : "!")),
+          ...Object.entries(spots()).map(([id, spot]) => h("button", { class: `game-map-pin ${TOWN[id] ? "" : "case"} ${quests?.current()?.spot === id ? "objective" : ""}`, type: "button", style: mark(spot.door.x, spot.door.y), onclick: () => travel(id), title: info(id).place }, TOWN[id] ? "▼" : "!")),
           h("span", { class: "game-map-you", style: mark(player.x, player.y), "aria-label": "你在这里" }, "你")),
         h("div", { class: "game-map-list" },
           h("b", {}, "小镇设施"),
@@ -646,6 +653,81 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     walkTo(doorOf(id));
   }
 
+  /* ----- quests: difficulty, the quest log, and the guide's story lines ----- */
+  let questLines = []; // waiting to be said the next time the player is free (not in a window)
+  const takeQuestLines = () => questLines.splice(0);
+  function renderTracker() {
+    if (!quests) return;
+    const step = quests.current();
+    tracker.replaceChildren(icon("learn", { size: 14 }), h("span", {}, step ? step.goal : "支线完成！"));
+    tracker.title = step ? `${step.chapter.title}：${step.goal}（J 打开任务日志）` : "侦探事务所支线已完成（J 打开任务日志）";
+  }
+  quests?.onChange(({ finishedChapter, next }) => {
+    questLines.push(...(finishedChapter?.done || []));
+    if (next && next.chapter !== finishedChapter && next.say) questLines.push(...next.say);
+    renderTracker();
+    if (enabled && !windowOpen && stage.dataset.view === "town") {
+      drawTown();
+      say(takeQuestLines());
+    }
+  });
+
+  const overlay = h("div", { class: "game-panel", role: "dialog", "aria-modal": "true" });
+  overlay.hidden = true;
+  shell.append(overlay);
+  const closeOverlay = () => {
+    overlay.hidden = true;
+  };
+
+  /** Pick a difficulty; the first time, the story starts afterwards. */
+  function chooseDifficulty(first = false) {
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, first ? "选择难度" : "更换难度"), !first && h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭")),
+      h("p", { class: "game-panel-note" }, first ? "随时可以在任务日志里更换。不确定的话，选「轻松」或「标准」。" : "更换难度不会影响已经完成的进度。"),
+      h("div", { class: "game-difficulties" },
+        ...Object.entries(DIFFICULTIES).map(([id, d]) =>
+          h("button", { class: `game-difficulty ${quests.difficulty === id ? "chosen" : ""}`, type: "button", onclick: () => {
+            quests.setDifficulty(id);
+            closeOverlay();
+            if (first) {
+              shownControls = false;
+              goTown();
+            }
+            else renderLog();
+          } }, h("b", {}, d.label), h("small", {}, d.note)))),
+    );
+    overlay.hidden = false;
+    overlay.querySelector(".game-difficulty")?.focus({ preventScroll: true });
+  }
+
+  function renderLog() {
+    const step = quests.current();
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, quests.quest.title), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（J）")),
+      h("p", { class: "game-panel-note" }, quests.quest.subtitle, " · 难度：", h("b", {}, DIFFICULTIES[quests.difficulty]?.label || "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
+      step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, step.chapter.title)),
+      h("ol", { class: "game-log" },
+        ...quests.quest.chapters.map((chapter) => {
+          const done = quests.chapterDone(chapter);
+          const now = step?.chapter === chapter;
+          return h("li", { class: done ? "done" : now ? "now" : "" }, h("span", { class: "game-log-mark", "aria-hidden": "true" }, done ? "✓" : now ? "▶" : "·"), chapter.title);
+        })),
+      quests.badges().includes("rea-detective") && h("p", { class: "game-badge" }, "🏅 已获得徽章：见习侦探"),
+      h("div", { class: "game-panel-foot" }, h("button", { class: "btn small", type: "button", onclick: () => {
+        if (!window.confirm("要从头开始这条支线吗？已完成的案子成绩会保留。")) return;
+        quests.reset();
+        closeOverlay();
+        goTown();
+      } }, "从头开始这条支线")),
+    );
+  }
+  function openLog() {
+    if (!quests || windowOpen) return;
+    if (!overlay.hidden) return closeOverlay();
+    renderLog();
+    overlay.hidden = false;
+  }
+
   /* ----- navigation ----- */
   function goTown() {
     closeWindow();
@@ -658,16 +740,23 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     nearDoor = null;
     prompt.hidden = true;
     drawTown();
-    say([
-      { text: "这里是我们的小镇。每栋房子都能帮你做一件事。", face: "happy" },
-      {
-        text: touch
-          ? "用左下角的轮盘走路，走到门口会出现「进入」按钮。点右上角「地图」可以选地方，我会自己走过去。第一次来的话，推荐先去侦探事务所。"
-          : "用 WASD 或方向键走路，右键点地面也能走过去；走到门口按 E 进去。按 M 打开地图选地方，我会自己走过去。第一次来的话，推荐先去侦探事务所。",
-        face: "normal",
-      },
-    ]);
+    renderTracker();
+    const controls = {
+      text: touch
+        ? "用左下角的轮盘走路，走到门口会出现「进入」按钮。点上面的「地图」可以选地方，我会自己走过去；当前任务显示在右上角，头上有「!」的房子就是目标。"
+        : "用 WASD 或方向键走路，右键点地面也能走过去；走到门口按 E 进去。M 打开地图，J 打开任务日志；头上有「!」的房子就是当前目标。",
+      face: "normal",
+    };
+    const pending = takeQuestLines();
+    const step = quests?.current();
+    if (pending.length) say(pending);
+    else if (!shownControls) {
+      shownControls = true;
+      say([...(step?.say || [{ text: "这里是我们的小镇。每栋房子都能帮你做一件事。", face: "happy" }]), controls]);
+    } else if (step) say([{ text: `接下来：${step.goal}。`, face: "normal" }]);
+    else dialogue.hidden = true;
   }
+  let shownControls = false;
 
   function enterSpot(id) {
     if (TOWN[id]) return enter(id);
@@ -705,7 +794,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     place = id;
     menu.hidden = true;
     drawRoom(id);
-    say([{ text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () =>
+    quests?.event("enter", id);
+    const story = takeQuestLines();
+    say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () =>
       showMenu([
         ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
         { label: "回小镇地图", run: goTown },
@@ -744,6 +835,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       shell.hidden = false;
       fit();
       goTown();
+      if (quests && !quests.difficulty) chooseDifficulty(true);
     } else {
       mainHome.parent.insertBefore(main, mainHome.next);
       shell.hidden = true;
@@ -762,6 +854,15 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       event.preventDefault();
       if (!keys.has(key)) startWalking();
       keys.add(key);
+      return;
+    }
+    if (!overlay.hidden) {
+      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log"))) closeOverlay();
+      return;
+    }
+    if (key === "j" && !windowOpen && quests) {
+      event.preventDefault();
+      openLog();
       return;
     }
     if (key === "m" && !windowOpen) {

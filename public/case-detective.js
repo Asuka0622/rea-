@@ -24,7 +24,7 @@ function saveStars(id, stars) {
 
 export const starText = (n) => "★".repeat(n) + "☆".repeat(3 - n);
 
-export function createDetective({ h, icon, toast, panel, showSection, rerender, extras, portraits = () => new Set() }) {
+export function createDetective({ h, icon, toast, panel, showSection, rerender, extras, portraits = () => new Set(), onSolved = () => {} }) {
   const reportsEl = document.querySelector("#reports");
   const hud = h("div", { class: "case-hud", role: "region", "aria-label": "调查助手" });
   hud.hidden = true;
@@ -246,6 +246,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
         game.phase = "closed";
         game.stars = stars;
         saveStars(item.id, stars);
+        onSolved(item.id);
       }
       return [
         h("div", { class: "case-closed" },

@@ -6,7 +6,7 @@ import { sceneBanner } from "./scenes.js";
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
 // professionals see the findings and explanations directly. A "stories" case is read, not analysed.
-export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog }) {
+export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog, onSolved = () => {} }) {
   const library = document.querySelector("#case-library");
   const list = document.querySelector("#case-list");
   const quest = document.querySelector("#case-quest");
@@ -17,7 +17,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   let reading = null; // id of the stories case being read
   let portraits = new Set();
   let pixelArt = new Set();
-  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits });
+  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits, onSolved });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));
@@ -40,6 +40,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   async function start(item) {
     if (item.type === "stories") {
       reading = item.id;
+      onSolved(item.id);
       showHome();
       library.open = false;
       render();
@@ -124,7 +125,10 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
     const state = stateOf(item.id);
     const total = item.questions.length;
     const dots = h("ol", { class: "case-dots", "aria-label": "调查进度" }, item.questions.map((q, i) => h("li", { class: state.solved.has(q.id) ? "done" : i === state.index ? "active" : "" }, i + 1)));
-    if (state.index >= total) return [dots, lab(item), conclusion(item)];
+    if (state.index >= total) {
+      onSolved(item.id); // the conclusion is reached: the case counts as solved
+      return [dots, lab(item), conclusion(item)];
+    }
     const question = item.questions[state.index];
     const { available, multi, options } = questionOptions(question, reports);
     if (!available) {

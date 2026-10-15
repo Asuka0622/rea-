@@ -73,6 +73,8 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
 /* ----- characters (sprite-<name>.png, or a drawn stand-in), sized in map pixels ----- */
 .game-sprite {position:absolute;left:calc(var(--sx) * var(--px) * 1px);bottom:calc(30px * var(--px));height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
 .game-sprite.town {bottom:auto;top:calc(104px * var(--px));}
+/* Rooms are drawn closer than the town (a desk is ~40px tall), so people stand taller inside. */
+.game-sprite.indoor {height:calc(58px * var(--px));bottom:calc(44px * var(--px));}
 .game-sprite.drawn {width:calc(16px * var(--px));display:block;}
 .game-sprite.drawn i,.game-sprite.drawn b,.game-sprite.drawn u {position:absolute;display:block;}
 .game-sprite.drawn i {left:calc(3px * var(--px));top:0;width:calc(10px * var(--px));height:calc(12px * var(--px));background:linear-gradient(180deg,#7ad3c0 0 45%,#f0c8a0 45%);box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}
@@ -223,3 +225,36 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-front {position:absolute;pointer-events:none;background-image:url(/art/pixel/town-front.png);background-repeat:no-repeat;image-rendering:pixelated;}
 .game-world .game-building {z-index:1000;}
 .game-world .game-interact {z-index:1001;}
+
+/* ----- quests: tracker in the menu bar, "!" over the target, the log and difficulty panels ----- */
+.game-quest-tracker {margin-left:auto;display:flex;align-items:center;gap:6px;max-width:min(420px,45vw);padding:6px 12px;cursor:pointer;
+  background:#fff0c8;border:3px solid #5e3415;box-shadow:inset 0 -3px 0 #e8a95b;color:#3b2312;font:14px var(--font-display,"Fusion Pixel");}
+.game-quest-tracker span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.game-quest-tracker:hover,.game-quest-tracker:focus-visible {background:#ffe7a3;outline:none;}
+.game-objective {position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);display:grid;place-items:center;width:22px;height:26px;
+  background:#d4683a;border:3px solid #7a2f12;color:#fff;font:16px/1 var(--font-display,"Fusion Pixel");animation:game-bob .8s steps(2) infinite;}
+.game-building.objective .game-label {background:#ffd88a;border-color:#7a2f12;}
+.game-map-pin.objective {background:#d4683a;color:#fff;border-color:#7a2f12;transform:translate(-50%,-100%) scale(1.3);}
+.game-panel {position:fixed;left:50%;top:50%;z-index:65;transform:translate(-50%,-50%);width:min(620px,calc(100vw - 24px));max-height:calc(100vh - 80px);overflow:auto;
+  display:flex;flex-direction:column;gap:12px;padding:0 0 16px;background:#fff0c8;color:#3b2312;border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 8px 0 rgba(0,0,0,.35);}
+.game-panel[hidden] {display:none;}
+.game-panel-head {display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;background:#f6cf8e;border-bottom:3px solid #5e3415;}
+.game-panel-head h2 {margin:0;font:18px var(--font-display,"Fusion Pixel");color:#3b2312;}
+.game-panel-note {margin:0 16px;font-size:13px;line-height:1.7;color:#6b4626;}
+.game-panel-foot {margin:4px 16px 0;display:flex;justify-content:flex-end;}
+.game-difficulties {display:grid;gap:10px;margin:0 16px;}
+.game-difficulty {display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:12px 14px;cursor:pointer;background:#fff7e3;border:3px solid #c79a5b;color:#3b2312;}
+.game-difficulty b {font:17px var(--font-display,"Fusion Pixel");}
+.game-difficulty small {font-size:13px;line-height:1.6;color:#6b4626;}
+.game-difficulty:hover,.game-difficulty:focus-visible,.game-difficulty.chosen {border-color:#2f5418;background:#e9f5d6;outline:none;}
+.game-log-now {margin:0 16px;display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:#ffe7a3;border:3px solid #d79a52;}
+.game-log-now small {font-size:12px;color:#7a3f12;}
+.game-log-now b {font:16px var(--font-display,"Fusion Pixel");}
+.game-log-now span {font-size:12px;color:#6b4626;}
+.game-log {list-style:none;margin:0 16px;padding:0;display:grid;gap:4px;}
+.game-log li {display:flex;gap:8px;align-items:center;padding:6px 8px;font-size:14px;color:#8a6a48;}
+.game-log li.done {color:#2f5418;}
+.game-log li.now {color:#3b2312;font-weight:700;background:#ffe7a3;}
+.game-log-mark {width:16px;text-align:center;font-family:var(--font-display,"Fusion Pixel");}
+.game-badge {margin:0 16px;padding:8px 12px;background:#e9f5d6;border:3px solid #2f5418;font:15px var(--font-display,"Fusion Pixel");color:#1f3310;}
+@media (max-height:500px) {.game-quest-tracker {padding:3px 8px;font-size:12px;}}

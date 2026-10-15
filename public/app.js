@@ -7,6 +7,10 @@ import { mountReplicate } from "./replicate.js";
 import { mountCases } from "./cases.js";
 import { mountScenes } from "./scenes.js";
 import { createGameShell } from "./game-shell.js";
+import { createQuests } from "./game-quests.js";
+
+// The player's quest progress and difficulty (game mode); cases report solves to it.
+const quests = createQuests();
 import { beginnerReading } from "./report-reading.js";
 import { recommendExercise } from "./exercise-recommendation.js";
 import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
@@ -1285,7 +1289,7 @@ const adventure = createAdventure({
   notice: toast,
 });
 const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
-const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open(), onCatalog: () => gameShell?.redraw() });
+const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open(), onCatalog: () => gameShell?.redraw(), onSolved: (id) => quests.event("solve", id) });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();
@@ -1320,7 +1324,7 @@ loadScenes();
 
 /* ================= game shell ================= */
 // Beginners get the town-map game; professionals and "网页模式" keep the plain page.
-var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id) });
+var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id), quests });
 document.querySelector("#game-toggle")?.addEventListener("click", () => gameShell.leaveWebMode());
 gameShell.sync();
 // The map guides first-time users; the full guide is available on demand.
