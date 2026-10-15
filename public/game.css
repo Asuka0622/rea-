@@ -336,3 +336,6 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .mg-bin-items span {padding:2px 6px;font-size:12px;background:#fff;border:1px solid #6b4a2b;border-radius:4px;}
 .mg-card {margin:6px auto 12px;max-width:320px;padding:12px;text-align:center;font-size:17px;font-weight:700;background:#fff;border:3px solid #5e3415;border-radius:8px;box-shadow:0 3px 0 #5e3415;}
 @media (max-width:640px) {.mg-bins {grid-template-columns:repeat(2,1fr);} .mg-lamp-glass {width:22px;height:22px;}}
+
+/* Moving water (game-water.js): drawn right above the map picture, below buildings, trees and people. */
+.game-water {position:absolute;left:0;top:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none;}

@@ -2,6 +2,7 @@ import { SCENES } from "./scenes.js";
 import { DIFFICULTIES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
 import { createMinigame } from "./game-minigames.js";
+import { createWaterLayer } from "./game-water.js";
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
 const SPEAKERS = {
@@ -229,6 +230,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     fit();
     worldEl.append(
       background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
+      ...waterFor(picture),
       ...Object.entries(spots()).map(([id, spot]) => {
         const scene = info(id);
         const objective = quests?.current()?.spot === id;
@@ -266,7 +268,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let roomEl = null;
   let room = null;
 
+  /* Moving water over the map picture (game-water.js); one layer per map, kept while the map is shown. */
+  let water = null;
+  function waterFor(picture) {
+    water?.stop();
+    const name = `${townImage()}-water`;
+    if (!picture || !has(name)) return (water = null), [];
+    if (water?.name !== name) water = { name, ...createWaterLayer(`/art/pixel/${name}.png`, { width: (regional() ? REGION_SIZE : world).w, height: (regional() ? REGION_SIZE : world).h }) };
+    water.start();
+    return [water.canvas];
+  }
+
   function drawRoom(id) {
+    water?.stop();
     worldEl = null;
     nearDoor = null;
     const scene = SCENES[id];

@@ -10,6 +10,7 @@ Reads public/art/pixel/town.png and writes:
 - public/art/pixel/town-walk.json: a grid of 4x4-pixel cells (1 = walkable, 0 = blocked) and a list
   of "fronts" (trees and other foliage the player can walk behind): { x, y, w, h, base } in map pixels.
 - public/art/pixel/town-front.png: the same size as the map, holding only the pixels of those fronts.
+- public/art/pixel/town-water.png: the water's pixels (white on transparent), which the game animates.
 
 How it reads the picture: water is blocked. Tree canopies (darker, bluer greens) and dark outlines form
 blobs; for each blob only the lower part (the trunk and the bottom of the canopy) is blocked, so the
@@ -50,6 +51,46 @@ def kind(r, g, b):
     if v < 0.35 or (0.22 <= h <= 0.40 and v < 0.72 and s > 0.40):
         return "foliage"  # tree canopies, dense foliage, dark outlines and shadows
     return "ground"
+
+
+MIN_WATER = 40  # cells; smaller blue patches (a roof, a sign) are not water
+
+
+def clear_water(r, g, b):
+    """Stricter than kind(): bright blue water, not dark blue-green pine needles."""
+    h, s, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+    return 0.47 <= h <= 0.64 and s >= 0.3 and v >= 0.5
+
+
+def water_mask(px, kinds, cells, width, height):
+    """Pixels of real water: blue pixels in large connected areas of water cells, outside buildings."""
+    rows, cols = len(cells), len(cells[0])
+    keep = set()
+    seen = [[False] * cols for _ in range(rows)]
+    for r0 in range(rows):
+        for c0 in range(cols):
+            if cells[r0][c0] != "water" or seen[r0][c0]:
+                continue
+            blob, stack = [], [(r0, c0)]
+            seen[r0][c0] = True
+            while stack:
+                r, c = stack.pop()
+                blob.append((r, c))
+                for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+                    if 0 <= nr < rows and 0 <= nc < cols and not seen[nr][nc] and cells[nr][nc] == "water":
+                        seen[nr][nc] = True
+                        stack.append((nr, nc))
+            if len(blob) >= MIN_WATER:
+                keep.update(blob)
+    mask = Image.new("LA", (width, height))
+    inside = lambda x, y: any(bx <= x < bx + bw and by <= y < by + bh for bx, by, bw, bh in BUILDINGS)
+    for r, c in keep:
+        for dy in range(CELL):
+            for dx in range(CELL):
+                x, y = c * CELL + dx, r * CELL + dy
+                if kinds[y][x] == "water" and clear_water(*px[x, y]) and not inside(x, y):
+                    mask.putpixel((x, y), (255, 255))
+    return mask
 
 
 def region_buildings(public: Path, region: str):
@@ -156,6 +197,7 @@ def main() -> None:
     out = {"cell": CELL, "size": [width, height], "rows": ["".join(str(v) for v in row) for row in walk], "fronts": fronts}
     (root / f"{name}-walk.json").write_text(json.dumps(out) + "\n", encoding="utf8")
     front.save(root / f"{name}-front.png", optimize=True)
+    water_mask(px, kinds, cells, width, height).save(root / f"{name}-water.png", optimize=True)
     print(f"{name}-walk.json: {cols}x{rows} cells, {sum(row.count(1) for row in walk)} walkable, {len(fronts)} fronts; {name}-front.png")
     if args.preview:
         big = image.resize((width * 2, height * 2), Image.Resampling.NEAREST).convert("RGBA")
