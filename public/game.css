@@ -455,3 +455,5 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-toast.trophy {background:#3a2614;border-color:#0d0906;box-shadow:0 4px 0 #0d0906,inset 0 0 0 3px #e0a03a;}
 .game-toast.trophy b {color:#ffcf3d;}
 .game-toast.trophy small {color:#f4e4c4;}
+.st-icon {position:relative;width:24px;height:24px;image-rendering:pixelated;}
+.st-card-gem .st-icon {width:36px;height:36px;}

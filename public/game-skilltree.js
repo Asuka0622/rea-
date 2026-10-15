@@ -74,7 +74,7 @@ let lastBranch = null; // the page shown last time, while the game is open
  * @param whereOf    (stepId) => "主线 · 第一章 …：goal" or ""
  * @param onClose    () => void
  */
-export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null }) {
+export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null, hasArt = () => false }) {
   const states = new Map();
   for (const branch of SKILL_TREE) {
     const lit = (id) => states.get(id) === "lit";
@@ -88,7 +88,9 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
   const litCount = all.filter(({ skill }) => states.get(skill.id) === "lit").length;
   const r = rank(litCount);
   const byId = new Map(all.map((entry) => [entry.skill.id, entry]));
-  const face = (skill, state) => (state === "locked" ? lock() : h("span", { class: "st-glyph" }, state === "making" ? "?" : skill.glyph));
+  // A drawn icon (public/art/pixel/skills/<id>.png) replaces the character once it exists.
+  const face = (skill, state) =>
+    state === "locked" ? lock() : state === "making" ? h("span", { class: "st-glyph" }, "?") : hasArt(`skills/${skill.id}`) ? h("img", { class: "st-icon", src: `/art/pixel/skills/${skill.id}.png`, alt: "" }) : h("span", { class: "st-glyph" }, skill.glyph);
 
   const card = h("aside", { class: "st-card", "aria-live": "polite" });
   function show({ skill, branch }) {

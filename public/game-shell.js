@@ -1115,7 +1115,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return "";
     };
     overlay.classList.add("skilltree");
-    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay, achievements: { list: ACHIEVEMENTS, got: achievements.got } }));
+    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay, achievements: { list: ACHIEVEMENTS, got: achievements.got }, hasArt: has }));
     overlay.hidden = false;
     requestAnimationFrame(() => overlay.querySelector(".st-node.selected")?.focus({ preventScroll: true }));
   }
