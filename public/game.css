@@ -74,8 +74,9 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
 .game-sprite {position:absolute;left:calc(var(--sx) * var(--px) * 1px);bottom:calc(30px * var(--px));height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
 .game-sprite.town {bottom:auto;top:calc(104px * var(--px));}
 /* Rooms are drawn closer than the town (a desk is ~40px tall), so people stand taller inside. */
-.game-sprite.indoor {height:calc(58px * var(--px));}
-.game-sprite.player.sheet.indoor {width:calc(28.8px * var(--px));height:calc(57.6px * var(--px));}
+/* Indoors the player is drawn --k times the town size (set by the game from where it stands). */
+.game-sprite.indoor {height:calc(32px * var(--px) * var(--k, 2.35));}
+.game-sprite.player.sheet.indoor {width:calc(16px * var(--px) * var(--k, 2.35));height:calc(32px * var(--px) * var(--k, 2.35));}
 .game-sprite.drawn {width:calc(16px * var(--px));display:block;}
 .game-sprite.drawn i,.game-sprite.drawn b,.game-sprite.drawn u {position:absolute;display:block;}
 .game-sprite.drawn i {left:calc(3px * var(--px));top:0;width:calc(10px * var(--px));height:calc(12px * var(--px));background:linear-gradient(180deg,#7ad3c0 0 45%,#f0c8a0 45%);box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}

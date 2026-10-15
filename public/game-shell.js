@@ -220,7 +220,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     doctor: { top: 120, blocks: [{ x: 0, y: 112, w: 48, h: 20 }], spot: { x: 234, y: 126 }, spotLabel: "找白医生" },
   };
   const roomOf = (id) => ({ ...ROOM_DEFAULT, ...ROOMS[id] });
-  const INDOOR = 1.8; // people are drawn this much bigger inside: rooms are a closer view than the town
+  /* Rooms are a closer view than the town. Measured on the rooms (a door is ~95px, a desk ~32px: about
+     46px to a metre), Lumi (~1.5m) stands ~70px tall at the back wall, and a little taller nearer the
+     front of the picture (perspective). Returns the size of a 16x32 frame relative to the town. */
+  const indoorScale = () => (room ? 2.35 * (1 + 0.18 * Math.max(0, Math.min(1, (player.y - room.top) / (180 - room.top)))) : 1);
   let roomEl = null;
   let room = null;
 
@@ -354,7 +357,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const nearDoorway = (x, y) => Object.values(spots()).some((b) => Math.abs(x - b.door.x) < 7 && y >= b.door.y - 4 && y - b.door.y < 9);
   /** The feet (an 8x3 box at the bottom of the sprite) would hit something, or leave the map. */
   function blocked(x, y) {
-    if (room) return x < 10 || x > 310 || y < room.top || y > 178 || room.blocks.some((b) => x + 6 > b.x && x - 6 < b.x + b.w && y > b.y && y - 4 < b.y + b.h);
+    if (room) return x < 14 || x > 306 || y < room.top || y > 178 || room.blocks.some((b) => x + 9 > b.x && x - 9 < b.x + b.w && y > b.y && y - 5 < b.y + b.h);
     if (x < 6 || x > world.w - 6 || y < 14 || y > world.h - 2) return true;
     if (nearDoorway(x, y)) return false;
     if (blocks().some((b) => x + 4 > b.x && x - 4 < b.x + b.w && y > b.y && y - 3 < b.y + b.h)) return true;
@@ -386,7 +389,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     let index = 0;
     while (t >= durations[index] && index < clip.frames - 1) t -= durations[index++];
     const [cols, rows] = animation.sheet || [4, 2];
-    const k = room ? INDOOR : 1;
+    const k = indoorScale();
     playerEl.style.backgroundSize = `calc(${cols * 16 * k}px * var(--px)) calc(${rows * 32 * k}px * var(--px))`;
     playerEl.style.backgroundPosition = `calc(${-index * 16 * k}px * var(--px)) calc(${-clip.row * 32 * k}px * var(--px))`;
     // Mirror the side view when walking the other way; front and back views are never mirrored.
@@ -402,6 +405,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     playerEl.classList.toggle("walking", player.walking);
     playerEl.classList.toggle("face-left", player.left);
     playerEl.style.zIndex = String(Math.round(player.y));
+    if (room) playerEl.style.setProperty("--k", indoorScale().toFixed(3));
     followCamera();
   }
 
@@ -597,7 +601,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   function positionPrompt() {
     prompt.style.left = `calc(${player.x.toFixed(1)}px * var(--px))`;
-    prompt.style.top = `calc(${(player.y - (room ? 32 * INDOOR + 4 : 36)).toFixed(1)}px * var(--px))`;
+    prompt.style.top = `calc(${(player.y - (room ? 32 * indoorScale() + 4 : 36)).toFixed(1)}px * var(--px))`;
   }
   /** Indoors: "spot" (the room's work: opens its menu) or "exit" (back to town). */
   function showRoomPrompt() {
