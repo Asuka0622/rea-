@@ -355,17 +355,75 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-toast.leaving {opacity:0;transform:translateY(-8px);transition:opacity .4s,transform .4s;}
 @keyframes game-toast-in {from {opacity:0;transform:translateY(-10px) scale(.95);}}
 
-/* Skill tree. */
-.game-skills {display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:12px 16px 16px;}
-.game-skill-branch {padding:8px;background:#fff6dc;border:2px solid #d9a866;border-radius:8px;}
-.game-skill-branch h3 {margin:0 0 6px;font:16px var(--font-display,"Fusion Pixel");color:#3b2312;}
-.game-skill-branch h3 small {font-size:12px;color:#8a5a2b;}
-.game-skill-branch ol {list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
-.game-skill-branch li {display:grid;grid-template-columns:16px 1fr;column-gap:6px;align-items:center;font-size:13px;}
-.game-skill-branch li small {grid-column:2;font-size:11px;color:#8a5a2b;}
-.game-skill-gem {width:12px;height:12px;transform:rotate(45deg);background:#cdbb9c;border:2px solid #8a6a44;}
-.game-skill-branch li.lit .game-skill-gem {background:#ffcf3d;border-color:#a5512b;box-shadow:0 0 8px rgba(255,194,61,.9);}
-.game-skill-branch li.making {opacity:.5;}
+/* ----- Skill tree: a pixel RPG screen (game-skilltree.js). Hard edges only: no rounded corners, no soft
+   glow; frames are stacked solid borders, the floor is a 2-tone pixel tile, animations step. ----- */
+.game-panel.skilltree {top:58px;transform:translateX(-50%);width:min(1120px,calc(100vw - 16px));max-height:calc(100vh - 66px);padding:0;background:#1d1611;border:4px solid #0d0906;border-radius:0;
+  box-shadow:inset 0 0 0 3px #8a5a2b,inset 0 0 0 6px #3a2614,0 6px 0 #0d0906;}
+.st {display:flex;flex-direction:column;max-height:calc(100vh - 74px);font-family:var(--font-display,"Fusion Pixel");color:#f4e4c4;}
+.st-head {display:flex;align-items:center;gap:16px;padding:12px 16px;background:#3a2614;border-bottom:4px solid #0d0906;box-shadow:inset 0 -3px 0 #6b4a2b;}
+.st-rank {display:flex;align-items:center;gap:10px;margin-right:auto;}
+.st-level {display:grid;place-items:center;min-width:64px;height:44px;padding:0 8px;font-size:20px;font-weight:400;color:#2a170b;background:#ffcf3d;border:3px solid #0d0906;box-shadow:inset -3px -3px 0 #c98a1c,inset 3px 3px 0 #fff2a8;}
+.st-title {margin:0 0 4px;font-size:16px;color:#ffe8b0;}
+.st-xp {display:flex;gap:3px;}
+.st-xp i {width:28px;height:10px;background:#2a1f18;border:2px solid #0d0906;}
+.st-xp i.full {background:#7fd06a;box-shadow:inset 0 -3px 0 #3f8f3a;}
+.st-rank small {display:block;margin-top:3px;font-size:11px;color:#c9a36b;}
+.st-count {margin:0;font-size:14px;color:#c9a36b;}
+.st-count b {font-size:20px;font-weight:400;color:#ffcf3d;}
+.st-head .btn {border-radius:0;}
+.st-body {display:grid;grid-template-columns:1fr 260px;min-height:0;flex:1;}
+.st-lanes {display:grid;grid-template-columns:repeat(5,minmax(96px,1fr));gap:4px;padding:14px;overflow:auto;background:repeating-conic-gradient(#251c16 0 25%,#2b211a 0 50%) 0 0/16px 16px;}
+.st-lane {display:flex;flex-direction:column;align-items:center;}
+.st-emblem {display:flex;flex-direction:column;align-items:center;gap:2px;margin:0 0 10px;font-size:15px;font-weight:400;color:#f4e4c4;}
+.st-emblem-mark {display:grid;place-items:center;width:40px;height:44px;padding-bottom:6px;font-size:20px;color:#1b120c;background:var(--c);clip-path:polygon(0 0,100% 0,100% 70%,50% 100%,0 70%);
+  box-shadow:inset -3px -3px 0 rgba(0,0,0,.35),inset 3px 3px 0 rgba(255,255,255,.35);}
+.st-emblem small {font-size:11px;color:#c9a36b;}
+.st-lane ol {list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;}
+.st-lane li {position:relative;display:flex;flex-direction:column;align-items:center;padding-top:12px;}
+.st-lane li:first-child {padding-top:0;}
+/* The path up to the previous gem: a 4px dotted pixel line; lit paths are the branch colour with a light running along. */
+.st-lane li::before {content:"";position:absolute;top:0;left:50%;width:4px;height:12px;margin-left:-2px;background:repeating-linear-gradient(#4a4038 0 4px,transparent 4px 8px);}
+.st-lane li:first-child::before {display:none;}
+.st-lane li.path-lit::before {background:repeating-linear-gradient(var(--c) 0 4px,#fff2c8 4px 6px,var(--c) 6px 8px);background-size:4px 8px;animation:st-flow .5s steps(4) infinite;}
+.st-lane li.path-next::before {background:repeating-linear-gradient(var(--c) 0 4px,transparent 4px 8px);}
+@keyframes st-flow {to {background-position:0 8px;}}
+.st-node {display:flex;flex-direction:column;align-items:center;gap:2px;padding:0;background:none;border:0;cursor:pointer;color:inherit;font-family:inherit;}
+.st-gem {position:relative;display:grid;place-items:center;width:52px;height:52px;}
+.st-gem-art {position:absolute;inset:0;width:100%;height:100%;}
+.st-glyph {position:relative;font-size:15px;line-height:1;color:#1b120c;}
+.st-node.next .st-glyph {color:var(--c);}
+.st-node.making .st-glyph {color:#6a5e52;}
+.st-lock {position:relative;width:21px;height:24px;}
+.st-node-label {max-width:96px;padding:1px 4px;font-size:12px;line-height:1.3;text-align:center;color:#d8c4a0;}
+.st-node.lit .st-node-label {color:#ffe8b0;}
+.st-node.locked .st-node-label,.st-node.making .st-node-label {color:#7a6c5e;}
+.st-node.next .st-gem {animation:st-blink 1s steps(2) infinite;}
+@keyframes st-blink {50% {transform:translateY(-2px);}}
+.st-node.selected .st-node-label,.st-node:focus-visible .st-node-label {color:#1b120c;background:#ffcf3d;outline:2px solid #0d0906;}
+.st-node:focus-visible {outline:none;}
+.st-node:hover .st-gem {transform:translateY(-2px);}
+@media(prefers-reduced-motion:reduce) {.st-node.next .st-gem,.st-lane li.path-lit::before {animation:none;}}
+/* The card on the right: parchment in a dark frame. */
+.st-card {display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 14px;overflow:auto;background:#f4e4c4;color:#3b2312;border-left:4px solid #0d0906;box-shadow:inset 3px 0 0 #8a5a2b;}
+.st-card-gem {position:relative;display:grid;place-items:center;width:84px;height:84px;}
+.st-card-gem .st-glyph {font-size:22px;}
+.st-card-gem.next .st-glyph {color:var(--c);}
+.st-card-gem .st-lock {width:28px;height:32px;}
+.st-card-branch {margin:0;font-size:12px;color:#8a5a2b;}
+.st-card h3 {margin:0;font-size:20px;font-weight:400;}
+.st-card-status {margin:0;padding:2px 8px;font-size:13px;color:#fff;background:#5e5248;border:2px solid #1b120c;}
+.st-card-status.lit {background:#3f8f3a;}
+.st-card-status.next {background:var(--c);color:#1b120c;}
+.st-card-note {margin:0;font-size:13px;color:#6b4626;text-align:center;}
+.st-card-box {align-self:stretch;margin-top:4px;padding:8px 10px;background:#fff6dc;border:3px solid #3b2312;box-shadow:inset 0 0 0 2px #e8c88e;}
+.st-card-box b {display:block;margin-bottom:2px;font-size:12px;font-weight:400;color:#a5512b;}
+.st-card-box p {margin:0;font-size:13px;line-height:1.7;}
+.st-card-hint {margin:0;font-size:12px;line-height:1.6;color:#8a5a2b;text-align:center;}
+@media (max-width:820px) {
+  .st-body {grid-template-columns:1fr;}
+  .st-card {border-left:0;border-top:4px solid #0d0906;}
+  .st-head {flex-wrap:wrap;}
+}
 
 /* Falling leaves: a few pixels above everything in the town. */
 .game-leaf {position:absolute;z-index:9500;width:calc(3px * var(--px));height:calc(2px * var(--px));pointer-events:none;}

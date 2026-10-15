@@ -3,7 +3,8 @@ import { DIFFICULTIES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
 import { createMinigame } from "./game-minigames.js";
 import { createWaterLayer } from "./game-water.js";
-import { SKILL_TREE, skillsFrom } from "./game-skills.js";
+import { skillsFrom } from "./game-skills.js";
+import { renderSkillTree } from "./game-skilltree.js";
 import { createSound } from "./game-sound.js";
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
@@ -983,6 +984,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   shell.append(overlay);
   const closeOverlay = () => {
     overlay.hidden = true;
+    overlay.classList.remove("skilltree");
   };
 
   /** Pick a difficulty; the first time, the story starts afterwards. */
@@ -1071,28 +1073,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     setTimeout(() => el.remove(), 3700);
   }
 
-  /** 技能树 (K): every branch, with what is learned, what is next and what is still being made. */
+  /** 技能树 (K): the pixel RPG skill screen (game-skilltree.js). */
   function openSkills() {
     if (!quests || windowOpen) return;
-    if (!overlay.hidden && overlay.querySelector(".game-skills")) return closeOverlay();
-    const all = SKILL_TREE.flatMap((branch) => branch.skills);
-    const learned = all.filter((skill) => skill.from && quests.stepDone(skill.from)).length;
-    overlay.replaceChildren(
-      h("div", { class: "game-panel-head" }, h("h2", {}, "技能树"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（K）")),
-      h("p", { class: "game-panel-note" }, `已点亮 ${learned} / ${all.length}。跟着主线和支线走，一格一格点亮它们。`),
-      h("div", { class: "game-skills" },
-        ...SKILL_TREE.map((branch) => {
-          const lit = branch.skills.filter((skill) => skill.from && quests.stepDone(skill.from)).length;
-          return h("section", { class: "game-skill-branch" },
-            h("h3", {}, branch.title, h("small", {}, ` ${lit}/${branch.skills.length}`)),
-            h("ol", {},
-              ...branch.skills.map((skill) => {
-                const done = skill.from && quests.stepDone(skill.from);
-                return h("li", { class: done ? "lit" : skill.from ? "todo" : "making", title: skill.from ? skill.note : `${skill.note}（制作中）` }, h("span", { class: "game-skill-gem", "aria-hidden": "true" }), h("b", {}, skill.label), h("small", {}, done ? skill.note : skill.from ? "还没学" : "制作中"));
-              })));
-        })),
-    );
+    if (!overlay.hidden && overlay.querySelector(".st")) return closeOverlay();
+    const whereOf = (stepId) => {
+      for (const line of quests.lines) for (const chapter of line.chapters) for (const step of chapter.steps) if (step.id === stepId) return `${line.title} · ${chapter.title}：${step.goal}`;
+      return "";
+    };
+    overlay.classList.add("skilltree");
+    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay }));
     overlay.hidden = false;
+    requestAnimationFrame(() => overlay.querySelector(".st-node.selected")?.focus({ preventScroll: true }));
   }
   function drawTownIfFree() {
     if (enabled && !windowOpen && stage.dataset.view === "town") drawTown();
@@ -1247,7 +1239,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     if (!overlay.hidden) {
-      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || (key === "k" && overlay.querySelector(".game-skills"))) closeOverlay();
+      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || (key === "k" && overlay.querySelector(".st"))) closeOverlay();
       return;
     }
     if (key === "k" && !windowOpen && quests) {
