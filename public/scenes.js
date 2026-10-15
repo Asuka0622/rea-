@@ -3,6 +3,11 @@
 // draws a simple pixel landscape or room in CSS, so the page never asks for a missing file.
 
 export const SCENES = {
+  "real-stories": { place: "小镇档案馆", purpose: "真实世界故事", icon: "learn", line: "我是老秦。这里保存着真实事件；我们一起从事实中找出计算机与安全的教训。" },
+  painter: { place: "彩姐的画室", purpose: "ArtCraft 创作软件", icon: "learn", line: "我是彩姐。像素、颜色和分辨率决定了作品的样子。来读读真实开源创作软件的源码，看看它们的结构吧。" },
+  arcade: { place: "像素游戏厅", purpose: "真实游戏与 Mod", icon: "learn", line: "我是像素哥。Mod 会改变游戏的数据或规则。先备份，再从一个小改动开始验证效果。" },
+  woodshop: { place: "阿木的木工坊", purpose: "动手重建与复刻", icon: "wrench", line: "我是阿木。先观察输入和输出，拆成小步骤，再亲手重建一个功能。" },
+  office: { place: "周姐的办公楼", purpose: "版本侦探", icon: "scan", line: "我是周姐。同一个软件升级以后，行为可能变了。到委托板选版本侦探，对比两个版本的证据。" },
   home: { place: "侦探事务所", purpose: "接委托 · 查软件", icon: "scan", art: "scene-office", look: "town", sprites: [["lumi", "28%"]], line: "欢迎回来！委托板上有几个案子在等你。也可以把你自己想查的软件带过来，我们一起拆开看看。" },
   learn: { place: "小镇图书馆", purpose: "新手教程", icon: "learn", art: "scene-library", look: "room", sprites: [["lumi", "72%"]], line: "这里的书按顺序读一遍，就知道拆软件是怎么回事了。不着急，一课大概一分钟。" },
   engines: { place: "工具铺", purpose: "分析引擎", icon: "engines", art: "scene-workshop", look: "town", sprites: [["lumi", "24%"]], line: "大部分软件空手就能查。想看安卓 App 或者程序内部的代码，就得来这儿添置专门的工具。" },

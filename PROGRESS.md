@@ -361,3 +361,7 @@
 - scripts/build-walkmap.py 升级：除可行走网格外，按颜色把每片树丛（111 处）和 11 栋房子（只取房子本身像素，排除周围草地小路；树冠高光用"补洞"补全）提取到前景层 town-front.png，并记录每块的底线（base）。树丛只有下 60% 挡路、上 40% 可以走到后面；房子只有下半部（墙）挡路，屋顶后面可走。
 - 游戏里每块前景按底线排序，人物按脚的位置排序：站在树后时下半身被树冠挡住，站在树前时人物压住树冠。浏览器实测两种情况都正确。
 - 物理：两个方向都被挡住时尝试斜向挤过窄缝；实测图书馆、农场、小雨家门口的长路线都能走到。已知不足：事务所屋顶深色描边被识别为障碍，人物只能停在屋顶上沿。75/75 测试通过。
+
+## 2026-10-16 — Cloud seasonal art integration (feature branch)
+
+On `codex/cloud-seasonal-artwork`, connected synced seasonal town/room art to saved environment controls, pixel weather/time layers, seasonal foreground masking, metadata-driven resident and animal sprites, role-specific speakers and additional room entry points. Fixed the south bridge shadow collision. Original anime portraits and latest campaign code retained. Full completion is **not** claimed: later eras, production clocktower/story art and authored night/rain relighting remain. Detailed scope, QA and gaps: `docs/seasonal-integration.md`.

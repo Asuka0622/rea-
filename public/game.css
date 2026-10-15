@@ -604,3 +604,22 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .code-tab[aria-selected="true"] {color:#1b120c;background:#e8cf98;}
 .code-tab.cards-tab {margin-left:auto;}
 .code-status {min-height:1.4em;margin:6px 0 0;font-size:12px;color:#6b4626;}
+
+/* Crisp sampling is mandatory even for imported high-resolution sheets. */
+.game-sprite.player.sheet.smooth,img.game-sprite,img.scene-sprite {image-rendering:pixelated;}
+.game-environment {position:absolute;inset:0;width:100%;height:100%;z-index:9600;pointer-events:none;image-rendering:pixelated;}
+.game-environment-controls {position:relative;background:#fff4d8;color:#3b2312;border:2px solid #5e3415;padding:6px;max-width:240px;}
+.game-environment-controls summary {cursor:pointer;font-size:12px;min-height:24px;}
+.game-environment-controls select {min-height:36px;max-width:75px;background:#fff4d8;color:#3b2312;}
+html[data-camp-theme="dark"] .game-stage::after {display:none;}
+.game-resident {position:absolute;transform:translate(-50%,-100%);border:0;padding:0;background-color:transparent;background-repeat:no-repeat;image-rendering:pixelated;cursor:pointer;min-width:0;min-height:0;}
+.game-resident:focus-visible {outline:2px solid #fff4d8;outline-offset:3px;}
+.game-environment-controls {font-family:var(--font-display,"Fusion Pixel");flex:none;}
+.game-environment-controls[open] {position:fixed;top:60px;left:12px;z-index:51;}
+.game-environment-controls select {font-family:var(--font-display,"Fusion Pixel");}
+@media(max-width:900px) {
+  .game-environment-controls {max-width:90px;padding:3px;}
+  .game-environment-controls summary {font-size:10px;}
+  .game-environment-controls[open] {max-width:260px;}
+}
+.game-environment-controls:not([open]) select {display:none;}

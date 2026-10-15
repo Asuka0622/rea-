@@ -1,3 +1,5 @@
+import { ENV_OPTIONS, normalizeEnvironment, environmentArt, mountEnvironment } from "./game-environment.js";
+import { mountTownLife } from "./game-town-life.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
@@ -20,6 +22,7 @@ const SPEAKERS = {
   archivist: "老秦",
   bibi: "比比",
   xingbo: "星博士",
+  painter: "彩姐", gamer: "像素哥", clerk: "周姐",
   ayan: "阿砚",
   liuniangzi: "柳娘子",
   hangonglian: "韩公廉",
@@ -88,6 +91,11 @@ const ACTIONS = {
   engines: [{ label: "看看有什么工具", tab: "engines" }],
   clients: [{ label: "把工具寄给 AI 助手", tab: "clients" }],
   doctor: [{ label: "给装备做个体检", tab: "doctor" }],
+  painter: [{ label: "体验 ArtCraft 创作软件", tab: "home", target: "#artcraft-demos", open: "#artcraft-demos" }],
+  arcade: [{ label: "查看真实游戏 Mod", tab: "home", target: "#game-mods", open: "#game-mods" }],
+  woodshop: [{ label: "从报告开始动手复刻", tab: "home", rebuild: true }, { label: "先分析一个练习样本", tab: "home", target: "#task-card" }],
+  office: [{ label: "调查版本变化", tab: "home", caseId: "notes-versions" }],
+  "real-stories": [{ label: "听老秦讲真实故事", tab: "home", caseId: "real-stories" }],
 };
 
 const EXTRA_LINES = {
@@ -98,7 +106,7 @@ const EXTRA_LINES = {
   doctor: "我来给你的装备做个检查。",
 };
 
-export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null }) {
+export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, openRebuild = () => false, quests = null }) {
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -144,6 +152,30 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     h("button", { class: "btn small", type: "button", onclick: () => setMode("pro") }, icon("wrench", { size: 14 }), "专业模式"),
     h("button", { class: "btn small", type: "button", onclick: () => { setWebMode(true); sync(); } }, icon("monitor", { size: 14 }), "网页模式"),
   );
+  let environment;
+  try { environment = normalizeEnvironment(JSON.parse(localStorage.getItem("rea-environment") || "{}")); }
+  catch { environment = normalizeEnvironment(); }
+  let stopEnvironment = () => {};
+  let stopTownLife = () => {};
+  const environmentControls = h("details", { class: "game-environment-controls" }, h("summary", {}, "季节 · 天气 · 光照"));
+  for (const [key, options] of Object.entries(ENV_OPTIONS)) {
+    const select = h("select", { "aria-label": { season: "季节", time: "光照时段", weather: "天气" }[key], onchange: (event) => {
+      environment = normalizeEnvironment({ ...environment, [key]: event.target.value });
+      try { localStorage.setItem("rea-environment", JSON.stringify(environment)); } catch {}
+      if (room) { const position = { ...player }; drawRoom(place); Object.assign(player, position); placePlayer(); }
+      else drawTown();
+    } }, ...Object.entries(options).map(([value, label]) => h("option", { value }, label)));
+    select.value = environment[key];
+    environmentControls.append(select);
+  }
+  hud.append(environmentControls);
+  const roomArtId = (id) => ({ painter: "studio", "real-stories": "archive" })[id] || id;
+  const displayedArt = (base) => regionData()?.era ? base : environmentArt(base, environment, has);
+  function paintEnvironment(host, id = null) {
+    stopEnvironment();
+    if (regionData()?.era) return;
+    stopEnvironment = mountEnvironment({ stage, host, state: environment, room: id ? roomArtId(id) : null, width: id ? 320 : world.w, height: id ? 180 : world.h, lights: id ? [] : Object.values(spots()).map(s => [s.door.x, s.door.y - 16]) });
+  }
   const sound = createSound();
   const soundButton = h("button", { class: "btn small game-sound-toggle", type: "button", onclick: () => {
     const on = sound.toggle();
@@ -273,6 +305,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       }
       Object.assign(world, REGION_SIZE);
     }
+    stopTownLife();
     loadWalkMap();
     const picture = has(townImage());
     stage.dataset.view = "town";
@@ -280,7 +313,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     room = null;
     spotCache = null;
     nearDoor = null; // the prompt is re-attached to the new world layer when needed
-    const background = picture ? h("img", { class: "game-bg", src: `/art/pixel/${townImage()}.png`, alt: "" }) : null;
+    const background = picture ? h("img", { class: "game-bg", src: `/art/pixel/${displayedArt(townImage())}.png`, alt: "" }) : null;
     if (background) {
       background.addEventListener("load", () => {
         world.w = background.naturalWidth;
@@ -319,12 +352,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     placePlayer();
     addFronts();
     scatterLeaves();
+    paintEnvironment(worldEl);
+    if (!regionData()?.era) stopTownLife = mountTownLife({ host: worldEl, region, has, say });
   }
 
   /* Inside a building (room pixels, 320x180): where the floor starts, furniture the feet cannot cross,
      the spot where the room's work happens (E opens its menu), the way out, and where you come in. */
   const ROOM_DEFAULT = { top: 118, blocks: [], spot: { x: 160, y: 128 }, exit: { x: 160, y: 176 }, spawn: { x: 160, y: 160 } };
   const ROOMS = {
+    painter: { top: 100, blocks: [{ x: 72, y: 83, w: 128, h: 41 }], spot: { x: 160, y: 133 }, spotLabel: "找彩姐创作" },
+    arcade: { top: 105, blocks: [{ x: 0, y: 90, w: 115, h: 25 }, { x: 205, y: 105, w: 90, h: 29 }], spot: { x: 170, y: 126 }, spotLabel: "和像素哥聊 Mod" },
+    woodshop: { top: 110, blocks: [{ x: 100, y: 96, w: 120, h: 26 }], spot: { x: 155, y: 130 }, spotLabel: "跟阿木动手做" },
+    office: { top: 110, blocks: [{ x: 216, y: 123, w: 65, h: 38 }], spot: { x: 170, y: 126 }, spotLabel: "接周姐的版本委托" },
+    "real-stories": { top: 112, blocks: [{ x: 107, y: 98, w: 142, h: 29 }], spot: { x: 180, y: 135 }, spotLabel: "听老秦讲故事" },
     home: { top: 112, spot: { x: 132, y: 118 }, exit: { x: 288, y: 116 }, spawn: { x: 270, y: 126 }, spotLabel: "查看委托板和办公桌" },
     learn: { top: 100, blocks: [{ x: 104, y: 96, w: 118, h: 24 }], spot: { x: 162, y: 126 }, spotLabel: "和书奶奶说话" },
     engines: { top: 108, blocks: [{ x: 0, y: 100, w: 66, h: 28 }, { x: 262, y: 100, w: 58, h: 32 }], spot: { x: 186, y: 120 }, spotLabel: "看看工作台" },
@@ -344,28 +384,30 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   function waterFor(picture) {
     water?.stop();
     const name = `${townImage()}-water`;
-    if (!picture || !has(name)) return (water = null), [];
+    if (!picture || !has(name) || (!regionData()?.era && environment.season !== "autumn")) return (water = null), [];
     if (water?.name !== name) water = { name, ...createWaterLayer({ mask: `/art/pixel/${name}.png`, picture: `/art/pixel/${townImage()}.png`, width: (regional() ? REGION_SIZE : world).w, height: (regional() ? REGION_SIZE : world).h }) };
     water.start();
     return [water.canvas];
   }
 
   function drawRoom(id) {
+    stopTownLife();
     water?.stop();
     worldEl = null;
     nearDoor = null;
     const scene = SCENES[id];
-    const picture = has(`room-${id}`);
+    const picture = has(`room-${roomArtId(id)}`);
     stage.dataset.view = id;
     room = roomOf(id);
     Object.assign(player, { x: room.spawn.x, y: room.spawn.y, walking: false });
     target = null;
     roomEl = h("div", { class: "game-room" },
-      picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
+      picture ? h("img", { class: "game-bg", src: `/art/pixel/${displayedArt(`room-${roomArtId(id)}`)}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
       (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
     stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place));
     placePlayer();
     animate(0, 0, 0);
+    paintEnvironment(roomEl, id);
   }
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
@@ -553,7 +595,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           style: [
             `left:calc(${f.x}px * var(--px))`, `top:calc(${f.y}px * var(--px))`,
             `width:calc(${f.w}px * var(--px))`, `height:calc(${f.h}px * var(--px))`,
-            `background-image:url(/art/pixel/${townImage()}-front.png)`,
+            `background-image:url(/art/pixel/${displayedArt(townImage())}.png)`,
+            `mask-image:url(/art/pixel/${townImage()}-front.png)`,
+            `mask-size:calc(${world.w}px * var(--px)) calc(${world.h}px * var(--px))`,
+            `mask-position:calc(${-f.x}px * var(--px)) calc(${-f.y}px * var(--px))`,
             `background-size:calc(${world.w}px * var(--px)) calc(${world.h}px * var(--px))`,
             `background-position:calc(${-f.x}px * var(--px)) calc(${-f.y}px * var(--px))`,
             `z-index:${f.base}`,
@@ -609,7 +654,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     // Mirror the side view when walking the other way; front and back views are never mirrored.
     const sideFacesLeft = animation.side === "left";
     playerEl.classList.toggle("face-left", name.includes("side") ? player.left !== sideFacesLeft : name === "walk" && player.left);
-    playerEl.classList.toggle("smooth", Boolean(animation.smooth));
+    playerEl.classList.remove("smooth");
   }
 
   function placePlayer() {
@@ -724,7 +769,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let leaves = [];
   function scatterLeaves() {
     leaves = [];
-    if (reducedMotion || !worldEl) return;
+    if (reducedMotion || !worldEl || (!regionData()?.era && environment.season !== "autumn")) return;
     for (let i = 0; i < 14; i += 1) {
       const colors = (regional() && regionData().leaves) || LEAF_COLORS;
       const el = h("span", { class: "game-leaf", "aria-hidden": "true", style: `background:${colors[i % colors.length]}` });
@@ -1534,11 +1579,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     drawRoom(id);
     quests?.event("enter", id);
     const story = takeQuestLines();
-    say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
+    say([...story, { text: SCENES[id].line, who: ({ learn: "librarian", engines: "smith", clients: "postman", doctor: "doctor", painter: "painter", woodshop: "carpenter", arcade: "gamer", office: "clerk", archive: "archivist", "real-stories": "archivist" })[id] || "lumi", face: "happy" }, { text: EXTRA_LINES[id] || SCENES[id].purpose, face: "thinking" }], () => roomMenu(id));
   }
   function roomMenu(id) {
     showMenu([
-      ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
+      ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => { openWindow(id, action); if (action.caseId) startCase(action.caseId); } })),
       { label: "随便走走", run: () => (menu.hidden = true) },
       { label: "回小镇地图", run: goTown },
     ]);
@@ -1553,6 +1598,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     dialogue.hidden = true;
     if (action.open) document.querySelector(action.open).open = true;
     windowBody.scrollTop = 0;
+    if (action.rebuild && !openRebuild()) document.querySelector("#task-card")?.scrollIntoView({ block: "start" });
     if (action.target) requestAnimationFrame(() => document.querySelector(action.target)?.scrollIntoView({ block: "start" }));
   }
 
@@ -1588,7 +1634,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keyup", (event) => keys.delete(event.key.toLowerCase()));
   window.addEventListener("blur", () => keys.clear());
   document.addEventListener("keydown", (event) => {
-    if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
+    if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable],.game-environment-controls")) return;
     const key = event.key.toLowerCase();
     if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && closeupEl.hidden && !director.playing) {
       event.preventDefault();

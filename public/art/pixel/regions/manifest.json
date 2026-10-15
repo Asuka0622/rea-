@@ -5,7 +5,7 @@
     "time": "noon",
     "label": "autumn-clear-noon"
   },
-  "stateNote": "All five region maps and ten interiors have four seasonal clear-noon pixel-art baselines. Runtime supports all 48 season/weather/time combinations with pixel outdoor rain/snow, precipitation confined to interior window panes, and shared time-of-day lighting. The 44 non-clear-noon combinations per scene are layered at runtime rather than separately painted; fully bespoke state art would require 660 additional images across 15 scenes.",
+  "stateNote": "Five town regions and ten interiors have four seasonal clear-noon baselines. game-environment.js layers weather and time presentation over those baselines. Window masks and practical lights need full visual review. Era maps keep their authored environment. Full campaign and bespoke weather-aware relighting are not complete. See docs/seasonal-integration.md.",
   "regionMapSize": [
     960,
     540
@@ -378,7 +378,7 @@
       "winter-snow-sunset",
       "winter-snow-night"
     ],
-    "renderingNote": "Runtime presentation is supported for all combinations using the matching seasonal clear-noon baseline plus pixel weather and lighting layers. Interior rain/snow is confined to window panes. Only the four seasonal clear-noon combinations have dedicated full-scene art."
+    "renderingNote": "Seasonal baselines plus runtime weather and time overlays. See docs/seasonal-integration.md for validation and remaining gaps."
   },
   "townspeopleSprites": [
     {

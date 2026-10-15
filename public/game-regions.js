@@ -87,6 +87,8 @@ export const REGIONS = {
   },
   south: {
     name: "南岸",
+    // The painted bridge planks are traversable; the water classifier marks their shadows as blocked.
+    open: [{ x: 411, y: 0, w: 36, h: 210 }],
     spawn: { x: 430, y: 80 },
     spots: {},
     obstacles: [],

@@ -233,3 +233,5 @@
 :root[data-skin="cozy"][data-presentation] .profiles label:has(input:checked) {background:var(--cyan-wash);outline:3px solid var(--cyan);outline-offset:-3px;}
 :root[data-skin="cozy"][data-presentation] :is(.profiles label,.switch) :is(b,span) {color:var(--ink);}
 :root[data-skin="cozy"][data-presentation] :is(.profiles label,.switch) small {color:var(--ink-soft);}
+/* Local glyph fallback on systems without an installed Chinese UI font. */
+:root[data-skin="cozy"] {--font-body:system-ui,-apple-system,"PingFang SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Fusion Pixel",sans-serif;}

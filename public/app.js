@@ -1324,7 +1324,10 @@ loadScenes();
 
 /* ================= game shell ================= */
 // Beginners get the town-map game; professionals and "网页模式" keep the plain page.
-var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id), quests });
+var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id), openRebuild: () => {
+  if (!current?.reports.length) { toast("先分析一个练习样本，再从报告里选择要复刻的功能。"); return false; }
+  replicate.open(); return true;
+}, quests });
 document.querySelector("#game-toggle")?.addEventListener("click", () => gameShell.leaveWebMode());
 gameShell.sync();
 // The map guides first-time users; the full guide is available on demand.
