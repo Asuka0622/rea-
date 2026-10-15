@@ -1,6 +1,20 @@
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
+import { createMinigame } from "./game-minigames.js";
+
+/** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
+const SPEAKERS = {
+  lumi: "路米",
+  smith: "铁叔",
+  librarian: "书奶奶",
+  postman: "阿信",
+  doctor: "白医生",
+  carpenter: "阿木",
+  archivist: "老秦",
+  bibi: "比比",
+  xingbo: "星博士",
+};
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
 // home screen; clicking a building enters it, the guide talks in a dialogue box at the bottom, and
@@ -271,11 +285,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
   // A line is "text" or { text, face }: the face picks Lumi's expression for that line.
-  const portrait = (face = "normal") => {
-    const name = [`lumi-${face}`, "lumi-normal"].find((n) => art().portraits.has(n));
-    return name
-      ? h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }))
-      : h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
+  const portrait = (face = "normal", who = "lumi") => {
+    const name = [`${who}-${face}`, `${who}-normal`].find((n) => art().portraits.has(n));
+    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }));
+    // Someone without a portrait yet: a wooden frame with the first character of their name.
+    if (who !== "lumi") return h("div", { class: "case-portrait game-portrait-stand-in", "aria-hidden": "true" }, h("span", {}, (SPEAKERS[who] || who).slice(0, 1)));
+    return h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
   };
 
   function say(texts, after) {
@@ -291,8 +306,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const line = typeof lines[lineIndex] === "string" ? { text: lines[lineIndex] } : lines[lineIndex];
     dialogue.hidden = false;
     dialogue.replaceChildren(
-      portrait(line.face),
-      h("div", { class: "case-say-text" }, h("b", {}, "路米"), h("p", {}, line.text), !last && h("span", { class: "game-more" }, "点击继续")),
+      portrait(line.face, line.who),
+      h("div", { class: "case-say-text" }, h("b", {}, SPEAKERS[line.who || "lumi"] || line.who), h("p", {}, line.text), !last && h("span", { class: "game-more" }, "点击继续")),
     );
     if (last) after?.();
   }
@@ -668,7 +683,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     nearDoor = id;
     prompt.hidden = !id;
     if (!id) return;
-    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon || spotData(id)?.placeholder ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), quests?.playAt(id) ? `调查 · ${info(id).place}` : ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon || spotData(id)?.placeholder ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
     worldEl?.append(prompt);
     positionPrompt();
   }
@@ -901,7 +916,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             const done = quests.chapterDone(line, chapter);
             const current = now?.chapter === chapter;
             const making = chapter.ready === false;
-            return h("li", { class: done ? "done" : current ? "now" : making ? "making" : "" }, h("span", { class: "game-log-mark", "aria-hidden": "true" }, done ? "✓" : current ? "▶" : "·"), chapter.title, making && h("small", {}, waiting === chapter ? " 制作中，敬请期待" : " 制作中"));
+            return h("li", { class: done ? "done" : current ? "now" : making ? "making" : "" }, h("span", { class: "game-log-mark", "aria-hidden": "true" }, done ? "✓" : current ? "▶" : "·"), chapter.title, (making || waiting === chapter) && h("small", {}, ` ${waiting === chapter ? quests.waitReason(chapter) : "制作中"}`));
           })));
     };
     overlay.replaceChildren(
@@ -917,6 +932,26 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         goTown();
       } }, "从头开始全部剧情")),
     );
+  }
+  /** A story step's mini-game in the panel; winning it completes the step (and the story goes on). */
+  function openMinigame(step) {
+    target = null;
+    keys.clear();
+    dialogue.hidden = true;
+    const game = createMinigame(step.game, {
+      h,
+      difficulty: quests.difficulty || "normal",
+      onWin: () => {
+        closeOverlay();
+        quests.event("play", step.game);
+      },
+    });
+    overlay.replaceChildren(
+      h("div", { class: "game-panel-head" }, h("h2", {}, game.title), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "先不玩了")),
+      game.el,
+    );
+    overlay.hidden = false;
+    overlay.querySelector("button:not([disabled])")?.focus({ preventScroll: true });
   }
   function drawTownIfFree() {
     if (enabled && !windowOpen && stage.dataset.view === "town") drawTown();
@@ -960,6 +995,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let shownControls = false;
 
   function enterSpot(id) {
+    const play = quests?.playAt(id);
+    if (play) return openMinigame(play);
     if (ACTIONS[id]) return enter(id);
     // A story step may be waiting here; otherwise the place says what it is.
     if (spotData(id)?.soon || spotData(id)?.placeholder) {

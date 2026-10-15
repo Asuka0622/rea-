@@ -297,3 +297,42 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-building .clockface::before {height:calc(5px * var(--px));transform:rotate(-30deg);}
 .game-building .clockface::after {height:calc(7px * var(--px));transform:rotate(174deg);}
 .game-building .clockface[data-state="stopped"] {background:#b9b09c;}
+
+/* A speaker without a portrait yet: a wooden frame with the first character of the name. */
+.game-portrait-stand-in {display:grid;place-items:center;background:#e9c58c;box-shadow:inset 0 0 0 4px #6b4a2b;}
+.game-portrait-stand-in span {font:48px var(--font-display,"Fusion Pixel");color:#5e3415;}
+
+/* ----- mini-games (game-minigames.js), shown in the game panel ----- */
+.mg {padding:4px 16px 16px;color:#3b2312;}
+.mg-progress {margin:8px 0 0;font-size:12px;color:#8a5a2b;}
+.mg-note {margin:6px 0 10px;padding:8px 10px;font-size:13px;line-height:1.7;background:#fff6dc;border:2px dashed #d9a866;border-radius:6px;}
+.mg-ask {margin:8px 0;font-weight:700;}
+.mg-feedback {min-height:1.6em;margin:8px 0;font-size:14px;}
+.mg-feedback[data-mood="good"] {color:#2f7a3a;}
+.mg-feedback[data-mood="bad"] {color:#b4432a;}
+.mg-buttons {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.mg-pattern {margin:4px 0;font:22px var(--font-display,"Fusion Pixel");letter-spacing:.35em;text-align:center;color:#5e3415;}
+.mg-total {display:block;margin-top:6px;text-align:center;font-variant-numeric:tabular-nums;}
+.mg-lamps {display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:10px;background:#5b4a3a;border:3px solid #3a2614;border-radius:8px;}
+.mg-lamp {display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;background:none;border:0;cursor:pointer;color:#f4ecd8;}
+.mg-lamp:disabled {cursor:default;}
+.mg-lamp-glass {width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8d8a80,#4a4740);box-shadow:0 0 0 3px #b08a3e;transition:background .15s,box-shadow .15s;}
+.mg-lamp.on .mg-lamp-glass {background:radial-gradient(circle at 35% 35%,#fff6c8,#ffc23d);box-shadow:0 0 0 3px #b08a3e,0 0 14px 4px rgba(255,194,61,.7);}
+.mg-lamp small {font-size:12px;font-variant-numeric:tabular-nums;}
+.mg-lamp:focus-visible {outline:2px solid #ffcf8a;outline-offset:2px;}
+.mg-tray {display:flex;flex-wrap:wrap;gap:6px;min-height:40px;margin-bottom:10px;}
+.mg-chip {display:flex;flex-direction:column;align-items:flex-start;padding:6px 10px;background:#fff0c8;border:2px solid #5e3415;border-radius:6px;cursor:pointer;color:#3b2312;font-weight:700;text-align:left;}
+.mg-chip small {font-weight:400;font-size:12px;color:#6b4626;}
+.mg-chip.picked {background:#ffcf8a;box-shadow:0 0 0 3px #a5512b;}
+.mg-bins {display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.mg-bins.two {grid-template-columns:repeat(2,1fr);}
+.mg-bin {display:flex;flex-direction:column;align-items:center;gap:4px;min-height:96px;padding:8px;background:#f6dfae;border:3px solid #6b4a2b;border-radius:8px;cursor:pointer;color:#3b2312;}
+.mg-bin b {font-size:15px;}
+.mg-bin small {font-size:11px;color:#6b4626;text-align:center;}
+.mg-bin:hover {background:#ffe7b8;}
+.mg-bin.drawer-forget {background:#dfe6e8;}
+.mg-bin.drawer-keep {background:#d9c7a8;}
+.mg-bin-items {display:flex;flex-wrap:wrap;justify-content:center;gap:4px;}
+.mg-bin-items span {padding:2px 6px;font-size:12px;background:#fff;border:1px solid #6b4a2b;border-radius:4px;}
+.mg-card {margin:6px auto 12px;max-width:320px;padding:12px;text-align:center;font-size:17px;font-weight:700;background:#fff;border:3px solid #5e3415;border-radius:8px;box-shadow:0 3px 0 #5e3415;}
+@media (max-width:640px) {.mg-bins {grid-template-columns:repeat(2,1fr);} .mg-lamp-glass {width:22px;height:22px;}}

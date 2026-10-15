@@ -15,10 +15,12 @@ export const DIFFICULTIES = {
  * A line: { id, title, subtitle, unlock?, intro?, chapters }.
  *   unlock: { line, chapter } — the line opens when that chapter of another line is done.
  *   intro: what the guide says when the line opens.
- * A chapter: { id, title, steps, done?, badge?, ready? } — ready: false = still being made (shown in the
- *   log as 制作中; the line waits there).
- * A step: { id, type: "enter" | "solve", spot, case?, goal, say, done? }
- *   enter: walk into a building (spot); solve: finish a case. `say` is what the guide says when the step
+ * A chapter: { id, title, steps, done?, badge?, ready?, after? } — ready: false = still being made (shown
+ *   in the log as 制作中; the line waits there). after: { line, chapter } — the chapter starts only once
+ *   that chapter of another line is done (the line waits there too).
+ * A step: { id, type: "enter" | "solve" | "play", spot, case?, game?, goal, say, done? }
+ *   enter: walk into a building (spot); solve: finish a case; play: win a mini-game (game-minigames.js)
+ *   started at the spot. `say` is what the guide says when the step
  *   becomes current, `done` when it is finished; a chapter's `done` follows its last step.
  */
 
@@ -49,11 +51,49 @@ export const MAIN_QUEST = {
       ],
       done: [
         { text: "钟楼的门锁得紧紧的，门上刻着一串 0 和 1……这钟楼，好像不只是一座钟？", face: "surprised" },
-        { text: "要打开它，得请工具铺的铁叔帮忙。他出门进货了，过几天才回来。", face: "thinking" },
+        { text: "要打开它，得请工具铺的铁叔帮忙。他出门进货了，要过一阵子才回来。", face: "thinking" },
         { text: "在那之前，事务所的委托板上已经有人来求助了。我们先帮帮大家吧！", face: "happy" },
       ],
     },
-    { id: "ch1", title: "第一章 · 打开钟楼（电脑是什么）", ready: false, steps: [] },
+    {
+      id: "ch1",
+      title: "第一章 · 打开钟楼（电脑是什么）",
+      after: { line: "rea", chapter: "case-1" },
+      steps: [
+        {
+          id: "meet-smith", type: "enter", spot: "engines", goal: "铁叔回来了！去工具铺找他",
+          say: [{ text: "听说铁叔进货回来了！我们去工具铺找他，请他帮忙打开钟楼。", face: "happy" }],
+          done: [
+            { who: "smith", text: "哈哈，你们想进钟楼？那可不是一座普通的钟。", face: "happy" },
+            { who: "smith", text: "门上那串 0 和 1 就是密码。钟楼里面的东西只认两种状态：开和关，记成 1 和 0。", face: "normal" },
+            { who: "smith", text: "门边有 8 盏小灯，每盏灯代表一个数。把对的灯点亮，门就开了。去试试吧！", face: "normal" },
+          ],
+        },
+        {
+          id: "open-door", type: "play", game: "binary", spot: "clocktower", goal: "去钟楼，用 8 盏灯打开门",
+          say: [{ text: "回北区的钟楼，在门口按 E，试试那 8 盏灯。", face: "normal" }],
+          done: [{ text: "门开了！原来 01001101 就是 77。电脑里所有的东西，数字、文字、图片，最后都是这样一串 0 和 1。", face: "happy" }],
+        },
+        {
+          id: "sort-parts", type: "play", game: "parts", spot: "clocktower", goal: "进钟楼，弄清每个零件是干什么的",
+          say: [{ text: "里面全是齿轮和发条……铁叔说，看懂一台机器，先看每个零件负责什么。", face: "thinking" }],
+          done: [
+            { who: "smith", text: "对喽！拉绳是输入，齿轮是处理，记事板是存储，钟面和铃是输出。你们用的电脑，也是这四样。", face: "happy" },
+            { text: "那钟楼为什么会停呢？零件看起来都好好的……", face: "thinking" },
+          ],
+        },
+        {
+          id: "two-drawers", type: "play", game: "drawers", spot: "clocktower", goal: "弄明白钟楼为什么「忘了时间」",
+          say: [{ who: "smith", text: "记事板下面有两个抽屉，你们拉开看看就知道了。", face: "normal" }],
+        },
+      ],
+      done: [
+        { who: "smith", text: "停电那一下，「断电就忘」的抽屉全清空了，所以它忘了现在几点；可「一直记得」的抽屉还在，所以它还记得每天该做什么。", face: "normal" },
+        { text: "我们把时间重新拨好了！可是……钟走得一会儿快一会儿慢。", face: "surprised" },
+        { who: "smith", text: "零件都没坏。毛病出在它的「指令」上：有人改过它的程序。", face: "thinking" },
+        { text: "程序？那得找手艺街的阿木了，他最会做东西。不过阿木最近忙，下一章我们再去找他！", face: "normal" },
+      ],
+    },
     { id: "ch2", title: "第二章 · 重写指令（编程）", ready: false, steps: [] },
     { id: "ch3", title: "第三章 · 对时（网络）", ready: false, steps: [] },
     { id: "ch4", title: "第四章 · 谁动了钟（安全与逆向）", ready: false, steps: [] },
@@ -163,11 +203,19 @@ export function createQuests(lines = QUEST_LINES) {
     const chapter = other?.chapters.find((c) => c.id === line.unlock.chapter);
     return Boolean(other && chapter && chapterDone(other, chapter));
   };
-  /** Playable steps, in order: a line stops at its first chapter still being made. */
+  /** A chapter that has to wait: still being made, or for another line's chapter. */
+  const blocked = (chapter) => {
+    if (chapter.ready === false) return true;
+    if (!chapter.after) return false;
+    const other = lineById(chapter.after.line);
+    const need = other?.chapters.find((c) => c.id === chapter.after.chapter);
+    return !(other && need && chapterDone(other, need));
+  };
+  /** Playable steps, in order: a line stops at its first chapter that has to wait. */
   function steps(line) {
     const out = [];
     for (const chapter of line.chapters) {
-      if (chapter.ready === false) break;
+      if (blocked(chapter)) break;
       for (const step of chapter.steps) out.push({ ...step, chapter, line });
     }
     return out;
@@ -183,10 +231,17 @@ export function createQuests(lines = QUEST_LINES) {
     }
     return null;
   }
-  /** A line's first chapter still being made, once everything before it is done (where the line waits). */
+  /** A line's first chapter that has to wait, once everything before it is done (where the line waits). */
   const waitingAt = (line) => {
-    const index = line.chapters.findIndex((chapter) => chapter.ready === false);
+    const index = line.chapters.findIndex(blocked);
     return index >= 0 && line.chapters.slice(0, index).every((c) => chapterDone(line, c)) ? line.chapters[index] : null;
+  };
+  /** Why a chapter waits, for the log. */
+  const waitReason = (chapter) => {
+    if (chapter.ready === false) return "制作中，敬请期待";
+    const other = lineById(chapter.after?.line);
+    const need = other?.chapters.find((c) => c.id === chapter.after.chapter);
+    return need ? `完成「${need.title}」后继续` : "";
   };
 
   function complete(step) {
@@ -217,7 +272,10 @@ export function createQuests(lines = QUEST_LINES) {
     lineCurrent,
     unlocked,
     waitingAt,
+    waitReason,
     chapterDone,
+    /** A mini-game step waiting at this spot (in any open line), or null. */
+    playAt: (spot) => lines.map(lineCurrent).find((step) => step?.type === "play" && step.spot === spot) || null,
     isDone: (lineId, stepId) => done[lineId]?.has(stepId) || false,
     get tracked() {
       return state.tracked;
@@ -249,7 +307,7 @@ export function createQuests(lines = QUEST_LINES) {
       for (const line of lines) {
         const step = lineCurrent(line);
         if (!step) continue;
-        const match = (step.type === "enter" && kind === "enter" && step.spot === id) || (step.type === "solve" && kind === "solve" && step.case === id);
+        const match = (step.type === "enter" && kind === "enter" && step.spot === id) || (step.type === "solve" && kind === "solve" && step.case === id) || (step.type === "play" && kind === "play" && step.game === id);
         if (match) {
           complete(step);
           matched = true;
