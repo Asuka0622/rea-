@@ -92,7 +92,7 @@ export const MAIN_QUEST = {
         },
         {
           id: "open-door", type: "play", game: "binary", spot: "clocktower", goal: "去钟楼，用 8 盏灯打开门",
-          say: [{ text: "回北区的钟楼，在门口按 E，试试那 8 盏灯。", face: "normal" }],
+          say: [{ text: "回北区，点击钟楼标记，试试那 8 盏灯。", face: "normal" }],
           done: [{ text: "门开了！原来 01001101 就是 77。电脑里所有的东西，数字、文字、图片，最后都是这样一串 0 和 1。", face: "happy" }],
         },
         {

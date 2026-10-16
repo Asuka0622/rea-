@@ -35,7 +35,7 @@ Browser plugin was not available. Playwright used a temporary Chromium binary ou
 ## Remaining work — project is not complete
 
 1. The latest main's full six-era campaign is not implemented by this change. Its explicit `ready: false` chapters and absent era maps remain unfinished; the existing China map is still documented as a placeholder. Do not advertise a finished 1.5–2.5 hour campaign.
-2. Stopped/running 80×150 clocktower sprites were added from the written brief; the stopped state is shown in the north map. The repaired state is not connected to story progression because the clocktower chapter is not implemented. The clocktower interior, story props, several era/character assets still need production work. Existing anime dialogue portraits were intentionally retained.
+2. Stopped/running 80×150 clocktower sprites were added from the written brief; the stopped state is shown in the north map. Both sprite states now follow the quest clock: drifting/running share the running image, with an explicit inaccurate-clock label for drifting. The first chapter exercises are connected; later travel remains incomplete. The clocktower interior, story props, several era/character assets still need production work. Existing anime dialogue portraits were intentionally retained.
 3. Baselines contain painted sunlight and shadows. Runtime tinting does not remove that baked lighting. Convincing fully relit night/rain interiors require authored light/shadow/window layers; current overlays are an initial environment implementation, not finished cinematic relighting.
 4. Window masks, light positions, room furniture collisions and every seasonal foreground need a thorough scene-by-scene visual pass. The browser interaction run covered the studio; asset resolution tests cover the other rooms, not full visual certification of all 720 scene/state combinations.
 5. Ambient NPCs animate idle poses; they do not yet walk collision-aware daily schedules. Animals react to clicks but do not implement the proposed full ambient vignettes.
@@ -45,7 +45,7 @@ Browser plugin was not available. Playwright used a temporary Chromium binary ou
 
 ## 地图接入状态同步 — 2026-10-16
 
-本次状态核对从分支提交 923b0771f120911d44ed2eff0489e079492a8b40 开始。现已将 public/game-regions.js 的道路出口、建筑门口和完整 960×540 坐标系接入区域地图；地图使用等比例完整显示，地点标记、NPC、小动物、出口和钟楼覆盖层共享同一套视口换算，建筑标记锚定到门口。北区钟楼停摆图层已接入，修复版素材已交付但尚未与剧情切换绑定。区域间仍是地图跳转，连续步行、碰撞/遮挡和跨区寻路尚未接入。新增坐标映射、门口锚点和出口测试；README 已同步记录这些边界。
+本次状态核对从分支提交 923b0771f120911d44ed2eff0489e079492a8b40 开始。现已将 public/game-regions.js 的道路出口、建筑门口和完整 960×540 坐标系接入区域地图；地图使用等比例完整显示，地点标记、NPC、小动物、出口和钟楼覆盖层共享同一套视口换算，建筑标记锚定到门口。北区钟楼图层已随任务时钟状态切换（走时不准暂共用运转版）。区域间仍是地图跳转，连续步行、碰撞/遮挡和跨区寻路尚未接入。新增坐标映射、门口锚点和出口测试；README 已同步记录这些边界。
 
 
 ### 2026-10-16 map/art follow-up
@@ -53,3 +53,13 @@ Browser plugin was not available. Playwright used a temporary Chromium binary ou
 - `node --check` passes for `public/game-shell.js` and `public/game-regions.js`; the reconstructed focused environment/region harness passes 10/10 tests.
 - Both clocktower PNGs validate as transparent 80×150 files and are catalogued in the region manifest. The north overlay is tied to the canonical doorway coordinate.
 - The follow-up did not repeat browser screenshot QA; the existing browser/device limitations above still apply.
+
+
+### 2026-10-16 runtime integration follow-up
+
+- The real room renderer now mounts/disposes `game-environment.js`, replacing duplicate CSS weather. All ten room windows and practical-light anchors use the shared 320×180 coordinate system; precipitation remains clipped to windows. Baked sunlight remains a limitation.
+- Region visits now report quest events. The clocktower opens the existing binary, parts and drawers lessons in a native modal. Only the lesson win callback records progress; cancelling does not. Difficulty/focus story filters and speaker labels are retained.
+- Returning from a room or work window restores its source region. Quest clock labels and north-map sprites follow saved progression. This does not implement the later China travel or six-era campaign.
+- Real browser regression: 48 indoor environment combinations, single-canvas lifecycle, region return, binary lesson completion and saved progress, cancelled binary/parts lessons, desktop and landscape mobile; no captured page errors or HTTP failures. Screenshots are temporary QA evidence. Parts/drawers wins and later campaign transitions have not received an end-to-end browser pass.
+- Focused environment/region/quest tests: 17/17 pass, including actual asset resolution and measured light bounds.
+- Full suite on this revision: 92 tests, 80 pass, 9 skipped, 3 failures. Windows-only ZIP reader and Linux procps ownership failures remain; the MCP proxy test also hit a partial-JSON parse failure in the combined run. A standalone smoke rerun passed the MCP proxy test and retained only the procps failure. These are not reported as a green full suite.

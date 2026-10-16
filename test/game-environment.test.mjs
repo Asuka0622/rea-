@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { ENV_OPTIONS, normalizeEnvironment, environmentArt, ROOM_WINDOWS } from '../public/game-environment.js';
+import { ENV_OPTIONS, normalizeEnvironment, environmentArt, ROOM_WINDOWS, ROOM_LIGHTS } from '../public/game-environment.js';
 const base=new URL('../public/art/pixel/',import.meta.url);
 const has=name=>fs.existsSync(new URL(`${name}.png`,base));
 test('all 48 environment states resolve existing seasonal map and room art',()=>{
@@ -17,4 +17,9 @@ test('invalid persisted settings fall back and missing variants never produce mi
 });
 test('window masks stay within room bounds',()=>{
  for(const rects of Object.values(ROOM_WINDOWS))for(const [x,y,w,h]of rects)assert.ok(x>=0&&y>=0&&x+w<=320&&y+h<=180);
+});
+
+test('room practical lights match known rooms and remain inside the artwork',()=>{
+ assert.deepEqual(Object.keys(ROOM_LIGHTS).sort(),Object.keys(ROOM_WINDOWS).sort());
+ for(const lights of Object.values(ROOM_LIGHTS))for(const [x,y,color]of lights){assert.ok(x>=0&&x<320&&y>=0&&y<180);assert.match(color,/^#[0-9a-f]{6}$/i);}
 });

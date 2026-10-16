@@ -1,4 +1,6 @@
 import { SCENES } from "./scenes.js";
+import { mountEnvironment } from "./game-environment.js";
+import { createMinigame } from "./game-minigames.js";
 import { regionLinks, regionSpotAnchor, regionViewportRect, REGION_SIZE, REGIONS as REGION_LAYOUT } from "./game-regions.js";
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
@@ -103,7 +105,7 @@ const REGIONS = [
     id: "north", label: "北岸办公区", file: "town-north", note: "周姐的办公楼和版本侦探委托",
     places: [
       { type: "case-order", order: 5, spotKey: "office", fallback: { title: "周姐的办公楼", person: "周姐", text: "周姐把版本号、日期和便签整理在一起，教你循着变化找到线索。" } },
-      { type: "tip", spotKey: "clocktower", title: "停摆的钟楼", person: "铁叔", text: "钟楼的门锁着，门上刻着一串 0 和 1。等铁叔回来，我们再想办法打开它。" },
+      { type: "clocktower", spotKey: "clocktower", title: "停摆的钟楼" },
     ],
     actors: [{ id: "clerk", room: "office", label: "周姐", x: 59, y: 42, line: "核对版本差异时，把时间、编号和对应记录放在一张表里。" }],
   },
@@ -137,20 +139,6 @@ const ROOM_SCENES = {
   office: { place: "周姐的办公室", purpose: "版本侦探", icon: "scan", speaker: "clerk", line: "把版本号、日期和记录放在一起，变化就更容易看清。" },
   archive: { place: "小镇档案馆", purpose: "真实世界故事", icon: "learn", speaker: "archivist", line: "先确认记录的来源和时间，再判断材料能说明什么。" },
 };
-// Window rectangles are percentages of each 320x180 interior illustration. Weather overlays stay
-// inside these panes so rain and snow never appear over indoor furniture.
-const ROOM_WINDOWS = {
-  home: [[0, 3, 20, 50], [88, 5, 12, 45]],
-  learn: [[0, 4, 19, 52], [90, 4, 10, 45]],
-  engines: [[0, 3, 20, 50]],
-  clients: [[0, 3, 20, 50]],
-  doctor: [[0, 3, 20, 55], [91, 3, 9, 52]],
-  studio: [[8, 2, 28, 34]],
-  arcade: [[76, 2, 20, 34]],
-  woodshop: [[5, 2, 24, 34]],
-  office: [[72, 2, 23, 36]],
-  archive: [[0, 2, 26, 38]],
-};
 const WORLD_STATE_KEY = "rea-wb-world-state";
 
 /** What can be done in each place. `target` is scrolled into view inside the window. */
@@ -174,7 +162,7 @@ const EXTRA_LINES = {
   doctor: "我来给你的装备做个检查。",
 };
 
-export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {} }) {
+export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null }) {
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -186,6 +174,21 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let enabled = false;
   let regionId = "center";
   let mapPanel = null;
+  let disposeEnvironment = () => {};
+  let returnRegion = null;
+  const questStory = [];
+  quests?.onChange(({ story }) => {
+    const difficulty = quests.difficulty || "normal";
+    const focus = quests.focus || "balanced";
+    const includes = (list, value) => !list || list.split(" ").includes(value);
+    for (const line of story) {
+      if (!includes(line.only, difficulty) || !includes(line.focus, focus)) continue;
+      const actor = REGIONS.flatMap((region) => region.actors || []).find((actor) => actor.id === line.who);
+      questStory.push({ ...line, text: line[difficulty] || line.text, speaker: line.who, speakerName: actor?.label });
+    }
+  });
+  const clockState = () => quests?.clockState() || "stopped";
+  const clockTitle = () => ({ stopped: "停摆的钟楼", drifting: "钟楼 · 走时不准", running: "钟楼 · 正常运转" })[clockState()];
   let worldState = { season: "autumn", weather: "clear", time: "noon" };
   try {
     const saved = JSON.parse(localStorage.getItem(WORLD_STATE_KEY) || "null");
@@ -345,6 +348,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return door ? { ...spot, mapX: door.x, mapY: door.y, doorAnchored: true } : spot;
     };
     return region.places.flatMap((spot) => {
+      if (spot.type === "clocktower") return [anchorDoor({ ...spot, title: clockTitle(), subtitle: "主线任务" })];
       if (spot.type === "scene") {
         if (!SCENES[spot.id]) return [];
         return [anchorDoor({ ...spot, title: SCENES[spot.id].place, subtitle: SCENES[spot.id].purpose })];
@@ -361,6 +365,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     });
   }
   function activateDestination(spot) {
+    returnRegion = regionId;
+    if (spot.type === "clocktower") return enterClocktower();
     if (spot.type === "scene") return enter(spot.id);
     if (spot.type === "interior") return enterInterior(spot.id);
     if (spot.type === "case") return enterSpot(spot.id);
@@ -369,6 +375,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     say([{ text: `${person}：${line}`, face: "happy" }]);
   }
   function drawRegion(id = regionId) {
+    disposeEnvironment();
     const region = REGIONS.find((item) => item.id === id) || REGIONS[0];
     regionId = region.id;
     worldEl = null;
@@ -381,7 +388,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const exits = regionLinks(region.id, Object.fromEntries(REGIONS.map(({ id, label }) => [id, label])));
     stage.replaceChildren(h("div", { class: "game-region-view" },
       h("img", { class: "game-bg", src: regionImage(region), alt: `${region.label}像素地图` }),
-      ...(region.id === "north" ? [regionBuildingOverlay("north", "clocktower", "north-clocktower-stopped.png")] : []),
+      ...(region.id === "north" ? [regionBuildingOverlay("north", "clocktower", `north-clocktower-${clockState() === "stopped" ? "stopped" : "running"}.png`)] : []),
       outsideAtmosphere(region.id),
       h("div", { class: "game-region-title" }, region.label),
       ...exits.map((exit) => {
@@ -449,6 +456,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   function drawTown() {
+    disposeEnvironment();
     const picture = has("town");
     stage.dataset.view = "town";
     spotCache = null;
@@ -486,22 +494,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   function drawRoom(id) {
+    disposeEnvironment();
     worldEl = null;
     const scene = SCENES[id] || ROOM_SCENES[id];
     const picture = has(`room-${id}`);
-    const windows = picture ? (ROOM_WINDOWS[id] || []) : [[11, 16, 18, 22]];
     stage.dataset.view = id;
     stage.replaceChildren(
       h("div", { class: `game-room room-${id} season-${worldState.season} time-${worldState.time} weather-${worldState.weather}` },
         picture ? h("img", { class: "game-bg", src: roomImage(id), alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
-        h("span", { class: "game-interior-light", "aria-hidden": "true" }),
-        ...windows.map(([left, top, width, height]) => h("span", {
-          class: "game-window-weather", "aria-hidden": "true",
-          style: `left:${left}%;top:${top}%;width:${width}%;height:${height}%`,
-        })),
         sprite("lumi", 110)),
       h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place),
     );
+    disposeEnvironment = mountEnvironment({ stage, host: stage.querySelector(".game-room"), state: worldState, room: id, width: 320, height: 180 });
   }
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
@@ -947,6 +951,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* ----- navigation ----- */
   function goTown() {
     closeWindow();
+    returnRegion = null;
     if (place) lastPlace = place;
     place = null;
     menu.hidden = true;
@@ -997,24 +1002,28 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   function enter(id, speaker = null) {
+    if (stage.dataset.view === "region") returnRegion = regionId;
     closeWindow();
     target = null;
     keys.clear();
     place = id;
     menu.hidden = true;
     drawRoom(id);
+    quests?.event("enter", id);
     say([
+      ...questStory.splice(0),
       { text: SCENES[id].line, face: "happy" },
       { text: speaker?.line || EXTRA_LINES[id], face: "thinking", speaker: speaker?.id, speakerName: speaker?.label },
     ], () =>
       showMenu([
         ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
-        { label: "回小镇地图", run: goTown },
+        { label: "回小镇地图", run: leavePlace },
       ]),
     );
   }
 
   function enterInterior(id, speaker = null) {
+    if (stage.dataset.view === "region") returnRegion = regionId;
     const scene = ROOM_SCENES[id];
     if (!scene) return;
     target = null;
@@ -1053,8 +1062,53 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (!windowOpen) return;
     gameWindow.hidden = true;
     windowOpen = false;
-    if (place) enter(place);
+    if (place) ROOM_SCENES[place] ? enterInterior(place) : enter(place);
+    else if (returnRegion) leavePlace();
     else if (stage.dataset.view !== "town" || lastPlace) goTown();
+  }
+
+  function leavePlace() {
+    if (!returnRegion) return goTown();
+    place = null;
+    lastPlace = null;
+    menu.hidden = true;
+    dialogue.hidden = true;
+    drawRegion(returnRegion);
+  }
+
+  const storyBody = h("div", { class: "game-story-body" });
+  const storyTitle = h("h2", { id: "game-story-title" });
+  const storyDialog = h("dialog", { class: "game-story-dialog", "aria-labelledby": "game-story-title" },
+    h("div", { class: "game-window-head" }, storyTitle, h("button", { class: "btn small", type: "button", onclick: () => storyDialog.close() }, "关闭练习")), storyBody);
+  shell.append(storyDialog);
+  storyDialog.addEventListener("close", () => { if (enabled) enterClocktower(false); });
+
+  function enterClocktower(recordVisit = true) {
+    place = null;
+    menu.hidden = true;
+    keys.clear();
+    if (recordVisit) quests?.event("enter", "clocktower");
+    drawRegion("north");
+    const step = quests?.playAt("clocktower");
+    const goal = quests?.current()?.goal;
+    const story = questStory.splice(0);
+    say(story.length ? story : [{ text: goal || "钟楼的门上刻着一串 0 和 1。先到事务所和图书馆，再来调查它。", face: "thinking" }], () => showMenu([
+      ...(step ? [{ label: step.goal, run: () => {
+        let won = false;
+        const game = createMinigame(step.game, { h, difficulty: quests.difficulty || "normal", onWin: () => {
+          if (won) return;
+          won = true;
+          quests.event("play", step.game);
+          storyDialog.close();
+        } });
+        storyTitle.textContent = game.title;
+        storyBody.replaceChildren(game.el);
+        menu.hidden = true;
+        dialogue.hidden = true;
+        storyDialog.showModal();
+      } }] : []),
+      { label: "回到北区地图", run: () => { menu.hidden = true; dialogue.hidden = true; drawRegion("north"); } },
+    ]));
   }
 
   /* ----- switching between game and page ----- */
@@ -1069,6 +1123,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       fit();
       goTown();
     } else {
+      disposeEnvironment();
       mainHome.parent.insertBefore(main, mainHome.next);
       shell.hidden = true;
       gameWindow.hidden = true;
@@ -1080,6 +1135,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keyup", (event) => keys.delete(event.key.toLowerCase()));
   window.addEventListener("blur", () => keys.clear());
   document.addEventListener("keydown", (event) => {
+    if (storyDialog.open) return;
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
     const key = event.key.toLowerCase();
     if (KEY_DIRS[key] && !windowOpen && stage.dataset.view === "town") {
@@ -1106,7 +1162,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (event.key === "Escape") {
       if (!statePanel.hidden) statePanel.hidden = true;
       else if (windowOpen) closeWindow();
-      else if (place) goTown();
+      else if (place) leavePlace();
     } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && !windowOpen && event.target === document.body) {
       event.preventDefault();
       dialogue.click();

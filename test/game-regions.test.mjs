@@ -60,7 +60,7 @@ test("building pins anchor to canonical door coordinates and map artwork stays a
 
 test("the north map displays the clocktower as a story landmark", () => {
   const shell = fs.readFileSync(new URL("../public/game-shell.js", import.meta.url), "utf8");
-  assert.match(shell, /north-clocktower-stopped/);
+  assert.match(shell, /north-clocktower-/);
   assert.match(shell, /spotKey: "clocktower"/);
 });
 test("clocktower sprites are catalogued at the authored 80x150 size", () => {

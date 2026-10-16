@@ -314,35 +314,7 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 @keyframes game-rain {to {translate:calc(2px * var(--px)) calc(8px * var(--px));}}
 @keyframes game-snow {to {translate:calc(2px * var(--px)) calc(8px * var(--px));}}
 .game-room {overflow:hidden;isolation:isolate;}
-.game-window-weather {position:absolute;z-index:2;overflow:hidden;pointer-events:none;opacity:0;image-rendering:pixelated;}
-.game-interior-light {position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;background-repeat:no-repeat;mix-blend-mode:screen;transition:opacity .25s steps(3);}
-.game-room.time-morning .game-interior-light {opacity:.22;background-image:linear-gradient(118deg,rgba(255,228,169,.36),transparent 46%);}
-.game-room.time-sunset .game-interior-light {opacity:.32;background-image:linear-gradient(118deg,rgba(255,147,76,.42),transparent 58%);}
-.game-room.time-night .game-interior-light {opacity:.92;background-image:var(--room-lamps,radial-gradient(ellipse at 62% 58%,rgba(255,183,92,.58) 0 2%,rgba(255,157,68,.2) 9%,transparent 24%));}
-.game-room.room-home {--room-lamps:radial-gradient(ellipse at 67% 60%,rgba(255,188,102,.62) 0 2%,rgba(255,160,72,.2) 10%,transparent 24%),radial-gradient(ellipse at 16% 24%,rgba(139,192,255,.22),transparent 22%);}
-.game-room.room-learn {--room-lamps:radial-gradient(ellipse at 51% 54%,rgba(255,196,111,.52) 0 2%,rgba(255,167,82,.18) 12%,transparent 29%),radial-gradient(ellipse at 80% 22%,rgba(255,201,126,.24),transparent 20%);}
-.game-room.room-engines {--room-lamps:radial-gradient(ellipse at 68% 59%,rgba(255,168,82,.58) 0 2%,rgba(255,134,56,.2) 10%,transparent 25%),radial-gradient(ellipse at 30% 31%,rgba(255,195,111,.2),transparent 18%);}
-.game-room.room-clients {--room-lamps:radial-gradient(ellipse at 60% 55%,rgba(255,193,106,.56) 0 2%,rgba(255,157,68,.18) 11%,transparent 27%),radial-gradient(ellipse at 80% 24%,rgba(153,197,255,.2),transparent 20%);}
-.game-room.room-doctor {--room-lamps:radial-gradient(ellipse at 63% 46%,rgba(231,247,207,.46) 0 2%,rgba(195,235,187,.16) 11%,transparent 26%),radial-gradient(ellipse at 20% 28%,rgba(168,210,255,.2),transparent 20%);}
-.game-room.room-studio {--room-lamps:radial-gradient(ellipse at 60% 60%,rgba(255,193,106,.58) 0 2%,rgba(255,157,68,.2) 10%,transparent 26%),radial-gradient(ellipse at 34% 28%,rgba(255,217,152,.18),transparent 19%);}
-.game-room.room-arcade {--room-lamps:radial-gradient(ellipse at 74% 50%,rgba(93,234,226,.4) 0 2%,rgba(87,194,228,.2) 10%,transparent 24%),radial-gradient(ellipse at 32% 48%,rgba(232,106,228,.36) 0 2%,rgba(193,82,223,.15) 11%,transparent 25%);}
-.game-room.room-woodshop {--room-lamps:radial-gradient(ellipse at 66% 59%,rgba(255,187,96,.6) 0 2%,rgba(255,154,67,.2) 11%,transparent 27%);}
-.game-room.room-office {--room-lamps:radial-gradient(ellipse at 70% 56%,rgba(255,194,106,.55) 0 2%,rgba(255,157,68,.18) 10%,transparent 24%),radial-gradient(ellipse at 26% 28%,rgba(154,196,255,.2),transparent 20%);}
-.game-room.room-archive {--room-lamps:radial-gradient(ellipse at 72% 60%,rgba(255,194,106,.62) 0 2%,rgba(255,157,68,.2) 12%,transparent 28%),radial-gradient(ellipse at 25% 24%,rgba(153,195,255,.16),transparent 20%);}
-.game-room.weather-rain .game-window-weather {opacity:.72;background:repeating-linear-gradient(108deg,transparent 0 calc(7px * var(--px)),rgba(195,229,247,.78) calc(7px * var(--px)) calc(8px * var(--px)),transparent calc(8px * var(--px)) calc(15px * var(--px)));
-  animation:game-rain .7s steps(5) infinite;}
-.game-room.weather-snow .game-window-weather {opacity:.85;background-image:linear-gradient(#fff 0 0),linear-gradient(#e8f7ff 0 0),linear-gradient(#f7fcff 0 0),linear-gradient(#e8f7ff 0 0);
-  background-size:calc(1px * var(--px)) calc(1px * var(--px)),calc(2px * var(--px)) calc(2px * var(--px)),calc(1px * var(--px)) calc(1px * var(--px)),calc(2px * var(--px)) calc(2px * var(--px));
-  background-position:14% 20%,45% 72%,74% 33%,90% 58%;background-repeat:no-repeat;animation:game-snow 4s steps(6) infinite;}
-.game-room .game-bg {filter:brightness(var(--scene-brightness,1)) saturate(var(--scene-saturation,1)) sepia(var(--scene-sepia,0));}
-.game-room.time-morning {--scene-brightness:1.05;--scene-saturation:1.04;}
-.game-room.time-sunset {--scene-brightness:.96;--scene-saturation:1.07;--scene-sepia:.16;}
-.game-room.time-night {--scene-brightness:.68;--scene-saturation:.9;}
-.game-room.weather-rain {--scene-brightness:.94;--scene-saturation:.88;}
-.game-room.time-morning.weather-rain {--scene-brightness:.98;--scene-saturation:.94;}
-.game-room.time-sunset.weather-rain {--scene-brightness:.9;--scene-saturation:.88;--scene-sepia:.18;}
-.game-room.time-night.weather-rain {--scene-brightness:.62;--scene-saturation:.84;--scene-sepia:0;}
-.game-room.time-noon.weather-snow .game-bg {filter:brightness(1.02) saturate(.96);}
+.game-environment {position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;image-rendering:pixelated;}
 @media(max-width:850px) {
   .game-region-cards {grid-template-columns:repeat(2,minmax(0,1fr));}
   .game-region-title {top:58px;}
@@ -360,3 +332,35 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
   .game-state-panel {top:54px;}
 }
 @media(prefers-reduced-motion:reduce) {.game-atmosphere::after,.game-room.weather-rain .game-window-weather,.game-room.weather-snow .game-window-weather,.game-region-actor,.game-region-animal {animation:none!important;}.game-region-actor.wandering {background-position:0 0!important;}}
+
+/* Clocktower lessons use a native modal so focus and Escape stay inside the exercise. */
+.game-story-dialog {position:fixed;inset:0;width:min(900px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:0;border:4px solid #5e3415;background:#fff0c8;color:#3b2312;overflow:auto;}
+.game-story-dialog::backdrop {background:rgba(20,15,12,.72);}
+.game-story-dialog h2 {margin:0;font-size:19px;}
+.game-story-body {padding:18px;}
+.game-story-dialog .mg {display:grid;gap:14px;}
+.game-story-dialog .mg-progress {display:flex;justify-content:space-between;gap:12px;margin:0;}
+.game-story-dialog .mg-note {margin:0;padding:12px;background:#f6dfb1;line-height:1.7;}
+.game-story-dialog .mg-hearts {color:#a33c32;white-space:nowrap;}
+.game-story-dialog .mg-area {min-height:130px;}
+.game-story-dialog .mg-buttons,.game-story-dialog .mg-tray {display:flex;gap:8px;flex-wrap:wrap;}
+.game-story-dialog .mg-feedback {min-height:1.5em;margin:0;}
+.game-story-dialog .mg-feedback[data-mood="good"] {color:#315f24;}
+.game-story-dialog .mg-feedback[data-mood="bad"] {color:#973623;}
+.game-story-dialog .mg-lamps {display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin:16px 0;}
+.game-story-dialog .mg-lamp {display:grid;justify-items:center;gap:6px;padding:8px 2px;border:2px solid #856139;background:#e8d7b2;color:#3b2312;cursor:pointer;}
+.game-story-dialog .mg-lamp:disabled {opacity:1;cursor:default;}
+.game-story-dialog .mg-lamp-glass {width:24px;height:30px;border:3px solid #534d40;background:#475050;}
+.game-story-dialog .mg-lamp.on .mg-lamp-glass {background:#ffd976;border-color:#ab6c23;box-shadow:0 0 0 3px #f7dfa1;}
+.game-story-dialog .mg-input {width:140px;max-width:100%;padding:8px;font-size:18px;background:#fffaf0;color:#3b2312;border:2px solid #856139;}
+.game-story-dialog .mg-bins {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px;}
+.game-story-dialog .mg-bin {display:grid;gap:6px;min-height:90px;padding:12px;border:2px solid #856139;background:#f1dfba;color:#3b2312;text-align:left;cursor:pointer;}
+.game-story-dialog .mg-chip,.game-story-dialog .mg-card {padding:10px;border:2px solid #856139;background:#fff9e7;color:#3b2312;}
+.game-story-dialog .mg-chip.picked {outline:3px solid #537039;}
+@media(max-width:850px) {.game-story-body {padding:10px;}.game-story-dialog .mg-lamps {gap:4px;}.game-story-dialog .mg-note {font-size:13px;}.game-story-dialog .mg-lamp-glass {width:18px;height:24px;}}
+
+/* Keep the lesson paper opaque even when the workbench uses translucent sheets. */
+:root[data-skin="cozy"][data-presentation] dialog.game-story-dialog {background:#fff0c8;color:#3b2312;}
+.game-story-dialog[open] {animation:none;}
+.game-story-dialog::backdrop {backdrop-filter:none;}
+.game-story-dialog :is(button,input) {font-family:var(--font-body),"Fusion Pixel",sans-serif;}
