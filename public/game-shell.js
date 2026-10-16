@@ -1,4 +1,5 @@
 import { SCENES } from "./scenes.js";
+import { regionLinks } from "./game-regions.js";
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
 // home screen; clicking a building enters it, the guide talks in a dialogue box at the bottom, and
@@ -362,10 +363,17 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     prompt.hidden = true;
     stage.dataset.view = "region";
     const places = destinations(region);
+    const exits = regionLinks(region.id, Object.fromEntries(REGIONS.map(({ id, label }) => [id, label])));
     stage.replaceChildren(h("div", { class: "game-region-view" },
       h("img", { class: "game-bg", src: regionImage(region), alt: `${region.label}像素地图` }),
       outsideAtmosphere(region.id),
       h("div", { class: "game-region-title" }, region.label),
+      ...exits.map((exit) => h("button", {
+        class: "game-region-pin game-region-exit", type: "button",
+        style: `left:${Math.max(8, Math.min(92, exit.x))}%;top:${Math.max(12, Math.min(88, exit.y))}%`,
+        onclick: () => chooseRegion(exit.to),
+        "aria-label": `沿道路前往${exit.label}`,
+      }, h("span", { class: "game-region-pin-icon", "aria-hidden": "true" }, "↗"), h("span", { class: "game-region-pin-label" }, `去${exit.label}`))),
       ...places.map((spot) => h("button", {
         class: `game-region-pin ${spot.type === "case" ? "case" : spot.type === "tip" || spot.type === "case-order" ? "tip" : ""}`,
         type: "button", style: `left:${spot.x}%;top:${spot.y}%`, onclick: () => activateDestination(spot),

@@ -240,6 +240,7 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-region-pin.case .game-region-pin-icon {background:#d4683a;color:#fff;border-color:#672e19;}
 .game-region-pin.tip .game-region-pin-icon {background:#a9d978;color:#253b15;}
 .game-region-pin-label {padding:3px 7px;border:2px solid #5e3415;background:#fff0c8;color:#3b2312;box-shadow:0 2px 0 rgba(0,0,0,.25);
+.game-region-exit .game-region-pin-icon {border-radius:5px;background:#dce9b8;color:#294119;}
   font:12px var(--font-display,"Fusion Pixel");white-space:nowrap;}
 .game-region-pin:hover .game-region-pin-icon,.game-region-pin:focus-visible .game-region-pin-icon {transform:translateY(-2px);background:#a6d96a;outline:2px solid #fff4d8;}
 .game-region-pin:focus-visible {outline:none;}

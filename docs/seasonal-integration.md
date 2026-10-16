@@ -45,5 +45,5 @@ Browser plugin was not available. Playwright used a temporary Chromium binary ou
 
 ## 地图接入状态同步 — 2026-10-16
 
-本次状态核对从分支提交 `923b0771f120911d44ed2eff0489e079492a8b40` 开始。五区地图和地点标记已在 `public/game-shell.js` 中提供，但目前仍是区域卡片与地点标记驱动的跳转。独立的 `public/game-regions.js` 出入口、出生点与建筑门口数据尚未接入该运行时地图；跨区步行寻路、碰撞/遮挡重建和 NPC 地点绑定仍未完成。README 已同步记录这一边界。
+本次状态核对从分支提交 `923b0771f120911d44ed2eff0489e079492a8b40` 开始。五区地图和地点标记已在 `public/game-shell.js` 中提供；现已将 `public/game-regions.js` 的道路出口数据接入区域地图，并在各道路出口显示可点击的邻区入口。区域间仍是地图跳转，连续步行、碰撞/遮挡和跨区寻路尚未接入；NPC 地点与建筑门口的坐标绑定也仍待完成。新增的出口按钮和区域出入口关系已加入定向测试。README 已同步记录这些边界。
 

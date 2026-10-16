@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
-import { REGIONS, REGION_SIZE, regionOf } from "../public/game-regions.js";
+import { REGIONS, REGION_SIZE, regionLinks, regionOf } from "../public/game-regions.js";
 import { QUEST_LINES } from "../public/game-quests.js";
 
 const inside = (p) => p.x > 0 && p.x < REGION_SIZE.w && p.y > 0 && p.y < REGION_SIZE.h;
@@ -30,4 +30,21 @@ test("buildings sit on their map and every quest place is somewhere in town", ()
     }
   }
   for (const line of QUEST_LINES) for (const chapter of line.chapters) for (const step of chapter.steps) if (step.spot) assert.ok(regionOf(step.spot), `${step.id}: ${step.spot}`);
+});
+
+test("road exits link the five runtime region maps in both directions", () => {
+  const labels = { center: "小镇中心", homes: "住宅区", craft: "手艺街", north: "北区", south: "南岸" };
+  assert.deepEqual(regionLinks("center", labels).map((link) => link.to).sort(), ["craft", "homes", "north", "south"]);
+  for (const id of ["homes", "craft", "north", "south"]) {
+    const [link] = regionLinks(id, labels);
+    assert.equal(link.to, "center", `${id} should connect to the center`);
+    assert.ok(link.x >= 0 && link.x <= 100 && link.y >= 0 && link.y <= 100, `${id} link position`);
+  }
+});
+
+test("the region renderer shows road exits as navigable map buttons", () => {
+  const shell = fs.readFileSync(new URL("../public/game-shell.js", import.meta.url), "utf8");
+  assert.match(shell, /regionLinks\(region\.id/);
+  assert.match(shell, /game-region-exit/);
+  assert.match(shell, /chooseRegion\(exit\.to\)/);
 });

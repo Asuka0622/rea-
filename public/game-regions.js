@@ -103,3 +103,15 @@ export const regionsOf = (era = undefined) => Object.keys(REGIONS).filter((name)
 export function regionOf(id) {
   return Object.keys(REGIONS).find((name) => REGIONS[name].spots[id]) || null;
 }
+
+/** Road links rendered on the town's region maps. Coordinates are centers of each edge zone. */
+export function regionLinks(regionId, availableRegions = {}) {
+  const region = REGIONS[regionId];
+  if (!region) return [];
+  return region.exits.filter((exit) => availableRegions[exit.to]).map((exit) => ({
+    ...exit,
+    label: availableRegions[exit.to],
+    x: (exit.x + exit.w / 2) / REGION_SIZE.w * 100,
+    y: (exit.y + exit.h / 2) / REGION_SIZE.h * 100,
+  }));
+}
