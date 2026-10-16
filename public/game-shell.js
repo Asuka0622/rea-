@@ -1,5 +1,5 @@
 import { SCENES } from "./scenes.js";
-import { regionLinks } from "./game-regions.js";
+import { regionLinks, regionSpotAnchor, regionViewportRect, REGION_SIZE, REGIONS as REGION_LAYOUT } from "./game-regions.js";
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
 // home screen; clicking a building enters it, the guide talks in a dialogue box at the bottom, and
@@ -47,9 +47,9 @@ const REGIONS = [
   {
     id: "center", label: "小镇中心", file: "town-center", note: "图书馆、事务所、工具铺、驿站和诊所",
     places: [
-      { type: "scene", id: "learn", x: 24, y: 32 }, { type: "scene", id: "home", x: 50, y: 26 },
-      { type: "scene", id: "engines", x: 79, y: 33 }, { type: "scene", id: "clients", x: 24, y: 62 },
-      { type: "scene", id: "doctor", x: 79, y: 62 },
+      { type: "scene", id: "learn", spotKey: "learn" }, { type: "scene", id: "home", spotKey: "home" },
+      { type: "scene", id: "engines", spotKey: "engines" }, { type: "scene", id: "clients", spotKey: "clients" },
+      { type: "scene", id: "doctor", spotKey: "doctor" },
     ],
     actors: [
       { id: "librarian", scene: "learn", label: "书奶奶", x: 29, y: 38 },
@@ -68,9 +68,9 @@ const REGIONS = [
   {
     id: "homes", label: "居民区", file: "town-homes", note: "镇民住家和农场委托",
     places: [
-      { type: "case", id: "privacy-ledger", x: 36, y: 29 }, { type: "case", id: "weather-keys", x: 72, y: 28 },
-      { type: "case", id: "calculator-eggs", x: 33, y: 53 }, { type: "case", id: "farm-save", x: 80, y: 52 },
-      { type: "case", id: "flashlight-apk", x: 43, y: 75 }, { type: "case", id: "real-stories", x: 73, y: 79 },
+      { type: "case", id: "privacy-ledger", spotKey: "privacy-ledger" }, { type: "case", id: "weather-keys", spotKey: "weather-keys" },
+      { type: "case", id: "calculator-eggs", spotKey: "calculator-eggs" }, { type: "case", id: "farm-save", spotKey: "farm-save" },
+      { type: "case", id: "flashlight-apk", spotKey: "flashlight-apk" }, { type: "case", id: "real-stories", spotKey: "real-stories" },
     ],
     actors: [
       { id: "jogger", label: "晨跑的姐姐", x: 49, y: 64, wander: true, phase: 2, line: "每天记下一点变化，过一阵再回看，就容易发现异常。" },
@@ -88,10 +88,10 @@ const REGIONS = [
   {
     id: "craft", label: "工艺街", file: "town-craft", note: "美术工作室、游戏街机厅、木工坊和手办店",
     places: [
-      { type: "interior", id: "studio", title: "美术工作室", person: "彩姐", text: "彩姐把常用的创作工具分门别类地挂在墙上，等着带你认识数字创作。", x: 34, y: 34 },
-      { type: "interior", id: "arcade", title: "游戏街机厅", person: "像素哥", text: "像素哥收藏了不少真实游戏 Mod，想看懂它们，可以从一个小改动开始。", x: 77, y: 27 },
-      { type: "interior", id: "woodshop", title: "木工坊", person: "阿木", text: "阿木喜欢先量尺寸、画草图，再把零件一步一步搭起来。", x: 33, y: 70 },
-      { type: "tip", title: "手办店", person: "缝缝", text: "缝缝会用手边的材料做角色模型；这里还有可选的模型 Mod 拓展。", x: 81, y: 70 },
+      { type: "interior", id: "studio", spotKey: "painter", title: "美术工作室", person: "彩姐", text: "彩姐把常用的创作工具分门别类地挂在墙上，等着带你认识数字创作。" },
+      { type: "interior", id: "arcade", spotKey: "arcade", title: "游戏街机厅", person: "像素哥", text: "像素哥收藏了不少真实游戏 Mod，想看懂它们，可以从一个小改动开始。" },
+      { type: "interior", id: "woodshop", spotKey: "woodshop", title: "木工坊", person: "阿木", text: "阿木喜欢先量尺寸、画草图，再把零件一步一步搭起来。" },
+      { type: "tip", spotKey: "figures", title: "手办店", person: "缝缝", text: "缝缝会用手边的材料做角色模型；这里还有可选的模型 Mod 拓展。" },
     ],
     actors: [
       { id: "painter", room: "studio", label: "彩姐", x: 27, y: 39, line: "想做出自己的作品吗？先选一个顺手的创作工具，再从一张小画开始。" },
@@ -101,7 +101,10 @@ const REGIONS = [
   },
   {
     id: "north", label: "北岸办公区", file: "town-north", note: "周姐的办公楼和版本侦探委托",
-    places: [{ type: "case-order", order: 5, fallback: { title: "周姐的办公楼", person: "周姐", text: "周姐把版本号、日期和便签整理在一起，教你循着变化找到线索。" }, x: 52, y: 38 }],
+    places: [
+      { type: "case-order", order: 5, spotKey: "office", fallback: { title: "周姐的办公楼", person: "周姐", text: "周姐把版本号、日期和便签整理在一起，教你循着变化找到线索。" } },
+      { type: "tip", spotKey: "clocktower", title: "停摆的钟楼", person: "铁叔", text: "钟楼的门锁着，门上刻着一串 0 和 1。等铁叔回来，我们再想办法打开它。" },
+    ],
     actors: [{ id: "clerk", room: "office", label: "周姐", x: 59, y: 42, line: "核对版本差异时，把时间、编号和对应记录放在一张表里。" }],
   },
   {
@@ -300,7 +303,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     worldEl?.style.setProperty("--px", String(townPx));
     placePlayer();
   }
-  window.addEventListener("resize", fit);
+  window.addEventListener("resize", () => { fit(); if (stage.dataset.view === "region") drawRegion(regionId); });
   const viewW = () => stage.clientWidth / townPx; // how much of the town (in map pixels) fits on screen
   const viewH = () => stage.clientHeight / townPx;
   let worldEl = null;
@@ -322,6 +325,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const variant = `${region.file}-${worldState.season}-clear-noon`;
     return `/art/pixel/regions/${worldState.season === "autumn" ? `${region.file}.png` : `${variant}.png`}`;
   }
+  const regionViewport = () => ({ w: stage.clientWidth || REGION_SIZE.w, h: stage.clientHeight || REGION_SIZE.h });
+  const mapRect = (rect) => regionViewportRect(rect, regionViewport());
+  function regionBuildingOverlay(regionId, spotKey, file) {
+    const spot = REGION_LAYOUT[regionId]?.spots?.[spotKey];
+    if (!spot) return null;
+    const rect = mapRect({ x: spot.door.x - 40, y: spot.door.y - 150, w: 80, h: 150 });
+    return rect && h("img", { class: "game-region-building", src: `/art/pixel/regions/${file}`, alt: "", "aria-hidden": "true", style: `left:${rect.x}%;top:${rect.y}%;width:${rect.w}%;height:${rect.h}%` });
+  }
   function roomImage(id) {
     const variant = `room-${id}-${worldState.season}-clear-noon`;
     return `/art/pixel/${has(variant) ? `${variant}.png` : `room-${id}.png`}`;
@@ -329,20 +340,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const outsideAtmosphere = (region = "town") => h("div", { class: `game-atmosphere outside ${worldState.weather} region-${region}`, "aria-hidden": "true" }, h("span", { class: "game-outdoor-lights" }));
 
   function destinations(region) {
+    const anchorDoor = (spot) => {
+      const door = spot.spotKey ? regionSpotAnchor(region.id, spot.spotKey) : null;
+      return door ? { ...spot, mapX: door.x, mapY: door.y, doorAnchored: true } : spot;
+    };
     return region.places.flatMap((spot) => {
       if (spot.type === "scene") {
         if (!SCENES[spot.id]) return [];
-        return [{ ...spot, title: SCENES[spot.id].place, subtitle: SCENES[spot.id].purpose }];
+        return [anchorDoor({ ...spot, title: SCENES[spot.id].place, subtitle: SCENES[spot.id].purpose })];
       }
       if (spot.type === "case") {
         const item = cases().find((candidate) => candidate.id === spot.id);
-        return item ? [{ ...spot, title: item.scene?.place || item.title, subtitle: `委托 · 案例 ${item.order ?? ""}` }] : [];
+        return item ? [anchorDoor({ ...spot, title: item.scene?.place || item.title, subtitle: `委托 · 案例 ${item.order ?? ""}` })] : [];
       }
       if (spot.type === "case-order") {
         const item = cases().find((candidate) => candidate.order === spot.order || /版本/.test(candidate.title || ""));
-        return [item ? { ...spot, type: "case", id: item.id, title: item.scene?.place || item.title, subtitle: `委托 · 案例 ${item.order ?? ""}` } : { ...spot, title: spot.fallback.title, subtitle: spot.fallback.person }];
+        return [anchorDoor(item ? { ...spot, type: "case", id: item.id, title: item.scene?.place || item.title, subtitle: `委托 · 案例 ${item.order ?? ""}` } : { ...spot, title: spot.fallback.title, subtitle: spot.fallback.person })];
       }
-      return [{ ...spot, subtitle: spot.person }];
+      return [anchorDoor({ ...spot, subtitle: spot.person })];
     });
   }
   function activateDestination(spot) {
@@ -366,40 +381,57 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const exits = regionLinks(region.id, Object.fromEntries(REGIONS.map(({ id, label }) => [id, label])));
     stage.replaceChildren(h("div", { class: "game-region-view" },
       h("img", { class: "game-bg", src: regionImage(region), alt: `${region.label}像素地图` }),
+      ...(region.id === "north" ? [regionBuildingOverlay("north", "clocktower", "north-clocktower-stopped.png")] : []),
       outsideAtmosphere(region.id),
       h("div", { class: "game-region-title" }, region.label),
-      ...exits.map((exit) => h("button", {
-        class: "game-region-pin game-region-exit", type: "button",
-        style: `left:${Math.max(8, Math.min(92, exit.x))}%;top:${Math.max(12, Math.min(88, exit.y))}%`,
-        onclick: () => chooseRegion(exit.to),
-        "aria-label": `沿道路前往${exit.label}`,
-      }, h("span", { class: "game-region-pin-icon", "aria-hidden": "true" }, "↗"), h("span", { class: "game-region-pin-label" }, `去${exit.label}`))),
-      ...places.map((spot) => h("button", {
-        class: `game-region-pin ${spot.type === "case" ? "case" : spot.type === "tip" || spot.type === "case-order" ? "tip" : ""}`,
-        type: "button", style: `left:${spot.x}%;top:${spot.y}%`, onclick: () => activateDestination(spot),
-        "aria-label": `${spot.title}${spot.subtitle ? `，${spot.subtitle}` : ""}`,
-      }, h("span", { class: "game-region-pin-icon", "aria-hidden": "true" }, spot.type === "case" ? "!" : spot.type === "scene" ? "▼" : "✦"), h("span", { class: "game-region-pin-label" }, spot.title))),
-      ...(region.actors || []).filter((actor) => has(`anim-${actor.id}`)).map((actor) => h("button", {
-        class: `game-region-actor ${actor.id} ${actor.wander ? "wandering" : ""}`, type: "button", style: `left:${actor.x}%;top:${actor.y}%;--wander:calc(8px * var(--px));animation-delay:-${actor.phase || 0}s,-${actor.phase || 0}s;background-image:url(/art/pixel/anim-${actor.id}.png)`,
-        onclick: () => actor.scene
-          ? enter(actor.scene, actor)
-          : actor.room
-            ? enterInterior(actor.room, actor)
-            : say([{ text: actor.line, face: "happy", speaker: actor.id, speakerName: actor.label }]),
-        "aria-label": actor.scene ? `${actor.label}在门口，点击进入${SCENES[actor.scene].place}` : actor.room ? `${actor.label}，点击进入${ROOM_SCENES[actor.room].place}` : `${actor.label}，点击听一条提示`,
-      })),
-      ...(region.animals || []).filter((animal) => has(`animal-${animal.id}`)).map((animal) => h("button", {
-        class: `game-region-animal ${animal.id}`, type: "button",
-        style: `left:${animal.x}%;top:${animal.y}%;--animal-frame-w:${animal.w}px;--animal-frame-h:${animal.h}px;--animal-row:0;background-image:url(/art/pixel/animal-${animal.id}.png)`,
-        onclick: (event) => {
-          const button = event.currentTarget;
-          button.style.setProperty("--animal-row", String(animal.reactionRow ?? 1));
-          clearTimeout(button.animalReactionTimer);
-          button.animalReactionTimer = window.setTimeout(() => button.style.setProperty("--animal-row", "0"), 1800);
-          say([{ text: animal.line, face: "happy", speaker: animal.id, speakerName: animal.label, spriteType: "animal", spriteSize: [animal.w, animal.h] }]);
-        },
-        "aria-label": `${animal.label}，点击看动作并听提示`,
-      })),
+      ...exits.map((exit) => {
+        const point = mapRect({ x: exit.x / 100 * REGION_SIZE.w, y: exit.y / 100 * REGION_SIZE.h, w: 0, h: 0 });
+        const x = Math.max(8, Math.min(92, point?.x ?? exit.x));
+        const y = Math.max(12, Math.min(88, point?.y ?? exit.y));
+        return h("button", {
+          class: "game-region-pin game-region-exit", type: "button",
+          style: `left:${x}%;top:${y}%`,
+          onclick: () => chooseRegion(exit.to),
+          "aria-label": `沿道路前往${exit.label}`,
+        }, h("span", { class: "game-region-pin-icon", "aria-hidden": "true" }, "↗"), h("span", { class: "game-region-pin-label" }, `去${exit.label}`));
+      }),
+      ...places.map((spot) => {
+        const x = spot.mapX ?? spot.x / 100 * REGION_SIZE.w;
+        const y = spot.mapY ?? spot.y / 100 * REGION_SIZE.h;
+        const point = mapRect({ x, y, w: 0, h: 0 });
+        return h("button", {
+          class: `game-region-pin ${spot.doorAnchored ? "door-pin" : ""} ${spot.type === "case" ? "case" : spot.type === "tip" || spot.type === "case-order" ? "tip" : ""}`,
+          type: "button", style: point ? `left:${point.x}%;top:${point.y}%` : `left:${spot.x}%;top:${spot.y}%`, onclick: () => activateDestination(spot),
+          "aria-label": `${spot.title}${spot.subtitle ? `，${spot.subtitle}` : ""}`,
+        }, h("span", { class: "game-region-pin-icon", "aria-hidden": "true" }, spot.type === "case" ? "!" : spot.type === "scene" ? "▼" : "✦"), h("span", { class: "game-region-pin-label" }, spot.title));
+      }),
+      ...(region.actors || []).filter((actor) => has(`anim-${actor.id}`)).map((actor) => {
+        const point = mapRect({ x: actor.x / 100 * REGION_SIZE.w, y: actor.y / 100 * REGION_SIZE.h, w: 0, h: 0 });
+        return h("button", {
+          class: `game-region-actor ${actor.id} ${actor.wander ? "wandering" : ""}`, type: "button", style: `left:${point?.x ?? actor.x}%;top:${point?.y ?? actor.y}%;--wander:calc(8px * var(--px));animation-delay:-${actor.phase || 0}s,-${actor.phase || 0}s;background-image:url(/art/pixel/anim-${actor.id}.png)`,
+          onclick: () => actor.scene
+            ? enter(actor.scene, actor)
+            : actor.room
+              ? enterInterior(actor.room, actor)
+              : say([{ text: actor.line, face: "happy", speaker: actor.id, speakerName: actor.label }]),
+          "aria-label": actor.scene ? `${actor.label}在门口，点击进入${SCENES[actor.scene].place}` : actor.room ? `${actor.label}，点击进入${ROOM_SCENES[actor.room].place}` : `${actor.label}，点击听一条提示`,
+        });
+      }),
+      ...(region.animals || []).filter((animal) => has(`animal-${animal.id}`)).map((animal) => {
+        const point = mapRect({ x: animal.x / 100 * REGION_SIZE.w, y: animal.y / 100 * REGION_SIZE.h, w: 0, h: 0 });
+        return h("button", {
+          class: `game-region-animal ${animal.id}`, type: "button",
+          style: `left:${point?.x ?? animal.x}%;top:${point?.y ?? animal.y}%;--animal-frame-w:${animal.w}px;--animal-frame-h:${animal.h}px;--animal-row:0;background-image:url(/art/pixel/animal-${animal.id}.png)`,
+          onclick: (event) => {
+            const button = event.currentTarget;
+            button.style.setProperty("--animal-row", String(animal.reactionRow ?? 1));
+            clearTimeout(button.animalReactionTimer);
+            button.animalReactionTimer = window.setTimeout(() => button.style.setProperty("--animal-row", "0"), 1800);
+            say([{ text: animal.line, face: "happy", speaker: animal.id, speakerName: animal.label, spriteType: "animal", spriteSize: [animal.w, animal.h] }]);
+          },
+          "aria-label": `${animal.label}，点击看动作并听提示`,
+        });
+      }),
       h("div", { class: "game-region-tools" },
         h("button", { class: "btn small", type: "button", onclick: goTown }, "回起始小镇"),
         h("button", { class: "btn small", type: "button", onclick: openMap }, "切换区域"),

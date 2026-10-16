@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
-import { REGIONS, REGION_SIZE, regionLinks, regionOf } from "../public/game-regions.js";
+import { REGIONS, REGION_SIZE, regionLinks, regionOf, regionSpotAnchor, regionViewportRect } from "../public/game-regions.js";
 import { QUEST_LINES } from "../public/game-quests.js";
 
 const inside = (p) => p.x > 0 && p.x < REGION_SIZE.w && p.y > 0 && p.y < REGION_SIZE.h;
@@ -47,4 +47,26 @@ test("the region renderer shows road exits as navigable map buttons", () => {
   assert.match(shell, /regionLinks\(region\.id/);
   assert.match(shell, /game-region-exit/);
   assert.match(shell, /chooseRegion\(exit\.to\)/);
+});
+
+test("building pins anchor to canonical door coordinates and map artwork stays aligned when letterboxed", () => {
+  assert.deepEqual(regionSpotAnchor("center", "learn"), { x: 220, y: 190 });
+  assert.equal(regionSpotAnchor("south", "missing"), null);
+  assert.deepEqual(regionViewportRect({ x: 0, y: 0, w: 960, h: 540 }, { w: 1440, h: 900 }), { x: 0, y: 5, w: 100, h: 90 });
+  const tower = regionViewportRect({ x: 736, y: 120, w: 80, h: 150 }, { w: 960, h: 540 });
+  assert.ok(Math.abs(tower.x - 76.6667) < 0.001 && Math.abs(tower.y - 22.2222) < 0.001);
+  assert.ok(Math.abs(tower.w - 8.3333) < 0.001 && Math.abs(tower.h - 27.7778) < 0.001);
+});
+
+test("the north map displays the clocktower as a story landmark", () => {
+  const shell = fs.readFileSync(new URL("../public/game-shell.js", import.meta.url), "utf8");
+  assert.match(shell, /north-clocktower-stopped/);
+  assert.match(shell, /spotKey: "clocktower"/);
+});
+test("clocktower sprites are catalogued at the authored 80x150 size", () => {
+  const manifest = JSON.parse(fs.readFileSync(new URL("../public/art/pixel/regions/manifest.json", import.meta.url), "utf8"));
+  for (const asset of manifest.storyBuildings) {
+    assert.deepEqual(asset.size, [80, 150]);
+    assert.ok(fs.existsSync(new URL(`../public/art/pixel/regions/${asset.file}`, import.meta.url)), asset.file);
+  }
 });

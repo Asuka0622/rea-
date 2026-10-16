@@ -230,11 +230,13 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 
 /* ----- connected regions and shared seasonal / weather / time presentation ----- */
 .game-region-view {position:absolute;inset:0;overflow:hidden;background:#24443a;}
-.game-region-view > .game-bg {z-index:0;object-fit:cover;}
+.game-region-view > .game-bg {z-index:0;object-fit:contain;}
 .game-region-title {position:absolute;z-index:6;top:64px;left:50%;transform:translateX(-50%);padding:7px 18px 5px;
   border:3px solid #503015;background:#f6cf8e;color:#3b2312;box-shadow:inset 0 -3px 0 #d79a52,0 3px 0 rgba(0,0,0,.25);
   font:16px var(--font-display,"Fusion Pixel");white-space:nowrap;}
 .game-region-pin {position:absolute;z-index:5;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;padding:0;border:0;background:none;cursor:pointer;color:#3b2312;}
+.game-region-pin.door-pin {transform:translate(-50%,calc(-100% - 8px));}
+.game-region-building {position:absolute;z-index:1;display:block;image-rendering:pixelated;pointer-events:none;}
 .game-region-pin-icon {display:grid;place-items:center;min-width:27px;height:27px;padding:0 5px;border:3px solid #5e3415;border-radius:50%;background:#f6cf8e;color:#3b2312;
   box-shadow:0 2px 0 rgba(0,0,0,.32);font:14px var(--font-display,"Fusion Pixel");}
 .game-region-pin.case .game-region-pin-icon {background:#d4683a;color:#fff;border-color:#672e19;}

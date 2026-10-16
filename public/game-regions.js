@@ -115,3 +115,23 @@ export function regionLinks(regionId, availableRegions = {}) {
     y: (exit.y + exit.h / 2) / REGION_SIZE.h * 100,
   }));
 }
+
+/** Doorway position for a building pin, in 960x540 map pixels. */
+export function regionSpotAnchor(regionId, spotId) {
+  const door = REGIONS[regionId]?.spots?.[spotId]?.door;
+  return door ? { x: door.x, y: door.y } : null;
+}
+
+/** Map-space rectangle to percentages inside an object-fit:contain viewport. */
+export function regionViewportRect(rect, viewport) {
+  if (!rect || !viewport || !Number.isFinite(viewport.w) || !Number.isFinite(viewport.h) || viewport.w <= 0 || viewport.h <= 0) return null;
+  const scale = Math.min(viewport.w / REGION_SIZE.w, viewport.h / REGION_SIZE.h);
+  const offsetX = (viewport.w - REGION_SIZE.w * scale) / 2;
+  const offsetY = (viewport.h - REGION_SIZE.h * scale) / 2;
+  return {
+    x: (offsetX + rect.x * scale) / viewport.w * 100,
+    y: (offsetY + rect.y * scale) / viewport.h * 100,
+    w: rect.w * scale / viewport.w * 100,
+    h: rect.h * scale / viewport.h * 100,
+  };
+}

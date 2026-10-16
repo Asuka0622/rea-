@@ -443,5 +443,27 @@
       "region": "homes",
       "file": "../anim-grandma.png"
     }
+  ],
+  "storyBuildings": [
+    {
+      "file": "north-clocktower-stopped.png",
+      "size": [
+        80,
+        150
+      ],
+      "state": "stopped",
+      "season": "autumn-clear-noon",
+      "usage": "north region map; anchored to north.clocktower.door"
+    },
+    {
+      "file": "north-clocktower-running.png",
+      "size": [
+        80,
+        150
+      ],
+      "state": "running",
+      "season": "autumn-clear-noon",
+      "usage": "reserved for clocktower story completion; progression wiring pending"
+    }
   ]
 }
