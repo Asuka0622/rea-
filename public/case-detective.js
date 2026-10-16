@@ -1,5 +1,6 @@
 import { clueTarget, judgeClick, starsFor, provesClaim } from "./case-game.js";
 import { mountLab } from "./case-labs.js";
+import { createPuzzle, starsForPuzzle } from "./case-puzzle.js";
 
 // 侦探模式 (beginner mode, cases with a `game` block): a client asks for help, the guide reads out
 // each clue, and the learner answers by clicking rows in the real report below. Found rows go into
@@ -299,29 +300,56 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     ];
   }
 
+  function closedView(item, game, stars) {
+    const verdict = item.game.verdict;
+    if (game.phase !== "closed") {
+      game.phase = "closed";
+      game.stars = stars;
+      saveStars(item.id, stars);
+      onSolved(item.id);
+      if (talking()) queueMicrotask(() => talk.say([clientLine(item, verdict.closing, "happy")]));
+    }
+    return [
+      h("div", { class: "case-closed" },
+        h("div", { class: "case-stamp", "aria-hidden": "true" }, "结案"),
+        h("p", { class: "case-kicker" }, "案例馆 · 结案"),
+        h("h3", { id: "case-quest-title" }, item.title),
+        h("p", { class: "case-stars", "aria-label": `评价 ${game.stars} 星` }, starText(game.stars)),
+        h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 少犯错、少问路米可以拿满三星" : " · 完美破案！"),
+        !talking() && bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
+      ...extras(item),
+    ];
+  }
+
+  /** A puzzle case (case-puzzle.js): its own element runs the investigation; here only the brief and the close. */
+  function renderPuzzle(item, game) {
+    if (game.phase === "closed" || game.puzzle?.phase === "done") return closedView(item, game, game.stars ?? starsForPuzzle(game));
+    const client = item.game.client;
+    const brief = item.game.puzzle.brief || [];
+    if (!game.puzzle) {
+      game.puzzle = createPuzzle({
+        h, icon, item, talk, toast,
+        line: (who, text, face) => (who === "client" ? clientLine(item, text, face || "normal") : { text, face: face || "normal" }),
+        onMistake: () => (game.mistakes += 1),
+        onHint: () => (game.hints += 1),
+        onDone: () => rerender(),
+      });
+      if (talking()) queueMicrotask(() => talk.say([...client.lines.map((l, i) => clientLine(item, l.text ?? l, l.face || (i === 0 ? "normal" : "thinking"))), ...brief.map((l) => ({ text: l.text ?? l, face: l.face || "normal" }))]));
+    }
+    return [
+      h("h3", { id: "case-quest-title" }, item.title),
+      talking() ? h("p", { class: "case-hunt-tip" }, `委托人：${client.name}（${client.role}）`) : [
+        ...client.lines.map((l, i) => bubble(`${client.name}（${client.role}）`, l.text ?? l, "client", l.face || (i === 0 ? "normal" : "thinking"))),
+        ...brief.map((l) => bubble("路米", l.text ?? l, "guide", l.face)),
+      ],
+      game.puzzle.el,
+    ];
+  }
+
   function renderVerdict(item, game) {
     const verdict = item.game.verdict;
     const claim = verdict.claims[game.claim];
-    if (!claim) {
-      const stars = starsFor(game);
-      if (game.phase !== "closed") {
-        game.phase = "closed";
-        game.stars = stars;
-        saveStars(item.id, stars);
-        onSolved(item.id);
-        if (talking()) queueMicrotask(() => talk.say([clientLine(item, verdict.closing, "happy")]));
-      }
-      return [
-        h("div", { class: "case-closed" },
-          h("div", { class: "case-stamp", "aria-hidden": "true" }, "结案"),
-          h("p", { class: "case-kicker" }, "案例馆 · 结案"),
-          h("h3", { id: "case-quest-title" }, item.title),
-          h("p", { class: "case-stars", "aria-label": `评价 ${game.stars} 星` }, starText(game.stars)),
-          h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 零失误、不看提示可以拿满三星" : " · 完美破案！"),
-          !talking() && bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
-        ...extras(item),
-      ];
-    }
+    if (!claim) return closedView(item, game, starsFor(game));
     const pick = (evidence) => {
       if (provesClaim(claim, evidence.text)) {
         game.presented.push({ claim: claim.text, evidence: evidence.text });
@@ -375,6 +403,12 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
           toast(`报告里没有「${current.question.section}」，这条线索先跳过`);
           game.solved = true;
         }
+      }
+      if (item.game.puzzle) {
+        hud.hidden = true;
+        document.body.classList.remove("case-hud-on");
+        reportsEl.classList.remove("case-hunting");
+        return renderPuzzle(item, game);
       }
       renderHud();
       if (game.phase === "brief") return renderBrief(item, game);

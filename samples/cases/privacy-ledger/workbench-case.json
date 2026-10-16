@@ -162,6 +162,438 @@
           "face": "normal"
         }
       ]
+    },
+    "puzzle": {
+      "brief": [
+        {
+          "text": "这次没有现成的线索清单。先在小林的宿舍里四处看看，不对劲的地方都会记进笔记。",
+          "face": "happy"
+        },
+        {
+          "text": "然后去「代码搜索」里找证据，在「推理板」上把事情拼完整。",
+          "face": "normal"
+        }
+      ],
+      "scene": {
+        "place": "小林的宿舍",
+        "lead": "点房间里的东西看看。有用的发现会记进笔记，小词典也会多几个词。",
+        "items": [
+          {
+            "id": "laptop",
+            "label": "笔记本电脑",
+            "look": "laptop",
+            "at": [
+              38,
+              46
+            ],
+            "lines": [
+              {
+                "who": "client",
+                "text": "小林：小账本就开在这儿。一共就三个按钮：记一笔、看列表、同步。",
+                "face": "normal"
+              }
+            ],
+            "clue": {
+              "id": "buttons",
+              "title": "只有三个按钮",
+              "text": "界面上只有「记一笔」「看列表」「同步」。别的功能，用户根本点不到。",
+              "dict": [
+                {
+                  "zh": "同步",
+                  "code": "sync"
+                },
+                {
+                  "zh": "记一笔 / 看列表",
+                  "code": "add / list"
+                }
+              ]
+            }
+          },
+          {
+            "id": "phone",
+            "label": "手机",
+            "look": "phone",
+            "at": [
+              62,
+              56
+            ],
+            "lines": [
+              {
+                "text": "手机提醒：「小账本」今天在后台用了 1.2 MB 流量。",
+                "face": "thinking"
+              },
+              {
+                "who": "client",
+                "text": "小林：可我今天一次都没点过同步啊！",
+                "face": "surprised"
+              }
+            ],
+            "clue": {
+              "id": "traffic",
+              "title": "没点同步也在联网",
+              "text": "今天没点过同步，小账本却在后台用了流量。",
+              "dict": [
+                {
+                  "zh": "联网、往外发数据",
+                  "code": "fetch",
+                  "note": "JavaScript 里发网络请求最常用的写法"
+                },
+                {
+                  "zh": "网址",
+                  "code": "URL"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chat",
+            "label": "聊天记录",
+            "look": "chat",
+            "at": [
+              78,
+              30
+            ],
+            "lines": [
+              {
+                "text": "室友发来：「取件码收到啦，谢了！」",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "小林：那串取件码是我复制粘贴发给他的。……这跟小账本没关系吧？",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "copied",
+              "title": "最近复制过取件码",
+              "text": "小林昨天复制过一串取件码，粘贴发给了室友。",
+              "dict": [
+                {
+                  "zh": "剪贴板",
+                  "code": "clipboard"
+                },
+                {
+                  "zh": "读出文字",
+                  "code": "readText"
+                }
+              ]
+            }
+          },
+          {
+            "id": "clock",
+            "label": "挂钟",
+            "look": "clock",
+            "at": [
+              50,
+              6
+            ],
+            "lines": [
+              {
+                "who": "client",
+                "text": "小林：说起来，小账本开着的时候，电脑时不时会卡一下。大概……每半分钟一次？",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "every",
+              "title": "每半分钟卡一下",
+              "text": "小账本开着时，电脑大约每 30 秒卡一下，像是有什么在定时运行。",
+              "dict": [
+                {
+                  "zh": "每隔一段时间做一次",
+                  "code": "setInterval",
+                  "note": "时间单位是毫秒：1 秒 = 1000 毫秒"
+                }
+              ]
+            }
+          },
+          {
+            "id": "router",
+            "label": "路由器",
+            "look": "router",
+            "at": [
+              10,
+              28
+            ],
+            "lines": [
+              {
+                "text": "小林一打开小账本，路由器的灯就猛闪了一阵。一启动，就有东西发出去了。",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "startup",
+              "title": "一打开就联网",
+              "text": "小账本刚启动，网络灯就闪了。",
+              "dict": [
+                {
+                  "zh": "程序准备好的时候（启动时）",
+                  "code": "whenReady"
+                }
+              ]
+            }
+          },
+          {
+            "id": "policy",
+            "label": "隐私说明",
+            "look": "paper",
+            "at": [
+              22,
+              62
+            ],
+            "lines": [
+              {
+                "text": "这是小账本自带的「隐私说明」。写得可好听了，最后要拿证据一句句对质。",
+                "face": "normal"
+              }
+            ],
+            "clue": {
+              "id": "policy",
+              "title": "隐私说明",
+              "text": "① 只在点同步时联网 ② 同步只上传账目 ③ 不读剪贴板 ④ 统计完全匿名 ⑤ 除了同步，数据只留在你的电脑上",
+              "dict": [
+                {
+                  "zh": "电脑名",
+                  "code": "hostname"
+                },
+                {
+                  "zh": "用户名",
+                  "code": "username"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cat",
+            "label": "窗台上的猫",
+            "look": "cat",
+            "at": [
+              86,
+              66
+            ],
+            "lines": [
+              {
+                "who": "client",
+                "text": "小林：那是楼下的猫，天天来蹭空调。它没装小账本，放心。",
+                "face": "happy"
+              }
+            ]
+          }
+        ]
+      },
+      "terms": [
+        "ledger:add",
+        "ledger:list",
+        "ledger:sync",
+        "helper:peek-clipboard",
+        "peek",
+        "SYNC_URL",
+        "STATS_URL",
+        "setInterval",
+        "30000",
+        "lastClipboard",
+        "clipboard",
+        "readText",
+        "entries",
+        "reportDevice",
+        "whenReady",
+        "createWindow",
+        "hostname",
+        "username",
+        "platform",
+        "totalmem",
+        "refresh"
+      ],
+      "board": [
+        {
+          "title": "它正常在做的事",
+          "text": "用户点「同步」时，{ledger:sync} 把记下的账目发往 {SYNC_URL}。",
+          "explain": "推理成立：这是界面上看得见的正常功能。",
+          "hint": "搜 sync 看看。同步发去的网址存在一个常量里。",
+          "done": [
+            {
+              "text": "第一条成立。这是正常功能，没问题。",
+              "face": "happy"
+            }
+          ]
+        },
+        {
+          "title": "界面上看不见的事",
+          "text": "没有按钮的 {helper:peek-clipboard}，被 {setInterval} 每 {30000} 毫秒调用一次，把读到的剪贴板文字存进 {lastClipboard}。",
+          "explain": "推理成立：没有按钮的功能，被定时器悄悄调用。",
+          "hint": "先搜 setInterval，看它每次调用的是 window.helper 的哪个功能；再去 preload.js 里看这个功能对应哪个通道（搜 peek）。",
+          "done": [
+            {
+              "text": "第二条也成立。小林每复制一次，它就悄悄抄一份。",
+              "face": "thinking"
+            }
+          ]
+        },
+        {
+          "title": "一启动就做的事",
+          "text": "{reportDevice} 在 {whenReady} 之后马上执行，把 {hostname}、{username}，连同之前存下的 {lastClipboard}，一起发往 {STATS_URL}。",
+          "explain": "推理成立：设备信息和剪贴板，一启动就被发了出去。",
+          "hint": "搜 whenReady 看启动时做了什么，再搜 STATS_URL 看发了些什么。",
+          "done": [
+            {
+              "text": "三条全成立！把它们连起来：先偷偷抄下剪贴板，下次一启动，再连同电脑名一起发出去。",
+              "face": "surprised"
+            }
+          ]
+        }
+      ],
+      "toLab": [
+        {
+          "text": "不过推理只是推理。把小账本放进沙盒真跑一遍，亲眼看它发出去，才算铁证。",
+          "face": "happy"
+        }
+      ],
+      "labTasks": {
+        "boot": {
+          "text": "启动小账本，看它一启动做了什么。"
+        },
+        "sync": {
+          "text": "照常用一次：记一笔，再同步。对得上推理板第 1 条吗？"
+        },
+        "peek": {
+          "text": "复制一段文字，验证推理板第 2 条。",
+          "hint": "沙盒里时间快 10 倍，30000 毫秒在这里只要 3 秒。"
+        },
+        "again": {
+          "text": "验证推理板第 3 条：亲眼看到你复制的文字被发出去。",
+          "hint": "第一次启动时，lastClipboard 还是空的。它是定时器后来才存下的……那它什么时候才会被发走？"
+        }
+      },
+      "labEvidence": [
+        {
+          "id": "capture",
+          "text": "抓包：重启后发往 collect.quiet-stats.example 的请求里，带着你复制过的文字"
+        }
+      ],
+      "confront": {
+        "lead": "小林拿着隐私说明。选一句话，可以「追问」，也可以「出示证据」戳穿它。不是每句都是假的。",
+        "intro": [
+          {
+            "who": "client",
+            "text": "小林：可是……它的隐私说明白纸黑字写着呢！你看——",
+            "face": "thinking"
+          },
+          {
+            "text": "那就一句一句对质。哪句是假的，就把证据摆出来。",
+            "face": "happy"
+          }
+        ],
+        "objection": "小林：「这个……好像证明不了这句话吧？」",
+        "statements": [
+          {
+            "text": "「我们只在你点击『同步』时联网。」",
+            "accept": [
+              "reportDevice()",
+              "fetch(STATS_URL"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "小林：同步要联网，这很正常嘛。",
+                "face": "normal"
+              },
+              {
+                "text": "可你今天没点过同步，手机却说它用了流量……",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "小林：一启动就往外发？那这句根本是假的！",
+                "face": "surprised"
+              }
+            ],
+            "hint": "启动时马上执行的那个函数里，有没有联网？"
+          },
+          {
+            "text": "「同步只上传你记下的账目。」",
+            "press": [
+              {
+                "text": "同步的代码是 store.get(\"entries\")，发出去的确实只有账目。这一句是真的。",
+                "face": "normal"
+              }
+            ]
+          },
+          {
+            "text": "「我们不会读取你的剪贴板。」",
+            "accept": [
+              "clipboard.readText",
+              "helper.peek",
+              "peek-clipboard"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "小林：读剪贴板？它又没有这个按钮。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "小林：没有按钮……原来是背着我定时读的！",
+                "face": "surprised"
+              }
+            ],
+            "hint": "搜 clipboard。"
+          },
+          {
+            "text": "「统计数据完全匿名，认不出你是谁。」",
+            "accept": [
+              "os.hostname",
+              "userInfo"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "小林：匿名的话，应该就没事吧？",
+                "face": "normal"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "小林：XIAOLIN-PC、xiaolin……这不就是我吗！",
+                "face": "surprised"
+              }
+            ],
+            "hint": "统计里那个 device 都装了些什么？"
+          },
+          {
+            "text": "「除了同步，你的数据只会留在你自己的电脑上。」",
+            "accept": [
+              "抓包",
+              "clipboard: store.get"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "小林：剪贴板就算被存下来，也是存在我电脑上……",
+                "face": "normal"
+              },
+              {
+                "text": "lastClipboard 是存在本地了。可它会一直待在本地吗？",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "小林：我复制的取件码……真的被发到别人的服务器上了。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "动手实验里抓到的那个请求，就是最直接的证据。"
+          }
+        ]
+      }
     }
   },
   "scene": {

@@ -185,6 +185,7 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
     { id: "peek", text: "在右边「你的电脑」里复制一段文字，什么都别点，等一会儿。", hint: "报告说它每 30 秒偷偷调用一次。沙盒里时间走得快 10 倍，等 3 秒左右。" },
     { id: "again", text: "重启小账本，看它一启动发出去的包里多了什么。", hint: "剪贴板的内容先被存在本地，下次启动时跟着设备信息一起发走。" },
   ];
+  for (const task of tasks) Object.assign(task, lab.tasks?.[task.id]);
   function check() {
     if (boots >= 1) ticks.add("boot");
     if (log.some((r) => r.url === syncUrl && r.body.length)) ticks.add("sync");
@@ -341,6 +342,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     { id: "devtools", text: "按下开发者的快捷键，打开调试工具。", hint: "报告里那组全局快捷键：Ctrl+Shift+D。键盘按不出来，就用按键板上的那颗。" },
     { id: "pro", text: "在调试工具的控制台里，不花钱解锁专业版。", hint: "控制台里能直接用 preload 交给页面的 calc。试试 calc.unlock()，再用 calc.license() 看看。" },
   ];
+  for (const task of tasks) Object.assign(task, lab.tasks?.[task.id]);
   const praise = {
     egg: "冒出来了！一句藏起来的祝福，无伤大雅。",
     rainbow: "彩虹色！这就是著名的 Konami 秘籍。",

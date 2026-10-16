@@ -1,0 +1,65 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { caseCatalog } from "../lib/cases.mjs";
+import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks } from "../public/case-puzzle.js";
+
+const puzzles = caseCatalog().filter((c) => c.game?.puzzle);
+
+test("there is at least one puzzle case, and it has a lab", () => {
+  assert.ok(puzzles.length);
+  for (const item of puzzles) assert.ok(item.game.lab?.sources, item.id);
+});
+
+test("the shipped code has no developer comments", () => {
+  for (const item of puzzles) for (const line of shippedLines(item.game.lab.sources)) assert.ok(!/^\s*\/\//.test(line.text), `${item.id}: ${line.text}`);
+});
+
+test("every collectable name is in the shipped code, and every board answer can be collected", () => {
+  for (const item of puzzles) {
+    const { terms, board } = item.game.puzzle;
+    const code = shippedLines(item.game.lab.sources);
+    const found = new Set(code.flatMap((line) => termsIn(line.text, terms).filter((p) => typeof p !== "string").map((p) => p.term)));
+    for (const term of terms) assert.ok(found.has(term), `${item.id}: "${term}" can be clicked somewhere`);
+    for (const group of board) {
+      const answers = blanksOf(group.text);
+      for (const answer of answers) assert.ok(terms.includes(answer), `${item.id}: answer ${answer} is a term`);
+      assert.ok(checkGroup(group, answers).ok);
+      assert.equal(checkGroup(group, answers.map(() => "x")).wrong, answers.length);
+      assert.ok(group.hint && group.explain, `${item.id}: ${group.title} has a hint and an explanation`);
+    }
+  }
+});
+
+test("every word in the little dictionary finds something in the code", () => {
+  for (const item of puzzles) {
+    const code = shippedLines(item.game.lab.sources);
+    for (const thing of item.game.puzzle.scene.items) {
+      for (const entry of thing.clue?.dict || []) for (const word of entry.code.split(" / ")) assert.ok(searchCode(code, word).hits.length, `${item.id}: ${word}`);
+    }
+  }
+});
+
+test("every false claim can be broken by a line of shipped code or the lab's evidence, and true ones by nothing", () => {
+  for (const item of puzzles) {
+    const { confront, labEvidence = [] } = item.game.puzzle;
+    const evidence = [...shippedLines(item.game.lab.sources).map((l) => ({ text: l.text.trim() })), ...labEvidence];
+    const falseOnes = confront.statements.filter((s) => s.accept);
+    assert.ok(falseOnes.length >= 2 && falseOnes.length < confront.statements.length, `${item.id}: some claims are true`);
+    for (const statement of confront.statements) {
+      assert.ok(statement.press?.length, `${item.id}: ${statement.text} can be pressed`);
+      if (statement.accept) {
+        assert.ok(evidence.some((e) => breaks(statement, e)), `${item.id}: ${statement.text}`);
+        assert.ok(statement.broken?.length && statement.hint);
+      } else assert.ok(!evidence.some((e) => breaks(statement, e)));
+    }
+  }
+});
+
+test("search: Chinese finds nothing in the shipped code; too many hits are cut", () => {
+  const item = puzzles.find((c) => c.id === "privacy-ledger");
+  const code = shippedLines(item.game.lab.sources);
+  assert.equal(searchCode(code, "剪贴板").hits.length, 0);
+  assert.ok(searchCode(code, "clipboard").hits.length > 0);
+  assert.ok(searchCode(code, "e").more > 0);
+  assert.deepEqual(termsIn('"helper:peek-clipboard"', ["peek", "helper:peek-clipboard", "clipboard"]), ['"', { term: "helper:peek-clipboard" }, '"']);
+});
