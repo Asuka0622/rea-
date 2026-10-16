@@ -30,6 +30,29 @@ test("every collectable name is in the shipped code, and every board answer can 
   }
 });
 
+test("starting from the dictionary, searching (results show two lines either side) reaches every board answer", () => {
+  for (const item of puzzles) {
+    const { terms, board, scene } = item.game.puzzle;
+    const code = shippedLines(item.game.lab.sources);
+    const queue = scene.items.flatMap((t) => t.clue?.dict || []).flatMap((d) => d.code.split(" / "));
+    const searched = new Set();
+    const reached = new Set();
+    while (queue.length) {
+      const word = queue.shift();
+      if (searched.has(word)) continue;
+      searched.add(word);
+      for (const hit of searchCode(code, word).hits) {
+        for (let n = hit.n - 2; n <= hit.n + 2; n += 1) {
+          const text = hit.all[n - 1];
+          if (!text || /^\s*(\/\/|<!--)/.test(text)) continue;
+          for (const part of termsIn(text, terms)) if (typeof part !== "string" && !reached.has(part.term)) (reached.add(part.term), queue.push(part.term));
+        }
+      }
+    }
+    for (const group of board) for (const answer of blanksOf(group.text)) assert.ok(reached.has(answer), `${item.id}: ${answer} can be found by searching`);
+  }
+});
+
 test("every word in the little dictionary finds something in the code", () => {
   for (const item of puzzles) {
     const code = shippedLines(item.game.lab.sources);

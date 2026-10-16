@@ -8,6 +8,7 @@ import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
 import { renderSkillTree } from "./game-skilltree.js";
 import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
+import { createCaseSession } from "./case-session.js";
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
 const SPEAKERS = {
@@ -202,7 +203,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h("button", { class: "btn", type: "button", onclick: () => { setWebMode(true); sync(); } }, "用网页模式")),
   );
   const fade = h("div", { class: "game-fade", "aria-hidden": "true" });
-  const shell = h("div", { class: "game-shell", hidden: true }, stage, fade, hud, gameWindow, menu, dialogue, rotate);
+  // A puzzle case's full-screen views (notebook, laptop, confrontation): case-session.js fills it.
+  const caseLayer = h("div", { class: "case-layer" });
+  caseLayer.hidden = true;
+  const shell = h("div", { class: "game-shell", hidden: true }, stage, fade, hud, gameWindow, caseLayer, menu, dialogue, rotate);
   shell.hidden = true;
   document.body.append(shell);
 
@@ -706,7 +710,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
-  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id) };
+  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session };
   function walkTo(point, then) {
     if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];
@@ -755,7 +759,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
     lastTime = now;
-    if (!enabled || windowOpen || (stage.dataset.view !== "town" && !room)) return;
+    if (!enabled || windowOpen || caseBusy() || (stage.dataset.view !== "town" && !room)) return;
     let dx = 0;
     let dy = 0;
     if (!director.playing && closeupEl.hidden) {
@@ -861,6 +865,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const which = nearDoor;
     nearDoor = null;
     prompt.hidden = true;
+    if (caseRoom) {
+      if (which === "exit") return leaveCaseRoom();
+      if (which === "client") return caseRoom.session.talk();
+      return caseRoom.session.inspect(which.slice(5));
+    }
     if (which === "exit") goTown();
     else roomMenu(place);
   }
@@ -891,6 +900,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /** Indoors: "spot" (the room's work: opens its menu) or "exit" (back to town). */
   function showRoomPrompt() {
     const near = (p, r) => Math.hypot(player.x - p.x, player.y - p.y) < r;
+    if (caseRoom) return showCasePrompt(near);
     const id = !menu.hidden || !dialogue.hidden ? null : near(room.spot, 18) ? "spot" : near(room.exit, 16) ? "exit" : null;
     if (id === nearDoor) {
       if (id) positionPrompt();
@@ -900,6 +910,30 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     prompt.hidden = !id;
     if (!id) return;
     prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), id === "exit" ? "回小镇" : room.spotLabel || SCENES[place]?.purpose || "看看");
+    roomEl?.append(prompt);
+    positionPrompt();
+  }
+  /** In a case room: the nearest prop (by where you stand to look at it), the client, or the door. */
+  function showCasePrompt(near) {
+    const session = caseRoom.session;
+    const standAt = (thing) => ({ x: thing.stand?.[0] ?? thing.at[0], y: thing.stand?.[1] ?? Math.max(room.top + 4, thing.at[1] + 4) });
+    let id = null;
+    if (menu.hidden && dialogue.hidden && !session.busy) {
+      const things = room.items.map((thing) => ({ thing, d: Math.hypot(player.x - standAt(thing).x, player.y - standAt(thing).y) })).filter((t) => t.d < 22).sort((a, b) => a.d - b.d);
+      if (near(room.client, 22)) id = "client";
+      else if (things.length) id = `item:${things[0].thing.id}`;
+      else if (near(room.exit, 16)) id = "exit";
+    }
+    session.near(id?.startsWith("item:") ? id.slice(5) : null);
+    if (id === nearDoor) {
+      if (id) positionPrompt();
+      return;
+    }
+    nearDoor = id;
+    prompt.hidden = !id;
+    if (!id) return;
+    const thing = id.startsWith("item:") && room.items.find((t) => t.id === id.slice(5));
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), id === "exit" ? "回小镇" : id === "client" ? `和${caseRoom.item.game.client.name}说话` : session.label(thing));
     roomEl?.append(prompt);
     positionPrompt();
   }
@@ -1531,6 +1565,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* ----- navigation ----- */
   function goTown() {
     closeWindow();
+    if (caseRoom) {
+      caseRoom.session.close();
+      caseRoom = null;
+      sound.door();
+    }
     if (place) sound.door();
     arrive();
     if (place) lastPlace = place;
@@ -1574,6 +1613,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
     if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。这次先帮委托板上的三位吧！`, face: "thinking" }]);
+    // A puzzle case is played in the client's room itself.
+    const puzzleCase = cases().find((c) => c.id === id && c.game?.puzzle);
+    if (puzzleCase) return enterCaseRoom(puzzleCase);
     // A client's home: the case opens in the game window; closing it returns to this door.
     closeWindow();
     target = null;
@@ -1600,6 +1642,70 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       }
     }, 300);
   }
+
+  /* ----- a puzzle case in the client's room (case-session.js does the case itself) ----- */
+  const caseSessions = new Map(); // case id -> session, kept when the player steps out and back in
+  let caseRoom = null; // { id, item, session } while inside
+  const caseBusy = () => Boolean(caseRoom?.session.busy);
+  function enterCaseRoom(item) {
+    closeWindow();
+    arrive();
+    sound.door();
+    target = null;
+    keys.clear();
+    menu.hidden = true;
+    lastPlace = item.id;
+    place = null;
+    if (!caseSessions.has(item.id)) {
+      caseSessions.set(item.id, createCaseSession({
+        h, icon, item, layer: caseLayer,
+        ui: {
+          say: (texts) => {
+            dialogue.classList.add("over-window");
+            return sayAndWait(texts).then(() => dialogue.classList.remove("over-window"));
+          },
+          sound,
+          toast: (text) => toast(text),
+          has,
+          portraits: () => art().portraits,
+          onBusy: (busy) => {
+            keys.clear();
+            target = null;
+            prompt.hidden = true;
+            nearDoor = null;
+            hud.classList.toggle("under-case", busy);
+          },
+          onSolved: () => quests?.event("solve", item.id),
+        },
+      }));
+    }
+    caseRoom = { id: item.id, item, session: caseSessions.get(item.id) };
+    drawCaseRoom();
+    caseRoom.session.arrive();
+  }
+  function drawCaseRoom(keepPlace = false) {
+    water?.stop();
+    worldEl = null;
+    nearDoor = null;
+    const { item, session } = caseRoom;
+    const puzzle = item.game.puzzle;
+    stage.dataset.view = "case";
+    room = { ...ROOM_DEFAULT, ...puzzle.room, items: puzzle.scene.items };
+    if (!keepPlace) Object.assign(player, { x: room.spawn.x, y: room.spawn.y, walking: false });
+    target = null;
+    const picture = puzzle.scene.art && has(puzzle.scene.art);
+    const who = item.game.client;
+    roomEl = h("div", { class: "game-room case-room" },
+      picture ? h("img", { class: "game-bg", src: `/art/pixel/${puzzle.scene.art}.webp`, alt: "" }) : h("div", { class: `game-bg drawn case-room-bg ${puzzle.scene.look || "dorm"}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "bed" }), h("span", { class: "desk" }), h("span", { class: "shelf" }), h("span", { class: "rug" })),
+      ...puzzle.scene.items.map((thing) => session.propEl(thing)),
+      h("span", { class: `case-npc ${who.portrait}`, style: `left:calc(${room.client.x}px * var(--px));top:calc(${room.client.y}px * var(--px));z-index:${room.client.y}`, "aria-hidden": "true" }, h("span", { class: "game-sprite drawn" }, h("i", {}), h("b", {}), h("u", {})), h("small", {}, who.name)),
+      h("span", { class: "case-door", style: `left:calc(${room.exit.x}px * var(--px));top:calc(${room.exit.y}px * var(--px))`, "aria-hidden": "true" }),
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+    stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon("scan", { size: 16 }), puzzle.scene.place), session.hud);
+    placePlayer();
+    animate(0, 0, 0);
+  }
+  const leaveCaseRoom = () => goTown();
 
   function enter(id) {
     closeWindow();
@@ -1672,6 +1778,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keydown", (event) => {
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
     const key = event.key.toLowerCase();
+    // In a case room, the case's screens take their keys first (N: the notebook, Escape: close).
+    if (caseRoom && dialogue.hidden && caseRoom.session.key(event)) {
+      event.preventDefault();
+      return;
+    }
+    if (caseBusy()) {
+      if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && !event.target.closest?.("button,input")) {
+        event.preventDefault();
+        dialogue.click();
+      }
+      return;
+    }
     if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && closeupEl.hidden && !director.playing) {
       event.preventDefault();
       if (!keys.has(key)) startWalking();
@@ -1724,6 +1842,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (event.key === "Escape") {
       if (windowOpen) closeWindow();
       else if (place) goTown();
+      else if (caseRoom) return;
     } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && (!windowOpen || dialogue.classList.contains("over-window")) && (event.target === document.body || event.target.closest?.(".game-window"))) {
       event.preventDefault();
       dialogue.click();
@@ -1755,7 +1874,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     redraw() {
       if (!enabled) return;
       if (windowOpen) return;
-      if (place) drawRoom(place);
+      if (caseRoom) drawCaseRoom(true);
+      else if (place) drawRoom(place);
       else drawTown();
       if (!dialogue.hidden && lines.length) renderLine(lineIndex >= lines.length - 1 ? null : lineAfter);
     },

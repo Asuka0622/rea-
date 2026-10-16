@@ -168,7 +168,7 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
         scene.items.map((thing) => h("button", {
           type: "button",
           class: `pz-thing ${state.seen.has(thing.id) ? "seen" : ""}`,
-          style: `left:${thing.at[0]}%;top:${thing.at[1]}%`,
+          style: `left:${(thing.at[0] / 320) * 100}%;top:${Math.max(0, (thing.at[1] / 180) * 100 - 16)}%`,
           "aria-label": thing.label,
           onclick: async () => {
             const first = !state.seen.has(thing.id);

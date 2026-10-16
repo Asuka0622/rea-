@@ -51,6 +51,20 @@ export function createSound() {
     wrong: () => note(180, { length: 0.22, type: "sawtooth", volume: 0.25, slide: -60 }),
     unlock: () => [659, 784, 988, 1319].forEach((f, i) => note(f, { at: i * 0.08, length: 0.16, type: "triangle", volume: 0.4 })),
     click: () => note(880, { length: 0.03, volume: 0.15 }),
+    // Detective cases (case-session.js).
+    page: () => [0, 0.03, 0.06].forEach((at) => note(2400 + Math.random() * 600, { at, length: 0.025, type: "triangle", volume: 0.06 })),
+    key: () => note(1500 + Math.random() * 400, { length: 0.012, type: "square", volume: 0.05 }),
+    stamp: () => {
+      note(70, { length: 0.16, type: "triangle", volume: 0.8, slide: -30 });
+      note(220, { at: 0.02, length: 0.06, type: "square", volume: 0.25 });
+    },
+    beep: () => [1320, 1320].forEach((f, i) => note(f, { at: i * 0.12, length: 0.06, volume: 0.22 })),
+    clue: () => [784, 1047].forEach((f, i) => note(f, { at: i * 0.09, length: 0.1, type: "triangle", volume: 0.3 })),
+    objection: () => {
+      note(110, { length: 0.35, type: "sawtooth", volume: 0.5, slide: 40 });
+      [523, 784, 1047].forEach((f, i) => note(f, { at: 0.05 + i * 0.05, length: 0.3, type: "square", volume: 0.3 }));
+    },
+    tension: () => [196, 185, 196, 233].forEach((f, i) => note(f, { at: i * 0.22, length: 0.2, type: "triangle", volume: 0.25 })),
   };
 
   return {
