@@ -27,3 +27,14 @@ pwsh scripts/build-desktop.ps1 -PythonBase 'C:/实际Python目录'
 ```
 
 默认不包含大型游戏、ArtCraft 源码。可用 -IncludeGameSources / -IncludeArtcraft 增大包的示例范围。构建输出 ZIP 与 SHA-256 文件。启动与分析验证脚本为 scripts/test-desktop.mjs。
+
+## 预告测试版（demo）
+
+比特镇 · 侦探事务所的约 30 分钟试玩：序章、三份委托（小林的记账软件、朵朵的存档、小雨的计算器）、结案徽章和正式版预告。不含 Python，也不需要联网或安装分析引擎。
+
+```powershell
+pwsh scripts/build-desktop.ps1 -Demo
+node scripts/test-demo.mjs dist/BitTown-Detective-Demo-v<版本>-win-x64.zip
+```
+
+测试脚本会在 dist/test-demo 里解压、用包内的 Node 以 demo 模式启动（用户目录都指向测试文件夹），并用包内样本真跑三个案例，核对每条线索和质疑。玩家解压后双击「开始游戏.bat」即可。开发时可以在网址后加 `?demo` 预览。
