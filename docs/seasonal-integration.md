@@ -42,3 +42,8 @@ Browser plugin was not available. Playwright used a temporary Chromium binary ou
 6. The six original user reference images were not attached in this session. The synced artwork was inspected and the written direction followed, but direct six-image fidelity review is still outstanding.
 7. Mobile landscape was inspected. Portrait retains main's rotate-or-web-mode screen; iOS/Android devices and screen readers were not tested.
 8. Seasonal water currently stays in the painted baseline outside autumn; richer per-season animated water needs a matching seasonal animation source. This avoids visibly overlaying autumn river colors on winter/spring/summer.
+
+## 地图接入状态同步 — 2026-10-16
+
+本次状态核对从分支提交 `923b0771f120911d44ed2eff0489e079492a8b40` 开始。五区地图和地点标记已在 `public/game-shell.js` 中提供，但目前仍是区域卡片与地点标记驱动的跳转。独立的 `public/game-regions.js` 出入口、出生点与建筑门口数据尚未接入该运行时地图；跨区步行寻路、碰撞/遮挡重建和 NPC 地点绑定仍未完成。README 已同步记录这一边界。
+
