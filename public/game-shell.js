@@ -919,9 +919,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const standAt = (thing) => ({ x: thing.stand?.[0] ?? thing.at[0], y: thing.stand?.[1] ?? Math.max(room.top + 4, thing.at[1] + 4) });
     let id = null;
     if (menu.hidden && dialogue.hidden && !session.busy) {
-      const things = room.items.map((thing) => ({ thing, d: Math.hypot(player.x - standAt(thing).x, player.y - standAt(thing).y) })).filter((t) => t.d < 22).sort((a, b) => a.d - b.d);
-      if (near(room.client, 22)) id = "client";
-      else if (things.length) id = `item:${things[0].thing.id}`;
+      // Whatever is closest: a prop (measured from where you stand to look at it) or the client.
+      const dist = (p) => Math.hypot(player.x - p.x, player.y - p.y);
+      const candidates = [...room.items.map((thing) => ({ id: `item:${thing.id}`, d: dist(standAt(thing)) })), { id: "client", d: dist(room.client) }].filter((c) => c.d < 22).sort((a, b) => a.d - b.d);
+      if (candidates.length) id = candidates[0].id;
       else if (near(room.exit, 16)) id = "exit";
     }
     session.near(id?.startsWith("item:") ? id.slice(5) : null);

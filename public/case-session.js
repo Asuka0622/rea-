@@ -135,6 +135,8 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     const paint = () => {
       body.replaceChildren(...{ clues: cluesPage, dict: dictPage, evidence: evidencePage, board: () => boardPage(say) }[state.page]());
       book.querySelectorAll(".nb-tab").forEach((tab) => tab.classList.toggle("on", tab.dataset.page === state.page));
+      const count = book.querySelector('.nb-tab[data-page="board"] small');
+      if (count) count.textContent = `${state.solved.size}/${puzzle.board.length}`;
     };
     const book = h("div", { class: "nb", role: "dialog", "aria-label": "侦探手账" },
       h("div", { class: "nb-cover-edge", "aria-hidden": "true" }),
@@ -172,6 +174,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
 
   /* ----- the deduction page: drag name cards into the sentences ----- */
   let picked = null; // a name card picked by click (for players who do not drag)
+  let stamped = null; // the group stamped just now: only its stamp comes down with a thud
   function boardPage(sayEl) {
     const cards = h("div", { class: "nb-cards" }, [...state.words].map((w) => {
       const card = h("button", { type: "button", class: `nb-card ${picked === w ? "picked" : ""}`, "data-word": w }, w);
@@ -207,7 +210,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       return h("div", { class: `nb-deduce ${done ? "done" : ""}` },
         h("b", {}, `${"①②③④⑤"[g]} ${group.title}`),
         h("p", {}, sentence),
-        done ? h("span", { class: "nb-stamp" }, "成立") : h("button", { class: "nb-seal", type: "button", onclick: (e) => seal(g, e.currentTarget.closest(".nb-deduce"), sayEl) }, "盖章"));
+        done ? h("span", { class: `nb-stamp ${stamped === g ? "fresh" : ""}` }, "成立") : h("button", { class: "nb-seal", type: "button", onclick: (e) => seal(g, e.currentTarget.closest(".nb-deduce"), sayEl) }, "盖章"));
     });
     return [
       h("p", { class: "nb-note" }, "把下面的名字卡拖进句子的空格里（也可以先点卡片，再点空格）。一条全对才能盖上章。"),
@@ -268,7 +271,9 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     }
     state.solved.add(g);
     sound.stamp();
+    stamped = g;
     book().repaint();
+    stamped = null;
     sayEl.textContent = `路米：${group.explain}`;
     if (state.solved.size === puzzle.board.length) {
       state.phase = "verify";

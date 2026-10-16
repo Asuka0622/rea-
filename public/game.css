@@ -710,7 +710,8 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .nb-slot.over {background:#e8c270;}
 .nb-slot:disabled {cursor:default;}
 .nb-seal {align-self:flex-end;padding:4px 16px;font:700 14px var(--font-display,inherit);color:#fbf6e6;background:#a6463c;border:2px solid #5a1f19;border-radius:4px;cursor:pointer;}
-.nb-stamp {position:absolute;right:16px;top:8px;padding:2px 12px;font:900 22px var(--font-display,inherit);color:#a6463c;border:4px double #a6463c;transform:rotate(-12deg);opacity:.9;animation:case-stamp .35s cubic-bezier(.2,1.6,.4,1);}
+.nb-stamp {position:absolute;right:16px;top:8px;padding:2px 12px;font:900 22px var(--font-display,inherit);color:#a6463c;border:4px double #a6463c;transform:rotate(-12deg);opacity:.9;}
+.nb-stamp.fresh {animation:case-stamp .35s cubic-bezier(.2,1.6,.4,1);}
 @keyframes case-stamp {from {transform:rotate(-12deg) scale(2.2);opacity:0;}}
 .nb-cards {display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:rgba(107,61,36,.12);border:2px dashed #a57a4a;}
 .nb-card {padding:3px 10px;font:600 13px var(--font-mono);color:#e8c270;background:#1d2433;border:2px solid #0d1119;box-shadow:0 2px 0 #0d1119;cursor:grab;touch-action:none;user-select:none;}

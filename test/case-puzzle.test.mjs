@@ -53,6 +53,15 @@ test("starting from the dictionary, searching (results show two lines either sid
   }
 });
 
+test("in the room, every prop and the client can be walked up to on its own", () => {
+  for (const item of puzzles) {
+    const { room, scene } = item.game.puzzle;
+    const spots = [...scene.items.map((t) => ({ id: t.id, x: t.stand[0], y: t.stand[1] })), { id: "client", ...room.client }];
+    for (const spot of spots) assert.ok(spot.y >= room.top && spot.y <= 178 && spot.x > 14 && spot.x < 306, `${item.id}: ${spot.id} stands on the floor`);
+    for (const a of spots) for (const b of spots) if (a.id < b.id) assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 24, `${item.id}: ${a.id} and ${b.id} are too close`);
+  }
+});
+
 test("every word in the little dictionary finds something in the code", () => {
   for (const item of puzzles) {
     const code = shippedLines(item.game.lab.sources);
