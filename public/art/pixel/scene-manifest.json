@@ -1,0 +1,34 @@
+{
+  "style": "Original crisp pixel-art headers; nearest-neighbor resampling",
+  "runtimeSize": [
+    384,
+    64
+  ],
+  "assets": [
+    {
+      "id": "office",
+      "file": "scene-office.png",
+      "place": "侦探事务所"
+    },
+    {
+      "id": "library",
+      "file": "scene-library.png",
+      "place": "小镇图书馆"
+    },
+    {
+      "id": "workshop",
+      "file": "scene-workshop.png",
+      "place": "工具铺"
+    },
+    {
+      "id": "post",
+      "file": "scene-post.png",
+      "place": "驿站"
+    },
+    {
+      "id": "clinic",
+      "file": "scene-clinic.png",
+      "place": "小镇诊所"
+    }
+  ]
+}

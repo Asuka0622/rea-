@@ -1,0 +1,124 @@
+{
+  "style": "pixel art with transparent backgrounds; displayed with pixelated sampling",
+  "grid": [
+    4,
+    3
+  ],
+  "cycleOrder": [
+    "frame-1",
+    "frame-2",
+    "frame-3",
+    "frame-4"
+  ],
+  "animals": [
+    {
+      "id": "cat",
+      "file": "animal-cat.png",
+      "frameSize": [
+        18,
+        18
+      ],
+      "region": "center",
+      "poses": "4-frame row cycles: sitting-tail-sway, walking, sleeping",
+      "sourceFile": "public/art/source/animal-cat-actions-generated.png",
+      "actions": [
+        "sitting-tail-sway",
+        "walking",
+        "sleeping"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 2
+    },
+    {
+      "id": "dog",
+      "file": "animal-dog.png",
+      "frameSize": [
+        20,
+        20
+      ],
+      "region": "homes",
+      "poses": "4-frame row cycles: running, sitting, tail-wag",
+      "sourceFile": "public/art/source/animal-dog-actions-generated.png",
+      "actions": [
+        "running",
+        "sitting",
+        "tail-wag"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 1
+    },
+    {
+      "id": "chicken",
+      "file": "animal-chicken.png",
+      "frameSize": [
+        12,
+        12
+      ],
+      "region": "homes",
+      "poses": "4-frame row cycles: pecking, standing, walking",
+      "sourceFile": "public/art/source/animal-chicken-actions-generated.png",
+      "actions": [
+        "pecking",
+        "standing",
+        "walking"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 2
+    },
+    {
+      "id": "duck",
+      "file": "animal-duck.png",
+      "frameSize": [
+        22,
+        11
+      ],
+      "region": "south",
+      "poses": "4-frame row cycles: swimming, walking, wing-flap",
+      "sourceFile": "public/art/source/animal-duck-actions-generated.png",
+      "actions": [
+        "swimming",
+        "walking",
+        "wing-flap"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 1
+    },
+    {
+      "id": "pigeon",
+      "file": "animal-pigeon.png",
+      "frameSize": [
+        18,
+        15
+      ],
+      "region": "center",
+      "poses": "4-frame row cycles: standing, flying, pecking",
+      "sourceFile": "public/art/source/animal-pigeon-actions-generated.png",
+      "actions": [
+        "standing",
+        "flying",
+        "pecking"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 1
+    },
+    {
+      "id": "butterfly",
+      "file": "animal-butterfly.png",
+      "frameSize": [
+        14,
+        14
+      ],
+      "region": "south",
+      "poses": "4-frame row cycles: wing-flap, hovering, perched",
+      "sourceFile": "public/art/source/animal-butterfly-actions-generated.png",
+      "actions": [
+        "wing-flap",
+        "hovering",
+        "perched"
+      ],
+      "framesPerAction": 4,
+      "reactionRow": 2
+    }
+  ],
+  "integration": "Four-frame row 1 loops by default; clicking an animal briefly switches to its reactionRow, then returns to the idle loop. Sprite sampling is nearest-neighbor."
+}
