@@ -253,7 +253,8 @@ const server = http.createServer(async (req, res) => {
       return res.end("not found");
     }
     let body = fs.readFileSync(file);
-    if (name === "index.html") body = Buffer.from(body.toString("utf8").replace("__WORKBENCH_TOKEN__", TOKEN));
+    // REA_DEMO=1 starts the 预告测试版 (the demo build sets it in its launcher).
+    if (name === "index.html") body = Buffer.from(body.toString("utf8").replace("__WORKBENCH_TOKEN__", TOKEN).replace("__WORKBENCH_DEMO__", process.env.REA_DEMO === "1" ? "1" : "0"));
     // Fonts ship with the workbench (Google Fonts is unreachable for many users in mainland China); they never change.
     const cache = name.startsWith("fonts/") ? "public, max-age=31536000, immutable" : "no-store";
     res.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream", "Cache-Control": cache });

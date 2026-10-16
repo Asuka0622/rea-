@@ -6,7 +6,11 @@ import { sceneBanner } from "./scenes.js";
 // 案例馆: pick a case, analyse its sample, then investigate the report question by question.
 // Beginners answer one question at a time with hints that jump to the right report section;
 // professionals see the findings and explanations directly. A "stories" case is read, not analysed.
-export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog, onSolved = () => {} }) {
+export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog, onSolved = () => {}, talk = null, demo = null }) {
+  // 预告测试版: only demo.cases can be taken, numbered 1–3 in that order; the rest open in the full game.
+  const inDemo = (item) => !demo || demo.cases.includes(item.id);
+  const caseNo = (item) => (demo && inDemo(item) ? demo.cases.indexOf(item.id) + 1 : item.order);
+  const caseName = (item) => (demo ? `委托${"一二三"[caseNo(item) - 1] || caseNo(item)}` : `案例 ${item.order}`);
   const library = document.querySelector("#case-library");
   const list = document.querySelector("#case-list");
   const quest = document.querySelector("#case-quest");
@@ -17,7 +21,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   let reading = null; // id of the stories case being read
   let portraits = new Set();
   let pixelArt = new Set();
-  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits, onSolved });
+  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits, onSolved, talk });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));
@@ -70,16 +74,18 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   function renderList() {
     const stars = savedStars();
     list.replaceChildren(
-      ...catalog.map((item) =>
+      ...[...catalog].sort((a, b) => (demo ? Number(!inDemo(a)) - Number(!inDemo(b)) || caseNo(a) - caseNo(b) : 0)).map((item) =>
         h(
           "article",
           { class: "case-card", role: "listitem" },
-          h("div", { class: "case-card-head" }, h("span", { class: "case-no" }, String(item.order).padStart(2, "0")), h("h3", {}, item.title), stars[item.id] && h("span", { class: "case-card-stars", "aria-label": `最好成绩 ${stars[item.id]} 星` }, starText(stars[item.id]))),
+          h("div", { class: "case-card-head" }, h("span", { class: "case-no" }, inDemo(item) ? String(caseNo(item)).padStart(2, "0") : "—"), h("h3", {}, item.title), stars[item.id] && h("span", { class: "case-card-stars", "aria-label": `最好成绩 ${stars[item.id]} 星` }, starText(stars[item.id]))),
           item.game && h("p", { class: "case-mode-tag" }, icon("spark", { size: 14 }), "侦探模式：在报告里亲手找证据"),
           h("p", { class: "case-story" }, item.story),
           h("div", { class: "case-skills" }, item.skills.map((skill) => h("span", { class: "tag" }, skill))),
           item.requires?.length && h("p", { class: "case-requires" }, icon("engines", { size: 15 }), `需要先安装分析引擎：${item.requires.map((id) => ENGINE_NAMES[id] || id).join(" + ")}`),
-          item.type === "stories"
+          !inDemo(item)
+            ? h("button", { class: "btn", type: "button", disabled: true }, "正式版开放")
+            : item.type === "stories"
             ? h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("learn", { size: 16 }), "阅读故事")
             : h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("scan", { size: 16 }), "开始调查"),
         ),
@@ -187,7 +193,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   function sceneOf(item) {
     const scene = item.scene;
     if (!scene) return null;
-    return sceneBanner({ h, icon, id: `case-${item.id}`, place: scene.place, purpose: `案例 ${item.order}`, iconName: item.type === "stories" ? "learn" : "scan", art: `case-scene-${item.id}`, look: scene.look, sprites: [["lumi", "26%"], ...(scene.client ? [[scene.client, "70%"]] : [])], have: pixelArt, compact: true });
+    return sceneBanner({ h, icon, id: `case-${item.id}`, place: scene.place, purpose: caseName(item), iconName: item.type === "stories" ? "learn" : "scan", art: `case-scene-${item.id}`, look: scene.look, sprites: [["lumi", "26%"], ...(scene.client ? [[scene.client, "70%"]] : [])], have: pixelArt, compact: true });
   }
 
   function lab(item) {

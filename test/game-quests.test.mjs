@@ -124,3 +124,19 @@ test("lines written for a difficulty only use the known levels", () => {
     }
   }
 });
+
+test("the demo runs through three cases that need no extra analysis engine, then ends with the badge", async () => {
+  const { DEMO_QUEST, DEMO_CASES } = await import("../public/game-quests.js");
+  const catalog = caseCatalog();
+  for (const id of DEMO_CASES) {
+    const item = catalog.find((c) => c.id === id);
+    assert.ok(item?.game, `${id} is a detective case`);
+    assert.ok(!item.requires?.length, `${id} needs no engine`);
+  }
+  const quests = createQuests([DEMO_QUEST], { key: "test-demo" });
+  assert.equal(quests.event("enter", "home"), true);
+  for (const id of DEMO_CASES) assert.equal(quests.event("solve", id), true, id);
+  assert.equal(quests.event("enter", "home"), true);
+  assert.equal(quests.current(), null);
+  assert.deepEqual(quests.badges().map((b) => b.id), ["rea-detective"]);
+});

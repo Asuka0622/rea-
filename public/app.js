@@ -7,10 +7,12 @@ import { mountReplicate } from "./replicate.js";
 import { mountCases } from "./cases.js";
 import { mountScenes } from "./scenes.js";
 import { createGameShell } from "./game-shell.js";
-import { createQuests } from "./game-quests.js";
+import { createQuests, DEMO_QUEST, DEMO_CASES } from "./game-quests.js";
 
 // The player's quest progress and difficulty (game mode); cases report solves to it.
-const quests = createQuests();
+// 预告测试版: started with REA_DEMO=1 (or ?demo to try it): the detective agency and three cases only.
+const DEMO = document.querySelector('meta[name="workbench-demo"]')?.content === "1" || new URLSearchParams(location.search).has("demo");
+const quests = DEMO ? createQuests([DEMO_QUEST], { key: "rea-game-progress-demo" }) : createQuests();
 import { beginnerReading } from "./report-reading.js";
 import { recommendExercise } from "./exercise-recommendation.js";
 import {aiServiceGuide,preferredDomesticClient,overseasAccountClient,prioritizeDomesticClients} from "./ai-services.js";
@@ -1289,7 +1291,7 @@ const adventure = createAdventure({
   notice: toast,
 });
 const replicate = mountReplicate({ h, icon, toast, copy, api, isPro, getReports: () => current?.reports || [], getTarget: () => current?.target || "", webAis: WEB_AIS });
-const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open(), onCatalog: () => gameShell?.redraw(), onSolved: (id) => quests.event("solve", id) });
+const cases = mountCases({ h, icon, api, toast, analyze: (path) => runAnalysis(path), busy: () => adventure.busy, showHome: () => showTab("home"), showEngines: () => showTab("engines"), getReports: () => current?.reports || [], getTarget: () => current?.target || "", isPro, openReplicate: () => replicate.open(), onCatalog: () => gameShell?.redraw(), onSolved: (id) => quests.event("solve", id), talk: { can: () => Boolean(gameShell?.canTalk()), say: (lines) => gameShell.talk(lines) }, demo: DEMO ? { cases: DEMO_CASES } : null });
 const gameWorkshop=mountGameCases({h,api,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 const modelWorkshop=mountModelMods({h,api,isPro,isSimple,analyze:runAnalysis,busy:()=>adventure.busy,toast,showHome:()=>showTab("home")});
 hydrateIcons();
@@ -1324,7 +1326,7 @@ loadScenes();
 
 /* ================= game shell ================= */
 // Beginners get the town-map game; professionals and "网页模式" keep the plain page.
-var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id), quests });
+var gameShell = createGameShell({ h, icon, showTab, isPro, setMode: (next) => applyMode(next, { announce: true }), art: () => artSets, cases: () => cases.catalog(), startCase: (id) => cases.startById(id), quests, demo: DEMO ? { cases: DEMO_CASES } : null });
 document.querySelector("#game-toggle")?.addEventListener("click", () => gameShell.leaveWebMode());
 gameShell.sync();
 // The map guides first-time users; the full guide is available on demand.

@@ -1,8 +1,11 @@
 param(
   [string]$NodeVersion = '24.21.0',
-  [Parameter(Mandatory=$true)][string]$PythonBase,
+  # Required for the full build (Unity reading); the demo needs no Python.
+  [string]$PythonBase = '',
   [switch]$IncludeArtcraft,
-  [switch]$IncludeGameSources
+  [switch]$IncludeGameSources,
+  # 预告测试版: the game's detective agency and three cases (about 30 minutes); starts with REA_DEMO=1.
+  [switch]$Demo
 )
 $ErrorActionPreference = 'Stop'
 $reaBuildRoot = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
@@ -10,12 +13,15 @@ $reaBuildVersion = (Get-Content -LiteralPath (Join-Path $reaBuildRoot 'package.j
 if ($reaBuildVersion -notmatch '^\d+\.\d+\.\d+$' -or $NodeVersion -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid release version' }
 $reaBuildDist = [IO.Path]::GetFullPath((Join-Path $reaBuildRoot 'dist'))
 $reaBuildCache = Join-Path $reaBuildDist '.cache'
-$reaBuildName = "REA-Workbench-v$reaBuildVersion-win-x64"
+$reaBuildName = if ($Demo) { "BitTown-Detective-Demo-v$reaBuildVersion-win-x64" } else { "REA-Workbench-v$reaBuildVersion-win-x64" }
 $reaBuildStage = [IO.Path]::GetFullPath((Join-Path $reaBuildDist $reaBuildName))
 if (-not $reaBuildStage.StartsWith($reaBuildDist + [IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) { throw 'Build stage must remain within dist' }
-$PythonBase = [IO.Path]::GetFullPath($PythonBase)
 $reaUnityPackages = Join-Path $reaBuildRoot 'data\tools\unitypy\venv\Lib\site-packages'
-if (-not (Test-Path -LiteralPath (Join-Path $PythonBase 'python312.dll')) -or -not (Test-Path -LiteralPath (Join-Path $reaUnityPackages 'UnityPy'))) { throw 'CPython 3.12 and project UnityPy environment are required; see docs/unity/README.md' }
+if (-not $Demo) {
+  if (-not $PythonBase) { throw '-PythonBase is required for the full build (or build the demo with -Demo)' }
+  $PythonBase = [IO.Path]::GetFullPath($PythonBase)
+  if (-not (Test-Path -LiteralPath (Join-Path $PythonBase 'python312.dll')) -or -not (Test-Path -LiteralPath (Join-Path $reaUnityPackages 'UnityPy'))) { throw 'CPython 3.12 and project UnityPy environment are required; see docs/unity/README.md' }
+}
 New-Item -ItemType Directory -Force -Path $reaBuildCache | Out-Null
 if (Test-Path -LiteralPath $reaBuildStage) { Remove-Item -LiteralPath $reaBuildStage -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $reaBuildStage | Out-Null
@@ -50,7 +56,8 @@ try {
   }
 } finally { $reaNodeZip.Dispose() }
 
-# Portable CPython: relative isolated search paths, no venv or developer-machine paths.
+# Portable CPython: relative isolated search paths, no venv or developer-machine paths. (Not in the demo.)
+if (-not $Demo) {
 $reaPython = Join-Path $reaRuntime 'python'
 New-Item -ItemType Directory -Force -Path $reaPython | Out-Null
 foreach ($reaPythonFile in @('python.exe','python3.dll','python312.dll','vcruntime140.dll','vcruntime140_1.dll','LICENSE.txt')) {
@@ -68,14 +75,23 @@ foreach ($reaPackage in Get-ChildItem -LiteralPath $reaUnityPackages) {
   if ($reaPackage.Name -ne '__pycache__' -and $reaPackage.Name -notmatch '^(pip|setuptools)(-|$)') { Copy-Item -LiteralPath $reaPackage.FullName -Destination $reaPackagedPackages -Recurse }
 }
 [IO.File]::WriteAllText((Join-Path $reaPython 'python312._pth'),((@('.','DLLs','Lib','Lib/site-packages','import site') -join [Environment]::NewLine) + [Environment]::NewLine),[Text.UTF8Encoding]::new($false))
+}
 
 # Application and small educational examples. No user data, credentials or extracted artwork.
-foreach ($reaItem in @('server.mjs','mcp-proxy.mjs','package.json','package-lock.json','README.md','RELEASE.md','LICENSE','THIRD-PARTY-NOTICES.md','lib','public','docs','node_modules')) {
+$reaAppItems = @('server.mjs','mcp-proxy.mjs','package.json','package-lock.json','README.md','RELEASE.md','LICENSE','THIRD-PARTY-NOTICES.md','lib','public','node_modules')
+if (-not $Demo) { $reaAppItems += 'docs' }
+foreach ($reaItem in $reaAppItems) {
   Copy-Item -LiteralPath (Join-Path $reaBuildRoot $reaItem) -Destination $reaBuildStage -Recurse
+}
+# Original portrait art and art sources are not shipped (the game uses the prepared faces).
+foreach ($reaArtSource in @('public\art\portraits','public\art\source')) {
+  $reaArtPath = Join-Path $reaBuildStage $reaArtSource
+  if (Test-Path -LiteralPath $reaArtPath) { Remove-Item -LiteralPath $reaArtPath -Recurse -Force }
 }
 $reaSamples = Join-Path $reaBuildStage 'samples'
 New-Item -ItemType Directory -Force -Path $reaSamples | Out-Null
-foreach ($reaItem in @('notes-demo','game-mods')) {
+# The case library (small: the detective cases' sample programs) goes in every build.
+foreach ($reaItem in @('notes-demo','game-mods','cases')) {
   $reaSampleDir = Join-Path $reaSamples $reaItem
   New-Item -ItemType Directory -Force -Path $reaSampleDir | Out-Null
   foreach ($reaSampleEntry in Get-ChildItem -LiteralPath (Join-Path $reaBuildRoot "samples\$reaItem")) {
@@ -101,6 +117,37 @@ New-Item -ItemType Directory -Force -Path $reaPackagedScripts | Out-Null
 foreach ($reaScript in @('inspect-unity.py','setup-unity.ps1','prepare-artcraft.ps1','prepare-game-sources.ps1')) {
   Copy-Item -LiteralPath (Join-Path $reaBuildRoot ("scripts\"+$reaScript)) -Destination $reaPackagedScripts
 }
+if ($Demo) {
+$reaLauncher = @'
+@echo off
+chcp 65001 >nul
+title 比特镇 · 侦探事务所 预告测试版
+cd /d "%~dp0"
+set "REA_WORKBENCH_HOME=%~dp0data"
+set "REA_DEMO=1"
+if not exist "runtime\node.exe" (
+  echo 请先完整解压，再打开此文件。
+  pause
+  exit /b 1
+)
+echo 正在启动预告测试版，浏览器会自动打开。游戏期间请保持本窗口打开。
+"runtime\node.exe" server.mjs
+pause
+'@
+[IO.File]::WriteAllText((Join-Path $reaBuildStage '开始游戏.bat'),($reaLauncher -replace "`r?`n","`r`n"),[Text.UTF8Encoding]::new($false))
+$reaInstructions = @"
+比特镇 · 侦探事务所 预告测试版 v$reaBuildVersion · Windows x64 免安装
+
+1. 完整解压到一个可写的文件夹。
+2. 双击「开始游戏.bat」，浏览器会自动打开游戏。
+3. 大约 30 分钟：跟着路米认识比特镇，接下三份委托，把可疑的软件拆开查清楚。
+4. 玩完关闭启动窗口即可。进度保存在浏览器里。
+
+键盘：WASD 或方向键走路，E 进门，M 地图，J 任务日志，K 技能和成就。鼠标右键点地面也能走过去。
+游戏里分析的都是自带的教学示例，不会读取你电脑上的其他文件，不需要联网。
+"@
+[IO.File]::WriteAllText((Join-Path $reaBuildStage '使用说明.txt'),($reaInstructions -replace "`r?`n","`r`n"),[Text.UTF8Encoding]::new($true))
+} else {
 $reaLauncher = @'
 @echo off
 chcp 65001 >nul
@@ -133,7 +180,8 @@ ArtCraft 和四个游戏案例的大型源码没有放进最小包，可按 RELE
 Unity 当前提供贴图与 OBJ 网格导出，不包含完整工程、骨骼动画或游戏内修改验证。
 "@
 [IO.File]::WriteAllText((Join-Path $reaBuildStage '使用说明.txt'),($reaInstructions -replace "`r?`n","`r`n"),[Text.UTF8Encoding]::new($true))
-$reaRuntimeInfo = @{node=$NodeVersion;nodeArchiveSHA256=$reaNodeExpected;python='3.12.14';unitypy='1.25.4';gameSources=[bool]$IncludeGameSources;artcraftSources=[bool]$IncludeArtcraft}
+}
+$reaRuntimeInfo = @{node=$NodeVersion;nodeArchiveSHA256=$reaNodeExpected;python=$(if ($Demo) { $null } else { '3.12.14' });unitypy=$(if ($Demo) { $null } else { '1.25.4' });gameSources=[bool]$IncludeGameSources;artcraftSources=[bool]$IncludeArtcraft;demo=[bool]$Demo}
 $reaRuntimeInfo | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $reaBuildStage 'runtime-info.json') -Encoding utf8
 $reaBuildArchive = Join-Path $reaBuildDist "$reaBuildName.zip"
 if (Test-Path -LiteralPath $reaBuildArchive) { Remove-Item -LiteralPath $reaBuildArchive }

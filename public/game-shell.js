@@ -98,7 +98,9 @@ const EXTRA_LINES = {
   doctor: "我来给你的装备做个检查。",
 };
 
-export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null }) {
+export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null, demo = null }) {
+  // 预告测试版: only demo.cases can be taken; the other clients' homes say they open in the full game.
+  const inDemo = (id) => !demo || demo.cases.includes(id);
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -176,6 +178,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能·成就（K）"));
   hud.append(soundButton);
+  if (demo) hud.append(h("span", { class: "game-demo-tag", title: "预告测试版：侦探事务所和三份委托，约 30 分钟" }, "预告测试版"));
   const watchButton = h("button", { class: "btn small game-watch", type: "button", onclick: () => travelHome(), title: "按一下怀表，回比特镇的钟楼" }, "⌚ 回比特镇");
   watchButton.hidden = true;
   hud.append(watchButton);
@@ -370,11 +373,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
   // A line is "text" or { text, face }: the face picks Lumi's expression for that line.
-  const portrait = (face = "normal", who = "lumi") => {
-    const name = [`${who}-${face}`, `${who}-normal`].find((n) => art().portraits.has(n));
-    if (name) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${name}.webp`, alt: "", width: 160, height: 160 }));
+  const portrait = (face = "normal", who = "lumi", name = "") => {
+    const file = [`${who}-${face}`, `${who}-normal`].find((n) => art().portraits.has(n));
+    if (file) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${file}.webp`, alt: "", width: 160, height: 160 }));
     // Someone without a portrait yet: a wooden frame with the first character of their name.
-    if (who !== "lumi") return h("div", { class: "case-portrait game-portrait-stand-in", "aria-hidden": "true" }, h("span", {}, (SPEAKERS[who] || who).slice(0, 1)));
+    if (who !== "lumi") return h("div", { class: "case-portrait game-portrait-stand-in", "aria-hidden": "true" }, h("span", {}, (name || SPEAKERS[who] || who).slice(0, 1)));
     return h("div", { class: "guide-avatar", "aria-hidden": "true" }, h("span", {}));
   };
 
@@ -416,7 +419,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     dialogue.hidden = false;
     const text = h("p", { "aria-label": line.text });
     const more = !last && h("span", { class: "game-more" }, "点击继续");
-    dialogue.replaceChildren(portrait(line.face, line.who), h("div", { class: "case-say-text" }, h("b", {}, SPEAKERS[line.who || "lumi"] || line.who), text, more || ""));
+    dialogue.replaceChildren(portrait(line.face, line.who, line.name), h("div", { class: "case-say-text" }, h("b", {}, line.name || SPEAKERS[line.who || "lumi"] || line.who), text, more || ""));
     stopTyping();
     if (reducedMotion) text.textContent = line.text;
     else {
@@ -495,7 +498,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (spotData(id)?.placeholder) return spotData(id).placeholder;
     if (spotData(id)?.label) return spotData(id).label;
     const item = cases().find((c) => c.id === id);
-    return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : `委托 · 案例 ${item?.order ?? ""}` };
+    if (item && !inDemo(id)) return { place: item.scene?.place || item.title || id, purpose: "正式版开放" };
+    const order = demo ? demo.cases.indexOf(id) + 1 : item?.order;
+    return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : (demo ? `委托${"一二三"[order - 1] || order}` : `委托 · 案例 ${order ?? ""}`) };
   }
   const doorOf = (id) => spotData(id).door;
   const blocks = () => [
@@ -1261,6 +1266,72 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     worldEl?.querySelector(".game-building.tower")?.classList.add("door-open");
   }
 
+  /* ----- 预告测试版: the ending — the clock tower stirs, then thanks, the player's results and a teaser ----- */
+  let demoEnding = false;
+  const DEMO_START = "rea-demo-started";
+  async function playDemoEnding() {
+    const door = REGIONS.north.spots.clocktower.door;
+    await director.play([
+      { flash: 600, color: "#ffffff" },
+      { call: () => {
+        place = null;
+        lastPlace = null;
+        cameraFocus = null;
+        switchRegion("north", { x: door.x - 70, y: door.y + 40 });
+      } },
+      { wait: 600 },
+      { camera: { x: door.x, y: door.y - 70 }, ms: 1200 },
+      { wait: 500 },
+      { sound: "blip", pitch: 220 }, { shake: 600 }, { wait: 700 },
+      { sound: "blip", pitch: 180 }, { shake: 800 }, { flash: 500, color: "#d8f4ff" }, { wait: 600 },
+      { say: [
+        { text: "钟楼……在发光？！", face: "surprised" },
+        { text: "停摆的钟楼里，好像藏着一台能穿越时间的机器……", face: "thinking" },
+      ] },
+      { flash: 1200, color: "#ffffff" },
+      { camera: "player", ms: 400 },
+    ]);
+    showDemoEnd();
+  }
+  function showDemoEnd() {
+    let started = 0;
+    try {
+      started = Number(localStorage.getItem(DEMO_START)) || 0;
+    } catch {}
+    const minutes = started ? Math.max(1, Math.round((Date.now() - started) / 60000)) : null;
+    let stars = {};
+    try {
+      stars = JSON.parse(localStorage.getItem("rea-workbench-case-stars") || "{}") || {};
+    } catch {}
+    const starCount = demo.cases.reduce((sum, id) => sum + (stars[id] || 0), 0);
+    overlay.classList.add("demo-end");
+    overlay.replaceChildren(
+      h("div", { class: "demo-end-head" }, h("p", {}, "预告测试版 · 完"), h("h2", {}, "感谢试玩！")),
+      h("div", { class: "demo-end-stats" },
+        h("div", {}, h("b", {}, minutes ? `${minutes} 分钟` : "—"), h("small", {}, "用时")),
+        h("div", {}, h("b", {}, `${starCount} / ${demo.cases.length * 3}`), h("small", {}, "破案星级")),
+        h("div", {}, h("b", {}, `${achievements.count()} / ${ACHIEVEMENTS.length}`), h("small", {}, "成就")),
+        h("div", {}, h("b", {}, "见习侦探"), h("small", {}, "获得徽章"))),
+      h("div", { class: "demo-end-teaser" },
+        h("h3", {}, "正式版预告：停摆的钟楼"),
+        h("p", {}, "比特镇的钟楼其实是一台时光机。跟着路米穿越六个时代，在计算机知识诞生的地方，亲手学会它们。"),
+        h("ol", { class: "demo-end-eras" }, ...ERAS.map((era) => h("li", {}, h("b", {}, era.title), h("small", {}, `${era.place} · ${era.year}`)))),
+        h("p", { class: "demo-end-more" }, "数与算法 · 密码与安全 · 编程 · 电脑原理 · 网络 · 人工智能")),
+      h("div", { class: "demo-end-foot" },
+        h("button", { class: "btn primary", type: "button", onclick: () => closeOverlay() }, "继续在比特镇逛逛"),
+        h("button", { class: "btn", type: "button", onclick: () => {
+          if (!window.confirm("要从头再玩一次预告测试版吗？")) return;
+          quests.reset();
+          try {
+            localStorage.removeItem(DEMO_START);
+          } catch {}
+          closeOverlay();
+          location.reload();
+        } }, "从头再玩一次")),
+    );
+    overlay.hidden = false;
+  }
+
   /* ----- quests: difficulty, the quest log, and the guide's story lines ----- */
   let questLines = []; // waiting to be said the next time the player is free (not in a window)
   const takeQuestLines = () => questLines.splice(0);
@@ -1274,6 +1345,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   quests?.onChange(({ step, finishedChapter, story }) => {
     questLines.push(...story);
+    if (demo && finishedChapter?.id === "d-finale") demoEnding = true;
     achievements.note({ type: "step", id: step.id });
     if (finishedChapter) achievements.note({ type: "chapter", id: finishedChapter.id, difficulty: quests.difficulty });
     achievements.note({ type: "skills", count: skillCount() });
@@ -1293,7 +1365,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   shell.append(overlay);
   const closeOverlay = () => {
     overlay.hidden = true;
-    overlay.classList.remove("skilltree", "timemachine");
+    overlay.classList.remove("skilltree", "timemachine", "demo-end");
   };
 
   /** Pick a difficulty; the first time, the story starts afterwards. */
@@ -1310,6 +1382,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             h("b", {}, d.label, d.recommended ? h("i", { class: "game-recommended" }, "推荐") : null, d.level ? h("small", { class: "game-level" }, ` · ${d.level}`) : null),
             h("small", {}, d.note))));
     const finish = () => {
+      if (demo) {
+        try {
+          if (!localStorage.getItem(DEMO_START)) localStorage.setItem(DEMO_START, String(Date.now()));
+        } catch {}
+      }
       closeOverlay();
       if (first) {
         shownControls = false;
@@ -1496,6 +1573,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (spotData(id).soon && regionData()?.era) return say([{ text: `「${info(id).place}」……现在进不去，以后再来看看吧。`, face: "thinking" }]);
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
+    if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。这次先帮委托板上的三位吧！`, face: "thinking" }]);
     // A client's home: the case opens in the game window; closing it returns to this door.
     closeWindow();
     target = null;
@@ -1534,6 +1612,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     drawRoom(id);
     quests?.event("enter", id);
     const story = takeQuestLines();
+    if (demoEnding) {
+      demoEnding = false;
+      return say(story, null, () => playDemoEnding());
+    }
     say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
   }
   function roomMenu(id) {
@@ -1642,7 +1724,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (event.key === "Escape") {
       if (windowOpen) closeWindow();
       else if (place) goTown();
-    } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && !windowOpen && event.target === document.body) {
+    } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && (!windowOpen || dialogue.classList.contains("over-window")) && (event.target === document.body || event.target.closest?.(".game-window"))) {
       event.preventDefault();
       dialogue.click();
     }
@@ -1650,6 +1732,13 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   return {
     sync,
+    /** Whether lines can be spoken in the dialogue box now (the game is on). */
+    canTalk: () => enabled,
+    /** Speak lines in the dialogue box, above the game window if one is open; resolves when clicked through. */
+    talk(texts) {
+      dialogue.classList.add("over-window");
+      return sayAndWait(texts).then(() => dialogue.classList.remove("over-window"));
+    },
     /** The page switched tabs (e.g. a case started): show it in the game window. */
     onTab(tab) {
       if (!enabled || windowOpen) return;

@@ -258,16 +258,78 @@ export const REA_QUEST = {
 
 export const QUEST_LINES = [MAIN_QUEST, REA_QUEST];
 
-function load() {
+/*
+ * 预告测试版 (demo, about 30 minutes): Bit Town and the detective agency only. Three cases of different
+ * kinds — where data goes, a file format, hidden entries — then the badge and a teaser of the whole game.
+ * Progress is saved apart from the full game's.
+ */
+export const DEMO_CASES = ["privacy-ledger", "farm-save", "calculator-eggs"]; // none needs an extra analysis engine
+export const DEMO_QUEST = {
+  id: "demo",
+  title: "侦探事务所 · 预告测试版",
+  subtitle: "跟着路米，拆开三个可疑的软件",
+  chapters: [
+    {
+      id: "d-prologue",
+      title: "序章 · 新来的助手",
+      steps: [
+        {
+          id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所找路米",
+          say: [
+            { text: "欢迎来到比特镇！我是路米，在镇上开了一家侦探事务所，专门帮大家查软件。", face: "happy" },
+            { text: "你愿意当我的助手吗？事务所就在广场正北边，红屋顶、挂着放大镜招牌的那栋。", face: "normal" },
+          ],
+          done: [
+            { text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" },
+            { focus: "story balanced", text: "镇上的人遇到可疑的软件，都会来这儿找我。最近委托特别多，一个人实在忙不过来。", face: "thinking" },
+          ],
+        },
+      ],
+      done: [{ text: "委托板上已经有三份委托了。第一份来自小林，我带你一步一步查，查完你就会了！", face: "happy" }],
+    },
+    {
+      id: "d-case-1",
+      title: "委托一 · 小林的记账软件",
+      steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "小林住在住宅区的宿舍楼：从广场往西走，看到一栋好多窗户的三层楼就是。", face: "normal" }] }],
+      done: [{ text: "漂亮！软件往哪里发数据、偷偷用了哪些能力，你已经会查了。", face: "happy" }],
+    },
+    {
+      id: "d-case-2",
+      title: "委托二 · 朵朵的存档",
+      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵的农场也在住宅区，红色谷仓那里。", face: "thinking" }] }],
+      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
+    },
+    {
+      id: "d-case-3",
+      title: "委托三 · 小雨的计算器",
+      steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "去小雨家，找找计算器里的秘密", say: [{ text: "最后一份委托来自小雨：她说计算器里藏着秘密。她家是住宅区里粉色屋顶的那栋。", face: "happy" }] }],
+      done: [{ text: "彩蛋可以留，后门不能留。重要的检查要放在服务器上，这条要记住。", face: "normal" }],
+    },
+    {
+      id: "d-finale",
+      title: "结案 · 见习侦探",
+      badge: { id: "rea-detective", label: "见习侦探" },
+      steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所向路米报告", say: [{ text: "三份委托都办完了！回事务所来吧，我有东西要给你。", face: "happy" }] }],
+      done: [
+        { text: "这枚「见习侦探」徽章是你的了！拆开软件、收集证据、拿证据说话，你都学会了。", face: "happy" },
+        { focus: "story balanced", text: "……对了，你有没有发现？今天中午，北边钟楼的钟一声都没响。", face: "thinking" },
+        { text: "钟楼那边好像有动静。我们去看看！", face: "surprised" },
+      ],
+    },
+  ],
+};
+
+function load(key = KEY) {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+    return JSON.parse(localStorage.getItem(key) || "{}") || {};
   } catch {
     return {};
   }
 }
 
-export function createQuests(lines = QUEST_LINES) {
-  const saved = load();
+/** key: where progress is saved (the demo keeps its own). */
+export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
+  const saved = load(key);
   const done = Object.fromEntries(lines.map((line) => [line.id, new Set(saved.done?.[line.id] || [])]));
   // Saves from before the main line: the prologue's first two steps were the REA line's.
   if (!saved.done?.main && done.main && saved.done?.rea) for (const id of ["visit-office", "visit-library"]) if (saved.done.rea.includes(id)) done.main.add(id);
@@ -276,13 +338,13 @@ export function createQuests(lines = QUEST_LINES) {
   const listeners = new Set();
   const save = () => {
     try {
-      const all = load();
+      const all = load(key);
       all.difficulty = state.difficulty;
       all.focus = state.focus;
       all.done = { ...(all.done || {}), ...Object.fromEntries(lines.map((line) => [line.id, [...done[line.id]]])) };
       all.badges = [...state.badges];
       all.tracked = state.tracked;
-      localStorage.setItem(KEY, JSON.stringify(all));
+      localStorage.setItem(key, JSON.stringify(all));
     } catch {}
   };
 

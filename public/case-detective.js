@@ -24,7 +24,15 @@ function saveStars(id, stars) {
 
 export const starText = (n) => "★".repeat(n) + "☆".repeat(3 - n);
 
-export function createDetective({ h, icon, toast, panel, showSection, rerender, extras, portraits = () => new Set(), onSolved = () => {} }) {
+/**
+ * talk: { can(), say(lines) } — in the game (beginner mode in the town), the client's request, the doubts,
+ * objections and thanks are spoken in the game's dialogue box one line at a time (say resolves when the
+ * player has clicked through); the panel keeps only what is played with. Elsewhere, bubbles as before.
+ */
+export function createDetective({ h, icon, toast, panel, showSection, rerender, extras, portraits = () => new Set(), onSolved = () => {}, talk = null }) {
+  const talking = () => Boolean(talk?.can());
+  // A client's line for the dialogue box: their portrait set, their name.
+  const clientLine = (item, text, face = "normal") => ({ who: item.game.client.portrait, name: item.game.client.name, text: text.replace(/^[^：「]+：/, ""), face });
   const reportsEl = document.querySelector("#reports");
   const hud = h("div", { class: "case-hud", role: "region", "aria-label": "调查助手" });
   hud.hidden = true;
@@ -199,8 +207,38 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
             : h("div", { class: "case-bag-item" }, h("small", {}, item.section), h("span", {}, item.text)))));
   }
 
+  function startHunt(game) {
+    game.phase = "hunt";
+    const technical = reportsEl.querySelector("details.report-technical");
+    if (technical) technical.open = true;
+    rerender();
+    setTimeout(() => {
+      const target = reportsEl.querySelector("details.report-technical") || reportsEl;
+      window.scrollTo({ top: window.scrollY + target.getBoundingClientRect().top - 16, behavior: reduced() ? "auto" : "smooth" });
+    }, reduced() ? 0 : 380);
+  }
+
   function renderBrief(item, game) {
     const client = item.game.client;
+    if (talking()) {
+      // The request is told in the dialogue box; then the hunt starts by itself.
+      if (!game.briefTold) {
+        game.briefTold = true;
+        queueMicrotask(async () => {
+          await talk.say([
+            ...client.lines.map((line, i) => clientLine(item, line.text ?? line, line.face || (i === 0 ? "normal" : "thinking"))),
+            { text: "报告已经拿到了，它就是我们的调查现场。我会一条条给你线索，你在报告里点出证据。少犯错、少用提示，评价就越高。", face: "happy" },
+          ]);
+          if (game.phase === "brief") startHunt(game);
+        });
+      }
+      return [
+        h("p", { class: "case-kicker" }, "案例馆 · 新委托"),
+        h("h3", { id: "case-quest-title" }, item.title),
+        h("p", { class: "case-hunt-tip" }, `委托人：${client.name}（${client.role}）`),
+        h("div", { class: "case-actions" }, h("button", { class: "btn primary", type: "button", onclick: () => startHunt(game) }, icon("scan", { size: 16 }), "开始调查")),
+      ];
+    }
     return [
       h("p", { class: "case-kicker" }, "案例馆 · 新委托"),
       h("h3", { id: "case-quest-title" }, item.title),
@@ -208,16 +246,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
       ...client.lines.map((line, i) => bubble(`${client.name}（${client.role}）`, line.text ?? line, "client", line.face || (i === 0 ? "normal" : "thinking"))),
       bubble("路米", "报告已经拿到了，它就是我们的调查现场。我会一条条给你线索，你在报告里点出证据。少犯错、少用提示，评价就越高。"),
       h("div", { class: "case-actions" },
-        h("button", { class: "btn primary", type: "button", onclick: () => {
-          game.phase = "hunt";
-          const technical = reportsEl.querySelector("details.report-technical");
-          if (technical) technical.open = true;
-          rerender();
-          setTimeout(() => {
-            const target = reportsEl.querySelector("details.report-technical") || reportsEl;
-            window.scrollTo({ top: window.scrollY + target.getBoundingClientRect().top - 16, behavior: reduced() ? "auto" : "smooth" });
-          }, reduced() ? 0 : 380);
-        } }, icon("scan", { size: 16 }), "接下委托，开始调查")),
+        h("button", { class: "btn primary", type: "button", onclick: () => startHunt(game) }, icon("scan", { size: 16 }), "接下委托，开始调查")),
     ];
   }
 
@@ -229,7 +258,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
       h("p", { class: "case-kicker" }, `案例馆 · 调查中 · 线索 ${game.clue + 1} / ${total}`),
       h("h3", { id: "case-quest-title" }, item.title),
       h("ol", { class: "case-dots", "aria-label": "调查进度" }, item.questions.map((_, i) => h("li", { class: i < game.clue || (i === game.clue && game.solved) ? "done" : i === game.clue ? "active" : "" }, i + 1))),
-      bubble("路米", game.line || current?.question.gamePrompt || current?.question.prompt || "", game.mood),
+      !talking() && bubble("路米", game.line || current?.question.gamePrompt || current?.question.prompt || "", game.mood),
       choice && h("div", { class: "case-options", role: "radiogroup" }, current.question.options.map((option) => h("button", { type: "button", class: "case-option", onclick: () => answerChoice(option) }, option))),
       !choice && !game.solved && h("p", { class: "case-hunt-tip" }, icon("down", { size: 14 }), "答案在下面的报告里：先打开相关的板块，再点中那一行。"),
       h("div", { class: "case-bag-head" }, h("b", {}, `证据袋（${game.bag.length}）`)),
@@ -247,6 +276,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
         game.stars = stars;
         saveStars(item.id, stars);
         onSolved(item.id);
+        if (talking()) queueMicrotask(() => talk.say([clientLine(item, verdict.closing, "happy")]));
       }
       return [
         h("div", { class: "case-closed" },
@@ -255,7 +285,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
           h("h3", { id: "case-quest-title" }, item.title),
           h("p", { class: "case-stars", "aria-label": `评价 ${game.stars} 星` }, starText(game.stars)),
           h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 零失误、不看提示可以拿满三星" : " · 完美破案！"),
-          bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
+          !talking() && bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
         ...extras(item),
       ];
     }
@@ -269,9 +299,25 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
         game.mistakes += 1;
         game.line = verdict.objection;
         game.mood = "wrong";
+        if (talking()) talk.say([clientLine(item, verdict.objection, "surprised")]);
       }
       rerender();
     };
+    if (talking()) {
+      if (game.spokenClaim !== game.claim) {
+        const first = game.spokenClaim === undefined;
+        game.spokenClaim = game.claim;
+        queueMicrotask(() => talk.say([...(first ? [{ text: verdict.intro, face: "normal" }] : [{ text: ["说得好！", "没错，就是这条证据！", "漂亮，一针见血！", "对，证据摆在这儿呢。"][game.claim % 4], face: "happy" }]), clientLine(item, claim.text, "thinking")]));
+      }
+      return [
+        h("p", { class: "case-kicker" }, `案例馆 · 结案指认 · ${game.claim + 1} / ${verdict.claims.length}`),
+        h("h3", { id: "case-quest-title" }, item.title),
+        game.presented.length > 0 && h("ul", { class: "case-presented" }, game.presented.map((p) => h("li", {}, icon("check", { size: 14 }), h("span", {}, p.claim), h("b", {}, p.evidence)))),
+        h("p", { class: "case-claim-now" }, h("small", {}, `${item.game.client.name}说：`), claim.text),
+        h("p", { class: "case-hunt-tip" }, "从证据袋里挑一件证据，反驳这句话："),
+        bagView(game, { selectable: true, onPick: pick }),
+      ];
+    }
     return [
       h("p", { class: "case-kicker" }, `案例馆 · 结案指认 · ${game.claim + 1} / ${verdict.claims.length}`),
       h("h3", { id: "case-quest-title" }, item.title),
