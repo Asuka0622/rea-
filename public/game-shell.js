@@ -706,7 +706,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
-  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine() };
+  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id) };
   function walkTo(point, then) {
     if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];

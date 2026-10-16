@@ -132,6 +132,36 @@
       ],
       "objection": "小林：「这个……好像证明不了这句话吧？」",
       "closing": "小林：「天哪，我差点就装了！还好先让你查了一遍。」"
+    },
+    "lab": {
+      "kind": "network",
+      "files": [
+        "index.html",
+        "renderer.js",
+        "main.js"
+      ],
+      "intro": [
+        {
+          "who": "client",
+          "text": "小林：代码我看不懂……你能让它真的跑一遍给我看吗？",
+          "face": "thinking"
+        },
+        {
+          "text": "可以！把它关进沙盒里运行，网全是假的，什么都发不出去。旁边的行为监视器会把它做的每件事都记下来。",
+          "face": "happy"
+        }
+      ],
+      "done": [
+        {
+          "who": "client",
+          "text": "小林：我复制的东西……下次一打开就被发走了？！",
+          "face": "surprised"
+        },
+        {
+          "text": "亲眼看见了吧。证据也齐了，去和小林把话说清楚。",
+          "face": "normal"
+        }
+      ]
     }
   },
   "scene": {

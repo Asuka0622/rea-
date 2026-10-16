@@ -1,8 +1,10 @@
 import { clueTarget, judgeClick, starsFor, provesClaim } from "./case-game.js";
+import { mountLab } from "./case-labs.js";
 
 // 侦探模式 (beginner mode, cases with a `game` block): a client asks for help, the guide reads out
 // each clue, and the learner answers by clicking rows in the real report below. Found rows go into
-// the evidence bag; the case closes by presenting evidence for each of the client's doubts.
+// the evidence bag. A case with `game.lab` then has a hands-on step of its own (case-labs.js), and
+// the case closes by presenting evidence for each of the client's doubts.
 
 const STARS_KEY = "rea-workbench-case-stars";
 
@@ -148,7 +150,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     game.line = null;
     game.mood = "";
     if (game.clue >= active.item.questions.length) {
-      game.phase = "verdict";
+      game.phase = active.item.game.lab ? "lab" : "verdict";
       rerender();
       panel.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
       return;
@@ -266,6 +268,37 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     ];
   }
 
+  function toVerdict(game) {
+    game.phase = "verdict";
+    rerender();
+    panel.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
+  }
+
+  function renderLab(item, game) {
+    const lab = item.game.lab;
+    if (!game.labEl) {
+      try {
+        game.labEl = mountLab({ h, icon, lab, onMistake: () => (game.mistakes += 1), onHint: () => (game.hints += 1), onFinish: () => toVerdict(game), onDone: () => {
+          if (talking() && lab.done?.length) talk.say(lab.done.map((line) => (line.who === "client" ? clientLine(item, line.text, line.face || "happy") : { text: line.text ?? line, face: line.face || "happy" })));
+        } });
+      } catch (error) {
+        toast(`实验打不开：${error.message}`);
+        queueMicrotask(() => toVerdict(game));
+        return [];
+      }
+    }
+    if (talking() && !game.labTold && lab.intro?.length) {
+      game.labTold = true;
+      queueMicrotask(() => talk.say(lab.intro.map((line) => (line.who === "client" ? clientLine(item, line.text, line.face || "normal") : { text: line.text ?? line, face: line.face || "normal" }))));
+    }
+    return [
+      h("p", { class: "case-kicker" }, "案例馆 · 动手实验"),
+      h("h3", { id: "case-quest-title" }, item.title),
+      !talking() && lab.intro?.length && bubble("路米", lab.intro.filter((line) => line.who !== "client").map((line) => line.text ?? line).join("")),
+      game.labEl,
+    ];
+  }
+
   function renderVerdict(item, game) {
     const verdict = item.game.verdict;
     const claim = verdict.claims[game.claim];
@@ -346,6 +379,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
       renderHud();
       if (game.phase === "brief") return renderBrief(item, game);
       if (game.phase === "hunt") return renderHunt(item, game);
+      if (game.phase === "lab") return renderLab(item, game);
       return renderVerdict(item, game);
     },
     reset(id) {

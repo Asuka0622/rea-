@@ -21,7 +21,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   let reading = null; // id of the stories case being read
   let portraits = new Set();
   let pixelArt = new Set();
-  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits, onSolved, talk });
+  const detective = createDetective({ h, icon, toast, panel: quest, showSection, rerender: () => render(), extras: (item) => [item.game?.lab ? null : lab(item), conclusion(item)].filter(Boolean), portraits: () => portraits, onSolved, talk });
 
   const norm = (p) => String(p || "").replace(/[\\/]+$/, "").replace(/\\/g, "/").toLowerCase();
   const activeCase = () => catalog.find((c) => norm(c.path) === norm(getTarget()));

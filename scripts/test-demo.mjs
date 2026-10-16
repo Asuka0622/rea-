@@ -1,7 +1,8 @@
 // Verify the 预告测试版 package: node scripts/test-demo.mjs dist/BitTown-Detective-Demo-v<ver>-win-x64.zip
 // Extracts it under dist/, starts its own node.exe in demo mode with every user folder pointed inside the
 // test folder (nothing touches the real home), and checks the page is in demo mode, the three demo cases
-// analyse from the packaged samples, and every clue and every doubt matches the real reports.
+// analyse from the packaged samples, every clue and every doubt matches the real reports, and each case's
+// hands-on lab has its sample files.
 import fs from "node:fs";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -69,6 +70,9 @@ try {
     }
     for (const claim of item.game.verdict.claims) assert.ok(bag.some((e) => provesClaim(claim, e)), `${id}: ${claim.text}`);
     checks.push(`${id}: every clue and doubt matches its real report`);
+    const lab = item.game.lab;
+    assert.ok(lab && lab.files.every((file) => lab.sources?.[file]), `${id}: the lab's sample files are packaged`);
+    checks.push(`${id}: its ${lab.kind} lab has the sample files`);
   }
   assert.equal((await fetch(`${base}/api/cases`)).status, 403);
   checks.push("API rejects requests without the token");

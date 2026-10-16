@@ -127,6 +127,37 @@
       ],
       "objection": "小雨：「欸？这个跟我说的不是一回事吧？」",
       "closing": "小雨：「原来彩蛋和后门只差一点点……我要去告诉做计算器的人！」"
+    },
+    "lab": {
+      "kind": "calculator",
+      "files": [
+        "index.html",
+        "renderer.js",
+        "main.js",
+        "preload.js"
+      ],
+      "intro": [
+        {
+          "who": "client",
+          "text": "小雨：报告里写的那些，都是真的吗？我想亲手试试！",
+          "face": "happy"
+        },
+        {
+          "text": "那就在沙盒里把计算器跑起来。报告里找到的每个入口，都亲手按一遍。",
+          "face": "happy"
+        }
+      ],
+      "done": [
+        {
+          "who": "client",
+          "text": "小雨：原来彩蛋和后门长得这么像……",
+          "face": "thinking"
+        },
+        {
+          "text": "都试过了，证据也在袋子里。去结案吧。",
+          "face": "normal"
+        }
+      ]
     }
   }
 }
