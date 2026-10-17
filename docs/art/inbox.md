@@ -22,3 +22,5 @@
 2026-10-18 对账：收件图 **#141** 的黑发、矩形眼镜、藏蓝格纹衬衫男性与星博士身份相符；已复用为 `anim-xingbo` 五行动画源图（标准行裁帧），无需另画同一角色。
 
 接入四季时注意：季节版地图的建筑位置必须和秋季版对齐；碰撞、遮挡和水面数据要按每个季节的图重新生成。对齐检查图已做到一半（`scratchpad/align.png`）。
+
+2026-10-18 新增候选：**小克「橙蟹」方向**已放入 `docs/art/review/`——`characters/xiaoke-orange-crab-expressions-candidate.png`（六表情：普通/开心/思考/惊讶/抱歉/不确定）与 `animations/anim-xiaoke-orange-crab-candidate.png`（行走、挥钳、故障闪烁、缩小进怀表；源图在 `sources/`）。与先前的三方向候选（`xiaoke-design-directions-v1-candidate.png`）并列待选型；选定后按 asset-requirements 第 4 节补全套。
