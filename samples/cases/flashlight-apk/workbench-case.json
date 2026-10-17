@@ -149,6 +149,453 @@
       ],
       "objection": "王奶奶：「孩子，这个和我问的好像不是一回事呀。」",
       "closing": "王奶奶：「原来是这样！孩子，帮我点「拒绝」吧。手电筒照样亮，就够了。」"
+    },
+    "lab": {
+      "kind": "permissions",
+      "sampleTitle": "权限判定 · 小光手电筒 1.2",
+      "lampLabel": "这个 App 只有一件事：按一下，灯亮。看清楚，它到底要了哪些权限。",
+      "files": [
+        "AndroidManifest.json"
+      ],
+      "permissions": [
+        {
+          "id": "flashlight",
+          "label": "闪光灯",
+          "need": true,
+          "why": "开灯就是它。"
+        },
+        {
+          "id": "camera",
+          "label": "相机",
+          "need": true,
+          "why": "不少安卓机型要把相机权限给了，才能控制闪光灯。"
+        },
+        {
+          "id": "internet",
+          "label": "联网",
+          "need": false,
+          "why": "开灯不用联网；联网是广告要的。"
+        },
+        {
+          "id": "contacts",
+          "label": "读取通讯录",
+          "need": false,
+          "why": "读通讯录和开灯没有任何关系。"
+        },
+        {
+          "id": "location",
+          "label": "精确定位",
+          "need": false,
+          "why": "开灯不需要知道你在哪儿。"
+        },
+        {
+          "id": "phone-state",
+          "label": "读取手机状态",
+          "need": false,
+          "why": "读设备识别码和开灯无关，那是用来认人的。"
+        },
+        {
+          "id": "boot",
+          "label": "开机自启",
+          "need": false,
+          "why": "开机自启只是让它一直在后台待着，不是开灯要的。"
+        }
+      ],
+      "intro": [
+        {
+          "who": "client",
+          "text": "王奶奶：孩子，就是在应用商店里看到这个，评论说「一按就亮」。你帮我看看，它问我要那么多东西，是开灯用的吗？",
+          "face": "thinking"
+        },
+        {
+          "text": "把清单拿出来，一条一条判：开灯到底用不用得上。"
+        }
+      ],
+      "done": [
+        {
+          "who": "client",
+          "text": "王奶奶：七个里头，只有两个是真的在开灯……",
+          "face": "surprised"
+        },
+        {
+          "text": "都判完了。去和王奶奶把话说清楚吧。"
+        }
+      ]
+    },
+    "puzzle": {
+      "title": "只开一盏灯：手电筒要什么",
+      "sampleName": "小光手电筒",
+      "computerLabel": "王奶奶的电脑",
+      "labSource": "权限判定",
+      "room": {
+        "top": 134,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 222,
+          "y": 166
+        },
+        "blocks": [
+          {
+            "x": 18,
+            "y": 92,
+            "w": 104,
+            "h": 48
+          },
+          {
+            "x": 128,
+            "y": 100,
+            "w": 84,
+            "h": 32
+          },
+          {
+            "x": 228,
+            "y": 46,
+            "w": 74,
+            "h": 96
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "王奶奶：你随便看，我这些东西都不值钱。",
+              "face": "happy"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "王奶奶：判好了？那……它到底要这么多做什么呀？",
+              "face": "thinking"
+            }
+          ]
+        },
+        "characterScale": 1.875
+      },
+      "terminal": "phone",
+      "scene": {
+        "place": "王奶奶的客厅",
+        "look": "living",
+        "art": null,
+        "lead": "在客厅里走走，靠近东西按 E 调查。",
+        "items": [
+          {
+            "id": "phone",
+            "label": "王奶奶的手机",
+            "look": "phone",
+            "at": [
+              150,
+              102
+            ],
+            "stand": [
+              150,
+              140
+            ],
+            "size": 18,
+            "lines": [
+              {
+                "who": "client",
+                "text": "王奶奶：你看，它一装好就跳出来这些，我都不敢点。",
+                "face": "thinking"
+              },
+              {
+                "text": "手机屏幕上是一串权限请求。清单可以拿到电脑上看，一条条对着功能判。"
+              }
+            ],
+            "clue": {
+              "id": "ask",
+              "title": "一装就要权限",
+              "text": "装上一打开，它就弹出一串权限请求，连通讯录都要。",
+              "dict": [
+                {
+                  "zh": "申请的权限",
+                  "code": "permissions"
+                }
+              ]
+            }
+          },
+          {
+            "id": "addressbook",
+            "label": "电话本",
+            "look": "paper",
+            "at": [
+              178,
+              102
+            ],
+            "stand": [
+              178,
+              140
+            ],
+            "size": 16,
+            "lines": [
+              {
+                "text": "纸页已经翻软了，上面是儿女的电话。手机会把这些交给一个手电筒吗？"
+              }
+            ],
+            "clue": {
+              "id": "contacts",
+              "title": "电话本",
+              "text": "本子上记着儿女的电话——这正是「读取通讯录」能拿走的东西。",
+              "dict": [
+                {
+                  "zh": "通讯录",
+                  "code": "READ_CONTACTS"
+                }
+              ]
+            }
+          },
+          {
+            "id": "glasses",
+            "label": "老花镜",
+            "look": "chat",
+            "at": [
+              206,
+              102
+            ],
+            "stand": [
+              206,
+              146
+            ],
+            "size": 16,
+            "lines": [
+              {
+                "text": "镜腿用胶带缠过。屏幕上的小字，王奶奶是看不清的。"
+              }
+            ],
+            "clue": {
+              "id": "location",
+              "title": "老花镜",
+              "text": "王奶奶看小字得戴上它。「精确定位」这种字，她根本看不清。",
+              "dict": [
+                {
+                  "zh": "定位",
+                  "code": "ACCESS_FINE_LOCATION"
+                }
+              ]
+            }
+          },
+          {
+            "id": "remote",
+            "label": "电视遥控器",
+            "look": "router",
+            "at": [
+              60,
+              100
+            ],
+            "stand": [
+              60,
+              146
+            ],
+            "size": 20,
+            "lines": [
+              {
+                "text": "遥控器的按键磨得发亮。电视里正放着广告。"
+              }
+            ],
+            "clue": {
+              "id": "ads",
+              "title": "电视和广告",
+              "text": "遥控器对着电视。手电筒里那些广告，和开灯也没关系。",
+              "dict": [
+                {
+                  "zh": "设备信息",
+                  "code": "READ_PHONE_STATE"
+                },
+                {
+                  "zh": "广告",
+                  "code": "quickads"
+                }
+              ]
+            }
+          },
+          {
+            "id": "photo",
+            "label": "墙上的全家福",
+            "look": "clock",
+            "at": [
+              120,
+              54
+            ],
+            "stand": [
+              120,
+              146
+            ],
+            "size": 18,
+            "wall": true,
+            "lines": [
+              {
+                "text": "相框擦得很干净。旁边那张便签是王奶奶自己写的：手机一开机，它自己就出来了。"
+              }
+            ],
+            "clue": {
+              "id": "boot",
+              "title": "开机就启动",
+              "text": "全家福旁边贴着一张便签：「手机一开机，它自己就出来了。」",
+              "dict": [
+                {
+                  "zh": "开机启动",
+                  "code": "BOOT_COMPLETED"
+                }
+              ]
+            }
+          },
+          {
+            "id": "slippers",
+            "label": "门口的拖鞋",
+            "look": "cat",
+            "at": [
+              40,
+              155
+            ],
+            "stand": [
+              40,
+              164
+            ],
+            "size": 16,
+            "optional": true,
+            "lines": [
+              {
+                "text": "门口摆着一双拖鞋，鞋底磨平了。王奶奶晚上起夜，就是怕黑。"
+              }
+            ]
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "奶奶要的不是一份报告，是一句听得懂的话：哪些权限是开灯要的，哪些不是。"
+        },
+        {
+          "text": "清单是工作台从这只 APK 里解出来的，权限名照原样保留。"
+        }
+      ],
+      "terms": [
+        "FLASHLIGHT",
+        "CAMERA",
+        "READ_CONTACTS",
+        "ACCESS_FINE_LOCATION",
+        "READ_PHONE_STATE",
+        "BOOT_COMPLETED",
+        "quickads"
+      ],
+      "board": [
+        {
+          "title": "开灯到底要什么",
+          "text": "手电筒只用到 {FLASHLIGHT} 和 {CAMERA}，可它还要 {READ_CONTACTS}、{ACCESS_FINE_LOCATION}、{READ_PHONE_STATE}。",
+          "hint": "清单的 permissions 一栏，一行一条。",
+          "explain": "三个「还要」的权限，和按一下开灯这件事没有关系。"
+        },
+        {
+          "title": "它还会自己起来",
+          "text": "清单里有一个接收 {BOOT_COMPLETED} 的组件，手机一开机它就能启动。",
+          "hint": "看 receivers 那一段。",
+          "explain": "开机自启让它在后台常驻，不用王奶奶点开也能跑。"
+        },
+        {
+          "title": "背后是谁",
+          "text": "应用里塞了 {quickads} 的广告和统计组件。",
+          "hint": "服务列表里有一个不是这个软件自己的名字。",
+          "explain": "广告和统计才是那些多余权限的去处。"
+        }
+      ],
+      "toLab": [
+        {
+          "text": "别只看清单：把七条权限一条条判一遍，看开灯到底用得上几条。"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "perm-check",
+          "text": "权限判定：七条权限里只有闪光灯和相机是开灯要用的，其余五条都不是。"
+        }
+      ],
+      "confront": {
+        "lead": "一件一件解释给王奶奶听。她说的话里，有真的，也有需要纠正的。",
+        "intro": [
+          {
+            "text": "王奶奶戴上老花镜：「你慢慢说，我听得懂。」拿证据给她看。"
+          }
+        ],
+        "statements": [
+          {
+            "text": "「它要通讯录，是为了帮我快速拨号吧？」",
+            "accept": [
+              "READ_CONTACTS"
+            ],
+            "press": [
+              {
+                "text": "手电筒有拨号这个功能吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：它连个打电话的按钮都没有啊。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示「读取通讯录」这条权限。"
+          },
+          {
+            "text": "「要定位是怕我走丢，想知道我在哪儿。」",
+            "accept": [
+              "ACCESS_FINE_LOCATION"
+            ],
+            "press": [
+              {
+                "text": "开灯需要知道位置吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：我在自己家里开灯，它管我在哪儿做什么。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示「精确定位」这条权限。"
+          },
+          {
+            "text": "「开机自己启动，是手机的正常行为吧？」",
+            "accept": [
+              "BOOT_COMPLETED"
+            ],
+            "press": [
+              {
+                "text": "那是它自己申请的，不是每个软件都有。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：怪不得我什么都没点，它也在。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示清单里的开机启动接收器。"
+          },
+          {
+            "text": "「只给开灯要用的权限，手电筒也照样亮。」",
+            "press": [
+              {
+                "text": "对。灯亮不亮，和通讯录、定位没有关系。"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "权限要和功能对得上。对不上，就是最明显的危险信号。",
+        "「不是代码」的清单也会说话：开机自启、广告组件都写在里面。",
+        "给老人的解释要短：这个要用，这个不用，够了。"
+      ]
     }
   }
 }

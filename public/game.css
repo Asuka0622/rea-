@@ -946,3 +946,32 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .lab-key.marked {color:#12240f;background:#8fd08a;border-color:#2f6b34;}
 .lab-key.wrong {color:#fff6dc;background:#c9573e;border-color:#7a2418;cursor:default;}
 .lab-say {margin:0;padding:8px 10px;font:12px/1.6 var(--font-body);color:#cfe8d4;background:#101a14;border-top:1px solid #2c4a36;}
+
+/* 王奶奶的客厅 (flashlight-apk) before its art arrives: sofa, tea table, bookshelf, TV on the wall. */
+.case-room-bg.living {position:absolute;inset:0;background:linear-gradient(#e6d3ae 0 61%,#b3855a 61%);}
+.case-room-bg.living::after {content:"";position:absolute;left:0;right:0;top:calc(110px * var(--px));height:calc(2px * var(--px));background:#8d6540;}
+.case-room-bg.living span {position:absolute;display:block;}
+.case-room-bg.living .window {left:calc(140px * var(--px));top:calc(30px * var(--px));width:calc(50px * var(--px));height:calc(40px * var(--px));
+  background:linear-gradient(#2b3038,#3d4550);border:calc(3px * var(--px)) solid #5a4026;box-shadow:inset 0 0 calc(5px * var(--px)) #7aa8c8;}
+.case-room-bg.living .bed {left:calc(18px * var(--px));top:calc(92px * var(--px));width:calc(104px * var(--px));height:calc(48px * var(--px));
+  background:linear-gradient(#9a6f4a 0 calc(14px * var(--px)),#b8875c calc(14px * var(--px)));border:calc(3px * var(--px)) solid #6b4a2c;border-radius:calc(6px * var(--px));}
+.case-room-bg.living .desk {left:calc(128px * var(--px));top:calc(100px * var(--px));width:calc(84px * var(--px));height:calc(32px * var(--px));
+  background:linear-gradient(#a3764c 0 calc(6px * var(--px)),#8a5f3a calc(6px * var(--px)));border:calc(3px * var(--px)) solid #6b4a2c;border-radius:calc(4px * var(--px));}
+.case-room-bg.living .shelf {left:calc(228px * var(--px));top:calc(46px * var(--px));width:calc(74px * var(--px));height:calc(96px * var(--px));
+  background:repeating-linear-gradient(#a3764c 0 calc(10px * var(--px)),#8a5f3a calc(10px * var(--px)) calc(13px * var(--px)));border:calc(3px * var(--px)) solid #6b4a2c;}
+.case-room-bg.living .rug {left:calc(100px * var(--px));top:calc(140px * var(--px));width:calc(130px * var(--px));height:calc(22px * var(--px));
+  background:repeating-linear-gradient(90deg,#c0603f 0 calc(9px * var(--px)),#a84c31 calc(9px * var(--px)) calc(18px * var(--px)));opacity:.85;border-radius:calc(3px * var(--px));}
+.case-npc.grandma .game-sprite i {background:linear-gradient(180deg,#d8d2c8 0 45%,#f0c8a0 45%);}
+.case-npc.grandma .game-sprite b {background:#6a8f8a;}
+
+/* 权限判定实验室: seven permissions, one question each. */
+.lab-perm {display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-top:6px;padding:7px 10px;background:#16251c;border:1px solid #3f6a4c;}
+.lab-perm-name {font:13px/1.6 var(--font-body);color:#d6f5da;}
+.lab-perm-pick {padding:3px 9px;font:12px/1.5 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.lab-perm-pick:hover {background:#2a4433;}
+.lab-perm.done {background:#1d3a24;border-color:#5da86a;}
+.lab-perm.done .lab-perm-pick.picked {color:#12240f;background:#8fd08a;border-color:#8fd08a;}
+.lab-perm.wrong {animation:perm-shake .3s 2;border-color:#c9573e;}
+@keyframes perm-shake {50% {transform:translateX(3px);}}
+.lab-lamp {margin:0;padding:8px 10px;font:12px/1.6 var(--font-body);color:#ffe8b0;background:#1b2a1f;border-bottom:1px solid #2c4a36;}
+.lab-perms {padding:8px 10px;}

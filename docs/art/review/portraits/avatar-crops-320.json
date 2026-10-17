@@ -1,0 +1,25 @@
+{
+  "output": [
+    320,
+    320
+  ],
+  "format": "WebP RGBA",
+  "crop": "top-centered square crop from 1086x1448 portrait source",
+  "cropRect": [
+    0,
+    0,
+    1086,
+    1086
+  ],
+  "resample": "Lanczos",
+  "assets": [
+    "duoduo-normal.webp",
+    "duoduo-happy.webp",
+    "duoduo-thinking.webp",
+    "duoduo-surprised.webp",
+    "xiaoyu-happy.webp",
+    "xiaoyu-thinking.webp",
+    "xiaoyu-surprised.webp"
+  ],
+  "note": "Xiaoyu normal remains public/art/faces/xiaoyu-normal.webp; this batch adds the other seven expressions."
+}

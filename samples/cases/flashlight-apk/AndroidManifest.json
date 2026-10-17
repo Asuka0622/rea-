@@ -1,0 +1,37 @@
+{
+  "说明": "REA 把 xiaoguang-flashlight.apk 里的二进制清单解成了这份可读版本，权限名照原样保留。",
+  "package": "com.xiaoguang.flashlight",
+  "versionName": "1.2",
+  "versionCode": 3,
+  "minSdk": 21,
+  "targetSdk": 34,
+  "permissions": [
+    "CAMERA",
+    "FLASHLIGHT",
+    "READ_CONTACTS",
+    "ACCESS_FINE_LOCATION",
+    "READ_PHONE_STATE",
+    "INTERNET",
+    "RECEIVE_BOOT_COMPLETED"
+  ],
+  "application": {
+    "label": "小光手电筒",
+    "activities": [
+      "com.xiaoguang.flashlight.MainActivity",
+      "com.quickads.sdk.AdActivity"
+    ],
+    "services": [
+      "com.xiaoguang.flashlight.ContactSyncService",
+      "com.quickads.sdk.TrackService"
+    ],
+    "receivers": [
+      {
+        "name": "com.xiaoguang.flashlight.BootReceiver",
+        "intent": "android.intent.action.BOOT_COMPLETED"
+      }
+    ],
+    "meta": {
+      "com.quickads.sdk.APP_ID": "qa-demo-0001"
+    }
+  }
+}

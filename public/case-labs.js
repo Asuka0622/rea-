@@ -654,7 +654,51 @@ function mountSecrets({ h, icon, lab, onMistake = () => {}, onDone = () => {} })
     tabs, body, say);
 }
 
-const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets };
+
+/**
+ * 权限判定 (小光手电筒): the manifest's permission list sits next to the only thing the app is for — turning
+ * the light on. Each permission gets sorted into 「开灯用得上」 or 「和开灯没关系」; the internet permission
+ * is the interesting one, because it is needed by the ads rather than the lamp.
+ */
+function mountPermissions({ h, icon, lab, onMistake = () => {}, onDone = () => {} }) {
+  const rows = lab.permissions || [];
+  const answered = new Map();
+  const say = h("p", { class: "lab-say", role: "status" }, "一条一条判：这个权限，开灯用得上吗？");
+  const count = h("b", { class: "lab-count" }, `0/${rows.length}`);
+  const list = h("div", { class: "lab-perms" });
+
+  const answer = (row, need, rowEl) => {
+    if (answered.has(row.id)) return;
+    if (Boolean(row.need) !== need) {
+      onMistake();
+      rowEl.classList.add("wrong");
+      say.textContent = `${row.label}：${row.why || (need ? "这个其实用不上。" : "这个其实是要用的。")}`;
+      setTimeout(() => rowEl.classList.remove("wrong"), 900);
+      return;
+    }
+    answered.set(row.id, need);
+    rowEl.classList.add("done");
+    rowEl.querySelectorAll("button").forEach((b) => { b.disabled = true; });
+    rowEl.querySelector(`button[data-need="${need}"]`)?.classList.add("picked");
+    count.textContent = `${answered.size}/${rows.length}`;
+    say.textContent = `${row.label}：${row.why || "判对了。"}`;
+    if (answered.size === rows.length) onDone();
+  };
+
+  for (const row of rows) {
+    const rowEl = h("div", { class: "lab-perm", "data-perm": row.id },
+      h("span", { class: "lab-perm-name" }, row.label),
+      h("button", { class: "lab-perm-pick", type: "button", "data-need": "yes", onclick: (e) => answer(row, true, e.currentTarget.parentElement) }, "开灯用得上"),
+      h("button", { class: "lab-perm-pick", type: "button", "data-need": "no", onclick: (e) => answer(row, false, e.currentTarget.parentElement) }, "和开灯没关系"));
+    list.append(rowEl);
+  }
+  return h("div", { class: "lab lab-permissions" },
+    h("div", { class: "lab-head" }, h("b", {}, lab.sampleTitle || "权限判定"), h("span", {}, "判好 "), count, h("span", {}, " 条")),
+    h("p", { class: "lab-lamp" }, icon("scan", { size: 14 }), lab.lampLabel || "这个 App 只有一件事：按一下，灯亮。"),
+    list, say);
+}
+
+const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions };
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint
