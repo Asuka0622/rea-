@@ -63,5 +63,5 @@ ui-pin,侦探界面,docs/art/review/sources/pin-source.png,public/art/pixel/ui/p
 ui-clue-icons,侦探界面,docs/art/review/sources/clue-icons-source.png,public/art/pixel/ui/clue-icons.png,,,,192,32,是,每格32×32,网址、存档时钟、调试钟楼页、钥匙、定时相机、手机广告,待验收,六格横排；格序说明见docs/art/review/ui/detective-ui-assets.json
 ui-notebook,侦探界面,docs/art/review/sources/notebook-source.png,public/art/pixel/ui/notebook.png,,,,640,420,是,,,待验收,透明打开手账，四个空白页签；正文与标签由代码绘制
 room-home-empty-board,事务所,docs/art/review/sources/room-home-empty-board-source.png,public/art/pixel/room-home.png,秋季,晴天,中午,320,180,否,,,待验收,保留现有房间构图，仅将墙面委托板清空；候选图与现有图对照见docs/art/review/room-home-empty-board-compare.png；未覆盖运行资源
-anim-azhe,阿哲,docs/art/review/sources/anim-azhe-source.png,public/art/pixel/anim-azhe.png,秋季,雨天,白天,256,192,是,64×96,待机2 / 推眼镜4,待验收,4列×2行透明精灵表；身份按阿哲具名立绘，风格/比例对齐anim-kobayashi；空帧保留透明；脚底基线已对齐；预览见docs/art/review/animations/anim-azhe-preview.png
+anim-azhe,阿哲,docs/art/review/sources/anim-azhe-source.png,public/art/pixel/anim-azhe.png,秋季,雨天,白天,256,192,是,64×96,待机2 / 推眼镜4,已接入,4列×2行 64×96；接进机房，按 40×60 逻辑尺寸显示；待机2帧/悬停推眼镜4帧；脚底与路米同基线
 anim-azhe-metadata,阿哲,docs/art/review/animations/anim-azhe.json,public/art/pixel/anim-azhe.json,秋季,雨天,白天,,,,64×96,待机2 / 推眼镜4,待验收,帧时长及动作行元数据；游戏动作映射待接入验收
