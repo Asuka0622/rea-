@@ -214,7 +214,7 @@
       "computerLabel": "阿哲的电脑",
       "labSource": "密钥自查",
       "room": {
-        "top": 126,
+        "top": 130,
         "spawn": {
           "x": 160,
           "y": 168
@@ -224,27 +224,27 @@
           "y": 176
         },
         "client": {
-          "x": 224,
-          "y": 152
+          "x": 225,
+          "y": 168
         },
         "blocks": [
           {
-            "x": 14,
-            "y": 44,
-            "w": 58,
-            "h": 92
-          },
-          {
-            "x": 94,
-            "y": 96,
-            "w": 132,
-            "h": 30
-          },
-          {
-            "x": 242,
+            "x": 20,
             "y": 40,
-            "w": 74,
-            "h": 100
+            "w": 60,
+            "h": 85
+          },
+          {
+            "x": 125,
+            "y": 112,
+            "w": 75,
+            "h": 14
+          },
+          {
+            "x": 230,
+            "y": 48,
+            "w": 70,
+            "h": 78
           }
         ],
         "clientTalk": {
@@ -268,8 +268,7 @@
       "terminal": "monitor",
       "scene": {
         "place": "阿哲的机房",
-        "look": "server",
-        "art": null,
+        "art": "case-room-weather-keys",
         "lead": "在机房里走走，靠近东西按 E 调查。",
         "items": [
           {
@@ -277,12 +276,12 @@
             "label": "阿哲的电脑",
             "look": "laptop",
             "at": [
-              160,
-              98
+              150,
+              134
             ],
             "stand": [
-              168,
-              132
+              150,
+              142
             ],
             "size": 30,
             "lines": [
@@ -305,19 +304,20 @@
                   "code": "WEATHER_API_KEY"
                 }
               ]
-            }
+            },
+            "hidden": true
           },
           {
             "id": "todo",
             "label": "显示器上的便签",
             "look": "chat",
             "at": [
-              120,
-              98
+              106,
+              127
             ],
             "stand": [
-              144,
-              132
+              96,
+              146
             ],
             "size": 20,
             "lines": [
@@ -335,19 +335,20 @@
                   "code": "MAP_ACCESS_TOKEN"
                 }
               ]
-            }
+            },
+            "hidden": true
           },
           {
             "id": "printout",
             "label": "打印出来的配置",
             "look": "paper",
             "at": [
-              200,
-              98
+              184,
+              127
             ],
             "stand": [
-              196,
-              132
+              190,
+              146
             ],
             "size": 22,
             "lines": [
@@ -365,18 +366,19 @@
                   "code": "adminPassword"
                 }
               ]
-            }
+            },
+            "hidden": true
           },
           {
             "id": "rack",
             "label": "统计服务器",
             "look": "router",
             "at": [
-              278,
-              120
+              275,
+              117
             ],
             "stand": [
-              272,
+              270,
               150
             ],
             "size": 26,
@@ -396,19 +398,20 @@
                   "code": "STATS_DB_URL"
                 }
               ]
-            }
+            },
+            "hidden": true
           },
           {
             "id": "poster",
             "label": "发布清单",
             "look": "clock",
             "at": [
-              118,
-              64
+              126,
+              56
             ],
             "stand": [
-              118,
-              132
+              126,
+              170
             ],
             "size": 20,
             "wall": true,
@@ -427,18 +430,19 @@
                   "code": "WEATHER_URL"
                 }
               ]
-            }
+            },
+            "hidden": true
           },
           {
             "id": "router",
             "label": "角落的路由器",
             "look": "router",
             "at": [
-              92,
-              148
+              85,
+              161
             ],
             "stand": [
-              92,
+              60,
               164
             ],
             "size": 20,
@@ -447,7 +451,8 @@
               {
                 "text": "角落的路由器一直亮着。机房里所有机器的网络都从这里出去。"
               }
-            ]
+            ],
+            "hidden": true
           }
         ]
       },

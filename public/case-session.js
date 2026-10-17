@@ -73,7 +73,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     const size = thing.size || 30;
     const el = h("button", {
       type:'button',
-      class: `case-prop ${thing.look} ${state.seen.has(thing.id) ? "seen" : ""} ${thing.wall ? "wall" : ""}`,
+      class: `case-prop ${thing.look} ${state.seen.has(thing.id) ? "seen" : ""} ${thing.wall ? "wall" : ""}${thing.hidden ? " hidden" : ""}`,
       style: `left:calc(${thing.at[0]}px * var(--px));top:calc(${thing.at[1]}px * var(--px));width:calc(${size}px * var(--px));z-index:${thing.wall ? 1 : Math.round(thing.at[1])}`,
       'aria-label':`${state.seen.has(thing.id)?'再次调查':'调查'}：${thing.label}`,
       title:thing.label,

@@ -975,3 +975,6 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 @keyframes perm-shake {50% {transform:translateX(3px);}}
 .lab-lamp {margin:0;padding:8px 10px;font:12px/1.6 var(--font-body);color:#ffe8b0;background:#1b2a1f;border-bottom:1px solid #2c4a36;}
 .lab-perms {padding:8px 10px;}
+
+/* A prop the background already draws: the icon steps aside, the 「?」 marker and the click area stay. */
+.case-prop.hidden svg,.case-prop.hidden img {display:none;}
