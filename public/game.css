@@ -879,3 +879,7 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 .calibrated-room .case-npc:not(:has(.case-client-sheet)) {width:calc(30px * var(--px));height:calc(60px * var(--px));}
 .calibrated-room .case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.875);}
 @media(max-width:700px),(max-height:500px) {.case-goal {top:calc(var(--game-toolbar-height, 40px) + 6px);}}
+
+/* On a phone held sideways the dialogue runs to the right edge and would sit on top of the
+   hand-book button; while someone is talking the button steps out of the way. */
+html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:none;transition:opacity .15s;}

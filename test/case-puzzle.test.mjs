@@ -1,8 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { caseCatalog } from "../lib/cases.mjs";
 import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks } from "../public/case-puzzle.js";
 
+const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const pixelDir = path.join(project, "public", "art", "pixel");
 const puzzles = caseCatalog().filter((c) => c.game?.puzzle);
 
 test("there is at least one puzzle case, and it has a lab", () => {
@@ -94,4 +99,32 @@ test("search: Chinese finds nothing in the shipped code; too many hits are cut",
   assert.ok(searchCode(code, "clipboard").hits.length > 0);
   assert.ok(searchCode(code, "e").more > 0);
   assert.deepEqual(termsIn('"helper:peek-clipboard"', ["peek", "helper:peek-clipboard", "clipboard"]), ['"', { term: "helper:peek-clipboard" }, '"']);
+});
+
+test("every case room points at artwork that is really in the project", () => {
+  for (const item of puzzles) {
+    const { scene } = item.game.puzzle;
+    if (scene.art) assert.ok(fs.existsSync(path.join(pixelDir, `${scene.art}.png`)), `${item.id}: background ${scene.art} is missing`);
+    for (const thing of scene.items) {
+      const art = thing.art || thing.id;
+      if (thing.art) assert.ok(fs.existsSync(path.join(pixelDir, "case-props", `${art}.png`)), `${item.id}: ${thing.id} wants case-props/${art}.png`);
+    }
+  }
+});
+
+test("every prop hangs on the canvas, and nobody has to stand inside the furniture", () => {
+  for (const item of puzzles) {
+    const { room, scene } = item.game.puzzle;
+    const blocks = room.blocks || [];
+    // The same test the shell walks with: half width 9, feet 5 above the block's bottom edge.
+    // Props themselves may sit on a bed or a desk, which is what the blocks cover; people may not.
+    const inside = (x, y) => blocks.some((b) => x + 9 > b.x && x - 9 < b.x + b.w && y > b.y && y - 5 < b.y + b.h);
+    for (const thing of scene.items) {
+      const [x, y] = thing.at;
+      assert.ok(x > 0 && x < 320 && y > 0 && y < 180, `${item.id}: ${thing.id} is drawn at ${x},${y}`);
+      assert.ok(!inside(thing.stand[0], thing.stand[1]), `${item.id}: ${thing.id}'s stand is inside furniture`);
+    }
+    assert.ok(!inside(room.client.x, room.client.y), `${item.id}: the client stands inside furniture`);
+    assert.ok(!blocks.some((b) => room.exit.y > b.y && room.exit.y - 5 < b.y + b.h && room.exit.x + 9 > b.x && room.exit.x - 9 < b.x + b.w), `${item.id}: the door is behind furniture`);
+  }
 });
