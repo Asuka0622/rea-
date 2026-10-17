@@ -65,3 +65,8 @@ ui-notebook,侦探界面,docs/art/review/sources/notebook-source.png,public/art/
 room-home-empty-board,事务所,docs/art/review/sources/room-home-empty-board-source.png,public/art/pixel/room-home.png,秋季,晴天,中午,320,180,否,,,待验收,保留现有房间构图，仅将墙面委托板清空；候选图与现有图对照见docs/art/review/room-home-empty-board-compare.png；未覆盖运行资源
 anim-azhe,阿哲,docs/art/review/sources/anim-azhe-source.png,public/art/pixel/anim-azhe.png,秋季,雨天,白天,256,192,是,64×96,待机2 / 推眼镜4,已接入,4列×2行 64×96；接进机房，按 40×60 逻辑尺寸显示；待机2帧/悬停推眼镜4帧；脚底与路米同基线
 anim-azhe-metadata,阿哲,docs/art/review/animations/anim-azhe.json,public/art/pixel/anim-azhe.json,秋季,雨天,白天,,,,64×96,待机2 / 推眼镜4,待验收,帧时长及动作行元数据；游戏动作映射待接入验收
+grandma-normal,王奶奶,docs/art/review/portraits/grandma-normal-candidate.png,public/art/faces/grandma-normal.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
+grandma-happy,王奶奶,docs/art/review/portraits/grandma-happy-candidate.png,public/art/faces/grandma-happy.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
+grandma-thinking,王奶奶,docs/art/review/portraits/grandma-thinking-candidate.png,public/art/faces/grandma-thinking.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
+grandma-surprised,王奶奶,docs/art/review/portraits/grandma-surprised-candidate.png,public/art/faces/grandma-surprised.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
+anim-grandma,王奶奶,docs/art/review/animations/anim-grandma-candidate.png,public/art/pixel/anim-grandma.png,秋季,晴天,傍晚,256,192,是,64×96,待机2 / 摆摆手4,已接入,4列×2行 64×96；接进客厅，按 40×60 逻辑尺寸显示；脚底与路米同基线
