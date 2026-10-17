@@ -1,0 +1,7 @@
+﻿asset_id,room,target_file,logical_w,logical_h,deliver_w,deliver_h,anchor_x,anchor_y,priority,status,current_stand_in,notes
+checklist,小雨房间,public/art/pixel/case-props/checklist.png,12,13,24,26,120,150,P2,待交付,代码占位,地上的发布检查表；两栏框线可由代码加；不急
+piggy,小雨房间,public/art/pixel/case-props/piggy.png,12,11,24,22,,,P2,已交付未布置,docs/art/review/case-props/piggy-candidate.png,存钱罐；关卡里还没有调查点
+anim-duoduo,朵朵,public/art/pixel/anim-duoduo.png,,,64,96,,,P0,待交付,代码占位,待机2帧+抱紧抱枕4帧；脚底基线一致；附json
+anim-xiaoyu,小雨,public/art/pixel/anim-xiaoyu.png,,,64,96,,,P0,待交付,代码占位,待机2帧+蹦一下4帧；脚底基线一致；附json
+duoduo-face,朵朵,public/art/faces/duoduo-normal.webp,,,320,320,,,P1,待交付,木框占位,四表情：normal/happy/thinking/surprised
+xiaoyu-face,小雨,public/art/faces/xiaoyu-happy.webp,,,320,320,,,P1,待交付,木框占位,已有normal；补happy/thinking/surprised

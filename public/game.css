@@ -833,6 +833,9 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 .case-room-bg.dorm.game-corner {background:linear-gradient(#c5c8e1 0 65%,#bd966a 65%);}
 .case-npc.duoduo .game-sprite b {background:#e4ad56;}
 .case-npc.xiaoyu .game-sprite b {background:#c96b65;}
+/* Clients who have no sprite sheet yet still read as themselves: hair first, then clothes. */
+.case-npc.duoduo .game-sprite i {background:linear-gradient(180deg,#8a5a2b 0 45%,#f0c8a0 45%);}
+.case-npc.xiaoyu .game-sprite i {background:linear-gradient(180deg,#3f3230 0 45%,#f0c8a0 45%);}
 
 /* Delivered Kobayashi sheet: 64x96 frames, 4 columns and 2 rows. */
 .case-npc:has(.case-client-sheet) {width:calc(28px * var(--px));height:calc(42px * var(--px));}
@@ -872,4 +875,7 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 .case-goal {top:calc(var(--game-toolbar-height, 52px) + 10px);}
 .case-npc:not(:has(.case-client-sheet)) {width:calc(26.4px * var(--px));height:calc(52.8px * var(--px));}
 .case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.65);}
+/* In a calibrated room the client stands on the same 60-unit body as the player, not a squat draft. */
+.calibrated-room .case-npc:not(:has(.case-client-sheet)) {width:calc(30px * var(--px));height:calc(60px * var(--px));}
+.calibrated-room .case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.875);}
 @media(max-width:700px),(max-height:500px) {.case-goal {top:calc(var(--game-toolbar-height, 40px) + 6px);}}

@@ -27,3 +27,17 @@ case-room-privacy-ledger-v3-candidate,小林宿舍,docs/art/review/case-room-pri
 case-room-privacy-ledger-v4-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v4-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1664,936,否,,,候选,空桌、空窗台与中心出口通道；桌面两件物品底锚点建议改为 y=80，猫锚点改为 y=56；需接入方核对调查站位、遮挡与碰撞
 case-room-farm-save-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,1664,936,否,,,候选,农场小屋阁楼；空床、空桌与开放地面；农场菜地和谷仓在窗外；未烘焙游戏机、南瓜抱枕、日历、U盘、笔记或小鸡；16:9候选，等待道具锚点及走路区验收
 case-room-calculator-eggs-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,1664,936,否,,,候选,粉色点缀的学生卧室；黄昏斜光；空书桌、空墙面与开放地面；未烘焙计算器、练习册、海报、论坛、存钱罐或玩偶；16:9候选，等待道具锚点及走路区验收
+case-room-farm-save-v2-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-v2-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,640,360,否,,,已接入,按320×180栅格缩到640×360；空桌空床与中央通路；桌面y=72、床上y≈100、墙面y=60；碰撞为床/床头柜/书桌椅/衣柜；六件调查物锚点已重排，站位在1.2倍屏幕下实测可走
+case-room-calculator-eggs-v2-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-v2-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,640,360,否,,,已接入,按320×180栅格缩到640×360；空书桌空墙与开放地面；桌面y=71、床上y≈104、墙面y=56；碰撞为床/床头柜/书桌椅/书架；七件调查物锚点已重排，椅子上的玩偶不再被委托人挡住
+case-props-console,朵朵房间,docs/art/review/sources/case-props-console-source.png,public/art/pixel/case-props/console.png,秋季,晴天,早晨,28,20,是,,,已接入,掌机横放；底边锚点(84,100)；显示14逻辑宽；屏幕内容由游戏给
+case-props-pillow,朵朵房间,docs/art/review/sources/case-props-pillow-source.png,public/art/pixel/case-props/pillow.png,秋季,晴天,早晨,32,28,是,,,已接入,南瓜抱枕；底边锚点(52,98)；显示16逻辑宽；压在床沿
+case-props-calendar,朵朵房间,docs/art/review/sources/case-props-calendar-source.png,public/art/pixel/case-props/calendar.png,秋季,晴天,早晨,22,28,是,,,已接入,挂墙日历兼便签；锚点(282,58)；纸面无可读字
+case-props-notebook,朵朵房间,docs/art/review/sources/case-props-notebook-source.png,public/art/pixel/case-props/notebook.png,秋季,晴天,早晨,28,24,是,,,已接入,摊开的种田笔记；锚点(272,72)；页面留空
+case-props-usb,朵朵房间,docs/art/review/sources/case-props-usb-source.png,public/art/pixel/case-props/usb.png,秋季,晴天,早晨,18,12,是,,,已接入,U盘；锚点(118,150)地板；显示9逻辑宽
+case-props-chick,朵朵房间,docs/art/review/sources/case-props-chick-source-sheet.png,docs/art/review/case-props/chick-candidate.png,,,,20,20,是,,,待验收,精灵表首帧；场景暂无小鸡调查点，留作地板装饰，未进运行目录
+case-props-calculator,小雨房间,docs/art/review/sources/case-props-calculator-source.png,public/art/pixel/case-props/calculator.png,秋季,晴天,傍晚,20,28,是,,,已接入,像素计算器；锚点(264,72)书桌右半边；显示10逻辑宽
+case-props-plush,小雨房间,docs/art/review/sources/case-props-plush-source.png,public/art/pixel/case-props/plush.png,秋季,晴天,傍晚,24,28,是,,,已接入,玩偶；锚点(248,100)椅子坐面；挡不挡书桌已核对
+case-props-workbook,小雨房间,docs/art/review/sources/case-props-workbook-source.png,public/art/pixel/case-props/workbook.png,秋季,晴天,傍晚,28,24,是,,,已接入,摊开的练习册；锚点(52,108)床上；页面留空
+case-props-poster,小雨房间,docs/art/review/sources/case-props-poster-source.png,public/art/pixel/case-props/poster.png,秋季,晴天,傍晚,24,28,是,,,已接入,墙面便签；锚点(82,58)；与论坛屏相距56逻辑单位
+case-props-forum,小雨房间,docs/art/review/sources/case-props-forum-source.png,public/art/pixel/case-props/forum.png,秋季,晴天,傍晚,30,24,是,,,已接入,贴墙屏幕；锚点(26,56)；无可读小字
+case-props-piggy,小雨房间,docs/art/review/sources/case-props-piggy-source.png,docs/art/review/case-props/piggy-candidate.png,,,,24,22,是,,,待验收,存钱罐；关卡暂无调查点，未进运行目录

@@ -177,7 +177,7 @@
       "computerLabel": "朵朵的存档工作台",
       "labSource": "存档实验",
       "room": {
-        "top": 118,
+        "top": 113,
         "spawn": {
           "x": 160,
           "y": 168
@@ -192,10 +192,28 @@
         },
         "blocks": [
           {
-            "x": 236,
-            "y": 132,
-            "w": 80,
-            "h": 36
+            "x": 26,
+            "y": 88,
+            "w": 72,
+            "h": 24
+          },
+          {
+            "x": 6,
+            "y": 96,
+            "w": 26,
+            "h": 30
+          },
+          {
+            "x": 206,
+            "y": 64,
+            "w": 86,
+            "h": 52
+          },
+          {
+            "x": 290,
+            "y": 40,
+            "w": 24,
+            "h": 76
           }
         ],
         "clientTalk": {
@@ -211,26 +229,28 @@
               "text": "你推理出格式了？工作台里有一份副本，拿副本试试吧。"
             }
           ]
-        }
+        },
+        "characterScale": 1.875
       },
       "terminal": "laptop",
       "scene": {
         "place": "朵朵的房间",
         "look": "dorm farm",
+        "art": "case-room-farm-save",
         "items": [
           {
             "id": "laptop",
             "label": "存档工作台",
             "look": "laptop",
             "at": [
-              136,
-              110
+              223,
+              72
             ],
             "stand": [
-              138,
-              130
+              221,
+              126
             ],
-            "size": 40,
+            "size": 24,
             "lines": [
               {
                 "text": "工作台里放着 save.js 和存档副本。源码可以搜索，原存档不会被直接修改。"
@@ -246,21 +266,22 @@
                   "code": "encodeSave / decodeSave"
                 }
               ]
-            }
+            },
+            "art": "laptop-room"
           },
           {
             "id": "console",
             "label": "床上的游戏机",
             "look": "phone",
             "at": [
-              272,
-              146
+              84,
+              100
             ],
             "stand": [
-              226,
-              150
+              84,
+              126
             ],
-            "size": 20,
+            "size": 14,
             "lines": [
               {
                 "text": "读档画面：角色「小白」，第 12 天，金币 230。游戏画面中的数字和文件里的字母看起来完全不同。"
@@ -277,21 +298,22 @@
                   "note": "NEW_GAME 是新游戏的默认值，不是当前存档。"
                 }
               ]
-            }
+            },
+            "art": "console"
           },
           {
             "id": "notebook",
             "label": "种田笔记",
             "look": "chat",
             "at": [
-              96,
-              110
+              272,
+              72
             ],
             "stand": [
-              96,
-              130
+              268,
+              126
             ],
-            "size": 24,
+            "size": 14,
             "lines": [
               {
                 "text": "笔记写着：「只改金币，不碰别的。」旁边有人补了一句：「sum 也得对上。」"
@@ -307,21 +329,22 @@
                   "code": "checksum / sum"
                 }
               ]
-            }
+            },
+            "art": "notebook"
           },
           {
             "id": "calendar",
             "label": "读档失败便签",
             "look": "clock",
             "at": [
-              258,
-              46
+              282,
+              58
             ],
             "stand": [
-              258,
-              126
+              296,
+              136
             ],
-            "size": 24,
+            "size": 11,
             "lines": [
               {
                 "text": "旧便签：「我把文件还原，改了金币再装回去，结果成了新农夫，只有 50 金币。」"
@@ -338,21 +361,22 @@
                 }
               ]
             },
-            "wall": true
+            "wall": true,
+            "art": "calendar"
           },
           {
             "id": "usb",
             "label": "备份存档",
             "look": "paper",
             "at": [
-              60,
-              164
+              118,
+              150
             ],
             "stand": [
-              76,
-              168
+              118,
+              164
             ],
-            "size": 22,
+            "size": 9,
             "lines": [
               {
                 "text": "U盘里保存着 slot1.sav 的副本。原件先留好，实验只用副本。"
@@ -368,27 +392,29 @@
                   "code": "base64 / SAVE_SALT"
                 }
               ]
-            }
+            },
+            "art": "usb"
           },
           {
             "id": "pillow",
             "label": "南瓜抱枕",
             "look": "cat",
             "at": [
-              196,
-              76
+              52,
+              98
             ],
             "stand": [
-              196,
+              52,
               126
             ],
-            "size": 30,
+            "size": 16,
             "lines": [
               {
                 "text": "抱枕下面压着半包种子。朵朵说：「金币能改，可种出第一棵南瓜的高兴改不出来。」"
               }
             ],
-            "wall": true
+            "wall": true,
+            "art": "pillow"
           }
         ]
       },

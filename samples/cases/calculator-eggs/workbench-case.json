@@ -165,7 +165,7 @@
       "computerLabel": "小雨的调试电脑",
       "labSource": "计算器实验",
       "room": {
-        "top": 118,
+        "top": 123,
         "spawn": {
           "x": 160,
           "y": 168
@@ -175,15 +175,33 @@
           "y": 176
         },
         "client": {
-          "x": 190,
-          "y": 150
+          "x": 196,
+          "y": 152
         },
         "blocks": [
           {
-            "x": 236,
-            "y": 132,
-            "w": 80,
-            "h": 36
+            "x": 16,
+            "y": 100,
+            "w": 76,
+            "h": 26
+          },
+          {
+            "x": 0,
+            "y": 96,
+            "w": 20,
+            "h": 34
+          },
+          {
+            "x": 212,
+            "y": 64,
+            "w": 76,
+            "h": 42
+          },
+          {
+            "x": 285,
+            "y": 40,
+            "w": 32,
+            "h": 62
           }
         ],
         "clientTalk": {
@@ -199,26 +217,28 @@
               "text": "推理可以错，按出来的效果不会骗人。去电脑上试试！"
             }
           ]
-        }
+        },
+        "characterScale": 1.875
       },
       "terminal": "laptop",
       "scene": {
         "place": "小雨的游戏角",
         "look": "dorm game-corner",
+        "art": "case-room-calculator-eggs",
         "items": [
           {
             "id": "laptop",
             "label": "调试电脑",
             "look": "laptop",
             "at": [
-              136,
-              110
+              225,
+              71
             ],
             "stand": [
-              138,
-              130
+              222,
+              132
             ],
-            "size": 40,
+            "size": 22,
             "lines": [
               {
                 "text": "电脑保留了这个原创计算器的源码。renderer.js 管界面，main.js 管主进程，preload.js 把能力交给页面。"
@@ -234,21 +254,22 @@
                   "code": "display / license"
                 }
               ]
-            }
+            },
+            "art": "laptop-room"
           },
           {
             "id": "calculator",
             "label": "像素计算器",
             "look": "phone",
             "at": [
-              272,
-              146
+              264,
+              72
             ],
             "stand": [
-              226,
-              150
+              272,
+              136
             ],
-            "size": 20,
+            "size": 10,
             "lines": [
               {
                 "text": "小雨输入一串数字时，屏幕忽然变成了一句祝福。普通加减法还在，数据也没少。"
@@ -264,21 +285,22 @@
                   "code": "display"
                 }
               ]
-            }
+            },
+            "art": "calculator"
           },
           {
             "id": "workbook",
             "label": "秘籍练习册",
             "look": "chat",
             "at": [
-              96,
-              110
+              52,
+              108
             ],
             "stand": [
-              96,
-              130
+              52,
+              146
             ],
-            "size": 24,
+            "size": 14,
             "lines": [
               {
                 "text": "练习册上画着上上下下左右左右，最后两个字母没写完。旁边写着「顺序不能乱」。"
@@ -294,21 +316,22 @@
                   "code": "SECRET_KEYS"
                 }
               ]
-            }
+            },
+            "art": "workbook"
           },
           {
             "id": "poster",
             "label": "调试快捷键便签",
             "look": "clock",
             "at": [
-              258,
-              46
+              82,
+              58
             ],
             "stand": [
-              258,
-              126
+              82,
+              146
             ],
-            "size": 24,
+            "size": 12,
             "lines": [
               {
                 "text": "墙上写着：「发布前记得收走开发工具。」后面的一组组合键被涂掉了。"
@@ -325,21 +348,22 @@
                 }
               ]
             },
-            "wall": true
+            "wall": true,
+            "art": "poster"
           },
           {
             "id": "forum",
             "label": "论坛里的传闻",
             "look": "router",
             "at": [
-              38,
-              70
+              26,
+              56
             ],
             "stand": [
-              40,
-              128
+              26,
+              146
             ],
-            "size": 28,
+            "size": 15,
             "lines": [
               {
                 "text": "论坛有人说：「地址后面加一小段，就能打开隐藏面板；还有一个调试通道能改授权。」这需要验证。"
@@ -360,21 +384,22 @@
                 }
               ]
             },
-            "wall": true
+            "wall": true,
+            "art": "forum"
           },
           {
             "id": "policy",
             "label": "发布检查表",
             "look": "paper",
             "at": [
-              60,
-              164
+              120,
+              150
             ],
             "stand": [
-              76,
+              120,
               168
             ],
-            "size": 22,
+            "size": 12,
             "lines": [
               {
                 "text": "清单有两栏：「可以保留的小惊喜」和「应移除的开发入口」。有些地方画了问号。"
@@ -392,20 +417,21 @@
             "label": "桌边的玩偶",
             "look": "cat",
             "at": [
-              196,
-              76
+              248,
+              100
             ],
             "stand": [
-              196,
+              246,
               126
             ],
-            "size": 30,
+            "size": 12,
             "lines": [
               {
                 "text": "玩偶背后写着：「别把所有秘密都叫漏洞，也别把所有后门都叫彩蛋。」"
               }
             ],
-            "wall": true
+            "wall": true,
+            "art": "plush"
           }
         ]
       },

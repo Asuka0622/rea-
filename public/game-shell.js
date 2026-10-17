@@ -1702,8 +1702,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (!keepPlace) Object.assign(player, { x: room.spawn.x, y: room.spawn.y, walking: false });
     target = null;
     const picture = puzzle.scene.art && has(puzzle.scene.art);
+    // Calibrated rooms are the 16:9 backgrounds drawn on the same 320x180 grid: the anchors in the case
+    // data are measured against the picture itself, so props, actors and collisions share one scale.
+    const calibrated = Boolean(puzzle.scene.art && puzzle.scene.art.startsWith("case-room-"));
     const who = item.game.client;
-    roomEl = h("div", { class: `game-room case-room${puzzle.scene.art === "case-room-privacy-ledger" ? " calibrated-room" : ""}` },
+    roomEl = h("div", { class: `game-room case-room${calibrated ? " calibrated-room" : ""}` },
       picture ? h("img", { class: "game-bg", src: `/art/pixel/${puzzle.scene.art}.png`, alt: "" }) : h("div", { class: `game-bg drawn case-room-bg ${puzzle.scene.look || "dorm"}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "bed" }), h("span", { class: "desk" }), h("span", { class: "shelf" }), h("span", { class: "rug" })),
       ...puzzle.scene.items.map((thing) => session.propEl(thing)),
       h("button", { type:'button',class: `case-npc ${who.portrait}`, style: `left:calc(${room.client.x}px * var(--px));top:calc(${room.client.y}px * var(--px));z-index:${room.client.y}`, 'aria-label':`和${who.name}说话`,onclick:()=>navigateCaseThing('client') }, has(`anim-${who.portrait}`) ? h("span", { class: `case-client-sheet ${who.portrait}`, 'aria-hidden':'true', style: `background-image:url(/art/pixel/anim-${who.portrait}${has(`anim-${who.portrait}-case`) ? "-case" : ""}.png)` }) : h("span", { class: "game-sprite drawn",'aria-hidden':'true' }, h("i", {}), h("b", {}), h("u", {})), h("small", {}, who.name)),
