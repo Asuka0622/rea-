@@ -10,6 +10,15 @@
 // 节奏 borrows from 音游 (Cytus / Muse Dash / 太鼓): notes ride a lane toward a judgment line, hits are
 // graded, combo and accuracy are shown, misses say what leaked out.
 
+//
+// 经营 borrows from Game Dev Story / Papers, Please: a company, a daily ledger, one switch per
+// permission. Ad money only flows while the lamp works; 查处 risk only builds while the dangerous
+// ones stay on; when the hammer falls it names the permission that called it down.
+//
+// 卡牌 borrows from 逆转裁判's cross-examination: the developer claims one thing at a time and the
+// player presents the one evidence card that answers exactly that claim. Wrong cards say what they
+// DO prove, so a miss is still a lesson in "evidence must match the claim".
+
 const cls = (parts) => parts.filter(Boolean).join(" ");
 
 function head(h, icon, title, onHint) {
@@ -318,4 +327,217 @@ export function mountPipes({ h, icon, lab, onMistake = () => {}, onHint = () => 
   };
   paint();
   return h("div", { class: "mini mini-pipes" }, head(h, icon, lab.sampleTitle || "数据流向", onHint), grid, h("div", { class: "mini-controls" }, count), say);
+}
+
+/**
+ * 经营 · 权限的代价 (王奶奶手电筒公司): the board handed you every switch turned on. Run the company for
+ * a week — ad income flows only while the lamp works, users drain and 查处 risk builds while the
+ * dangerous permissions stay on, and rent goes out either way. When the hammer falls it names the
+ * permission that called it down.
+ * 数据：{ days, users, rent, riskMax, bankFloor, perms:[{id,label,need,income,churn,risk,note}],
+ *         events:[{at,lose,label,text}] }
+ */
+export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+  const spec = lab.manage || {
+    days: 7, users: 100, rent: 4, riskMax: 120, bankFloor: -20,
+    perms: [
+      { id: "flash", label: "闪光灯（开灯用）", need: true, income: 0, churn: 0, risk: 0, note: "灯的本职。关了它，App 就是个摆设。" },
+      { id: "internet", label: "INTERNET（联网）", income: 9, churn: 0, risk: 5, note: "广告要它；SDK 把数据传出去，也要它。" },
+      { id: "contacts", label: "READ_CONTACTS（通讯录）", income: 6, churn: 2, risk: 6, note: "广告 SDK 想认识你的朋友。" },
+      { id: "location", label: "FINE_LOCATION（精确定位）", income: 5, churn: 3, risk: 5, note: "好推「附近」的广告。" },
+      { id: "boot", label: "BOOT_COMPLETED（开机自启）", income: 2, churn: 3, risk: 3, note: "一开机就开始干活。" },
+      { id: "camera", label: "CAMERA（相机）", income: 0, churn: 1, risk: 2, note: "开灯用不着摄像头。" },
+    ],
+    events: [
+      { at: 40, lose: 15, label: "商店问询", text: "商店来问：一个手电筒，为什么要读通讯录？" },
+      { at: 80, lose: 30, label: "通报批评", text: "被通报「超范围收集」，用户吵翻了。" },
+      { at: 120, lose: 999, label: "下架", text: "应用被下架了。" },
+    ],
+  };
+  const perms = spec.perms.map((perm) => ({ ...perm, on: true }));
+  const events = spec.events || [];
+  let day = 1;
+  let users = spec.users ?? 100;
+  let cash = spec.cash ?? 0;
+  let risk = 0;
+  let fired = new Set();
+  let notified = 0;
+  let over = false;
+
+  const say = h("p", { class: "mini-say", role: "status" }, "董事会把权限全开了，广告收入到账、用户在流失、查处风险在涨。该关哪几项，你来定——每过一天结一次账。");
+  const log = h("div", { class: "mini-mg-log" });
+  const meter = h("span", { class: "mini-mg-meter" }, h("i", {}));
+  const bar = h("div", { class: "mini-mg-bar" });
+  const next = h("button", { class: "btn primary", type: "button", onclick: () => endDay() }, icon("scan", { size: 14 }), "过一天");
+  const restart = h("button", { class: "btn", type: "button", hidden: true, onclick: () => reset() }, "重新开张");
+  const permEls = perms.map((perm) => h("button", {
+    class: "mini-mg-perm on", type: "button",
+    onclick: () => {
+      if (over) return;
+      perm.on = !perm.on;
+      if (perm.need && !perm.on) { onMistake(); say.textContent = "这是开灯本身要用的权限——灯不亮，什么都谈不上。"; }
+      else if (!perm.need && perm.on) say.textContent = `${perm.label}：${perm.note || "打开它"}。`;
+      else if (!perm.need) say.textContent = `关掉 ${perm.label}：广告少一份，风险也少一份。`;
+      paint();
+    },
+  }, h("b", {}, perm.label),
+    ...(perm.income ? [h("span", { class: "gain" }, `广告 +${perm.income}/天`)] : []),
+    ...(perm.churn ? [h("span", { class: "cost" }, `掉粉 ${perm.churn}/天`)] : []),
+    ...(perm.risk ? [h("span", { class: "cost" }, `风险 +${perm.risk}/天`)] : []),
+    ...(perm.need ? [h("span", { class: "gain" }, "开灯必须")] : []),
+    ...(perm.note ? [h("small", {}, perm.note)] : [])));
+  const root = h("div", { class: "mini mini-manage" }, head(h, icon, lab.manageTitle || "权限的代价", onHint),
+    bar, h("div", { class: "mini-mg-perms" }, ...permEls), h("div", { class: "mini-controls" }, next, restart), say, log);
+
+  const paint = () => {
+    const maxRisk = spec.riskMax ?? 120;
+    bar.replaceChildren(
+      h("span", { class: "mini-td-stat" }, `第 ${Math.min(day, spec.days)}/${spec.days} 天`),
+      h("span", { class: "mini-td-stat" }, `现金 ¥${Math.round(cash)}`),
+      h("span", { class: "mini-td-stat" }, `用户 ${Math.max(0, Math.round(users))}`),
+      h("span", { class: "mini-td-stat" }, `被查风险 ${Math.round(risk)}/${maxRisk}`));
+    bar.append(meter);
+    meter.firstChild.style.width = `${Math.min(100, (risk / maxRisk) * 100)}%`;
+    permEls.forEach((el, i) => { el.className = cls(["mini-mg-perm", perms[i].on ? "on" : "off"]); });
+  };
+
+  const endDay = () => {
+    if (over) return;
+    const on = perms.filter((perm) => perm.on);
+    const lamp = on.find((perm) => perm.need);
+    const income = lamp ? on.reduce((sum, perm) => sum + (perm.income || 0), 0) : 0;
+    const churn = on.reduce((sum, perm) => sum + (perm.churn || 0), 0);
+    const rent = spec.rent ?? 4;
+    const topRisk = () => [...perms].filter((perm) => perm.on && !perm.need && perm.risk).sort((a, b) => b.risk - a.risk)[0];
+    cash += income - rent;
+    users -= churn;
+    risk += on.reduce((sum, perm) => sum + (perm.risk || 0), 0);
+    const lines = [`第 ${day} 天：${lamp ? `进账 ¥${income}` : "灯没亮，收入 ¥0"}，房租 ¥${rent}${churn ? `，掉粉 ${churn}` : ""}。`];
+    if (!lamp) {
+      onMistake();
+      lines.push("开灯要用的权限被关了——灯都不亮，谈不上生意。");
+      say.textContent = "灯没亮。开灯那项是本职权限，不能关。";
+    }
+    for (const event of events) {
+      if (risk >= event.at && !fired.has(event.label)) {
+        fired.add(event.label);
+        notified += 1;
+        users -= event.lose;
+        const culprit = topRisk();
+        lines.push(`【${event.label}】${event.text}${culprit ? `（风险最大的一项：${culprit.label}）` : ""}`);
+        say.textContent = `${event.label}：${event.text}`;
+        if (event.label !== "商店问询") onMistake();
+      }
+    }
+    users = Math.max(0, users);
+    log.prepend(...lines.map((line) => h("div", {}, line)));
+    if (users <= 0) return finish(false, `用户跑光了。${topRisk()?.label || "多余的权限"}把大家吓走了。`);
+    if (cash < (spec.bankFloor ?? -20)) return finish(false, `钱烧完了（¥${Math.round(cash)}）：房租都交不起。`);
+    if (day >= spec.days) return finish(true);
+    day += 1;
+    paint();
+  };
+
+  const finish = (ok, text) => {
+    over = true;
+    next.hidden = true;
+    restart.hidden = false;
+    if (ok) {
+      say.textContent = `撑过 ${spec.days} 天：现金 ¥${Math.round(cash)}，剩 ${Math.round(users)} 个用户${notified ? `，被查 ${notified} 次` : ""}。`
+        + (cash <= 10 ? "只留本职最安全，但也最穷——这就是最小权限的代价与安心。"
+          : "钱赚到了，风险也在账上写着：每一项权限都要有人负责。");
+      onDone();
+    } else {
+      say.textContent = text;
+      onMistake();
+      log.prepend(h("div", {}, text));
+    }
+    paint();
+  };
+
+  const reset = () => {
+    day = 1;
+    users = spec.users ?? 100;
+    cash = spec.cash ?? 0;
+    risk = 0;
+    fired = new Set();
+    notified = 0;
+    over = false;
+    for (const perm of perms) perm.on = true;
+    next.hidden = false;
+    restart.hidden = true;
+    log.replaceChildren();
+    say.textContent = "再开一次：这回先想好，哪几项是本职。";
+    paint();
+  };
+  paint();
+  return root;
+}
+
+/**
+ * 卡牌 · 对质 (通用): the developer claims one thing at a time; the player presents the one evidence
+ * card that answers exactly that claim, 逆转裁判 style. 出对牌 == 用对证据 — a wrong card says what it
+ * does prove instead, so every miss still teaches "evidence must match the claim".
+ * 数据：{ opponent, cards:[{id,label,note}], claims:[{text,answer,why}] }
+ */
+export function mountCards({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+  const spec = lab.cards || {
+    opponent: "开发者",
+    cards: [
+      { id: "capture", label: "抓包记录", note: "你没点任何东西，它每 30 秒上传一次" },
+      { id: "timer", label: "代码：setInterval(…, 30000)", note: "每 30 秒干一次活的，只有定时器" },
+      { id: "sdk", label: "安装包里的 SDK 名单", note: "上传的收件人是广告 SDK 的地址" },
+      { id: "terms", label: "用户协议第 14 条", note: "写着「可能收集信息」" },
+      { id: "changelog", label: "更新日志", note: "只写了「修复闪退」" },
+      { id: "lamp", label: "手电筒 APK 的权限清单", note: "另一个案子的证据，和本案无关" },
+    ],
+    claims: [
+      { text: "我从不收集。你不点同步，它就不会上传。", answer: "capture", why: "抓包记录：你一下都没点，它每 30 秒自己传一次。" },
+      { text: "就算有，那也是一次性的统计，不会自己定时跑。", answer: "timer", why: "代码里的 setInterval(30000)：会自己定时跑的，只有定时器。" },
+      { text: "数据发到我们自己的服务器，没给过别人。", answer: "sdk", why: "收件地址在 SDK 名单里，是广告公司的，不是开发者的。" },
+      { text: "用户都同意了，协议里写得明明白白。", answer: "terms", why: "第 14 条写的是「可能收集」，没说定时——还藏在 9 页长文里。" },
+    ],
+  };
+  const cards = spec.cards || [];
+  const claims = spec.claims || [];
+  let idx = 0;
+  let wrong = 0;
+
+  const bubble = h("div", { class: "mini-cd-claim" });
+  const verdict = h("p", { class: "mini-cd-verdict" }, "");
+  const count = h("span", { class: "mini-count" });
+  const say = h("p", { class: "mini-say", role: "status" }, `${spec.opponent || "对方"}一句句说，你出对应的那张证据牌。对质不是吵架：让每一句话都对上一件证据。`);
+  const paint = () => {
+    bubble.replaceChildren(h("b", {}, `${spec.opponent || "对方"}：`), ` ${claims[idx]?.text || "……（他不说话了）"}`);
+    count.textContent = `已驳回 ${idx}/${claims.length} · 打错 ${wrong}`;
+  };
+  const play = (card) => {
+    const claim = claims[idx];
+    if (!claim || !card) return;
+    if (card.id === claim.answer) {
+      idx += 1;
+      verdict.className = "mini-cd-verdict refute";
+      verdict.textContent = `【等一下！】${claim.why || "这句话被证据驳倒了。"}`;
+      if (idx >= claims.length) {
+        say.textContent = wrong
+          ? `全部驳回，打错 ${wrong} 次——每张牌只说明一件事，出牌前先听清对面在主张什么。`
+          : "一张没错。证据和主张一一对应，这就是证据链。";
+        onDone();
+      } else {
+        say.textContent = "驳倒了。他换了种说法，下一句。";
+      }
+    } else {
+      wrong += 1;
+      onMistake();
+      verdict.className = "mini-cd-verdict";
+      verdict.textContent = `${card.label}——这张牌说明不了这句：它${card.note || "讲的是另一件事"}。`;
+      say.textContent = "证据要对着主张出：先听清这句话在主张什么，再挑牌。";
+    }
+    paint();
+  };
+  const cardEls = cards.map((card) => h("button", { class: "mini-cd-card", type: "button", onclick: () => play(card) },
+    h("b", {}, card.label), ...(card.note ? [h("small", {}, card.note)] : [])));
+  paint();
+  return h("div", { class: "mini mini-cards" }, head(h, icon, lab.cardsTitle || "当面对质", onHint),
+    bubble, verdict, h("div", { class: "mini-cd-cards" }, ...cardEls), h("div", { class: "mini-controls" }, count), say);
 }

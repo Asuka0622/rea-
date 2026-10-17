@@ -1057,3 +1057,26 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-rh-hit.good {background:#cfe8d4;}
 .mini-rh-hit.miss {background:#c9573e;color:#fff6dc;}
 .mini-rh-score {display:flex;gap:12px;font:12px/1.4 var(--font-mono);color:#e8c270;}
+/* 经营（Game Dev Story / Papers, Please 那一路）：一间公司、一本日账、每项权限一个开关。 */
+.mini-mg-bar {display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.mini-mg-meter {display:inline-block;width:96px;height:10px;background:#1f3326;border:1px solid #4d7a5c;vertical-align:middle;}
+.mini-mg-meter i {display:block;height:100%;width:0;background:#c9573e;transition:width .25s;}
+.mini-mg-perms {display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:6px;}
+.mini-mg-perm {padding:6px 8px;text-align:left;font:12px/1.5 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.mini-mg-perm.on {border-color:#e8c270;background:#2a4433;}
+.mini-mg-perm.off {opacity:.55;}
+.mini-mg-perm b {display:block;color:#ffe8b0;}
+.mini-mg-perm .gain {color:#e8c270;}
+.mini-mg-perm .cost {color:#d97a63;}
+.mini-mg-perm small {display:block;color:#8aa894;}
+.mini-mg-log {margin:0;padding:4px 8px;font:11px/1.6 var(--font-body);color:#8aa894;max-height:96px;overflow:auto;background:#0d1410;border:1px dashed #2f4a38;}
+/* 卡牌（逆转裁判那一路）：一句主张，一张对应的证据牌。 */
+.mini-cd-claim {padding:10px 12px;font:13px/1.6 var(--font-body);color:#fff6dc;background:#231a2e;border-left:3px solid #8a5fb0;min-height:44px;}
+.mini-cd-claim b {color:#d8b4e8;}
+.mini-cd-verdict {margin:0;padding:6px 8px;font:12px/1.6 var(--font-body);color:#cfe8d4;background:#101a14;border-left:3px solid #3f6a4c;min-height:32px;}
+.mini-cd-verdict.refute {border-left-color:#e8c270;color:#ffe8b0;}
+.mini-cd-cards {display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;}
+.mini-cd-card {padding:7px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.mini-cd-card:hover {border-color:#e8c270;}
+.mini-cd-card b {display:block;color:#ffe8b0;}
+.mini-cd-card small {display:block;color:#8aa894;}
