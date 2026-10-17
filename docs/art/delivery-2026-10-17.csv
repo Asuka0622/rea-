@@ -1,4 +1,4 @@
-asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
+﻿asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
 kobayashi-thinking,小林,docs/art/public/art/kobayashi-thinking.png,public/art/faces/kobayashi-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 lumi-point,路米,docs/art/public/art/lumi-point.png,public/art/faces/lumi-point.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 azhe-normal,阿哲,docs/art/public/art/azhe-normal.png,public/art/faces/azhe-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
@@ -48,5 +48,5 @@ duoduo-surprised-portrait-candidate,朵朵,docs/art/review/sources/portrait-duod
 xiaoyu-happy-portrait-candidate,小雨,docs/art/review/sources/portrait-xiaoyu-happy-source.png,public/art/portraits/xiaoyu-happy.png,,,,1086,1448,是,,,候选,透明3:4插画头像源图；同角色保持发型、服装和构图，表情独立；等待游戏头像裁切预览确认
 xiaoyu-thinking-portrait-candidate,小雨,docs/art/review/sources/portrait-xiaoyu-thinking-source.png,public/art/portraits/xiaoyu-thinking.png,,,,1086,1448,是,,,候选,透明3:4插画头像源图；同角色保持发型、服装和构图，表情独立；等待游戏头像裁切预览确认
 xiaoyu-surprised-portrait-candidate,小雨,docs/art/review/sources/portrait-xiaoyu-surprised-source.png,public/art/portraits/xiaoyu-surprised.png,,,,1086,1448,是,,,候选,透明3:4插画头像源图；同角色保持发型、服装和构图，表情独立；等待游戏头像裁切预览确认
-anim-duoduo,朵朵,docs/art/review/sources/anim-duoduo-source.png,public/art/pixel/anim-duoduo.png,秋季,晴天,早晨,256,192,是,64×96,待机2 / 抱枕拥抱4,候选,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、动作节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/
-anim-xiaoyu,小雨,docs/art/review/sources/anim-xiaoyu-source.png,public/art/pixel/anim-xiaoyu.png,秋季,晴天,傍晚,256,192,是,64×96,待机2 / 蹦跳4,候选,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、跳跃节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/
+anim-duoduo,朵朵,docs/art/review/sources/anim-duoduo-source.png,public/art/pixel/anim-duoduo.png,秋季,晴天,早晨,256,192,是,64×96,待机2 / 抱枕拥抱4,候选,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、动作节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/；已检查旧#143：图集动作行与64×96像素格不匹配，未直接接入；本候选按朵朵头像统一身份
+anim-xiaoyu,小雨,docs/art/review/sources/anim-xiaoyu-source.png,public/art/pixel/anim-xiaoyu.png,秋季,晴天,傍晚,256,192,是,64×96,待机2 / 蹦跳4,候选,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、跳跃节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/；风格参照小林运行精灵和朵朵候选，表情/衣着按小雨头像

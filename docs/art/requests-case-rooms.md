@@ -43,12 +43,12 @@
 
 ## 四、两位委托人的小人
 
-房间里已经有真实背景，方块占位特别显眼：朵朵和小雨现在用的是代码画的通用小人（只换发色和衣服颜色）。按 `asset-requirements.md` 第 7 节的精灵表格式交。
+两张精灵表已交付并接入，房间里不再有方块小人。剩下的只是对话头像。
 
 | 角色 | 目标文件 | 动作 | 说明 |
 |---|---|---|---|
-| 朵朵 `duoduo` | `public/art/pixel/anim-duoduo.png` + `.json` | 待机 2、抱紧抱枕 4 | 农场小屋的女孩；和头像同一套设计；脚底基线一致 |
-| 小雨 `xiaoyu` | `public/art/pixel/anim-xiaoyu.png` + `.json` | 待机 2、蹦一下 4 | 粉色房间的学生；已有 `xiaoyu-normal` 头像可对齐发色服装 |
+| 朵朵 `duoduo` | `public/art/pixel/anim-duoduo.png` + `.json` | 待机 2、抱紧抱枕 4 | **已接入**（256×192，4×2 格，64×96/帧） |
+| 小雨 `xiaoyu` | `public/art/pixel/anim-xiaoyu.png` + `.json` | 待机 2、蹦一下 4 | **已接入**（同上规格） |
 
 **对话头像**：朵朵四表情（normal / happy / thinking / surprised）现在没有，对话框里显示写着「朵」字的木框；小雨只有 normal。缺的表情按 `docs/art/faces/` 的 320×320 WebP 规格处理。
 
