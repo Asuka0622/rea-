@@ -50,7 +50,9 @@
 | 朵朵 `duoduo` | `public/art/pixel/anim-duoduo.png` + `.json` | 待机 2、抱紧抱枕 4 | **已接入**（256×192，4×2 格，64×96/帧） |
 | 小雨 `xiaoyu` | `public/art/pixel/anim-xiaoyu.png` + `.json` | 待机 2、蹦一下 4 | **已接入**（同上规格） |
 
-**对话头像**：朵朵四表情与小雨缺的三种表情已出 320×320 WebP，登记为「待验收」；小雨 normal 保留现有资源。裁切对照见 `docs/art/review/portraits/avatar-crops-320-review.png`，接入方需核对头像裁切和表情映射。
+**对话头像**：朵朵四表情与小雨缺的三种表情已出 320×320 WebP，登记为「待验收」；小雨 normal 保留现有资源。
+
+> 2026-10-17 接入时按第一关的构图重裁过：阿哲、朵朵、小雨的源图是半身全身图，用同一个缩放裁出来脸只有小林的四成。`scripts/prepare-portraits.py` 现在按角色记缩放（azhe 0.58 / duoduo 0.64 / xiaoyu 0.57，小林和路米 0.82），新角色来了先和 `kobayashi-normal.webp` 比一比再定系数，不要再图省事用一个全局值。裁切对照见 `docs/art/review/portraits/avatar-crops-320-review.png`，接入方需核对头像裁切和表情映射。
 
 **还缺王奶奶**：客厅这一关已经能玩，但王奶奶没有头像，对话框里显示写着「王」字的木框。需要四张 `grandma-normal.webp` / `grandma-happy.webp` / `grandma-thinking.webp` / `grandma-surprised.webp`，规格同其他角色（320×320、透明、头肩）。设计要点：灰白短发、老花镜挂在领口、深绿开衫，和客厅占位里的形象一致。
 
@@ -63,16 +65,18 @@
 
 接入完成后，接入方负责把 `samples/cases/*/workbench-case.json` 里对应 `items[].art` 换成新图，并复核 `stand` 站位与 `room.blocks` 碰撞（站位之间要留 ≥24 的间距，交互半径是 22）。
 
-## 六、阿哲的机房（`case-room-weather-keys`）：2026-10-17 起可以玩了，等美术
+## 六、阿哲的机房（`case-room-weather-keys`）：美术候选已交付，待接入验收
 
-序章第四个委托「天气小助手」已经做成能走进去的房间：两个机柜、一张摆放电脑的桌子、墙上的屏幕，六件调查物都能走到。现在用的是代码画的深色机房占位图，`scene.look` 是 `server`，家具位置已经和碰撞块对齐。
+序章第四个委托「天气小助手」已经做成能走进去的房间：两个机柜、一张摆放电脑的桌子、墙上的屏幕，六件调查物都能走到。机房背景和六件透明调查道具已生成并放到目标目录，当前仍待接入方在游戏场景中核对比例、锚点和调查流程。
 
 | 要交什么 | 目标文件 | 逻辑尺寸 | 说明 |
 |---|---|---|---|
-| 机房背景 | `public/art/pixel/case-room-weather-keys.png` | 320×180（交 640×360 或 1664×936） | 秋季雨天白天；左边和右边各一个机柜、中间一张摆放电脑的桌子、墙上一块屏幕；不要画调查物 |
-| 电脑 / 便签 / 打印件 / 机柜 / 链布清单 / 路由器 | `case-props/` 下同名文件 | 各 12–30 逻辑宽 | 现在全部是借用道具或代码图标 |
+| 机房背景 | `public/art/pixel/case-room-weather-keys.png` | 640×360 运行图（逻辑 320×180） | 秋季雨天白天；空机柜、空桌面、墙屏和通道；候选已出，待场景预览验收 |
+| 电脑 / 便签 / 打印件 / 机柜服务器 / 发布清单 / 路由器 | `public/art/pixel/case-props/weather-keys-{monitor,todo,printout,rack,poster,router}.png` | 宽 60 / 40 / 44 / 52 / 40 / 40 px（2×逻辑宽） | 独立透明像素稿已出，待房间内锚点与比例验收 |
 
-家具位置（背景画好后按这个对齐，或画完由接入方重新量）：
+道具裁切和背景预览见 `docs/art/review/weather-keys/weather-keys-props-contact.png`、`docs/art/review/weather-keys/case-room-weather-keys-art-preview.png` 与 `docs/art/review/case-room-weather-keys-v2-candidate.png`；完整道具源稿为 `docs/art/review/sources/weather-keys-props-sheet-source.png`。运行文件已放入目标目录，`items[].art` 映射和实际试玩仍由接入方验收后处理。
+
+家具位置（按当前可玩关卡坐标）：
 
 - 左机柜 `x 14–72, y 44–136`；右机柜 `x 242–316, y 40–140`
 - 桌子 `x 94–226, y 96–126`（桌面 y≈96）

@@ -112,7 +112,7 @@
 
 | 场景 | 背景文件 | `case-props/` 下物品 |
 |---|---|---|
-| 阿哲机房，秋季雨天白天 | `case-room-weather-keys.png` | `monitor.png`、`sticky.png`、`server.png`、`launch-poster.png`、`flyer.png`、`umbrella.png` |
+| 阿哲机房，秋季雨天白天 | `case-room-weather-keys.png` | 按当前关卡清单：`weather-keys-monitor.png`、`weather-keys-todo.png`、`weather-keys-printout.png`、`weather-keys-rack.png`、`weather-keys-poster.png`、`weather-keys-router.png` |
 | 周姐办公室，秋季晴天中午 | `case-room-notes-versions.png` | `screen.png`、`sticky-wall.png`、`coffee.png`、`xiaoke-ad.png`、`printer.png`、`plant.png` |
 | 王奶奶客厅，傍晚/夜晚 | `case-room-flashlight-apk-evening.png`、`case-room-flashlight-apk-night.png` | `grandma-phone.png`、`glasses.png`、`mantel-clock.png`、`photo.png`、`addressbook.png`、`nightlight.png` |
 
