@@ -712,7 +712,26 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
-  if (new URLSearchParams(location.search).has("debug")) window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session };
+  // ?case=<id> goes straight into that case room, which is how backgrounds and prop anchors get checked.
+  if (new URLSearchParams(location.search).has("debug")) {
+    window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session };
+    const jump = new URLSearchParams(location.search).get("case");
+    if (jump) {
+      // A fresh browser shows the welcome questions first; a review link answers them with the
+      // recommended option, then opens the room. Cases and questions load asynchronously, so retry.
+      let tries = 0;
+      const tryEnter = () => {
+        if (tries++ > 40) return;
+        const question = document.querySelector(".game-difficulty");
+        if (question) (document.querySelector(".game-difficulty.recommended") || question).click();
+        else if (stage.dataset.view !== "case") {
+          try { enterSpot(jump); } catch {}
+        } else return;
+        setTimeout(tryEnter, 700);
+      };
+      setTimeout(tryEnter, 800);
+    }
+  }
   function walkTo(point, then) {
     if (stage.dataset.view !== "town" && !room) return then?.();
     const path = findPath(player, point) || [point];

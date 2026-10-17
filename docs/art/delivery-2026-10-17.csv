@@ -41,3 +41,15 @@ case-props-workbook,小雨房间,docs/art/review/sources/case-props-workbook-sou
 case-props-poster,小雨房间,docs/art/review/sources/case-props-poster-source.png,public/art/pixel/case-props/poster.png,秋季,晴天,傍晚,24,28,是,,,已接入,墙面便签；锚点(82,58)；与论坛屏相距56逻辑单位
 case-props-forum,小雨房间,docs/art/review/sources/case-props-forum-source.png,public/art/pixel/case-props/forum.png,秋季,晴天,傍晚,30,24,是,,,已接入,贴墙屏幕；锚点(26,56)；无可读小字
 case-props-piggy,小雨房间,docs/art/review/sources/case-props-piggy-source.png,docs/art/review/case-props/piggy-candidate.png,,,,24,22,是,,,待验收,存钱罐；关卡暂无调查点，未进运行目录
+case-props-console-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-console-source.png,public/art/pixel/case-props/console.png,秋季,晴天,早晨,28,20,是,,,候选,透明像素PNG；空白掌机屏；按统一道具调色板缩至逻辑尺寸；待房间锚点与遮挡验收
+case-props-pillow-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-pillow-source.png,public/art/pixel/case-props/pillow.png,秋季,晴天,早晨,32,28,是,,,候选,透明像素PNG；南瓜形布抱枕；按统一道具调色板缩至逻辑尺寸；待房间锚点与遮挡验收
+case-props-calendar-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-calendar-source.png,public/art/pixel/case-props/calendar.png,秋季,晴天,早晨,22,28,是,,,候选,透明像素PNG；空日期格与秋叶图案，无可读文字；待房间锚点与遮挡验收
+case-props-usb-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-usb-source.png,public/art/pixel/case-props/usb.png,秋季,晴天,早晨,18,12,是,,,候选,透明像素PNG；复用同一暖色高光与描边；待房间锚点与遮挡验收
+case-props-notebook-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-notebook-source.png,public/art/pixel/case-props/notebook.png,秋季,晴天,早晨,28,24,是,,,候选,透明像素PNG；空白封面小叶标记；待房间锚点与遮挡验收
+case-props-chick-duoduo-candidate,朵朵房间,docs/art/review/sources/case-props-chick-source-sheet.png,public/art/pixel/case-props/chick.png,秋季,晴天,早晨,20,20,是,,,候选,复用收件图#169第一行第一帧小鸡；透明裁帧、最近邻缩至20×20；等待与场景比例验收
+case-props-calculator-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-calculator-source.png,public/art/pixel/case-props/calculator.png,秋季,晴天,傍晚,20,28,是,,,候选,透明像素PNG；屏幕空白、无读数；逻辑尺寸处理完成，待房间锚点验收
+case-props-workbook-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-workbook-source.png,public/art/pixel/case-props/workbook.png,秋季,晴天,傍晚,28,24,是,,,候选,透明像素PNG；留白练习册，不含伪文字或公式；待房间锚点验收
+case-props-poster-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-poster-source.png,public/art/pixel/case-props/poster.png,秋季,晴天,傍晚,24,28,是,,,候选,透明像素PNG；原创月亮浮岛游戏画面，无标题文字；待墙面锚点验收
+case-props-forum-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-forum-source.png,public/art/pixel/case-props/forum.png,秋季,晴天,傍晚,30,24,是,,,候选,透明像素PNG；空白论坛行框，文字由游戏叠加；待桌面锚点验收
+case-props-piggy-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-piggy-source.png,public/art/pixel/case-props/piggy.png,秋季,晴天,傍晚,24,22,是,,,候选,透明像素PNG；粉色陶瓷存钱罐；待房间锚点验收
+case-props-plush-xiaoyu-candidate,小雨房间,docs/art/review/sources/case-props-plush-source.png,public/art/pixel/case-props/plush.png,秋季,晴天,傍晚,24,28,是,,,候选,透明像素PNG；紫色兔子毛绒玩偶；待房间锚点验收
