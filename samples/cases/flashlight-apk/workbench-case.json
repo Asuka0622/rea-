@@ -222,40 +222,62 @@
         }
       ],
       "tower": {
-        "gates": [
+        "budget": 26,
+        "regen": 1.6,
+        "hp": 3,
+        "slots": [
           {
-            "id": "flashlight",
-            "label": "闪光灯",
-            "need": true
+            "at": 30
           },
           {
-            "id": "contacts",
-            "label": "读取通讯录",
-            "need": false
+            "at": 52
           },
           {
-            "id": "location",
-            "label": "精确定位",
-            "need": false
+            "at": 74
+          }
+        ],
+        "units": [
+          {
+            "id": "least-privilege",
+            "label": "最小权限",
+            "cost": 8,
+            "dps": 2.2,
+            "range": 24,
+            "note": "只给开灯要用的权限"
           },
           {
-            "id": "boot",
-            "label": "开机自启",
-            "need": false
+            "id": "throttle",
+            "label": "限速节流",
+            "cost": 5,
+            "dps": 1.0,
+            "range": 20,
+            "slow": true,
+            "note": "让收集走得慢一点"
+          },
+          {
+            "id": "sandbox",
+            "label": "沙盒隔离",
+            "cost": 10,
+            "dps": 3.0,
+            "range": 28,
+            "note": "关起来跑，出不去"
           }
         ],
         "waves": [
           {
-            "gate": "contacts",
-            "label": "通讯录收集器"
+            "count": 2,
+            "hp": 2.5,
+            "speed": 9
           },
           {
-            "gate": "location",
-            "label": "定位收集器"
+            "count": 3,
+            "hp": 3,
+            "speed": 10
           },
           {
-            "gate": "boot",
-            "label": "后台常驻"
+            "count": 4,
+            "hp": 4,
+            "speed": 11
           }
         ]
       }

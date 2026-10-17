@@ -1,6 +1,6 @@
 # 比特镇 · 当前素材制作与交付需求
 
-更新：2026-10-17。项目：`D:/gpt/rea`。本清单按实际文件与游戏试玩整理，面向出图和接入双方。
+更新：2026-10-18。项目：`D:/gpt/rea`。本清单按实际文件与游戏试玩整理，面向出图和接入双方。
 
 **先做序章的三个试玩委托，再补齐六个委托和第一章。已有素材先认领、验收，不重复出图。**
 
@@ -81,7 +81,7 @@
 
 房间均为 16:9、320×180 逻辑布局。已有候选需要检查是否把调查物品画在背景中、是否留出行走区域；只符合氛围的图可以作为参考，不能直接标为合格背景。两关后续若改为可行走解谜，调查物品和站位由关卡设计确认后再接。
 
-**2026-10-17 更新：两间背景已用 v2 候选接入**（`case-room-farm-save.png`、`case-room-calculator-eggs.png`，640×360 运行版），调查物锚点、站位、碰撞已按新家具位置校准，桌面、床、衣柜的遮挡可用。现在缺的是**房间里的道具和两位委托人的小人**——暂时借用小林的 `case-props/*-room.png`，方块小人仍是占位。
+**2026-10-18 更新：朵朵和小雨房间的背景、专属道具和人物精灵表已备齐**；小雨发布检查表候选也已补上。运行文件和候选清单仍要走游戏内验收，详见 [requests-case-rooms.md](requests-case-rooms.md)。
 
 这一批的逐件需求（文件名、逻辑尺寸、游戏内锚点、现在用什么顶着、优先级）见 **[requests-case-rooms.md](requests-case-rooms.md)** 与配套的 `requests-case-rooms.csv`。**按那份清单出图，不要再照本节旧表批量重画。**
 
@@ -104,11 +104,11 @@
 
 | 角色/前缀 | 需要的表情 | 场景动作 | 当前处理 |
 |---|---|---|---|
-| 小克 `xiaoke` | normal / happy / thinking / surprised / sorry / unsure | 悬浮待机4、移动4、说话2、故障闪烁4、缩小进怀表4 | 先交三个外形方向草图，选定后才做全套。白与薄荷青，原创，不使用真实公司标志 |
+| 小克 `xiaoke` | normal / happy / thinking / surprised / sorry / unsure | 悬浮待机4、移动4、说话2、故障闪烁4、缩小进怀表4 | 三个外形方向候选已交付（`docs/art/review/characters/xiaoke-design-directions-v1-candidate.png`）；选定后再做全套。白与薄荷青，原创，不使用真实公司标志 |
 | 阿哲 `azhe` | normal / happy / thinking / surprised | 站立2 + 推眼镜4 | 四张具名人物源图已有；4×2 像素精灵候选已生成，待接入验收 |
-| 周姐 `zhoujie` | 同上四表情 | 站立2 + 看表4 | 收件目录有表情候选，先确认身份与完整性 |
-| 王奶奶 `grandma` | 同上四表情 | 站立2 + 看手机4 | 同上 |
-| 星博士 `xingbo` | normal / happy / thinking / surprised / guilty | 标准行，见第7节 | 先查收件目录，再补缺 |
+| 周姐 `zhoujie` | 同上四表情 | 站立2 + 看表4 | 四张头像与4×2精灵候选已交付，待验收 |
+| 王奶奶 `grandma` | 同上四表情 | 站立2 + 看手机4 | 四张头像与4×2精灵已有；客厅新背景和八件道具候选已交付，待验收 |
+| 星博士 `xingbo` | normal / happy / thinking / surprised / guilty | 标准行，见第7节 | 五张头像与4×5标准行候选已交付，待验收；精灵表复用收件目录 #141 |
 
 ### 另外三个现场
 
@@ -116,9 +116,9 @@
 |---|---|---|
 | 阿哲机房，秋季雨天白天 | `case-room-weather-keys.png` | 按当前关卡清单：`weather-keys-monitor.png`、`weather-keys-todo.png`、`weather-keys-printout.png`、`weather-keys-rack.png`、`weather-keys-poster.png`、`weather-keys-router.png` |
 | 周姐办公室，秋季晴天中午 | `case-room-notes-versions.png` | `screen.png`、`sticky-wall.png`、`coffee.png`、`xiaoke-ad.png`、`printer.png`、`plant.png` |
-| 王奶奶客厅，傍晚/夜晚 | `case-room-flashlight-apk-evening.png`、`case-room-flashlight-apk-night.png` | `grandma-phone.png`、`glasses.png`、`mantel-clock.png`、`photo.png`、`addressbook.png`、`nightlight.png` |
+| 王奶奶客厅，傍晚/夜晚 | `case-room-flashlight-apk-evening.png`、`case-room-flashlight-apk-night.png` | `grandma-phone.png`、`glasses.png`、`mantel-clock.png`、`photo.png`、`addressbook.png`、`nightlight.png`、`remote.png`、`slippers.png` |
 
-周姐办公室和王奶奶客厅的独立物品列表仍需与最终关卡核对；阿哲机房已按当前关卡数据对账并接入。**先审查已有房间和人物候选，不直接重画整套**。物品跨房间不同名，避免把小林的手机覆盖成奶奶的手机。
+2026-10-18：周姐办公室的背景、六件道具、头像和人物精灵，以及王奶奶客厅的傍晚/夜晚背景、八件道具均已出图，登记为「待验收」。仍需按最终关卡核对独立物品和锚点；阿哲机房已按当前关卡数据对账并接入。物品跨房间不同名，避免把小林的手机覆盖成奶奶的手机。
 
 阿哲机房当前可玩版本是特例：六件物品已合入背景图，`items[].hidden` 保留独立调查热点；不要再叠加可见道具图。具体以 `requests-case-rooms.md` 和当前关卡数据为准。
 
@@ -129,6 +129,8 @@
 - 广场公告屏：`props/quiet-stats-billboard.png`，约 96×48；外框、屏幕与字分层，文案「让数据为你服务」由代码呈现。
 - 悄悄统计标志：`ui/quiet-stats-logo.png`，64×64，原创手指示意安静的圆形徽章。
 - 公司传单：`props/quiet-stats-flyer.png`，32×40；文字由游戏放大展示。
+
+2026-10-18：五张分区发光层、11:58 停摆钟楼、公告屏、标志和传单候选均已交付，预览见 `docs/art/review/town/`；均待游戏内位置与亮度验收。
 
 ## 5. P1：序章收尾与 1843 年伦敦
 

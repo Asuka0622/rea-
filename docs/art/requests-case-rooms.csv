@@ -1,7 +1,7 @@
-﻿asset_id,room,target_file,logical_w,logical_h,deliver_w,deliver_h,anchor_x,anchor_y,priority,status,current_stand_in,notes
-checklist,小雨房间,public/art/pixel/case-props/checklist.png,12,13,24,26,120,150,P2,待交付,代码占位,地上的发布检查表；两栏框线可由代码加；不急
+asset_id,room,target_file,logical_w,logical_h,deliver_w,deliver_h,anchor_x,anchor_y,priority,status,current_stand_in,notes
+checklist,小雨房间,public/art/pixel/case-props/checklist.png,12,13,24,26,120,150,P2,待验收,docs/art/review/case-props/checklist-candidate.png,"候选已交付；地上发布检查表，按(120,150)锚点待游戏验收"
 piggy,小雨房间,public/art/pixel/case-props/piggy.png,12,11,24,22,,,P2,已交付未布置,docs/art/review/case-props/piggy-candidate.png,存钱罐；关卡里还没有调查点
-anim-duoduo,朵朵,public/art/pixel/anim-duoduo.png,,,64,96,,,P0,待交付,代码占位,待机2帧+抱紧抱枕4帧；脚底基线一致；附json
-anim-xiaoyu,小雨,public/art/pixel/anim-xiaoyu.png,,,64,96,,,P0,待交付,代码占位,待机2帧+蹦一下4帧；脚底基线一致；附json
-duoduo-face,朵朵,public/art/faces/duoduo-normal.webp,,,320,320,,,P1,待交付,木框占位,四表情：normal/happy/thinking/surprised
-xiaoyu-face,小雨,public/art/faces/xiaoyu-happy.webp,,,320,320,,,P1,待交付,木框占位,已有normal；补happy/thinking/surprised
+anim-duoduo,朵朵,public/art/pixel/anim-duoduo.png,,,64,96,,,P0,已接入,,待机2帧+抱紧抱枕4帧；4×2格，64×96/帧；已接入
+anim-xiaoyu,小雨,public/art/pixel/anim-xiaoyu.png,,,64,96,,,P0,已接入,,待机2帧+蹦一下4帧；4×2格，64×96/帧；已接入
+duoduo-face,朵朵,public/art/faces/duoduo-normal.webp,,,320,320,,,P1,待验收,docs/art/review/portraits/duoduo-normal-candidate.png,四表情候选已出；对话框头像裁切与映射待验收
+xiaoyu-face,小雨,public/art/faces/xiaoyu-happy.webp,,,320,320,,,P1,待验收,docs/art/review/portraits/xiaoyu-happy-candidate.png,happy/thinking/surprised候选已出；normal沿用现有资源；头像映射待验收

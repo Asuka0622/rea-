@@ -1,6 +1,6 @@
 # 第一部美术与动画总清单
 
-> **2026-10-17 实机核对：本轮制作与交付请先看 [当前素材制作与交付需求](asset-requirements.md)。** 本页保留第一部整体范围；本轮优先级、已有增量与验收以新文档为准。
+> **2026-10-18 实机核对：本轮制作与交付请先看 [当前素材制作与交付需求](asset-requirements.md)。** 本页保留第一部整体范围；本轮优先级、已有增量与验收以新文档为准。
 
 > 2026-10-16 重新整理，**以这份为准**。游戏改成系列，第一部只讲人工智能（`docs/series.md`），序章是 REA 篇（剧情 `docs/story-prologue.md`）。原来七批需求分散在 `docs/art/prompts.md` 里，有的已经画好、有的作废，这里合成一张表。
 > **怎么画**（统一风格词、尺寸、透明背景、精灵表格式、季节天气时段、真实人物的画法）还看 `docs/art/prompts.md`，表里写了对应的节号。
@@ -19,13 +19,13 @@
 |---|---|---|---|---|---|
 | 路米 | `lumi` | normal / happy / surprised / thinking | ✅ | — | 另要一张 `lumi-point`（指向右边，对质时用）🎨 P1 |
 | 小林 | `kobayashi` | normal / happy / surprised | ✅ | — | 补一张 thinking 🎨 P0 |
-| **小克**（小镇 AI 助手） | `xiaoke` | normal / happy / thinking / surprised / sorry / **unsure** | 🎨 | **P0** | 先出 **3 个外形方向草图**给用户挑。原创，白色和薄荷青，不用任何真实公司的标志和配色。描述见 prompts.md 第七批 AG |
+| **小克**（小镇 AI 助手） | `xiaoke` | normal / happy / thinking / surprised / sorry / **unsure** | 📦 / 🎨 | **P0** | 三方向候选已交付，选型后补表情与动画。原创，白色和薄荷青，不用任何真实公司的标志和配色 |
 | 阿哲 | `azhe` | 4 个 | 📦 有全身像 | P0 | 要按 A 节的半身规格补齐 4 个表情 |
 | 小雨 | `xiaoyu` | 4 个 | 📦 有全身像 | P0 | 同上 |
-| 朵朵 | `duoduo` | 4 个 | 🎨 | P0 | |
-| 周姐 | `zhoujie` | 4 个 | 🎨 | P0 | |
-| 王奶奶 | `grandma` | 4 个 | 🎨 | P0 | |
-| 星博士 | `xingbo` | normal / happy / thinking / surprised / **guilty** | 🎨 | P0 | |
+| 朵朵 | `duoduo` | 4 个 | 📦 | P0 | 头像候选已出，动画已接入；头像待验收 |
+| 周姐 | `zhoujie` | 4 个 | 📦 | P0 | 头像候选已出，动画和办公室素材待游戏验收 |
+| 王奶奶 | `grandma` | 4 个 | 📦 | P0 | 头像与动画已交付；客厅场景和道具待验收 |
+| 星博士 | `xingbo` | normal / happy / thinking / surprised / **guilty** | 📦 | P0 | 头像五表情与标准动画已交付，待验收 |
 | 秋实（悄悄统计的经理） | `qiushi` | normal / confident / thinking / surprised / **cornered** | 🎨 | P1 | 亲切的推销员，不是凶恶的反派 |
 | 铁叔 | `smith` | 4 个 | 🎨 | P1 | 序章结尾打开钟楼 |
 | 爱达·洛夫莱斯 | `ada` | normal / thinking / happy / surprised | 🎨 | P1 | 已故历史人物，按「真实人物的画法」 |
@@ -38,7 +38,7 @@
 |---|---|---|---|---|
 | 五张分区图，秋季白天 | `regions/town-<分区>.png` | ✅ | — | 中心、住宅、手艺街、北区、南岸 |
 | 五张分区图，春、夏、冬 | 同上 + 季节后缀 | 📦 | P2 | 小克对齐后接入 |
-| **每张分区图的发光层** | `regions/town-<分区>-glow.png` | 🎨 | **P0** | 透明图层，**只画会发光的部分**：窗户灯光、路灯、钟楼的窗户。夜晚和傍晚由界面把地图调暗、再叠上这一层，这样不用为每个时段重画整张地图 |
+| **每张分区图的发光层** | `regions/town-<分区>-glow.png` | 📦 | **P0** | 五区透明候选已交；夜晚与地图叠图、亮度待验收 |
 | **每张分区图的雨天层** | `regions/town-<分区>-wet.png` | 🎨 | P1 | 透明图层：湿路面的反光、水洼。雨滴由界面画。阿哲那天下雨要用住宅区的 |
 | 北区夜晚版（守夜用） | `regions/town-north-night.png` | 🎨 | P1 | 如果发光层加调暗的效果不够好，再画这张整图；**先做发光层，看效果再定** |
 
@@ -48,9 +48,9 @@
 
 | 内容 | 文件 | 状态 | 优先级 | 备注 |
 |---|---|---|---|---|
-| 钟楼，停摆版 | `regions/north-clocktower-stopped.png` | 🎨 | **P0** | prompts.md P 节。**钟面停在 11:58**。现在是代码画的灰色小塔 |
+| 钟楼，停摆版 | `regions/north-clocktower-stopped.png` | 📦 | **P0** | 透明候选已交，钟面停在 11:58；待建筑锚点与道路遮挡验收 |
 | 钟楼，正常版 | `regions/north-clocktower-running.png` | 🎨 | P2 | 结局才用 |
-| 广场公告屏 | `props/quiet-stats-billboard.png` | 🎨 | P0 | 悄悄统计的广告「让数据为你服务」，约 96 × 48 |
+| 广场公告屏 | `props/quiet-stats-billboard.png` | 📦 | P0 | 像素底图候选已交；广告文字由代码显示，约 96 × 48 |
 
 ### 4. 室内（320 × 180，规格见 prompts.md I 节）
 
@@ -68,11 +68,11 @@
 | 委托 | 文件 | 时段天气 | 状态 | 优先级 |
 |---|---|---|---|---|
 | 小林的宿舍 | `case-room-privacy-ledger.webp` | autumn-clear-noon | 🎨（现在是代码画的） | **P0** |
-| 朵朵的房间 | `case-room-farm-save.webp` | autumn-clear-morning | 🎨 | **P0** |
-| 小雨的房间 | `case-room-calculator-eggs.webp` | autumn-clear-evening | 🎨 | **P0** |
-| 阿哲的机房 | `case-room-weather-keys.webp` | autumn-**rain**-day | 🎨 | P0 |
-| 周姐的办公室 | `case-room-notes-versions.webp` | autumn-clear-noon | 🎨 | P0 |
-| 王奶奶的客厅 | `case-room-flashlight-apk.webp` | 傍晚版 + 夜晚版**两张** | 🎨 | P0 |
+| 朵朵的房间 | `case-room-farm-save.png` | autumn-clear-morning | ✅ | **P0** |
+| 小雨的房间 | `case-room-calculator-eggs.png` | autumn-clear-evening | ✅ | **P0** |
+| 阿哲的机房 | `case-room-weather-keys.png` | autumn-**rain**-day | ✅ | P0 |
+| 周姐的办公室 | `case-room-notes-versions.png` | autumn-clear-noon | 📦 | P0 |
+| 王奶奶的客厅 | `case-room-flashlight-apk-evening.png` + `-night.png` | 傍晚版 + 夜晚版**两张** | 📦 | P0 |
 
 每间房的气氛描述见 prompts.md 第七批 AI 节。
 
@@ -89,11 +89,11 @@
 | 房间 | 物品（文件名 = id） | 状态 | 优先级 |
 |---|---|---|---|
 | 小林的宿舍 | `laptop` 笔记本电脑 · `phone` 手机 · `chat` 聊天记录 · `clock` 挂钟 · `router` 路由器 · `paper` 隐私说明 · `cat` 窗台上的橘猫 | 🎨（现在是代码画的） | **P0** |
-| 朵朵的房间 | `console` 游戏机 · `pillow` 南瓜抱枕 · `calendar` 日历 · `usb` U 盘 · `notebook` 种田笔记 · `chick` 小鸡 | 🎨 | P0 |
-| 小雨的房间 | `calculator` 计算器 · `workbook` 练习册 · `poster` 游戏海报 · `forum` 平板上的论坛帖 · `piggy` 存钱罐 · `plush` 毛绒玩具 | 🎨 | P0 |
-| 阿哲的机房 | `monitor` 双屏 · `sticky` 便利贴 · `server` 小机柜 · `launch-poster` 发布海报 · `flyer` 悄悄统计的传单 · `umbrella` 湿雨伞 | 🎨 | P0 |
-| 周姐的办公室 | `screen` 显示器 · `sticky-wall` 便签墙 · `coffee` 咖啡 · `xiaoke-ad` 小克客服海报 · `printer` 打印机 · `plant` 绿植 | 🎨 | P0 |
-| 王奶奶的客厅 | `grandma-phone` 手机 · `glasses` 老花镜 · `mantel-clock` 座钟 · `photo` 全家福 · `addressbook` 通讯录本 · `nightlight` 小夜灯 | 🎨 | P0 |
+| 朵朵的房间 | `console` 游戏机 · `pillow` 南瓜抱枕 · `calendar` 日历 · `usb` U 盘 · `notebook` 种田笔记 · `chick` 小鸡 | 📦 | P0 |
+| 小雨的房间 | `calculator` 计算器 · `workbook` 练习册 · `poster` 游戏海报 · `forum` 平板上的论坛帖 · `piggy` 存钱罐 · `plush` 毛绒玩具 · `checklist` 发布检查表 | 📦 | P0 |
+| 阿哲的机房 | `monitor` 双屏 · `sticky` 便利贴 · `server` 小机柜 · `launch-poster` 发布海报 · `flyer` 悄悄统计的传单 · `umbrella` 湿雨伞 | ✅ | P0 |
+| 周姐的办公室 | `screen` 显示器 · `sticky-wall` 便签墙 · `coffee` 咖啡 · `xiaoke-ad` 小克客服海报 · `printer` 打印机 · `plant` 绿植 | 📦 | P0 |
+| 王奶奶的客厅 | `grandma-phone` 手机 · `glasses` 老花镜 · `mantel-clock` 座钟 · `photo` 全家福 · `addressbook` 通讯录本 · `nightlight` 小夜灯 · `remote` 遥控器 · `slippers` 拖鞋 | 📦 | P0 |
 | 钟楼最深处 | `gear-1843` 刻着「A.A.L. 1843」的黄铜齿轮（64 × 64） | 🎨 | P1 |
 | 第一章 | `difference-engine` 差分机样机（约 64 × 96）· `operation-card` 运算卡 · `variable-card` 变量卡（各 24 × 36） | 🎨 | P1 |
 
@@ -132,8 +132,8 @@
 
 | 内容 | 文件 | 状态 | 优先级 |
 |---|---|---|---|
-| 公司标志（圆形徽章里一根竖在嘴唇前的手指） | `ui/quiet-stats-logo.png`（64 × 64） | 🎨 | P0 |
-| 传单「免费帮你统计用户量」 | `props/quiet-stats-flyer.png`（32 × 40） | 🎨 | P0 |
+| 公司标志（圆形徽章里一根竖在嘴唇前的手指） | `ui/quiet-stats-logo.png`（64 × 64） | 📦 | P0 |
+| 传单「免费帮你统计用户量」 | `props/quiet-stats-flyer.png`（32 × 40） | 📦 | P0 |
 | 《用户协议》翻开的特写 | `ui/user-agreement.png`（240 × 320） | 🎨 | P1 |
 
 ---
@@ -149,12 +149,12 @@
 | 路米 | `anim-lumi` | 标准行 | ✅；📦 有新版本 | — |
 | **小克** | `anim-xiaoke` | 悬浮待机 4、移动 4、说话 2、**故障闪烁 4**（身体出现错位的像素块）、**缩小钻进怀表 4**。悬浮的角色每帧在同一位置画小椭圆影子 | 🎨 | **P0** |
 | 小林 | `anim-kobayashi` | 站立 2 + 挠头 4 | 📦 可能在待认出的 NPC 精灵表里 | P0 |
-| 朵朵 | `anim-duoduo` | 站立 2 + 抱紧南瓜抱枕 4 | 📦 / 🎨 | P0 |
-| 小雨 | `anim-xiaoyu` | 站立 2 + 蹦一下 4 | 📦 / 🎨 | P0 |
-| 阿哲 | `anim-azhe` | 站立 2 + 推眼镜 4 | 📦 / 🎨 | P0 |
-| 周姐 | `anim-zhoujie` | 站立 2 + 看表 4 | 📦 / 🎨 | P0 |
-| 王奶奶 | `anim-grandma` | 站立 2 + 眯眼看手机 4 | 📦 / 🎨 | P0 |
-| 星博士 | `anim-xingbo` | 标准行 | 🎨 | P0 |
+| 朵朵 | `anim-duoduo` | 站立 2 + 抱紧南瓜抱枕 4 | ✅ | P0 |
+| 小雨 | `anim-xiaoyu` | 站立 2 + 蹦一下 4 | ✅ | P0 |
+| 阿哲 | `anim-azhe` | 站立 2 + 推眼镜 4 | 📦 | P0 |
+| 周姐 | `anim-zhoujie` | 站立 2 + 看表 4 | 📦 | P0 |
+| 王奶奶 | `anim-grandma` | 站立 2 + 眯眼看手机 4 | 📦 | P0 |
+| 星博士 | `anim-xingbo` | 待机 2、下走 4、上走 4、侧走 4、说话 2 | 📦 | P0 |
 | 铁叔 | `anim-smith` | 标准行 | 📦 / 🎨 | P1 |
 | 秋实 | `anim-qiushi` | 标准行 + 翻开用户协议 2 | 🎨 | P1 |
 | 路米 · 维多利亚装 | `anim-lumi-victorian` | 标准行。深色斗篷和小礼帽，保留薄荷青短发和耳机 | 🎨 | P1 |

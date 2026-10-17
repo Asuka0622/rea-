@@ -1030,3 +1030,30 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-standalone-bar b {color:#ffe8b0;font-weight:600;}
 .mini-standalone-bar span {font-size:12px;color:#8a7c6c;}
 .mini-standalone .mini {max-width:760px;}
+
+/* 塔防（保卫萝卜 / 明日方舟那一路）：一条路、几个部署位、部署预算、可升级。 */
+.mini-td-bar {display:flex;gap:14px;font:12px/1.4 var(--font-body);color:#e8d8bc;}
+.mini-td-stat {padding:2px 8px;background:#1b2a1f;border:1px solid #2c4a36;}
+.mini-td-path {position:relative;height:96px;background:repeating-linear-gradient(90deg,#203028 0 12px,#1b2a20 12px 24px);border:2px solid #2c4a36;}
+.mini-td-home {position:absolute;left:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#1b120c;background:#8fd08a;border:2px solid #2f6b34;}
+.mini-td-spawn {position:absolute;right:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#fff6dc;background:#7a2418;border:2px solid #7a2418;}
+.mini-td-slot {position:absolute;top:62%;transform:translate(-50%,-50%);width:74px;padding:4px 6px;font:11px/1.3 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px dashed #4d7a5c;cursor:pointer;}
+.mini-td-slot.placed {border-style:solid;background:#2a4433;color:#e8d8bc;}
+.mini-td-slot i {display:block;font-style:normal;color:#e8c270;}
+.mini-td-enemy {position:absolute;top:26%;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;}
+.mini-td-units {display:flex;flex-wrap:wrap;gap:8px;}
+.mini-td-unit {padding:5px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.mini-td-unit b {display:block;color:#ffe8b0;}
+.mini-td-unit span {color:#e8c270;}
+.mini-td-unit small {display:block;color:#8aa894;}
+.mini-td-unit.picked {border-color:#e8c270;background:#2a4433;}
+/* 节奏（音游那一路）：谱面、判定线、判定分级与连击。 */
+.mini-rh-lane {position:relative;height:104px;background:#151d18;border:2px solid #2c4a36;overflow:hidden;cursor:pointer;}
+.mini-rh-line {position:absolute;left:15%;top:0;bottom:0;width:4px;background:#ffe8b0;box-shadow:0 0 10px #ffe8b0;}
+.mini-rh-note {position:absolute;top:34%;transform:translate(-50%,-50%);padding:5px 9px;font:12px/1.2 var(--font-body);white-space:nowrap;color:#1b120c;background:#7fb069;border:2px solid #2f6b34;}
+.mini-rh-note.upload {background:#c9573e;color:#fff6dc;border-color:#7a2418;}
+.mini-rh-hit {position:absolute;left:50%;top:60%;transform:translateX(-50%);padding:3px 10px;font:12px/1.4 var(--font-body);color:#1b120c;background:#e8c270;}
+.mini-rh-hit.perfect {background:#8fd08a;}
+.mini-rh-hit.good {background:#cfe8d4;}
+.mini-rh-hit.miss {background:#c9573e;color:#fff6dc;}
+.mini-rh-score {display:flex;gap:12px;font:12px/1.4 var(--font-mono);color:#e8c270;}

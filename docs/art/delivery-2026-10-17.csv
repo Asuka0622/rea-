@@ -70,3 +70,45 @@ grandma-happy,王奶奶,docs/art/review/portraits/grandma-happy-candidate.png,pu
 grandma-thinking,王奶奶,docs/art/review/portraits/grandma-thinking-candidate.png,public/art/faces/grandma-thinking.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
 grandma-surprised,王奶奶,docs/art/review/portraits/grandma-surprised-candidate.png,public/art/faces/grandma-surprised.webp,,,,320,320,是,,,已接入,320×320 透明头肩；已按第一关构图核对；对话气泡直接读这张
 anim-grandma,王奶奶,docs/art/review/animations/anim-grandma-candidate.png,public/art/pixel/anim-grandma.png,秋季,晴天,傍晚,256,192,是,64×96,待机2 / 摆摆手4,已接入,4列×2行 64×96；接进客厅，按 40×60 逻辑尺寸显示；脚底与路米同基线
+grandma-room-baseline,王奶奶客厅,docs/art/review/sources/case-room-flashlight-apk-source.png,public/art/pixel/case-room-flashlight-apk.png,秋季,晴天,傍晚,640,360,否,,,待验收,傍晚候选兼容路径；未烘焙调查物；待房间锚点与遮挡验收
+grandma-room-evening,王奶奶客厅,docs/art/review/sources/case-room-flashlight-apk-source.png,public/art/pixel/case-room-flashlight-apk-evening.png,秋季,晴天,傍晚,640,360,否,,,待验收,傍晚客厅候选；与夜景同构
+grandma-room-night,王奶奶客厅,docs/art/review/sources/case-room-flashlight-apk-night-source.png,public/art/pixel/case-room-flashlight-apk-night.png,秋季,晴天,夜晚,640,360,否,,,待验收,夜间客厅候选；待灯光、锚点与游戏内验收
+zhoujie-room,周姐办公室,docs/art/review/sources/case-room-notes-versions-source.png,public/art/pixel/case-room-notes-versions.png,秋季,晴天,中午,640,360,否,,,待验收,空背景候选；调查物品独立分层，待家具锚点和碰撞验收
+grandma-phone,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/grandma-phone.png,秋季,晴天,傍晚,44,52,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-glasses,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/glasses.png,秋季,晴天,傍晚,48,24,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-mantel-clock,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/mantel-clock.png,秋季,晴天,傍晚,48,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-photo,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/photo.png,秋季,晴天,傍晚,48,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-addressbook,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/addressbook.png,秋季,晴天,傍晚,48,54,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-nightlight,王奶奶,docs/art/review/sources/grandma-props-source-sheet.png,public/art/pixel/case-props/nightlight.png,秋季,晴天,傍晚,40,46,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-remote,王奶奶,docs/art/review/sources/remote-source.png,public/art/pixel/case-props/remote.png,秋季,晴天,傍晚,48,30,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+grandma-slippers,王奶奶,docs/art/review/sources/slippers-source.png,public/art/pixel/case-props/slippers.png,秋季,晴天,傍晚,48,28,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-screen,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/screen.png,秋季,晴天,中午,56,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-sticky-wall,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/sticky-wall.png,秋季,晴天,中午,48,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-coffee,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/coffee.png,秋季,晴天,中午,32,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-xiaoke-ad,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/xiaoke-ad.png,秋季,晴天,中午,48,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-printer,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/printer.png,秋季,晴天,中午,56,48,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-plant,周姐,docs/art/review/sources/zhoujie-props-source-sheet.png,public/art/pixel/case-props/plant.png,秋季,晴天,中午,48,56,是,,,待验收,透明像素道具；待对应房间锚点和热点验收
+zhoujie-normal,周姐,docs/art/review/sources/portraits-zhoujie-expression-sheet-source.png,public/art/faces/zhoujie-normal.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+zhoujie-happy,周姐,docs/art/review/sources/portraits-zhoujie-expression-sheet-source.png,public/art/faces/zhoujie-happy.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+zhoujie-thinking,周姐,docs/art/review/sources/portraits-zhoujie-expression-sheet-source.png,public/art/faces/zhoujie-thinking.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+zhoujie-surprised,周姐,docs/art/review/sources/portraits-zhoujie-expression-sheet-source.png,public/art/faces/zhoujie-surprised.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+xingbo-normal,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-normal.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+xingbo-happy,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-happy.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+xingbo-thinking,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-thinking.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+xingbo-surprised,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-surprised.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+xingbo-guilty,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-guilty.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
+anim-zhoujie,周姐,docs/art/review/sources/anim-zhoujie-source-sheet.png,public/art/pixel/anim-zhoujie.png,秋季,晴天,中午,256,192,是,64×96,待机2 / 看表4,待验收,4列×2行；待房间比例、脚底基线与动作映射验收
+anim-zhoujie-metadata,周姐,docs/art/review/animations/anim-zhoujie.json,public/art/pixel/anim-zhoujie.json,秋季,晴天,中午,,,是,64×96,待机2 / 看表4,待验收,逐帧时长与动作行元数据
+anim-xingbo,星博士,docs/art/review/sources/anim-xingbo-source-sheet.png,public/art/pixel/anim-xingbo.png,,,,256,480,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,4列×5行；复用收件目录#141；帧底对齐；透明边缘碎点已清理
+anim-xingbo-metadata,星博士,docs/art/review/animations/anim-xingbo.json,public/art/pixel/anim-xingbo.json,,,,,,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,标准行动作映射、帧时长与朝向元数据
+xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,,,否,,三种外形方向,候选,三方向对照稿；等选型后制作表情和动画全套
+town-center-glow,比特镇center,docs/art/review/sources/town-center-glow-source.svg,public/art/pixel/regions/town-center-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
+town-homes-glow,比特镇homes,docs/art/review/sources/town-homes-glow-source.svg,public/art/pixel/regions/town-homes-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
+town-craft-glow,比特镇craft,docs/art/review/sources/town-craft-glow-source.svg,public/art/pixel/regions/town-craft-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
+town-north-glow,比特镇north,docs/art/review/sources/town-north-glow-source.svg,public/art/pixel/regions/town-north-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
+town-south-glow,比特镇south,docs/art/review/sources/town-south-glow-source.svg,public/art/pixel/regions/town-south-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
+north-clocktower-stopped,北区钟楼,docs/art/review/sources/north-clocktower-stopped-source.png,public/art/pixel/regions/north-clocktower-stopped.png,秋季,晴天,夜晚,960,540,是,,,待验收,停摆11:58透明覆盖层；候选复合预览在docs/art/review/town/；待道路遮挡验收
+quiet-stats-billboard,悄悄统计公告屏,docs/art/review/sources/quiet-stats-billboard-source.svg,public/art/pixel/props/quiet-stats-billboard.png,,,,96,48,是,,,待验收,像素外框与屏幕底图；文案由代码呈现
+quiet-stats-logo,悄悄统计标志,docs/art/review/sources/quiet-stats-logo-source.svg,public/art/pixel/ui/quiet-stats-logo.png,,,,64,64,是,,,待验收,原创像素徽章；待UI缩放验收
+quiet-stats-flyer,悄悄统计传单,docs/art/review/sources/quiet-stats-flyer-source.svg,public/art/pixel/props/quiet-stats-flyer.png,,,,32,40,是,,,待验收,透明像素传单；正文由游戏展示
+xiaoyu-checklist,小雨,docs/art/review/sources/checklist-source.svg,public/art/pixel/case-props/checklist.png,秋季,晴天,傍晚,24,26,是,,,待验收,"透明发布检查表；按(120,150)锚点候选，待场景验收"

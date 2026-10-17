@@ -1,8 +1,8 @@
 # 委托房间素材需求：朵朵与小雨（2026-10-17）
 
-两间委托房间已经接入背景（`public/art/pixel/case-room-farm-save.png`、`case-room-calculator-eggs.png`，1664×936 原稿按 320×180 栅格缩到 640×360），调查物锚点、站位和碰撞都按新家具位置校准过。
+两间委托房间的背景（`public/art/pixel/case-room-farm-save.png`、`case-room-calculator-eggs.png`）、专属道具和人物精灵表均已交付；小雨发布检查表也已补图。背景、人物与头像候选仍需按最终关卡做游戏内验收。
 
-两间房间的专属道具**都已到货并接入**，现在只剩**两位委托人的小人**、**缺的表情头像**，以及两件还没布置的可选道具。本清单只列还没交付的东西；整体范围见 `asset-requirements.md`，总清单见 `list.md`。
+两间房间的专属道具和人物素材已经备齐；小鸡、存钱罐属于已出图但尚未布置的可选装饰。发布检查表刚补成候选。整体范围见 `asset-requirements.md`，总清单见 `list.md`。
 
 ## 一、统一规格（这一批都适用）
 
@@ -54,9 +54,9 @@
 
 > 2026-10-17 接入时按第一关的构图重裁过：阿哲、朵朵、小雨的源图是半身全身图，用同一个缩放裁出来脸只有小林的四成。`scripts/prepare-portraits.py` 现在按角色记缩放（azhe 0.58 / duoduo 0.64 / xiaoyu 0.57，小林和路米 0.82），新角色来了先和 `kobayashi-normal.webp` 比一比再定系数，不要再图省事用一个全局值。裁切对照见 `docs/art/review/portraits/avatar-crops-320-review.png`，接入方需核对头像裁切和表情映射。
 
-王奶奶四张头像已交付并接进 `public/art/faces/`（320×320，灰白短发、老花镜、深绿开衫，和客厅占位一致），对话框里不再是「王」字木框。
+王奶奶四张头像位于 `public/art/faces/`（320×320，透明背景，灰白短发、老花镜、深绿开衫）；头像候选见 `docs/art/review/portraits/`，游戏内表情与裁切待验收。
 
-王奶奶的小人也已交付并接入（`anim-grandma.png` + `.json`），客厅里不再是方块占位——五个可玩委托的委托人现在都有真头像和真小人。
+王奶奶的小人候选为 `anim-grandma.png` + `.json`（4×2，64×96/帧）；客厅内比例、脚底基线和看手机动作映射待游戏内验收。
 
 ## 五、验收怎么算过
 
@@ -87,15 +87,17 @@
 - 左机柜碰撞块 `(20,40,60,85)`；桌子 `(125,112,75,14)`；右机柜 `(230,48,70,78)`
 - 可行走上边界 `top=130`，出生点 `(160,168)`，门口 `(160,176)`，阿哲站 `(225,168)`
 
-## 七、王奶奶的客厅（`case-room-flashlight-apk`）：2026-10-17 起可以玩了，等美术
+## 七、王奶奶的客厅（`case-room-flashlight-apk`）：2026-10-18 美术候选已交付
 
 序章第五个委托「小光手电筒」也做成了能走进去的房间：左边一辆旧沙发（上面放着电视遥控），中间一张茶几（手机、电话本、老花镜），右边一只书架，墙上有电视和一张全家福。现在用代码画的暖色客厅占位，`scene.look` 是 `living`，家具位置与碰撞块一致。
 
 | 要交什么 | 目标文件 | 逻辑尺寸 | 说明 |
 |---|---|---|---|
-| 客厅背景 | `public/art/pixel/case-room-flashlight-apk.png` | 320×180（交 640×360 或 1664×936） | 傍晚的老人家客厅：布沙发、木茶几、旧书架、墙上的电视和全家福；不需要画调查物 |
-| 手机 / 电话本 / 老花镜 / 遥控器 / 全家福 / 拖鞋 | `case-props/` 下同名文件 | 各 16–22 逻辑宽 | 现在全部是借用图标 |
+| 客厅背景 | `public/art/pixel/case-room-flashlight-apk-evening.png`、`case-room-flashlight-apk-night.png` | 各 640×360（逻辑 320×180） | 傍晚与夜景候选；傍晚版兼容路径 `case-room-flashlight-apk.png`；不烘焙调查物 |
+| 手机 / 老花镜 / 座钟 / 全家福 / 通讯录 / 小夜灯 / 遥控器 / 拖鞋 | `public/art/pixel/case-props/` 下同名文件 | 透明 PNG，2×逻辑像素 | 八件均已出图，候选见 `docs/art/review/case-props/`；锚点和热点待关卡验收 |
 
 - 沙发 `x 18–122, y 92–140`；茶几 `x 128–212, y 100–132`；书架 `x 228–302, y 46–142`
 - 墙上的电视 `x 140–190, y 30–80`；全家福 `(120, 54)`
 - 可行走上边界 `top=134`，出生点 `(160,168)`，门口 `(160,176)`，王奶奶站 `(222,166)`
+
+周姐办公室背景、六件道具、四张头像和4×2人物精灵均已生成候选，分别见 `public/art/pixel/case-room-notes-versions.png`、`public/art/pixel/case-props/`、`public/art/faces/zhoujie-*.webp`、`public/art/pixel/anim-zhoujie.png`。锚点、遮挡和动画待游戏内验收。发布检查表候选已放入 `public/art/pixel/case-props/checklist.png`。
