@@ -1,0 +1,82 @@
+{
+  "style": "warm walnut, cream paper, navy/teal and brass pixel-art UI",
+  "sources": {
+    "clueboard": "docs/art/review/sources/clueboard-source.png",
+    "notebook": "docs/art/review/sources/notebook-source.png",
+    "card": "docs/art/review/sources/clue-card-source.png",
+    "icons": "docs/art/review/sources/clue-icons-source.png",
+    "pin": "docs/art/review/sources/pin-source.png"
+  },
+  "processing": {
+    "board": "crop to 16:9 and Lanczos to 640x360",
+    "notebook": "alpha>=128 crop; nearest to 640x420",
+    "card": "alpha>=128 crop; nearest to 96x64",
+    "pin": "alpha>=128 crop, centered in square then nearest to 12x12",
+    "icons": "3x2 source grid; alpha>=200 crop; nearest fit to six horizontal 32x32 cells"
+  },
+  "icon_order": [
+    "website-link",
+    "archive-clock",
+    "debug-clocktower",
+    "key",
+    "timed-camera",
+    "phone-ad"
+  ],
+  "icon_source_boxes": [
+    [
+      114,
+      145,
+      465,
+      445
+    ],
+    [
+      622,
+      132,
+      957,
+      450
+    ],
+    [
+      1098,
+      148,
+      1425,
+      438
+    ],
+    [
+      122,
+      580,
+      440,
+      908
+    ],
+    [
+      594,
+      615,
+      1004,
+      895
+    ],
+    [
+      1143,
+      563,
+      1441,
+      909
+    ]
+  ],
+  "notebook_bbox": [
+    42,
+    95,
+    1631,
+    844
+  ],
+  "card_bbox": [
+    112,
+    132,
+    1424,
+    849
+  ],
+  "pin_bbox": [
+    393,
+    332,
+    861,
+    930
+  ],
+  "preview": "docs/art/review/ui/detective-ui-contact.png"
+}

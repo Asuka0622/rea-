@@ -35,26 +35,33 @@ test("every collectable name is in the shipped code, and every board answer can 
   }
 });
 
-test("starting from the dictionary, searching (results show two lines either side) reaches every board answer", () => {
-  for (const item of puzzles) {
-    const { terms, board, scene } = item.game.puzzle;
-    const code = shippedLines(item.game.lab.sources);
-    const queue = scene.items.flatMap((t) => t.clue?.dict || []).flatMap((d) => d.code.split(" / "));
-    const searched = new Set();
-    const reached = new Set();
-    while (queue.length) {
-      const word = queue.shift();
-      if (searched.has(word)) continue;
-      searched.add(word);
-      for (const hit of searchCode(code, word).hits) {
-        for (let n = hit.n - 2; n <= hit.n + 2; n += 1) {
-          const text = hit.all[n - 1];
-          if (!text || /^\s*(\/\/|<!--)/.test(text)) continue;
-          for (const part of termsIn(text, terms)) if (typeof part !== "string" && !reached.has(part.term)) (reached.add(part.term), queue.push(part.term));
-        }
+/** Names the notebook's dictionary can lead to, searching the way the terminal does (results show two
+ *  lines either side, comments are skipped). Used to check that answers and evidence are reachable. */
+function reachableFromDictionary(item) {
+  const { terms, scene } = item.game.puzzle;
+  const code = shippedLines(item.game.lab.sources);
+  const queue = scene.items.flatMap((t) => t.clue?.dict || []).flatMap((d) => d.code.split(" / "));
+  const searched = new Set();
+  const reached = new Set();
+  while (queue.length) {
+    const word = queue.shift();
+    if (searched.has(word)) continue;
+    searched.add(word);
+    for (const hit of searchCode(code, word).hits) {
+      for (let n = hit.n - 2; n <= hit.n + 2; n += 1) {
+        const text = hit.all[n - 1];
+        if (!text || /^\s*(\/\/|<!--)/.test(text)) continue;
+        for (const part of termsIn(text, terms)) if (typeof part !== "string" && !reached.has(part.term)) (reached.add(part.term), queue.push(part.term));
       }
     }
-    for (const group of board) for (const answer of blanksOf(group.text)) assert.ok(reached.has(answer), `${item.id}: ${answer} can be found by searching`);
+  }
+  return reached;
+}
+
+test("starting from the dictionary, searching (results show two lines either side) reaches every board answer", () => {
+  for (const item of puzzles) {
+    const reached = reachableFromDictionary(item);
+    for (const group of item.game.puzzle.board) for (const answer of blanksOf(group.text)) assert.ok(reached.has(answer), `${item.id}: ${answer} can be found by searching`);
   }
 });
 

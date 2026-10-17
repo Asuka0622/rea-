@@ -71,21 +71,19 @@
 
 调查点按图重排了锚点，图标不再叠画（`items[].hidden`，只留问号标记和点击区），行走碰撞也按真图重设（可行走上边界 `top=130`，左边柜子、桌子、右边机柜各一块）。
 
-**还缺阿哲房间里的小人**：他现在还是代码画的方块占位。需要 `public/art/pixel/anim-azhe.png` + `.json`，规格同小林、朵朵、小雨（256×192，4×2 格，64×96/帧；待机 2 帧 + 一个 4 帧动作）。
+**阿哲房间里的小人**：4×2 像素精灵候选已生成并放入 `public/art/pixel/anim-azhe.png` + `.json`（256×192，64×96/帧；待机 2 帧 + 推眼镜 4 帧）。状态为「待验收」；接入方需检查房间内比例、脚底基线和动作映射后再标记已接入。预览见 `docs/art/review/animations/anim-azhe-preview.png`。
 
 | 要交什么 | 目标文件 | 逻辑尺寸 | 说明 |
 |---|---|---|---|
-| 机房背景 | `public/art/pixel/case-room-weather-keys.png` | 640×360 运行图（逻辑 320×180） | 秋季雨天白天；空机柜、空桌面、墙屏和通道；候选已出，待场景预览验收 |
-| 电脑 / 便签 / 打印件 / 机柜服务器 / 发布清单 / 路由器 | `public/art/pixel/case-props/weather-keys-{monitor,todo,printout,rack,poster,router}.png` | 宽 60 / 40 / 44 / 52 / 40 / 40 px（2×逻辑宽） | 独立透明像素稿已出，待房间内锚点与比例验收 |
+| 机房背景 | `public/art/pixel/case-room-weather-keys.png` | 640×360 运行图（逻辑 320×180） | 秋季雨天白天；房间背景与六件调查物已合成并接入 |
+| 电脑 / 便签 / 打印件 / 机柜服务器 / 发布清单 / 路由器 | `public/art/pixel/case-props/weather-keys-{monitor,todo,printout,rack,poster,router}.png` | 宽 60 / 40 / 44 / 52 / 40 / 40 px（2×逻辑宽） | 独立透明像素源图已交；运行场景采用背景合成，隐藏调查点保留点击区 |
 
-道具裁切和背景预览见 `docs/art/review/weather-keys/weather-keys-props-contact.png`、`docs/art/review/weather-keys/case-room-weather-keys-art-preview.png` 与 `docs/art/review/case-room-weather-keys-v2-candidate.png`；完整道具源稿为 `docs/art/review/sources/weather-keys-props-sheet-source.png`。运行文件已放入目标目录，`items[].art` 映射和实际试玩仍由接入方验收后处理。
+道具裁切和当前房间图见 `docs/art/review/weather-keys/weather-keys-props-contact.png` 与 `docs/art/review/weather-keys/case-room-weather-keys-art-preview.png`；无道具背景源稿见 `docs/art/review/case-room-weather-keys-v2-candidate.png`，完整道具源稿为 `docs/art/review/sources/weather-keys-props-sheet-source.png`。当前关卡用 `scene.art` 加载合成背景，并通过 `items[].hidden` 保留调查热点，勿再叠加独立道具图。
 
-家具位置（按当前可玩关卡坐标）：
+当前坐标与碰撞以 `samples/cases/weather-keys/workbench-case.json` 为准：
 
-- 左机柜 `x 14–72, y 44–136`；右机柜 `x 242–316, y 40–140`
-- 桌子 `x 94–226, y 96–126`（桌面 y≈96）
-- 墙面屏幕 `x 150–210, y 12–46`
-- 可行走上边界 `top=126`，出生点 `(160,168)`，门口 `(160,176)`，阿哲站 `(224,152)`
+- 左机柜碰撞块 `(20,40,60,85)`；桌子 `(125,112,75,14)`；右机柜 `(230,48,70,78)`
+- 可行走上边界 `top=130`，出生点 `(160,168)`，门口 `(160,176)`，阿哲站 `(225,168)`
 
 ## 七、王奶奶的客厅（`case-room-flashlight-apk`）：2026-10-17 起可以玩了，等美术
 

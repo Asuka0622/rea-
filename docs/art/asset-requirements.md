@@ -96,6 +96,8 @@
 | 六条主线证据图标 | `ui/clue-icons.png` | 六格横排，每格 32×32：网址、存档时钟、调试页钟楼、钥匙、定时相机、手机广告；附格序说明 |
 | 侦探手账 | `ui/notebook.png` | 约 640×420，打开的笔记本；正文区域留白，四个页签与可读文字由代码绘制 |
 
+2026-10-17 首版候选已生成并登记「待验收」：空白事务所委托板版本、空线索板、空白证据卡、图钉、六格线索图标和侦探手账。预览见 `docs/art/review/room-home-empty-board-compare.png`、`docs/art/review/ui/detective-ui-contact.png`；运行素材位于 `public/art/pixel/ui/`。候选尚未替换事务所运行背景或接入界面。
+
 ## 4. P0：六个委托与序章主线必需
 
 ### 人物
@@ -103,7 +105,7 @@
 | 角色/前缀 | 需要的表情 | 场景动作 | 当前处理 |
 |---|---|---|---|
 | 小克 `xiaoke` | normal / happy / thinking / surprised / sorry / unsure | 悬浮待机4、移动4、说话2、故障闪烁4、缩小进怀表4 | 先交三个外形方向草图，选定后才做全套。白与薄荷青，原创，不使用真实公司标志 |
-| 阿哲 `azhe` | normal / happy / thinking / surprised | 站立2 + 推眼镜4 | 四张具名人物源图已有，先处理；动画先认领候选 |
+| 阿哲 `azhe` | normal / happy / thinking / surprised | 站立2 + 推眼镜4 | 四张具名人物源图已有；4×2 像素精灵候选已生成，待接入验收 |
 | 周姐 `zhoujie` | 同上四表情 | 站立2 + 看表4 | 收件目录有表情候选，先确认身份与完整性 |
 | 王奶奶 `grandma` | 同上四表情 | 站立2 + 看手机4 | 同上 |
 | 星博士 `xingbo` | normal / happy / thinking / surprised / guilty | 标准行，见第7节 | 先查收件目录，再补缺 |
@@ -116,7 +118,9 @@
 | 周姐办公室，秋季晴天中午 | `case-room-notes-versions.png` | `screen.png`、`sticky-wall.png`、`coffee.png`、`xiaoke-ad.png`、`printer.png`、`plant.png` |
 | 王奶奶客厅，傍晚/夜晚 | `case-room-flashlight-apk-evening.png`、`case-room-flashlight-apk-night.png` | `grandma-phone.png`、`glasses.png`、`mantel-clock.png`、`photo.png`、`addressbook.png`、`nightlight.png` |
 
-三间的独立物品列表仍需与最终关卡核对；**先审查已有房间和人物候选，不直接重画整套**。物品跨房间不同名，避免把小林的手机覆盖成奶奶的手机。
+周姐办公室和王奶奶客厅的独立物品列表仍需与最终关卡核对；阿哲机房已按当前关卡数据对账并接入。**先审查已有房间和人物候选，不直接重画整套**。物品跨房间不同名，避免把小林的手机覆盖成奶奶的手机。
+
+阿哲机房当前可玩版本是特例：六件物品已合入背景图，`items[].hidden` 保留独立调查热点；不要再叠加可见道具图。具体以 `requests-case-rooms.md` 和当前关卡数据为准。
 
 ### 小镇和钟楼
 
