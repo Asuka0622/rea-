@@ -1,0 +1,32 @@
+{
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    4,
+    2
+  ],
+  "smooth": false,
+  "side": "down",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        2000,
+        180
+      ]
+    },
+    "scratch-head": {
+      "row": 1,
+      "frames": 4,
+      "ms": [
+        180,
+        160,
+        360,
+        360
+      ]
+    }
+  }
+}

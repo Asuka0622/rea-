@@ -170,6 +170,358 @@
           "face": "normal"
         }
       ]
+    },
+    "puzzle": {
+      "title": "存档为什么不认我的金币？",
+      "sampleName": "种田日记",
+      "computerLabel": "朵朵的存档工作台",
+      "labSource": "存档实验",
+      "room": {
+        "top": 118,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 190,
+          "y": 150
+        },
+        "blocks": [
+          {
+            "x": 236,
+            "y": 132,
+            "w": 80,
+            "h": 36
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "这是我自己的单机存档。先备份，再试；改坏了我可不想重新种一遍。"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "你推理出格式了？工作台里有一份副本，拿副本试试吧。"
+            }
+          ]
+        }
+      },
+      "terminal": "laptop",
+      "scene": {
+        "place": "朵朵的房间",
+        "look": "dorm farm",
+        "items": [
+          {
+            "id": "laptop",
+            "label": "存档工作台",
+            "look": "laptop",
+            "at": [
+              136,
+              110
+            ],
+            "stand": [
+              138,
+              130
+            ],
+            "size": 40,
+            "lines": [
+              {
+                "text": "工作台里放着 save.js 和存档副本。源码可以搜索，原存档不会被直接修改。"
+              }
+            ],
+            "clue": {
+              "id": "workbench",
+              "title": "先看读写代码",
+              "text": "读档和存档都由 save.js 负责，工作台提供一份原创教学样本。",
+              "dict": [
+                {
+                  "zh": "读写存档",
+                  "code": "encodeSave / decodeSave"
+                }
+              ]
+            }
+          },
+          {
+            "id": "console",
+            "label": "床上的游戏机",
+            "look": "phone",
+            "at": [
+              272,
+              146
+            ],
+            "stand": [
+              226,
+              150
+            ],
+            "size": 20,
+            "lines": [
+              {
+                "text": "读档画面：角色「小白」，第 12 天，金币 230。游戏画面中的数字和文件里的字母看起来完全不同。"
+              }
+            ],
+            "clue": {
+              "id": "coins",
+              "title": "金币在某个数据里",
+              "text": "游戏能从存档里恢复金币。文件看不懂，不代表数据不存在。",
+              "dict": [
+                {
+                  "zh": "金币字段",
+                  "code": "gold / NEW_GAME",
+                  "note": "NEW_GAME 是新游戏的默认值，不是当前存档。"
+                }
+              ]
+            }
+          },
+          {
+            "id": "notebook",
+            "label": "种田笔记",
+            "look": "chat",
+            "at": [
+              96,
+              110
+            ],
+            "stand": [
+              96,
+              130
+            ],
+            "size": 24,
+            "lines": [
+              {
+                "text": "笔记写着：「只改金币，不碰别的。」旁边有人补了一句：「sum 也得对上。」"
+              }
+            ],
+            "clue": {
+              "id": "sum",
+              "title": "不仅检查金币",
+              "text": "读取时会检查一个叫 sum 的值。需要找出它怎样计算、怎样比较。",
+              "dict": [
+                {
+                  "zh": "校验码",
+                  "code": "checksum / sum"
+                }
+              ]
+            }
+          },
+          {
+            "id": "calendar",
+            "label": "读档失败便签",
+            "look": "clock",
+            "at": [
+              258,
+              46
+            ],
+            "stand": [
+              258,
+              126
+            ],
+            "size": 24,
+            "lines": [
+              {
+                "text": "旧便签：「我把文件还原，改了金币再装回去，结果成了新农夫，只有 50 金币。」"
+              }
+            ],
+            "clue": {
+              "id": "reset",
+              "title": "失败会回到新游戏",
+              "text": "修改内容以后直接装回，读档会回到默认进度。默认值和玩家原进度要分开。",
+              "dict": [
+                {
+                  "zh": "读档失败",
+                  "code": "decodeSave / NEW_GAME"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "usb",
+            "label": "备份存档",
+            "look": "paper",
+            "at": [
+              60,
+              164
+            ],
+            "stand": [
+              76,
+              168
+            ],
+            "size": 22,
+            "lines": [
+              {
+                "text": "U盘里保存着 slot1.sav 的副本。原件先留好，实验只用副本。"
+              }
+            ],
+            "clue": {
+              "id": "backup",
+              "title": "先备份再动手",
+              "text": "工作台的实验重建一份存档，不会改写原教学文件。",
+              "dict": [
+                {
+                  "zh": "编码与校验",
+                  "code": "base64 / SAVE_SALT"
+                }
+              ]
+            }
+          },
+          {
+            "id": "pillow",
+            "label": "南瓜抱枕",
+            "look": "cat",
+            "at": [
+              196,
+              76
+            ],
+            "stand": [
+              196,
+              126
+            ],
+            "size": 30,
+            "lines": [
+              {
+                "text": "抱枕下面压着半包种子。朵朵说：「金币能改，可种出第一棵南瓜的高兴改不出来。」"
+              }
+            ],
+            "wall": true
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "先在房间里找线索；点物品会走过去调查。N 打开手账，存档工作台可以搜索源码。"
+        },
+        {
+          "text": "请分清：画面里看到的事实、源码里的规则，以及需要实验验证的猜想。"
+        }
+      ],
+      "terms": [
+        "encodeSave",
+        "decodeSave",
+        "JSON.stringify",
+        "base64",
+        "checksum",
+        "sum",
+        "SAVE_SALT",
+        "sha256",
+        "NEW_GAME",
+        "gold"
+      ],
+      "board": [
+        {
+          "title": "乱码是什么",
+          "text": "保存时先用 {JSON.stringify} 把进度变成文字，再用 {base64} 编码；{base64} 本身不是加密。",
+          "hint": "比较 encodeSave 和 decodeSave 中怎样转换文字。",
+          "explain": "JSON 把结构写成文字，Base64 换一种表示。还原不需要密码。"
+        },
+        {
+          "title": "为什么金币回到起点",
+          "text": "读档会用 {checksum} 重新计算校验码，与 {sum} 比较；不一致就返回 {NEW_GAME}。",
+          "hint": "在 decodeSave 里找 if 判断和 return。",
+          "explain": "改了内容却沿用旧校验码，游戏会拒绝这份进度并回到默认值。"
+        },
+        {
+          "title": "怎样按规则重建",
+          "text": "校验函数把 {SAVE_SALT} 与内容拼在一起，再使用 {sha256} 算出校验码。",
+          "hint": "搜索 checksum，再追到其中的大写常量。",
+          "explain": "盐和规则都在这个原创单机样本里。实验会让你先观察失败，再按规则重算。"
+        }
+      ],
+      "toLab": [
+        {
+          "text": "先别急着说你会改了。拿副本试一次：直接改会怎样？重算以后又怎样？"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "save-tested",
+          "text": "存档实验：直接修改金币后校验失败；按源码的盐重算 sum 后，游戏成功读到 9999 金币。"
+        }
+      ],
+      "confront": {
+        "lead": "朵朵有几种猜想。对照源码和实验记录，说明哪句成立、哪句不成立。",
+        "intro": [
+          {
+            "text": "现在拿证据解释吧。有些说法是真的，不用每句都反驳。"
+          }
+        ],
+        "statements": [
+          {
+            "text": "「看起来都是乱码，所以一定加密了。」",
+            "accept": [
+              "toString(\"base64\")",
+              "Buffer.from(text, \"base64\")"
+            ],
+            "press": [
+              {
+                "text": "读写代码到底进行了哪种转换？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "原来只是换了写法，不需要密码。"
+              }
+            ],
+            "hint": "找 encodeSave 或 decodeSave 的 Base64 转换。"
+          },
+          {
+            "text": "「金币是我的，改了以后游戏一定会照单全收。」",
+            "accept": [
+              "checksum(body) !== sum",
+              "存档实验：直接修改金币后校验失败"
+            ],
+            "press": [
+              {
+                "text": "修改内容以后，sum 还和原来一样吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "内容和校验码必须对得上，这次确实会被拒绝。"
+              }
+            ],
+            "hint": "出示校验比较那一行，或实际读档实验记录。"
+          },
+          {
+            "text": "「算校验码的秘密只在服务器上，本地肯定找不到。」",
+            "accept": [
+              "const SAVE_SALT ="
+            ],
+            "press": [
+              {
+                "text": "这份样本究竟在哪里定义了盐？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "就在本机源码里！不能把本地常量当服务器秘密。"
+              }
+            ],
+            "hint": "搜索 SAVE_SALT，记下定义的那一行。"
+          },
+          {
+            "text": "「实验前留一份原存档，可以把自己的进度找回来。」",
+            "press": [
+              {
+                "text": "对。这次实验只在副本上操作；备份是保留原始进度，不是绕过校验。"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "从画面和存档分清“当前进度”与“新游戏默认值”。",
+        "先让修改失败，再找到校验规则，用副本验证修复。",
+        "源码、推理和读档结果三者对上，才算查明白。"
+      ]
     }
   }
 }

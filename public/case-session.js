@@ -1,5 +1,6 @@
 import { mountLab } from "./case-labs.js";
 import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks, starsForPuzzle } from "./case-puzzle.js";
+import {caseSnapshot,restoreCaseState,caseObjective} from './case-progress.js';
 
 // A puzzle case played inside the game world (game-shell.js draws the client's room and walks the
 // player; this file is everything the player does there). Nothing is a web page: clues come from
@@ -40,47 +41,46 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
   const puzzle = item.game.puzzle;
   const lab = item.game.lab;
   const client = item.game.client;
+  const computerLabel=puzzle.computerLabel || `${client.name}的电脑`;
+  const sampleName=puzzle.sampleName || "小账本";
+  const labSource=puzzle.labSource || "沙盒抓包";
   const code = shippedLines(lab.sources);
   const terms = puzzle.terms;
   const sound = ui.sound;
   const line = (l, face) => (l.who === "client" ? { who: client.portrait, name: client.name, text: String(l.text ?? l).replace(/^[^：「]+：/, ""), face: l.face || face || "normal" } : { text: l.text ?? l, face: l.face || face || "normal" });
   const say = (lines) => ui.say(lines.map((l) => line(l)));
 
-  const state = {
-    phase: "look",
-    told: false,
-    seen: new Set(),
-    clues: [],
-    dict: [],
-    words: new Set(),
-    evidence: [],
-    chosen: puzzle.board.map((group) => blanksOf(group.text).map(() => "")),
-    solved: new Set(),
-    broken: new Set(),
-    statement: 0,
-    mistakes: 0,
-    hints: 0,
-    history: [],
-    termLog: [],
-    page: "clues",
-  };
+  const saveKey=`rea-case-checkpoint-v1:${item.id}`;
+  let saved=null;
+  try {const raw=localStorage.getItem(saveKey);if(raw&&raw.length<100000)saved=JSON.parse(raw);}catch{}
+  const state=restoreCaseState(item,saved);
+  let saveFailed=false;
+  function checkpoint(){
+    try{localStorage.setItem(saveKey,JSON.stringify(caseSnapshot(item,state)));saveFailed=false;}catch{saveFailed=true;}
+    refreshGuide();
+  }
   const props = new Map();
   let screen = null; // the open full-screen view: "notebook" | "terminal" | "confront" | "closed"
 
   /* ----- the room's props (drawn by the shell; the session keeps their look up to date) ----- */
   function propEl(thing) {
     const size = thing.size || 30;
-    const el = h("span", {
+    const el = h("button", {
+      type:'button',
       class: `case-prop ${thing.look} ${state.seen.has(thing.id) ? "seen" : ""} ${thing.wall ? "wall" : ""}`,
       style: `left:calc(${thing.at[0]}px * var(--px));top:calc(${thing.at[1]}px * var(--px));width:calc(${size}px * var(--px));z-index:${thing.wall ? 1 : Math.round(thing.at[1])}`,
-      "aria-hidden": "true",
+      'aria-label':`${state.seen.has(thing.id)?'再次调查':'调查'}：${thing.label}`,
+      title:thing.label,
+      onclick:()=>ui.navigate?.(`item:${thing.id}`),
     });
     el.innerHTML = `<svg viewBox="0 0 32 28" shape-rendering="crispEdges">${PROPS[thing.look] || PROPS.paper}</svg>`;
-    if (ui.has(`case-props/${thing.id}`)) el.innerHTML = `<img src="/art/pixel/case-props/${thing.id}.png" alt="">`;
+    const art = thing.art || thing.id;
+    if (ui.has(`case-props/${art}`)) el.innerHTML = `<img src="/art/pixel/case-props/${art}.png" alt="">`;
+    el.append(h("span", {class:"case-hit-target", "aria-hidden":"true"}));
     props.set(thing.id, el);
     return el;
   }
-  const markSeen = (id) => props.get(id)?.classList.add("seen");
+  const markSeen = (id) => {const el=props.get(id);el?.classList.add('seen');if(el)el.setAttribute('aria-label','再次调查：'+puzzle.scene.items.find(x=>x.id===id).label);};
   /** The shell highlights what the player is standing next to. */
   function near(id) {
     for (const [key, el] of props) el.classList.toggle("near", key === id);
@@ -93,6 +93,8 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     layer.hidden = false;
     layer.dataset.view = name;
     ui.onBusy(true);
+    guide.hidden=true;
+    checkpoint();
   }
   function close() {
     if (!screen) return;
@@ -100,6 +102,8 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     layer.hidden = true;
     layer.replaceChildren();
     ui.onBusy(false);
+    guide.hidden=false;
+    checkpoint();
   }
 
   /* ----- the notebook ----- */
@@ -111,12 +115,25 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
   }
   const flash = (text) => {
     ui.toast(text);
+    checkpoint();
     hud.classList.remove("got");
     void hud.offsetWidth;
     hud.classList.add("got");
   };
   // A small notebook button in the corner of the room (also N).
   const hud = h("button", { class: "case-hud-book", type: "button", onclick: () => openNotebook() }, h("span", { class: "case-book-icon", "aria-hidden": "true" }), h("span", {}, "侦探手账"), h("kbd", {}, "N"));
+  const guideTitle=h('summary',{}),guideText=h('p',{'aria-live':'polite'}),saveText=h('small',{});
+  const guideAction=h('button',{type:'button',class:'case-goal-action',onclick:()=>{const target=caseObjective(item,state).target;if(target)ui.navigate?.(target);}},'');
+  const guide=h('details',{class:'case-goal','aria-label':'当前委托目标'},guideTitle,guideText,h('div',{class:'case-goal-controls'},guideAction,h('button',{type:'button',class:'case-goal-action',onclick:()=>openNotebook('board')},'查看推理')),saveText);
+  let lastGuide='';
+  function refreshGuide(){
+    const next=caseObjective(item,state),signature=JSON.stringify([next,state.words.size,state.evidence.length,saveFailed]);
+    if(signature===lastGuide)return;lastGuide=signature;
+    guideTitle.textContent=state.phase==='look'?`当前目标：${next.found<next.total?'调查现场':'搜索代码与推理'} · 线索 ${next.found}/${next.total}`:`当前目标：${next.stage}`;guideText.textContent=next.text;guideAction.textContent=next.action;guideAction.disabled=!next.target;
+    saveText.textContent=saveFailed?'浏览器无法保存进度，请保持当前页面打开。':`名字 ${state.words.size} · 证据 ${state.evidence.length} · 进度自动保存在本浏览器`;
+  }
+  refreshGuide();
+  window.addEventListener('pagehide',checkpoint);
 
   function openNotebook(page = state.page) {
     state.page = page;
@@ -137,6 +154,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       book.querySelectorAll(".nb-tab").forEach((tab) => tab.classList.toggle("on", tab.dataset.page === state.page));
       const count = book.querySelector('.nb-tab[data-page="board"] small');
       if (count) count.textContent = `${state.solved.size}/${puzzle.board.length}`;
+      checkpoint();
     };
     const book = h("div", { class: "nb", role: "dialog", "aria-label": "侦探手账" },
       h("div", { class: "nb-cover-edge", "aria-hidden": "true" }),
@@ -267,6 +285,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       void box.offsetWidth;
       box.classList.add("shake");
       sayEl.textContent = wrong <= 2 ? "路米：差一点……有一两处不对。" : "路米：好像还不对，有好几处要再想想。";
+      checkpoint();
       return;
     }
     state.solved.add(g);
@@ -277,9 +296,10 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     sayEl.textContent = `路米：${group.explain}`;
     if (state.solved.size === puzzle.board.length) {
       state.phase = "verify";
+      checkpoint();
       await sleep(700);
       close();
-      await say([...(group.done || []), ...(puzzle.toLab || []), { text: "去小林的电脑上，输入 sandbox，在沙盒里跑一遍。", face: "happy" }]);
+      await say([...(group.done || []), ...(puzzle.toLab || []), { text: `去${computerLabel}，输入 sandbox，在沙盒里跑一遍。`, face: "happy" }]);
     } else await say(group.done || []);
   }
 
@@ -318,18 +338,22 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       state.history.push(command);
       print("cmd", command);
       run(command, paint);
+      checkpoint();
       paint();
     });
     if (!state.termLog.length) {
-      print("sys", `REA 0.1 · 已经把「小账本」拆开（发布版，开发者的注释都被去掉了）。`);
+      print("sys", `REA 0.1 · 已载入「${sampleName}」的原创教学样本。代码搜索保留原行号，整行注释不参与检索。`);
       print("sys", "输入 help 看看能做什么。");
     }
+    const shortcuts=h('div',{class:'term-shortcuts','aria-label':'终端操作'},
+      ...[['help','命令说明'],['notebook','打开手账'],['sandbox','进入实验沙盒']].map(([command,label])=>h('button',{type:'button',onclick:()=>{state.history.push(command);print('cmd',command);run(command,paint);paint();checkpoint();}},label)));
     const view = h("div", { class: "case-screen laptop" },
       h("div", { class: "lt-lid" },
         h("div", { class: "term" },
-          h("div", { class: "term-bar" }, h("span", {}, "小林的电脑 · REA 终端"), h("button", { type: "button", class: "term-close", onclick: close }, "合上电脑 ✕")),
+          h("div", { class: "term-bar" }, h("span", {}, `${computerLabel} · REA 终端`), h("button", { type: "button", class: "term-close", onclick: close }, "合上电脑 ✕")),
+          shortcuts,
           out,
-          h("label", { class: "term-line" }, h("span", { class: "term-prompt" }, "rea@xiaolin:~$"), input))),
+          h("label", { class: "term-line" }, h("span", { class: "term-prompt" }, "rea:~$"), input))),
       h("div", { class: "lt-base", "aria-hidden": "true" }));
     view.addEventListener("click", (e) => !e.target.closest("button, input, .lab") && focusTerminal());
     paint();
@@ -337,7 +361,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     return view;
   }
   function renderTermLine({ kind, content }) {
-    if (kind === "cmd") return h("p", { class: "t-cmd" }, h("span", {}, "rea@xiaolin:~$ "), content);
+    if (kind === "cmd") return h("p", { class: "t-cmd" }, h("span", {}, "rea:~$ "), content);
     if (kind === "hit") return termHit(content);
     return h("p", { class: `t-${kind}` }, content);
   }
@@ -390,13 +414,15 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       case "help":
         print("sys", "find <词>    在代码里找含有这些词的行（可以写好几个词）");
         print("sys", "ls           看看拆出了哪些文件");
-        print("sys", "sandbox      在沙盒里运行小账本（网是假的，什么都发不出去）");
+        print("sys", `sandbox      进入「${sampleName}」的隔离实验`);
         print("sys", "clear        清屏      exit  合上电脑");
         print("sys", "小提示：点黄色的名字记进手账；关键的一行点 [记为证据]。");
         return;
       case "ls":
         print("out", Object.keys(lab.sources).join("    "));
         return;
+      case "notebook":
+        return openNotebook();
       case "clear":
         state.termLog.length = 0;
         return;
@@ -434,11 +460,12 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
   let labEl = null;
   function openSandbox() {
     if (!labEl) {
-      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, onMistake: () => (state.mistakes += 1), onHint: () => (state.hints += 1), finishLabel: "合上电脑，去找小林", onDone: () => {
-        for (const e of puzzle.labEvidence || []) if (!state.evidence.some((x) => x.id === e.id)) state.evidence.push({ ...e, where: "沙盒抓包" });
+      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, onMistake: () => {state.mistakes += 1;checkpoint();}, onHint: () => {state.hints += 1;checkpoint();}, finishLabel: `合上电脑，去找${client.name}`, onDone: () => {
+        for (const e of puzzle.labEvidence || []) if (!state.evidence.some((x) => x.id === e.id)) state.evidence.push({ ...e, where: labSource });
         sound.beep();
-        flash("抓包记录记为证据");
+        flash(`${labSource}记录记为证据`);
         state.phase = "confront";
+        checkpoint();
         say(lab.done || []);
       }, onFinish: async () => {
         close();
@@ -448,7 +475,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     open("terminal", h("div", { class: "case-screen laptop" },
       h("div", { class: "lt-lid" },
         h("div", { class: "term sandbox" },
-          h("div", { class: "term-bar" }, h("span", {}, "小林的电脑 · REA 沙盒"), h("button", { type: "button", class: "term-close", onclick: () => openTerminal() }, "回到终端")),
+          h("div", { class: "term-bar" }, h("span", {}, `${computerLabel} · REA 沙盒`), h("button", { type: "button", class: "term-close", onclick: () => openTerminal() }, "回到终端")),
           h("div", { class: "term-lab" }, labEl))),
       h("div", { class: "lt-base", "aria-hidden": "true" })));
   }
@@ -476,8 +503,9 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       const s = c.statements[state.statement];
       const broken = state.broken.has(state.statement);
       card.className = `cf-card ${broken ? "broken" : ""}`;
-      card.replaceChildren(...[h("small", {}, `${client.name}念着隐私说明 · 第 ${state.statement + 1} / ${c.statements.length} 句`), h("p", {}, s.text), broken && h("span", { class: "cf-x" }, "戳穿")].filter(Boolean));
+      card.replaceChildren(...[h("small", {}, `${client.name}的陈述 · 第 ${state.statement + 1} / ${c.statements.length} 句`), h("p", {}, s.text), broken && h("span", { class: "cf-x" }, "戳穿")].filter(Boolean));
       count.textContent = `已经戳穿 ${state.broken.size} / ${falseOnes} 句`;
+      checkpoint();
       view.querySelectorAll(".cf-act").forEach((b) => (b.disabled = broken));
       strip.replaceChildren(...(state.evidence.length ? state.evidence.map((e) => h("button", { type: "button", class: "cf-ev", onclick: () => present(e) }, h("small", {}, e.where), h("code", {}, e.text))) : [h("p", {}, "手账里还没有证据。")]));
     };
@@ -543,6 +571,8 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     state.phase = "done";
     const stars = starsForPuzzle(state);
     saveStars(item.id, stars);
+    checkpoint();
+    ui.onSolved(stars);
     await sleep(300);
     sound.unlock();
     open("closed", h("div", { class: "case-screen dim" },
@@ -552,21 +582,22 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
         h("h3", {}, item.title),
         h("p", { class: "cs-stars", "aria-label": `评价 ${stars} 星` }, "★".repeat(stars) + "☆".repeat(3 - stars)),
         h("p", { class: "cs-score" }, `犯错 ${state.mistakes} 次 · 问路米 ${state.hints} 次`),
+        puzzle.debrief?.length && h("div", {class:"case-debrief"},h("h4",{},"这次查明了什么"),h("ul",{},puzzle.debrief.map(text=>h("li",{},text)))),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
           close();
           await say([{ who: "client", text: item.game.verdict.closing, face: "happy" }]);
-          ui.onSolved(stars);
         } }, "好"))));
   }
 
   /* ----- hints ----- */
   async function hint(sayEl) {
     state.hints += 1;
+    checkpoint();
     let text;
     if (state.phase === "confront") text = puzzle.confront.statements[state.statement].hint || "先「追问」，听听这句话背后还有什么。";
-    else if (state.phase === "verify") text = "去小林的电脑上输入 sandbox，把推理一条条验证一遍。";
+    else if (state.phase === "verify") text = `去${computerLabel}输入 sandbox，把推理一条条验证一遍。`;
     else if (state.seen.size < Math.min(4, puzzle.scene.items.length)) text = "先在房间里多看看，靠近东西按 E。东西会告诉你该去代码里找什么。";
-    else if (state.words.size < 4) text = `去小林的电脑上搜代码。用小词典里的词，比如 find ${state.dict[0]?.code.split(" ")[0] || "fetch"}。`;
+    else if (state.words.size < 4) text = `去${computerLabel}搜代码。用小词典里的词，比如 find ${state.dict[0]?.code.split(" ")[0] || puzzle.terms[0]}。`;
     else {
       const g = puzzle.board.findIndex((_, i) => !state.solved.has(i));
       text = g >= 0 ? puzzle.board[g].hint : "推理都盖章了。";
@@ -579,6 +610,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
 
   return {
     hud,
+    guide,
     propEl,
     near,
     get busy() {
@@ -589,12 +621,15 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     },
     /** Walking in: the request the first time, a reminder of what is next later. */
     async arrive() {
+      if(state.phase==='done'){ui.onSolved(starsForPuzzle(state));await say([{text:'上次的结案结果已经恢复，可以继续探索小镇。',face:'happy'}]);return;}
       if (!state.told) {
         state.told = true;
         await say([...client.lines.map((l, i) => ({ who: "client", text: l.text ?? l, face: l.face || (i ? "thinking" : "normal") })), ...(puzzle.brief || [])]);
+        checkpoint();
         return;
       }
-      if (state.phase === "verify") await say([{ text: "推理已经拼好了。去电脑上输入 sandbox 验证一下。", face: "normal" }]);
+      ui.toast('已恢复这个委托的调查进度。');
+      if (state.phase === "verify") await say([{ text: `推理已经拼好了。去${computerLabel}输入 sandbox 验证一下。`, face: "normal" }]);
       if (state.phase === "confront") await say([{ text: `证据齐了，去找${client.name}吧。`, face: "normal" }]);
     },
     label(thing) {
@@ -607,8 +642,11 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       const first = !state.seen.has(id);
       state.seen.add(id);
       markSeen(id);
+      const discovered=addClue(thing.clue);
+      checkpoint();
       if (first || id !== puzzle.terminal) await say(thing.lines || []);
-      if (first && addClue(thing.clue)) {
+      if(ui.active && !ui.active())return;
+      if (discovered) {
         sound.clue();
         flash(`线索「${thing.clue.title}」记进手账`);
       }

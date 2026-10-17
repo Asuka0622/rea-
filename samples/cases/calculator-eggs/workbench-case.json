@@ -158,6 +158,387 @@
           "face": "normal"
         }
       ]
+    },
+    "puzzle": {
+      "title": "惊喜还是不该留下的入口？",
+      "sampleName": "像素计算器",
+      "computerLabel": "小雨的调试电脑",
+      "labSource": "计算器实验",
+      "room": {
+        "top": 118,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 190,
+          "y": 150
+        },
+        "blocks": [
+          {
+            "x": 236,
+            "y": 132,
+            "w": 80,
+            "h": 36
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "我想找有趣的彩蛋，可「变专业版」好像不是同一回事。你能分清吗？"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "推理可以错，按出来的效果不会骗人。去电脑上试试！"
+            }
+          ]
+        }
+      },
+      "terminal": "laptop",
+      "scene": {
+        "place": "小雨的游戏角",
+        "look": "dorm game-corner",
+        "items": [
+          {
+            "id": "laptop",
+            "label": "调试电脑",
+            "look": "laptop",
+            "at": [
+              136,
+              110
+            ],
+            "stand": [
+              138,
+              130
+            ],
+            "size": 40,
+            "lines": [
+              {
+                "text": "电脑保留了这个原创计算器的源码。renderer.js 管界面，main.js 管主进程，preload.js 把能力交给页面。"
+              }
+            ],
+            "clue": {
+              "id": "code",
+              "title": "功能分散在不同文件",
+              "text": "不能只看页面上的按钮。工作台可用 ls 看文件，再用 find 搜代码。",
+              "dict": [
+                {
+                  "zh": "界面与授权",
+                  "code": "display / license"
+                }
+              ]
+            }
+          },
+          {
+            "id": "calculator",
+            "label": "像素计算器",
+            "look": "phone",
+            "at": [
+              272,
+              146
+            ],
+            "stand": [
+              226,
+              150
+            ],
+            "size": 20,
+            "lines": [
+              {
+                "text": "小雨输入一串数字时，屏幕忽然变成了一句祝福。普通加减法还在，数据也没少。"
+              }
+            ],
+            "clue": {
+              "id": "greeting",
+              "title": "一句藏起来的祝福",
+              "text": "数字会触发不同的显示分支，需要找到等号键按下时的条件。",
+              "dict": [
+                {
+                  "zh": "屏幕显示",
+                  "code": "display"
+                }
+              ]
+            }
+          },
+          {
+            "id": "workbook",
+            "label": "秘籍练习册",
+            "look": "chat",
+            "at": [
+              96,
+              110
+            ],
+            "stand": [
+              96,
+              130
+            ],
+            "size": 24,
+            "lines": [
+              {
+                "text": "练习册上画着上上下下左右左右，最后两个字母没写完。旁边写着「顺序不能乱」。"
+              }
+            ],
+            "clue": {
+              "id": "keys",
+              "title": "按键顺序有意义",
+              "text": "不只是按过哪些键，还要看它们的先后顺序。",
+              "dict": [
+                {
+                  "zh": "按键序列",
+                  "code": "SECRET_KEYS"
+                }
+              ]
+            }
+          },
+          {
+            "id": "poster",
+            "label": "调试快捷键便签",
+            "look": "clock",
+            "at": [
+              258,
+              46
+            ],
+            "stand": [
+              258,
+              126
+            ],
+            "size": 24,
+            "lines": [
+              {
+                "text": "墙上写着：「发布前记得收走开发工具。」后面的一组组合键被涂掉了。"
+              }
+            ],
+            "clue": {
+              "id": "shortcut",
+              "title": "开发者留下的工具",
+              "text": "全局快捷键可能在主进程注册，不在计算器按钮里。",
+              "dict": [
+                {
+                  "zh": "开发快捷键",
+                  "code": "globalShortcut.register / openDevTools"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "forum",
+            "label": "论坛里的传闻",
+            "look": "router",
+            "at": [
+              38,
+              70
+            ],
+            "stand": [
+              40,
+              128
+            ],
+            "size": 28,
+            "lines": [
+              {
+                "text": "论坛有人说：「地址后面加一小段，就能打开隐藏面板；还有一个调试通道能改授权。」这需要验证。"
+              }
+            ],
+            "clue": {
+              "id": "entry",
+              "title": "隐藏不等于隔离",
+              "text": "地址片段与授权通道是两个不同入口。先定位源码，再到原创样本中验证。",
+              "dict": [
+                {
+                  "zh": "页面入口",
+                  "code": "location.hash / __debug"
+                },
+                {
+                  "zh": "授权检查",
+                  "code": "license / debug:unlock-pro"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "policy",
+            "label": "发布检查表",
+            "look": "paper",
+            "at": [
+              60,
+              164
+            ],
+            "stand": [
+              76,
+              168
+            ],
+            "size": 22,
+            "lines": [
+              {
+                "text": "清单有两栏：「可以保留的小惊喜」和「应移除的开发入口」。有些地方画了问号。"
+              }
+            ],
+            "clue": {
+              "id": "classify",
+              "title": "先判断能力，再分类",
+              "text": "看入口能做什么：只是换文字和颜色，还是打开调试工具、改变授权。",
+              "dict": []
+            }
+          },
+          {
+            "id": "plush",
+            "label": "桌边的玩偶",
+            "look": "cat",
+            "at": [
+              196,
+              76
+            ],
+            "stand": [
+              196,
+              126
+            ],
+            "size": 30,
+            "lines": [
+              {
+                "text": "玩偶背后写着：「别把所有秘密都叫漏洞，也别把所有后门都叫彩蛋。」"
+              }
+            ],
+            "wall": true
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "自由调查房间，把听到的传闻和能验证的事实分开。需要时在手账里问路米。"
+        },
+        {
+          "text": "这里运行的是工作台原创计算器样本，后面的实验只作用于这个样本。"
+        }
+      ],
+      "terms": [
+        "display",
+        "1314520",
+        "SECRET_KEYS",
+        "location.hash",
+        "globalShortcut.register",
+        "openDevTools",
+        "debug:unlock-pro",
+        "license",
+        "pro",
+        "true"
+      ],
+      "board": [
+        {
+          "title": "祝福是怎样出现的",
+          "text": "按等号时，如果 {display} 等于 {1314520}，计算器会显示一段祝福。",
+          "hint": "从 display 的判断分支往下看。",
+          "explain": "这是显示上的小惊喜，不改变授权或文件。"
+        },
+        {
+          "title": "开发工具藏在哪里",
+          "text": "页面根据 {location.hash} 决定是否显示调试面板；主进程通过 {globalShortcut.register} 注册组合键，调用 {openDevTools}。",
+          "hint": "地址判断在 renderer.js；全局快捷键在 main.js。",
+          "explain": "隐藏页面与调试快捷键是两条入口，发布前都应检查能暴露哪些能力。"
+        },
+        {
+          "title": "专业版的开关",
+          "text": "{debug:unlock-pro} 通道直接把 {license} 里的 {pro} 设为 {true}。",
+          "hint": "搜索 license，检查所有能改变它的地方。",
+          "explain": "这个原创样本把测试授权开关留在了客户端；实验里会和无害彩蛋分开比较。"
+        }
+      ],
+      "toLab": [
+        {
+          "text": "把每一种入口亲手触发，再按实际能力分类。看起来神秘，不等于性质相同。"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "calculator-tested",
+          "text": "计算器实验：祝福和彩虹只改变显示；隐藏页面与快捷键打开调试工具，测试解锁通道会改变专业版状态。"
+        }
+      ],
+      "confront": {
+        "lead": "拿源码和实验结果解释这些入口的区别。不是每句传闻都错。",
+        "intro": [
+          {
+            "text": "小雨把收集到的说法摊在桌上。哪句需要纠正？拿证据来说明。"
+          }
+        ],
+        "statements": [
+          {
+            "text": "「祝福数字肯定是传闻，代码里没有。」",
+            "accept": [
+              "display === \"1314520\""
+            ],
+            "press": [
+              {
+                "text": "等号键处理里有一个特殊判断。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "真有这个条件！原来祝福就是这样出现的。"
+              }
+            ],
+            "hint": "在 renderer.js 中定位那个数字的判断。"
+          },
+          {
+            "text": "「不管打开什么功能，都可以叫无害彩蛋。」",
+            "accept": [
+              "debug:unlock-pro",
+              "计算器实验：祝福和彩虹只改变显示"
+            ],
+            "press": [
+              {
+                "text": "改变颜色，和直接改变专业版授权，是同一种能力吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "一个只是惊喜，一个改变了访问能力，确实得分开。"
+              }
+            ],
+            "hint": "出示测试授权通道，或完成分类后的实验记录。"
+          },
+          {
+            "text": "「没有按钮，就肯定没有调试入口。」",
+            "accept": [
+              "globalShortcut.register",
+              "location.hash ==="
+            ],
+            "press": [
+              {
+                "text": "按钮、快捷键和地址片段分别在哪里处理？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "原来没有按钮，也可能通过别的入口打开。"
+              }
+            ],
+            "hint": "找到主进程注册快捷键，或页面检查地址的那一行。"
+          },
+          {
+            "text": "「开发者可以在自己的测试版本中使用调试工具。」",
+            "press": [
+              {
+                "text": "可以。问题在于发布时要检查入口的能力与访问范围，不能把测试版和发布版混为一谈。"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "先观察效果，再区分显示彩蛋、调试入口和授权变更。",
+        "按钮以外，快捷键、地址与消息通道也能打开功能。",
+        "这次只验证原创样本；判断其他软件时仍需它自己的证据。"
+      ]
     }
   }
 }

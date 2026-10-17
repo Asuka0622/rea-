@@ -643,7 +643,7 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .case-room-bg .desk {left:calc(80px * var(--px));top:calc(108px * var(--px));width:calc(100px * var(--px));height:calc(16px * var(--px));background:linear-gradient(#a57a4a 0 calc(4px * var(--px)),#7e5a34 calc(4px * var(--px)));border:calc(2px * var(--px)) solid #5a3f22;}
 .case-room-bg .bed {left:calc(236px * var(--px));top:calc(124px * var(--px));width:calc(80px * var(--px));height:calc(44px * var(--px));background:linear-gradient(90deg,#fbf6e6 0 calc(18px * var(--px)),#7fa6c9 calc(18px * var(--px)));border:calc(3px * var(--px)) solid #5a3f22;box-shadow:inset 0 calc(-6px * var(--px)) 0 #5f86a9;}
 .case-room-bg .rug {left:calc(96px * var(--px));top:calc(140px * var(--px));width:calc(110px * var(--px));height:calc(30px * var(--px));background:repeating-linear-gradient(90deg,#d6aa57 0 calc(8px * var(--px)),#c4954a calc(8px * var(--px)) calc(16px * var(--px)));border:calc(2px * var(--px)) solid #a57a3c;border-radius:calc(4px * var(--px));opacity:.85;}
-.case-prop {position:absolute;display:block;transform:translate(-50%,-100%);line-height:0;filter:drop-shadow(0 calc(1px * var(--px)) 0 rgba(0,0,0,.25));transition:transform .15s;}
+.case-prop {position:absolute;display:block;transform:translate(-50%,-100%);line-height:0;filter:drop-shadow(0 calc(1px * var(--px)) 0 rgba(0,0,0,.25));transition:transform .15s;padding:0;border:0;background:transparent;cursor:pointer;}
 .case-prop svg,.case-prop img {width:100%;height:auto;display:block;image-rendering:pixelated;}
 .case-prop:not(.seen)::after {content:"?";position:absolute;left:50%;top:calc(-12px * var(--px));transform:translateX(-50%);width:calc(9px * var(--px));height:calc(9px * var(--px));display:grid;place-items:center;font:700 calc(7px * var(--px)) var(--font-mono);color:#1d2433;background:#e8c270;border:calc(1px * var(--px)) solid #0d1119;animation:case-bob 1.2s ease-in-out infinite;}
 .case-prop.near {transform:translate(-50%,-100%) translateY(calc(-2px * var(--px)));filter:drop-shadow(0 0 calc(2px * var(--px)) #fff6c8) drop-shadow(0 0 calc(4px * var(--px)) #e8c270);}
@@ -651,8 +651,8 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .case-prop.router .led {animation:case-led 1.4s steps(2) infinite;}
 .case-prop.cat .tail {animation:case-led 2s steps(2) infinite;}
 @keyframes case-led {50% {opacity:.25;}}
-.case-npc {position:absolute;display:block;width:calc(16px * var(--px) * 2.35);height:calc(32px * var(--px) * 2.35);transform:translate(-50%,-100%);}
-.case-npc .game-sprite {position:absolute;left:0;bottom:0;width:calc(16px * var(--px));height:calc(32px * var(--px));transform:scale(2.35);transform-origin:left bottom;animation:game-bob 1.6s steps(2) infinite;}
+.case-npc {position:absolute;display:block;width:calc(16px * var(--px) * 1.3);height:calc(32px * var(--px) * 1.3);transform:translate(-50%,-100%);padding:0;border:0;background:transparent;cursor:pointer;}
+.case-npc .game-sprite {position:absolute;left:0;bottom:0;width:calc(16px * var(--px));height:calc(32px * var(--px));transform:scale(1.3);transform-origin:left bottom;animation:game-bob 1.6s steps(2) infinite;}
 .case-npc.kobayashi .game-sprite i {background:linear-gradient(180deg,#2a2a35 0 45%,#f0c8a0 45%);}
 .case-npc.kobayashi .game-sprite b {background:#6f9bd1;}
 .case-npc small {position:absolute;left:50%;top:calc(-10px * var(--px));transform:translateX(-50%);padding:0 calc(3px * var(--px));font:600 calc(6px * var(--px)) var(--font-mono);color:#fbf6e6;background:rgba(13,17,25,.7);white-space:nowrap;}
@@ -810,3 +810,66 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 .term-lab .lab-window {box-shadow:none;}
 .term-lab .btn {color:#0f1a14;background:#9fe8a8;border-color:#0d1119;}
 .term-lab .btn.ghost {color:#9fe8a8;background:transparent;border-color:#3f6a4c;}
+
+/* A small journal keeps the current learning action visible while the player investigates. */
+.case-goal {position:absolute;left:16px;top:72px;z-index:35;max-width:340px;width:calc(100% - 32px);box-sizing:border-box;padding:10px 14px;background:#fbf1d6;color:#302315;border:2px solid #805631;font:14px/1.6 var(--font-body);}
+.case-goal summary {font-size:14px;font-weight:600;cursor:pointer;}
+.case-goal p {margin:4px 0 8px;}
+.case-goal small {display:block;margin-top:6px;color:#66503b;font-size:11px;}
+.case-goal-controls,.term-shortcuts {display:flex;flex-wrap:wrap;gap:6px;}
+.case-goal-action {padding:5px 9px;background:#e9c385;color:#302315;border:1px solid #805631;font:inherit;font-size:12px;cursor:pointer;}
+.case-prop:focus-visible,.case-npc:focus-visible {outline:3px solid #fff1ad;outline-offset:4px;}
+.case-prop:focus-visible::before,.case-prop:hover::before {content:attr(title);position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);padding:6px 8px;background:#302315;color:#fff3d8;font:12px/1.4 var(--font-body);white-space:nowrap;pointer-events:none;z-index:1;}
+.term-shortcuts {padding:8px 12px;border-bottom:1px solid #3f6a4c;}
+.term-shortcuts button {padding:5px 9px;border:1px solid #7fae8a;background:#16251c;color:#d6f5da;font:12px/1.5 var(--font-body);cursor:pointer;}
+@media(max-height:500px) {.case-goal {top:50px;left:8px;max-width:270px;padding:6px 10px;font-size:12px;}.case-goal p {margin:2px 0 4px;}.case-goal small {font-size:10px;margin-top:3px;}.case-goal-controls {gap:4px;}.case-goal-action {padding:3px 7px;font-size:11px;}}
+
+/* A brief recap belongs to each completed investigation. */
+.case-debrief {text-align:left;max-width:54ch;margin:18px auto;font:14px/1.8 var(--font-body);}
+.case-debrief h4 {margin:0 0 8px;font:600 16px/1.5 var(--font-body);}
+.case-debrief ul {margin:0;padding-left:22px;}
+.case-debrief li {margin:6px 0;}
+.case-room-bg.dorm.farm {background:linear-gradient(#d6dfb8 0 65%,#b68d5d 65%);}
+.case-room-bg.dorm.game-corner {background:linear-gradient(#c5c8e1 0 65%,#bd966a 65%);}
+.case-npc.duoduo .game-sprite b {background:#e4ad56;}
+.case-npc.xiaoyu .game-sprite b {background:#c96b65;}
+
+/* Delivered Kobayashi sheet: 64x96 frames, 4 columns and 2 rows. */
+.case-npc:has(.case-client-sheet) {width:calc(28px * var(--px));height:calc(42px * var(--px));}
+.case-client-sheet {display:block;width:100%;height:100%;background-size:400% 200%;image-rendering:pixelated;background-repeat:no-repeat;animation:kobayashi-idle 2180ms step-end infinite;}
+@keyframes kobayashi-idle {0%,100% {background-position:0 0;}91.743% {background-position:33.333333% 0;}}
+.case-npc:hover .case-client-sheet,.case-npc:focus-visible .case-client-sheet {animation:kobayashi-think 1060ms step-end infinite;}
+@keyframes kobayashi-think {0%,100% {background-position:0 100%;}16.981% {background-position:33.333333% 100%;}32.075% {background-position:66.666667% 100%;}66.038% {background-position:100% 100%;}}
+@media(prefers-reduced-motion:reduce) {.case-client-sheet,.case-npc:hover .case-client-sheet,.case-npc:focus-visible .case-client-sheet {animation:none;background-position:0 0;}}
+
+/* Dorm art grid: 640x360 art pixels in a 320x180 room. */
+.calibrated-room .case-npc:has(.case-client-sheet) {width:calc(40px * var(--px));height:calc(60px * var(--px));}
+.calibrated-room .game-sprite.sheet.smooth {image-rendering:pixelated;}
+
+/* Shared world polish: quiet investigation markers, consistent sampling and grounded actors. */
+.game-sprite.player.sheet.smooth,img.game-sprite,img.scene-sprite {image-rendering:pixelated;}
+.game-sprite.player.sheet::before,.case-client-sheet::before {content:"";position:absolute;left:20%;bottom:-2%;width:60%;height:7%;border-radius:50%;background:rgba(45,27,17,.24);z-index:-1;pointer-events:none;}
+.case-prop:not(.seen)::after {content:"";width:7px;height:7px;top:-11px;background:#f8d88e;border:1px solid #594023;transform:translateX(-50%) rotate(45deg);animation:none;box-shadow:0 1px 3px #30231566;pointer-events:none;}
+.case-prop.near {transform:translate(-50%,-100%);filter:drop-shadow(0 1px 1px #38251366);outline:1px dashed #f6e6b1;outline-offset:4px;}
+.case-prop:hover::before,.case-prop:focus-visible::before {bottom:calc(100% + 17px);font-size:12px;padding:5px 8px;border:1px solid #80603d;box-shadow:0 3px 8px #30231533;}
+.case-npc small {font:500 12px/1.4 var(--font-body);top:-22px;padding:2px 7px;background:#302315d9;border-radius:2px;opacity:.8;}
+.case-npc:hover small,.case-npc:focus-visible small {opacity:1;}
+.game-interact.room-prompt {max-width:240px;box-sizing:border-box;font:12px/1.4 var(--font-body);padding:4px 8px;border-width:1px;animation:none;box-shadow:0 2px 5px #30231533;}
+.game-interact.room-prompt kbd {font-size:11px;border-width:1px;padding:0 4px;}
+.case-goal {top:64px;max-width:300px;background:#fbf1d6f2;padding:8px 12px;box-shadow:0 3px 12px #30231522;}
+.case-goal summary {font-size:13px;line-height:1.5;}
+.case-hud-book {right:14px;bottom:14px;padding:7px 10px;font-size:13px;border-width:2px;box-shadow:0 2px 5px #30231544;}
+.case-hud-book kbd {font-size:11px;border-width:1px;}
+@media(max-width:700px),(max-height:500px) {
+  .case-goal {top:48px;left:8px;max-width:240px;padding:5px 8px;}
+  .case-goal summary {font-size:11px;}
+  .case-npc small {font-size:10px;top:-18px;}
+  .case-hud-book {right:8px;bottom:8px;padding:5px 8px;font-size:11px;}
+  .game-interact.room-prompt {font-size:11px;max-width:190px;}
+}
+
+.case-hit-target {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:44px;min-height:44px;}
+.case-goal {top:calc(var(--game-toolbar-height, 52px) + 10px);}
+.case-npc:not(:has(.case-client-sheet)) {width:calc(26.4px * var(--px));height:calc(52.8px * var(--px));}
+.case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.65);}
+@media(max-width:700px),(max-height:500px) {.case-goal {top:calc(var(--game-toolbar-height, 40px) + 6px);}}

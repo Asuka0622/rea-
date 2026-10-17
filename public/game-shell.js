@@ -243,6 +243,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const view = regional() ? { w: 640, h: 360 } : world;
     townPx = Math.max(window.innerWidth / view.w, window.innerHeight / view.h);
     stage.style.setProperty("--px", String(roomPx));
+    stage.style.setProperty("--game-toolbar-height", `${Math.ceil(hud.getBoundingClientRect().height)}px`);
     worldEl?.style.setProperty("--px", String(townPx));
     placePlayer();
   }
@@ -321,7 +322,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       }),
       ...exitSigns(),
       // fronts are added by addFronts() below
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
     );
     placePlayer();
     addFronts();
@@ -342,7 +343,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* Rooms are a closer view than the town. Measured on the rooms (a door is ~95px, a desk ~32px: about
      46px to a metre), Lumi (~1.5m) stands ~70px tall at the back wall, and a little taller nearer the
      front of the picture (perspective). Returns the size of a 16x32 frame relative to the town. */
-  const indoorScale = () => (room ? 2.35 * (1 + 0.18 * Math.max(0, Math.min(1, (player.y - room.top) / (180 - room.top)))) : 1);
+  const indoorScale = () => !room ? 1 : caseRoom ? room.characterScale || 1.65 : 2.35 * (1 + 0.12 * Math.max(0, Math.min(1, (player.y - room.top) / (180 - room.top))));
   let roomEl = null;
   let room = null;
 
@@ -369,7 +370,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     target = null;
     roomEl = h("div", { class: "game-room" },
       picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
     stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place));
     placePlayer();
     animate(0, 0, 0);
@@ -411,6 +412,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     lineAfter = after;
     dialogue.onclick = () => advance(after);
     renderLine(after);
+    if(caseRoom){dialogue.tabIndex=-1;dialogue.focus({preventScroll:true});}
   }
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
@@ -894,8 +896,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     positionPrompt();
   }
   function positionPrompt() {
-    prompt.style.left = `calc(${player.x.toFixed(1)}px * var(--px))`;
-    prompt.style.top = `calc(${(player.y - (room ? 32 * indoorScale() + 4 : 36)).toFixed(1)}px * var(--px))`;
+    const x = room ? Math.max(46, Math.min(274, player.x)) : player.x;
+    prompt.style.left = `calc(${x.toFixed(1)}px * var(--px))`;
+    prompt.style.top = `calc(${(room ? Math.min(177, player.y + 12) : player.y - 36).toFixed(1)}px * var(--px))`;
+    prompt.classList.toggle("room-prompt", Boolean(room));
   }
   /** Indoors: "spot" (the room's work: opens its menu) or "exit" (back to town). */
   function showRoomPrompt() {
@@ -1569,6 +1573,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (caseRoom) {
       caseRoom.session.close();
       caseRoom = null;
+      const pendingDialogue=lineDone;lineDone=null;stopTyping();dialogue.hidden=true;pendingDialogue?.();
       sound.door();
     }
     if (place) sound.door();
@@ -1669,6 +1674,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           toast: (text) => toast(text),
           has,
           portraits: () => art().portraits,
+          navigate: navigateCaseThing,
+          active: () => caseRoom?.id === item.id,
           onBusy: (busy) => {
             keys.clear();
             target = null;
@@ -1696,15 +1703,26 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     target = null;
     const picture = puzzle.scene.art && has(puzzle.scene.art);
     const who = item.game.client;
-    roomEl = h("div", { class: "game-room case-room" },
-      picture ? h("img", { class: "game-bg", src: `/art/pixel/${puzzle.scene.art}.webp`, alt: "" }) : h("div", { class: `game-bg drawn case-room-bg ${puzzle.scene.look || "dorm"}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "bed" }), h("span", { class: "desk" }), h("span", { class: "shelf" }), h("span", { class: "rug" })),
+    roomEl = h("div", { class: `game-room case-room${puzzle.scene.art === "case-room-privacy-ledger" ? " calibrated-room" : ""}` },
+      picture ? h("img", { class: "game-bg", src: `/art/pixel/${puzzle.scene.art}.png`, alt: "" }) : h("div", { class: `game-bg drawn case-room-bg ${puzzle.scene.look || "dorm"}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "bed" }), h("span", { class: "desk" }), h("span", { class: "shelf" }), h("span", { class: "rug" })),
       ...puzzle.scene.items.map((thing) => session.propEl(thing)),
-      h("span", { class: `case-npc ${who.portrait}`, style: `left:calc(${room.client.x}px * var(--px));top:calc(${room.client.y}px * var(--px));z-index:${room.client.y}`, "aria-hidden": "true" }, h("span", { class: "game-sprite drawn" }, h("i", {}), h("b", {}), h("u", {})), h("small", {}, who.name)),
+      h("button", { type:'button',class: `case-npc ${who.portrait}`, style: `left:calc(${room.client.x}px * var(--px));top:calc(${room.client.y}px * var(--px));z-index:${room.client.y}`, 'aria-label':`和${who.name}说话`,onclick:()=>navigateCaseThing('client') }, has(`anim-${who.portrait}`) ? h("span", { class: `case-client-sheet ${who.portrait}`, 'aria-hidden':'true', style: `background-image:url(/art/pixel/anim-${who.portrait}${has(`anim-${who.portrait}-case`) ? "-case" : ""}.png)` }) : h("span", { class: "game-sprite drawn",'aria-hidden':'true' }, h("i", {}), h("b", {}), h("u", {})), h("small", {}, who.name)),
       h("span", { class: "case-door", style: `left:calc(${room.exit.x}px * var(--px));top:calc(${room.exit.y}px * var(--px))`, "aria-hidden": "true" }),
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: "background-image:url(/art/pixel/anim-lumi.png)", "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
-    stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon("scan", { size: 16 }), puzzle.scene.place), session.hud);
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi-case"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+    stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon("scan", { size: 16 }), puzzle.scene.place), session.hud,session.guide);
     placePlayer();
     animate(0, 0, 0);
+  }
+  function navigateCaseThing(key) {
+    if(!caseRoom||caseRoom.session.busy||!dialogue.hidden)return;
+    const current=caseRoom;
+    const thing=key.startsWith('item:')&&room.items.find(x=>x.id===key.slice(5));
+    const point=key==='client'?room.client:key==='exit'?room.exit:thing?{x:thing.stand?.[0]??thing.at[0],y:thing.stand?.[1]??Math.max(room.top+4,thing.at[1]+4)}:null;
+    if(!point)return;
+    walkTo(point,()=>{
+      if(caseRoom!==current||current.session.busy||!dialogue.hidden)return;
+      nearDoor=key;usePrompt();
+    });
   }
   const leaveCaseRoom = () => goTown();
 
@@ -1844,7 +1862,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (windowOpen) closeWindow();
       else if (place) goTown();
       else if (caseRoom) return;
-    } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && (!windowOpen || dialogue.classList.contains("over-window")) && (event.target === document.body || event.target.closest?.(".game-window"))) {
+    } else if ((event.key === "Enter" || event.key === " ") && !dialogue.hidden && (!windowOpen || dialogue.classList.contains("over-window")) && (event.target === document.body || event.target.closest?.(".game-window,.game-dialogue"))) {
       event.preventDefault();
       dialogue.click();
     }

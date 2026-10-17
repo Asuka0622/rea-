@@ -184,7 +184,7 @@
             "look": "laptop",
             "at": [
               136,
-              110
+              76
             ],
             "lines": [
               {
@@ -212,15 +212,16 @@
               138,
               130
             ],
-            "size": 40
+            "size": 28,
+            "art": "laptop-room"
           },
           {
             "id": "phone",
             "label": "手机",
             "look": "phone",
             "at": [
-              272,
-              146
+              274,
+              96
             ],
             "lines": [
               {
@@ -253,7 +254,8 @@
               226,
               150
             ],
-            "size": 20
+            "size": 9,
+            "art": "phone-room"
           },
           {
             "id": "chat",
@@ -261,7 +263,7 @@
             "look": "chat",
             "at": [
               96,
-              110
+              76
             ],
             "lines": [
               {
@@ -293,15 +295,16 @@
               96,
               130
             ],
-            "size": 24
+            "size": 20,
+            "art": "chat-room"
           },
           {
             "id": "clock",
             "label": "挂钟",
             "look": "clock",
             "at": [
-              258,
-              46
+              276,
+              36
             ],
             "lines": [
               {
@@ -323,11 +326,12 @@
               ]
             },
             "stand": [
-              258,
-              126
+              226,
+              120
             ],
-            "size": 24,
-            "wall": true
+            "size": 18,
+            "wall": true,
+            "art": "clock-room"
           },
           {
             "id": "router",
@@ -335,7 +339,7 @@
             "look": "router",
             "at": [
               38,
-              70
+              62
             ],
             "lines": [
               {
@@ -358,16 +362,17 @@
               40,
               128
             ],
-            "size": 28,
-            "wall": true
+            "size": 22,
+            "wall": true,
+            "art": "router-room"
           },
           {
             "id": "policy",
             "label": "隐私说明",
             "look": "paper",
             "at": [
-              60,
-              164
+              172,
+              76
             ],
             "lines": [
               {
@@ -391,18 +396,19 @@
               ]
             },
             "stand": [
-              76,
-              168
+              168,
+              132
             ],
-            "size": 22
+            "size": 14,
+            "art": "policy-room"
           },
           {
             "id": "cat",
             "label": "窗台上的猫",
             "look": "cat",
             "at": [
-              196,
-              76
+              210,
+              56
             ],
             "lines": [
               {
@@ -415,11 +421,13 @@
               196,
               126
             ],
-            "size": 30,
-            "wall": true
+            "size": 24,
+            "wall": true,
+            "art": "cat-room"
           }
         ],
-        "look": "dorm"
+        "look": "dorm",
+        "art": "case-room-privacy-ledger"
       },
       "terms": [
         "ledger:add",
@@ -651,10 +659,10 @@
         },
         "blocks": [
           {
-            "x": 236,
-            "y": 132,
-            "w": 80,
-            "h": 36
+            "x": 242,
+            "y": 104,
+            "w": 78,
+            "h": 52
           }
         ],
         "clientTalk": {
@@ -672,7 +680,8 @@
               "face": "thinking"
             }
           ]
-        }
+        },
+        "characterScale": 1.875
       }
     }
   },

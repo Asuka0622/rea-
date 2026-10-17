@@ -1,0 +1,27 @@
+﻿asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
+kobayashi-thinking,小林,docs/art/public/art/kobayashi-thinking.png,public/art/faces/kobayashi-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+lumi-point,路米,docs/art/public/art/lumi-point.png,public/art/faces/lumi-point.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+azhe-normal,阿哲,docs/art/public/art/azhe-normal.png,public/art/faces/azhe-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+azhe-happy,阿哲,docs/art/public/art/azhe-happy.png,public/art/faces/azhe-happy.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+azhe-thinking,阿哲,docs/art/public/art/azhe-thinking.png,public/art/faces/azhe-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+azhe-surprised,阿哲,docs/art/public/art/azhe-surprised.png,public/art/faces/azhe-surprised.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+xiaoyu-normal,小雨,docs/art/public/art/xiaoyu-normal.png,public/art/faces/xiaoyu-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
+lumi-happy-fullbody-source,路米,docs/art/public/art/lumi-happy.png,public/art/portraits/lumi-happy.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-normal-fullbody-source,路米,docs/art/public/art/lumi-normal.png,public/art/portraits/lumi-normal.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-surprised-fullbody-source,路米,docs/art/public/art/lumi-surprised.png,public/art/portraits/lumi-surprised.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-thinking-fullbody-source,路米,docs/art/public/art/lumi-thinking.png,public/art/portraits/lumi-thinking.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-normal-fullbody-source,小林,docs/art/public/art/kobayashi-normal.png,public/art/portraits/kobayashi-normal.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-happy-fullbody-source,小林,docs/art/public/art/kobayashi-happy.png,public/art/portraits/kobayashi-happy.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-surprised-fullbody-source,小林,docs/art/public/art/kobayashi-surprised.png,public/art/portraits/kobayashi-surprised.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+case-props-laptop,小林宿舍,docs/art/review/sources/case-props-laptop-source.png,public/art/pixel/case-props/laptop.png,秋季,晴天,中午,40,28,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；打开式笔记本，屏幕空白；实装站位待场景对位
+case-props-phone,小林宿舍,docs/art/review/sources/case-props-phone-source.png,public/art/pixel/case-props/phone.png,秋季,晴天,中午,20,28,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；手机屏幕空白，留给游戏显示线索；实装站位待场景对位
+case-props-chat,小林宿舍,docs/art/review/sources/case-props-chat-source.png,public/art/pixel/case-props/chat.png,秋季,晴天,中午,30,24,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；平板聊天气泡，无可读小字；实装站位待场景对位
+case-props-clock,小林宿舍,docs/art/review/sources/case-props-clock-source.png,public/art/pixel/case-props/clock.png,秋季,晴天,中午,24,24,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；独立挂钟，非钟楼资产；实装站位待场景对位
+case-props-router,小林宿舍,docs/art/review/sources/case-props-router-source.png,public/art/pixel/case-props/router.png,秋季,晴天,中午,28,20,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；路由器灯点静态，动画留给代码；实装站位待场景对位
+case-props-policy,小林宿舍,docs/art/review/sources/case-props-policy-source.png,public/art/pixel/case-props/policy.png,秋季,晴天,中午,24,28,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；空白隐私说明纸，无伪文字；实装站位待场景对位
+case-props-cat,小林宿舍,docs/art/review/sources/case-props-cat-source-sheet.png,public/art/pixel/case-props/cat.png,秋季,晴天,中午,32,28,是,,,已验收,复用收件图#167第一行第一帧坐姿橘猫；透明裁帧并最近邻缩放
+anim-kobayashi,小林,docs/art/review/sources/anim-kobayashi-existing-source.png,public/art/pixel/anim-kobayashi.png,秋季,晴天,中午,256,192,是,64x96,idle 2帧；scratch-head 4帧,已验收,身份匹配收件图#140；待机与挠头分别补帧；帧基线统一；已接入游戏待机及悬停挠头，桌面预览通过
+anim-kobayashi-metadata,小林,docs/art/review/sources/anim-kobayashi-existing-source.png,public/art/pixel/anim-kobayashi.json,秋季,晴天,中午,,,,64x96,idle 2帧；scratch-head 4帧,已验收,记录帧宽高、行列、默认朝向和逐帧时长
+case-room-privacy-ledger,小林宿舍,docs/art/review/case-room-privacy-ledger-v1.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1672,941,否,,,候选,16:9氛围与美术可用；书桌、窗台与现有调查物品锚点不匹配，暂不放入运行目录
+case-room-privacy-ledger-v3-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v3-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1664,936,否,,,已接入,空桌与空窗台背景；桌面锚点y=76、猫锚点y=56；床铺碰撞已调整；桌面及844×390横屏预览验收，手机调查路径通过
+case-room-privacy-ledger-v4-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v4-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1664,936,否,,,候选,空桌、空窗台与中心出口通道；桌面两件物品底锚点建议改为 y=80，猫锚点改为 y=56；需接入方核对调查站位、遮挡与碰撞

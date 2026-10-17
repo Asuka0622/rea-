@@ -215,7 +215,7 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
   function searchView() {
     searchInput.value = state.query;
     return [
-      h("p", { class: "pz-lead" }, "这是 REA 从小账本里拆出来的代码。发布版去掉了开发者的注释，只剩代码本身。"),
+      h("p", { class: "pz-lead" }, `这是「${puzzle.sampleName || item.title}」的原创教学代码。整行注释不参与搜索，请根据实际字段推理。`),
       h("div", { class: "pz-search" }, searchInput, h("button", { class: "btn small primary", type: "button", onclick: runSearch }, icon("scan", { size: 14 }), "搜索")),
       searchSay,
       state.results?.hits.length ? h("ol", { class: "pz-hits" }, state.results.hits.map(snippet)) : null,
