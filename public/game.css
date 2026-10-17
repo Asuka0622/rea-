@@ -978,3 +978,7 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 
 /* A prop the background already draws: the icon steps aside, the 「?」 marker and the click area stay. */
 .case-prop.hidden svg,.case-prop.hidden img {display:none;}
+
+/* 房间背景是画出来的（不是像素图）：按显示分辨率交付，缩放时用平滑采样，别用最近邻把它切成方块。
+   小镇地图、精灵和道具仍是像素图，继续 pixelated。 */
+.game-bg.art {image-rendering:auto;}
