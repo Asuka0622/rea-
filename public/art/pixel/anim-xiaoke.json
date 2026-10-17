@@ -1,0 +1,67 @@
+{
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    4,
+    5
+  ],
+  "smooth": false,
+  "sourceFrame": [
+    64,
+    96
+  ],
+  "animations": {
+    "talk": {
+      "ms": [
+        220,
+        220
+      ],
+      "frames": 2,
+      "row": 2
+    },
+    "idle": {
+      "ms": [
+        220,
+        220,
+        260,
+        300
+      ],
+      "frames": 4,
+      "row": 0
+    },
+    "shrink-watch": {
+      "ms": [
+        180,
+        160,
+        160,
+        550
+      ],
+      "frames": 4,
+      "row": 4
+    },
+    "move": {
+      "ms": [
+        130,
+        120,
+        130,
+        180
+      ],
+      "frames": 4,
+      "row": 1
+    },
+    "glitch": {
+      "ms": [
+        90,
+        70,
+        110,
+        160
+      ],
+      "frames": 4,
+      "row": 3
+    }
+  },
+  "side": "right",
+  "resample": "nearest"
+}

@@ -113,11 +113,12 @@
 
 | 角色/前缀 | 需要的表情 | 场景动作 | 当前处理 |
 |---|---|---|---|
-| 小克 `xiaoke` | normal / happy / thinking / surprised / sorry / unsure | 悬浮待机4、移动4、说话2、故障闪烁4、缩小进怀表4 | 三个外形方向候选已交付（`docs/art/review/characters/xiaoke-design-directions-v1-candidate.png`）；选定后再做全套。白与薄荷青，原创，不使用真实公司标志 |
+| 小克 `xiaoke` | normal / happy / thinking / surprised / sorry / unsure | 悬浮待机4、移动4、说话2、故障闪烁4、缩小进怀表4 | 按用户指定直接采用 Claude Code Clawd 橙色像素蟹形象；六张表情头像、4×5 动画表和小克怀表候选已交付，待游戏接入验收 |
 | 阿哲 `azhe` | normal / happy / thinking / surprised | 站立2 + 推眼镜4 | 四张具名人物源图已有；4×2 像素精灵候选已生成，待接入验收 |
 | 周姐 `zhoujie` | 同上四表情 | 站立2 + 看表4 | 四张头像与4×2精灵候选已交付，待验收 |
 | 王奶奶 `grandma` | 同上四表情 | 站立2 + 看手机4 | 四张头像与4×2精灵已有；客厅新背景和八件道具候选已交付，待验收 |
 | 星博士 `xingbo` | normal / happy / thinking / surprised / guilty | 标准行，见第7节 | 五张头像与4×5标准行候选已交付，待验收；精灵表复用收件目录 #141 |
+| 开发者 `dev`（卡牌对质对手） | normal / flustered | 无行走表：半身立绘 + 对质姿势2 | 小游戏「当面对质」的新角色；先交方向稿定人设（白衬衫工牌、抱平板），见 requests-minigames.md |
 
 ### 另外三个现场
 
@@ -154,6 +155,7 @@
 | 时光机与怀表 | `ui/timemachine-dial.png`、`era-1843.png`、`era-now.png`、`era-locked.png`、`pocket-watch.png`、`pocket-watch-xiaoke.png` | 表盘480×270、缩略图96×64、怀表32×32；年份文字和可点击区域由代码叠加 |
 | 时光机表盘内容 | 1843、1950、1970s、1997、2012、2017、现在 | 七格；未来可扩展，不画成封死的六格 |
 | 见习侦探徽章 | `badge-detective.png` | 48×48 |
+| 复勘三档徽章 | `ui/drill-tier-{compare,trace,verdict}.png` | 各 32×32；对照/溯源/定案，复勘页与结算用，星数代码画 |
 | 雨天叠加层 | `regions/town-<分区>-wet.png` | 960×540透明，湿地和水洼，和对应地图对齐；雨滴由代码做 |
 | 穿越效果 | `fx/time-warp.png` | 齿轮与光，横排6帧，附逐帧尺寸和时长 |
 | 伦敦街区 | `eras/london/street.png` | 960×540，维多利亚时代雾夜；标出入口、门口、可行走区 |

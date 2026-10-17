@@ -1,4 +1,4 @@
-﻿asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
+asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
 kobayashi-thinking,小林,docs/art/public/art/kobayashi-thinking.png,public/art/faces/kobayashi-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 lumi-point,路米,docs/art/public/art/lumi-point.png,public/art/faces/lumi-point.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 azhe-normal,阿哲,docs/art/public/art/azhe-normal.png,public/art/faces/azhe-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
@@ -101,7 +101,7 @@ anim-zhoujie,周姐,docs/art/review/sources/anim-zhoujie-source-sheet.png,public
 anim-zhoujie-metadata,周姐,docs/art/review/animations/anim-zhoujie.json,public/art/pixel/anim-zhoujie.json,秋季,晴天,中午,,,,64×96,待机2 / 看表4,待验收,逐帧时长与动作行元数据
 anim-xingbo,星博士,docs/art/review/sources/anim-xingbo-source-sheet.png,public/art/pixel/anim-xingbo.png,,,,256,480,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,4列×5行；复用收件目录#141；帧底对齐；透明边缘碎点已清理
 anim-xingbo-metadata,星博士,docs/art/review/animations/anim-xingbo.json,public/art/pixel/anim-xingbo.json,,,,,,,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,标准行动作映射、帧时长与朝向元数据
-xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,2172,724,是,,三种外形方向,候选,三方向对照稿；等选型后制作表情和动画全套
+xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,2172,724,是,,三种外形方向,已归档,旧白色机器人方向稿；按用户指定采用Clawd橙色像素蟹后归档，不作为当前形象
 town-center-glow,比特镇center,docs/art/review/sources/town-center-glow-source.svg,public/art/pixel/regions/town-center-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-homes-glow,比特镇homes,docs/art/review/sources/town-homes-glow-source.svg,public/art/pixel/regions/town-homes-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-craft-glow,比特镇craft,docs/art/review/sources/town-craft-glow-source.svg,public/art/pixel/regions/town-craft-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
@@ -112,3 +112,12 @@ quiet-stats-billboard,悄悄统计公告屏,docs/art/review/sources/quiet-stats-
 quiet-stats-logo,悄悄统计标志,docs/art/review/sources/quiet-stats-logo-source.svg,public/art/pixel/ui/quiet-stats-logo.png,,,,64,64,是,,,待验收,原创像素徽章；待UI缩放验收
 quiet-stats-flyer,悄悄统计传单,docs/art/review/sources/quiet-stats-flyer-source.svg,public/art/pixel/props/quiet-stats-flyer.png,,,,32,40,是,,,待验收,透明像素传单；正文由游戏展示
 xiaoyu-checklist,小雨,docs/art/review/sources/checklist-source.svg,public/art/pixel/case-props/checklist.png,秋季,晴天,傍晚,24,26,是,,,待验收,"透明发布检查表；按(120,150)锚点候选，待场景验收"
+xiaoke-normal,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-normal.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+xiaoke-happy,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-happy.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+xiaoke-thinking,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-thinking.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+xiaoke-surprised,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-surprised.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+xiaoke-sorry,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-sorry.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+xiaoke-unsure,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png,public/art/faces/xiaoke-unsure.webp,,,,320,320,是,,,待验收,320×320透明WebP头像；Clawd橙色像素蟹造型；待对话映射验收
+anim-xiaoke,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/art/pixel/anim-xiaoke.png,,,,256,480,是,64×96,悬浮待机4 / 移动4 / 说话2 / 故障闪烁4 / 缩小进怀表4,待验收,4列×5行；统一帧宽高和基线；按Clawd橙色像素蟹制作
+anim-xiaoke-metadata,小克,docs/art/review/animations/anim-xiaoke.json,public/art/pixel/anim-xiaoke.json,,,,,,,64×96,悬浮待机4 / 移动4 / 说话2 / 故障闪烁4 / 缩小进怀表4,待验收,动作行帧数朝向与逐帧时长元数据
+xiaoke-pocket-watch,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/art/pixel/ui/pocket-watch-xiaoke.png,,,,32,32,是,,,待验收,小克进入怀表的像素图标；待UI缩放验收

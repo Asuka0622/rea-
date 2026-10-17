@@ -23,4 +23,4 @@
 
 接入四季时注意：季节版地图的建筑位置必须和秋季版对齐；碰撞、遮挡和水面数据要按每个季节的图重新生成。对齐检查图已做到一半（`scratchpad/align.png`）。
 
-2026-10-18 新增候选：**小克「橙蟹」方向**已放入 `docs/art/review/`——`characters/xiaoke-orange-crab-expressions-candidate.png`（六表情：普通/开心/思考/惊讶/抱歉/不确定）与 `animations/anim-xiaoke-orange-crab-candidate.png`（行走、挥钳、故障闪烁、缩小进怀表；源图在 `sources/`）。与先前的三方向候选（`xiaoke-design-directions-v1-candidate.png`）并列待选型；选定后按 asset-requirements 第 4 节补全套。
+2026-10-18 更新：按用户指定，小克直接采用 Claude Code 的 Clawd 橙色像素蟹形象。六表情头像、4×5 专属动画和怀表图标已生成，运行文件及候选位置见 `delivery-2026-10-17.csv`；旧白色机器人和三方向稿已被新方向取代并归档，当前文件待游戏接入验收。
