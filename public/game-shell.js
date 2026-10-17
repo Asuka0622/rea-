@@ -6,6 +6,7 @@ import { createWaterLayer } from "./game-water.js";
 import { SKILL_TREE, skillsFrom } from "./game-skills.js";
 import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
 import { renderSkillTree } from "./game-skilltree.js";
+import { caseFor } from "./game-drills.js";
 import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
 import { createCaseSession } from "./case-session.js";
@@ -1572,7 +1573,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return "";
     };
     overlay.classList.add("skilltree");
-    overlay.replaceChildren(renderSkillTree({ h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay, achievements: { list: ACHIEVEMENTS, got: achievements.got }, hasArt: has }));
+    overlay.replaceChildren(renderSkillTree({
+      h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay,
+      achievements: { list: ACHIEVEMENTS, got: achievements.got }, hasArt: has,
+      drills: quests.drills, onDrill: startDrill,
+      playable: (caseId) => Boolean(cases().find((entry) => entry.id === caseId)?.game?.puzzle?.scene),
+    }));
     overlay.hidden = false;
     requestAnimationFrame(() => overlay.querySelector(".st-node.selected")?.focus({ preventScroll: true }));
   }
@@ -1669,10 +1675,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   /* ----- a puzzle case in the client's room (case-session.js does the case itself) ----- */
-  const caseSessions = new Map(); // case id -> session, kept when the player steps out and back in
+  const caseSessions = new Map(); // "case id" or "case id:drill:<drill id>" -> session, kept while out and back in
   let caseRoom = null; // { id, item, session } while inside
   const caseBusy = () => Boolean(caseRoom?.session.busy);
-  function enterCaseRoom(item) {
+  const caseKey = (item, drill) => (drill ? `${item.id}:drill:${drill.id}` : item.id);
+  /** 进阶副本: the same room, with the story hints taken away and its own record (docs/progression.md). */
+  function startDrill(drill, skill) {
+    const item = cases().find((entry) => entry.id === caseFor(skill.id));
+    if (!item?.game?.puzzle?.scene) return toast("这一关还没做成能走进去的房间，副本要等它上线。");
+    closeOverlay();
+    enterCaseRoom(item, drill);
+  }
+  function enterCaseRoom(item, drill = null) {
     closeWindow();
     arrive();
     sound.door();
@@ -1681,9 +1695,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     menu.hidden = true;
     lastPlace = item.id;
     place = null;
-    if (!caseSessions.has(item.id)) {
-      caseSessions.set(item.id, createCaseSession({
-        h, icon, item, layer: caseLayer,
+    const key = caseKey(item, drill);
+    if (!caseSessions.has(key)) {
+      caseSessions.set(key, createCaseSession({
+        h, icon, item, layer: caseLayer, drill,
         ui: {
           say: (texts) => {
             dialogue.classList.add("over-window");
@@ -1702,11 +1717,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             nearDoor = null;
             hud.classList.toggle("under-case", busy);
           },
-          onSolved: () => quests?.event("solve", item.id),
+          onSolved: (stars) => (drill ? quests?.recordDrill(drill.id, stars) : quests?.event("solve", item.id)),
         },
       }));
     }
-    caseRoom = { id: item.id, item, session: caseSessions.get(item.id) };
+    caseRoom = { id: item.id, item, drill, session: caseSessions.get(key) };
     drawCaseRoom();
     caseRoom.session.arrive();
   }

@@ -6,7 +6,8 @@
 // parchment card: what you learned, what it needs, or where in the story you learn it. The header has
 // the player's level, title and a segmented XP bar (game-skills.js rank()).
 
-import { SKILL_TREE, rank } from "./game-skills.js";
+import { branchesOfPart, PART, rank } from "./game-skills.js";
+import { TIERS, drillsFor, ladderFor, skillMastery, caseFor } from "./game-drills.js";
 
 const SVG = "http://www.w3.org/2000/svg";
 const CELL_W = 128; // board grid, in screen pixels
@@ -74,9 +75,11 @@ let lastBranch = null; // the page shown last time, while the game is open
  * @param whereOf    (stepId) => "主线 · 第一章 …：goal" or ""
  * @param onClose    () => void
  */
-export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null, hasArt = () => false }) {
+export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null, hasArt = () => false, drills = {}, onDrill = null, playable = () => true }) {
+  // 第一部只讲人工智能 (docs/series.md)：其它分支的数据留着，但不在本作的树上出现。
+  const BRANCHES = branchesOfPart(PART);
   const states = new Map();
-  for (const branch of SKILL_TREE) {
+  for (const branch of BRANCHES) {
     const lit = (id) => states.get(id) === "lit";
     for (const skill of branch.skills) states.set(skill.id, skill.from && stepDone(skill.from) ? "lit" : null);
     for (const skill of branch.skills) {
@@ -84,13 +87,43 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
       states.set(skill.id, !skill.from ? "making" : (skill.needs || []).every(lit) ? "next" : "locked");
     }
   }
-  const all = SKILL_TREE.flatMap((branch) => branch.skills.map((skill) => ({ skill, branch })));
+  const all = BRANCHES.flatMap((branch) => branch.skills.map((skill) => ({ skill, branch })));
   const litCount = all.filter(({ skill }) => states.get(skill.id) === "lit").length;
   const r = rank(litCount);
   const byId = new Map(all.map((entry) => [entry.skill.id, entry]));
   // A drawn icon (public/art/pixel/skills/<id>.png) replaces the character once it exists.
   const face = (skill, state) =>
     state === "locked" ? lock() : state === "making" ? h("span", { class: "st-glyph" }, "?") : hasArt(`skills/${skill.id}`) ? h("img", { class: "st-icon", src: `/art/pixel/skills/${skill.id}.png`, alt: "" }) : h("span", { class: "st-glyph" }, skill.glyph);
+
+  /**
+   * 进阶副本 (docs/progression.md): the story case is the easy pass; the same knowledge point comes back
+   * harder here. A drill opens once its skill is lit, and the next tier needs stars from the last one.
+   */
+  function drillBox(skill, state) {
+    const list = drillsFor(skill.id);
+    if (!list.length) return null;
+    const lit = state === "lit";
+    const mastery = skillMastery(skill.id, { lit, stars: drills });
+    const ladder = ladderFor(skill.id, { lit, stars: drills });
+    const ready = playable(caseFor(skill.id));
+    return h("div", { class: "st-card-box st-drills" },
+      h("b", {}, "进阶副本", h("small", {}, `${mastery.cleared}/${mastery.total} 关 · ${mastery.stars}/${mastery.max} 星`)),
+      ...ladder.map((drill) => {
+        const blocked = drill.state === "closed" || drill.state === "locked" || !ready;
+        const note = !ready ? "这一关还没做成能走进去的房间" : drill.state === "closed" ? "先完成这一关的委托" : drill.state === "locked" ? drill.needs : drill.why;
+        return h("button", {
+          class: `st-drill ${drill.state}${ready ? "" : " unbuilt"}`,
+          type: "button",
+          disabled: blocked,
+          title: note,
+          onclick: () => onDrill?.(drill, skill),
+        },
+          h("span", { class: "st-drill-tier" }, TIERS[drill.tier - 1]),
+          h("span", { class: "st-drill-title" }, drill.title),
+          h("span", { class: "st-stars", "aria-label": `${drill.stars} 星` }, "★".repeat(drill.stars), "☆".repeat(3 - drill.stars)),
+          h("small", {}, note));
+      }));
+  }
 
   const card = h("aside", { class: "st-card", "aria-live": "polite" });
   function show({ skill, branch }) {
@@ -114,6 +147,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         opens.length ? h("p", { class: "st-card-hint" }, "通往：", ...opens.map((next) => h("span", { class: `st-chip ${states.get(next.id)}` }, next.label))) : null,
         where && state === "lit" ? h("p", { class: "st-card-hint" }, `学自 ${where}`) : null,
         state === "making" ? h("p", { class: "st-card-hint" }, "这一格的课程还在制作中，敬请期待。") : null,
+        drillBox(skill, state),
       ].filter(Boolean),
     );
   }
@@ -156,6 +190,16 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     showTrophy(got[got.length - 1] || achievements.list[0]);
   }
 
+  /** Branch-wide drill totals for the header line. */
+  function drillOfBranch(branch) {
+    const rows = branch.skills.flatMap((skill) => {
+      const list = drillsFor(skill.id);
+      return list.length ? [skillMastery(skill.id, { lit: states.get(skill.id) === "lit", stars: drills })] : [];
+    });
+    if (!rows.length) return null;
+    return rows.reduce((all, one) => ({ cleared: all.cleared + one.cleared, total: all.total + one.total, stars: all.stars + one.stars, max: all.max + one.max }), { cleared: 0, total: 0, stars: 0, max: 0 });
+  }
+
   function page(branch) {
     lastBranch = branch.id;
     tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === branch.id)));
@@ -187,18 +231,20 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         "aria-label": `${skill.label}：${STATUS[state]}`,
         onclick: () => show({ skill, branch }),
         onfocus: () => show({ skill, branch }),
-      }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label));
+      }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label),
+        drillsFor(skill.id).length ? h("span", { class: `st-node-drills ${state === "lit" ? "on" : ""}` }, `副本 ${skillMastery(skill.id, { lit: state === "lit", stars: drills }).cleared}/${drillsFor(skill.id).length}`) : null);
     });
     const lit = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
     board.style.setProperty("--c", branch.color);
     board.replaceChildren(
-      h("p", { class: "st-motto" }, h("b", {}, `${branch.title} ${lit}/${branch.skills.length}`), branch.motto),
+      h("p", { class: "st-motto" }, h("b", {}, `${branch.title} ${lit}/${branch.skills.length}`), branch.motto,
+        drillOfBranch(branch) ? h("small", { class: "st-motto-drills" }, `副本 ${drillOfBranch(branch).cleared}/${drillOfBranch(branch).total} 关 · ${drillOfBranch(branch).stars}/${drillOfBranch(branch).max} 星`) : null),
       h("div", { class: "st-board", style: `width:${width}px;height:${height}px` }, lines, ...nodes),
     );
     const start = branch.skills.find((skill) => states.get(skill.id) === "next") || [...branch.skills].reverse().find((skill) => states.get(skill.id) === "lit") || branch.skills[0];
     show({ skill: start, branch });
   }
-  for (const branch of SKILL_TREE) {
+  for (const branch of BRANCHES) {
     const lit = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
     const ready = branch.skills.some((skill) => states.get(skill.id) === "next");
     tabs.append(
@@ -230,6 +276,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
       h("p", { class: "st-count" }, "技能 ", h("b", {}, String(litCount)), ` / ${all.length}`),
       h("button", { class: "btn small", type: "button", onclick: onClose }, "关闭（K）")),
     tabs,
+    h("p", { class: "st-scope" }, "本作只讲人工智能：安全是序章的侦探线，AI 是主线。电脑、网络、编程留给系列后面的部。"),
     h("div", { class: "st-body" }, board, card),
   );
 
@@ -238,7 +285,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     trophies();
     return root;
   }
-  const first = SKILL_TREE.find((branch) => branch.id === lastBranch) || SKILL_TREE.find((branch) => branch.skills.some((skill) => states.get(skill.id) === "next")) || SKILL_TREE[0];
+  const first = BRANCHES.find((branch) => branch.id === lastBranch) || BRANCHES.find((branch) => branch.skills.some((skill) => states.get(skill.id) === "next")) || BRANCHES[0];
   page(first);
   return root;
 }

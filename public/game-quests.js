@@ -334,7 +334,7 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
   // Saves from before the main line: the prologue's first two steps were the REA line's.
   if (!saved.done?.main && done.main && saved.done?.rea) for (const id of ["visit-office", "visit-library"]) if (saved.done.rea.includes(id)) done.main.add(id);
   // Saves from before the focus question count as balanced.
-  const state = { difficulty: saved.difficulty || null, focus: saved.focus || (saved.difficulty ? "balanced" : null), badges: new Set(saved.badges || []), tracked: saved.tracked || null };
+  const state = { difficulty: saved.difficulty || null, focus: saved.focus || (saved.difficulty ? "balanced" : null), badges: new Set(saved.badges || []), tracked: saved.tracked || null, drills: { ...(saved.drills || {}) } }; // drill id -> best stars (game-drills.js)
   const listeners = new Set();
   const save = () => {
     try {
@@ -344,6 +344,7 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
       all.done = { ...(all.done || {}), ...Object.fromEntries(lines.map((line) => [line.id, [...done[line.id]]])) };
       all.badges = [...state.badges];
       all.tracked = state.tracked;
+      all.drills = state.drills;
       localStorage.setItem(key, JSON.stringify(all));
     } catch {}
   };
@@ -448,6 +449,18 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
       state.tracked = lineId;
       save();
     },
+    /** Best stars per drill, from the 进阶副本 ladder (game-drills.js). */
+    get drills() {
+      return state.drills;
+    },
+    /** A finished drill: only the best run counts, and a replay can never lower it. */
+    recordDrill(id, stars) {
+      const earned = Math.max(0, Math.min(3, Math.round(stars)));
+      if (!id || earned <= (state.drills[id] || 0)) return false;
+      state.drills[id] = earned;
+      save();
+      return true;
+    },
     /** Earned badges with their names. */
     badges: () => lines.flatMap((line) => line.chapters.filter((c) => c.badge && state.badges.has(c.badge.id)).map((c) => c.badge)),
     /**
@@ -508,6 +521,7 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
       for (const line of lines) done[line.id].clear();
       state.badges.clear();
       state.tracked = null;
+      state.drills = {};
       save();
     },
   };

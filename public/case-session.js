@@ -37,7 +37,11 @@ const PROPS = {
  *       onSolved(stars) }
  * A dialogue line is { who: "client" | undefined (路米), text, face }.
  */
-export function createCaseSession({ h, icon, item, layer, ui }) {
+export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
+  // 进阶副本 (docs/progression.md): the same room and puzzle, with the hints taken away and a couple
+  // of decoy words in the notebook. Its progress is saved apart from the story run.
+  const harder = drill?.harder || {};
+  const noHints = harder.hints === false;
   const puzzle = item.game.puzzle;
   const lab = item.game.lab;
   const client = item.game.client;
@@ -50,7 +54,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
   const line = (l, face) => (l.who === "client" ? { who: client.portrait, name: client.name, text: String(l.text ?? l).replace(/^[^：「]+：/, ""), face: l.face || face || "normal" } : { text: l.text ?? l, face: l.face || face || "normal" });
   const say = (lines) => ui.say(lines.map((l) => line(l)));
 
-  const saveKey=`rea-case-checkpoint-v1:${item.id}`;
+  const saveKey=`rea-case-checkpoint-v1:${item.id}${drill ? `:drill:${drill.id}` : ""}`;
   let saved=null;
   try {const raw=localStorage.getItem(saveKey);if(raw&&raw.length<100000)saved=JSON.parse(raw);}catch{}
   const state=restoreCaseState(item,saved);
@@ -59,6 +63,8 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
     try{localStorage.setItem(saveKey,JSON.stringify(caseSnapshot(item,state)));saveFailed=false;}catch{saveFailed=true;}
     refreshGuide();
   }
+  // Decoy words the code never uses: searching them costs the player a turn.
+  for (const decoy of harder.decoys || []) if (!state.dict.some((d) => d.zh === decoy.zh)) state.dict.push({ zh: decoy.zh, code: decoy.code });
   const props = new Map();
   let screen = null; // the open full-screen view: "notebook" | "terminal" | "confront" | "closed"
 
@@ -160,7 +166,7 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
       h("div", { class: "nb-cover-edge", "aria-hidden": "true" }),
       h("div", { class: "nb-paper" },
         h("div", { class: "nb-head" }, h("b", {}, "侦探手账 · ", item.game.puzzle.title || client.name + "的委托"),
-          h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问路米"),
+          noHints ? h("span", { class: "nb-nohint" }, "副本模式：没有提示") : h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问路米"),
           h("button", { class: "nb-close", type: "button", "aria-label": "合上手账", onclick: close }, "✕")),
         body,
         say),
@@ -591,6 +597,12 @@ export function createCaseSession({ h, icon, item, layer, ui }) {
 
   /* ----- hints ----- */
   async function hint(sayEl) {
+    if (noHints) {
+      const text = "副本里没有路米提示：自己看代码。";
+      if (sayEl) sayEl.textContent = `路米：${text}`;
+      else await say([{ text, face: "thinking" }]);
+      return;
+    }
     state.hints += 1;
     checkpoint();
     let text;

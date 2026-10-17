@@ -9,6 +9,7 @@
 export const SKILL_TREE = [
   {
     id: "computer",
+    part: 2, // 留给系列第二部（计算史与计算机基础）
     title: "电脑",
     emblem: "机",
     color: "#e0a03a",
@@ -34,6 +35,7 @@ export const SKILL_TREE = [
   },
   {
     id: "code",
+    part: 4, // 留给系列后面的「编程与软件」那一部
     title: "编程",
     emblem: "码",
     color: "#5fb36a",
@@ -57,6 +59,7 @@ export const SKILL_TREE = [
   },
   {
     id: "network",
+    part: 3, // 留给系列后面的「网络与互联网」那一部
     title: "网络",
     emblem: "网",
     color: "#4d9fd6",
@@ -80,6 +83,7 @@ export const SKILL_TREE = [
   },
   {
     id: "security",
+    part: 1, // 序章 REA 篇：本作唯一已经能玩的知识线
     title: "安全",
     emblem: "侦",
     color: "#c9573e",
@@ -103,6 +107,7 @@ export const SKILL_TREE = [
   },
   {
     id: "ai",
+    part: 1, // 第一部的主线：人工智能
     title: "AI",
     emblem: "智",
     color: "#a77ad6",
@@ -125,6 +130,10 @@ export const SKILL_TREE = [
     ],
   },
 ];
+
+/** 第一部只讲人工智能 (docs/series.md)：其余分支留给后面的部，数据留着但不在本作的技能树上显示。 */
+export const PART = 1;
+export const branchesOfPart = (part = PART) => SKILL_TREE.filter((branch) => (branch.part || 1) === part);
 
 /** Skills a quest step teaches. */
 export const skillsFrom = (stepId) => SKILL_TREE.flatMap((branch) => branch.skills.filter((skill) => skill.from === stepId));

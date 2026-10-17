@@ -883,3 +883,23 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 /* On a phone held sideways the dialogue runs to the right edge and would sit on top of the
    hand-book button; while someone is talking the button steps out of the way. */
 html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:none;transition:opacity .15s;}
+
+/* 进阶副本 (docs/progression.md): the same knowledge point, one step harder, listed on the skill card. */
+.st-motto-drills {display:block;margin-top:4px;color:#a99a86;}
+.st-node-drills {position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:2px;padding:0 4px;font-size:10px;line-height:1.5;white-space:nowrap;color:#8a7c6c;background:rgba(13,9,6,.5);}
+.st-node-drills.on {color:#ffcf3d;}
+.st-drills b {display:flex;justify-content:space-between;align-items:baseline;}
+.st-drills b small {font-size:11px;color:#7a6a52;}
+.st-drill {display:grid;grid-template-columns:auto 1fr auto;gap:2px 6px;width:100%;margin-top:5px;padding:5px 7px;font:inherit;text-align:left;color:#2b1a10;background:#f4e6c0;border:2px solid #3b2312;cursor:pointer;}
+.st-drill:disabled {cursor:default;opacity:.62;}
+.st-drill.open {background:#ffe9a8;box-shadow:0 0 0 2px #e0a03a inset;}
+.st-drill.cleared {background:#dff0d2;}
+.st-drill-tier {padding:0 5px;font-size:10px;line-height:16px;color:#fff6dc;background:#7a4b22;}
+.st-drill.open .st-drill-tier {background:#a5512b;}
+.st-drill.cleared .st-drill-tier {background:#3f8f3a;}
+.st-drill-title {font-size:13px;line-height:16px;}
+.st-stars {font-size:12px;line-height:16px;color:#c9971f;}
+.st-drill small {grid-column:1 / -1;font-size:11px;line-height:1.5;color:#6a563e;}
+.st-drill.unbuilt {background:#e8e0d0;}
+/* 第一部只讲人工智能 (docs/series.md): say so on the tree, so missing branches do not look like a bug. */
+.st-scope {margin:6px 0 0;padding:4px 10px;font-size:12px;color:#b8a68c;background:rgba(13,9,6,.45);border-left:4px solid #6a563e;}
