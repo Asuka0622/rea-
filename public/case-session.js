@@ -130,13 +130,17 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   const hud = h("button", { class: "case-hud-book", type: "button", onclick: () => openNotebook() }, h("span", { class: "case-book-icon", "aria-hidden": "true" }), h("span", {}, "侦探手账"), h("kbd", {}, "N"));
   const guideTitle=h('summary',{}),guideText=h('p',{'aria-live':'polite'}),saveText=h('small',{});
   const guideAction=h('button',{type:'button',class:'case-goal-action',onclick:()=>{const target=caseObjective(item,state).target;if(target)ui.navigate?.(target);}},'');
-  const guide=h('details',{class:'case-goal','aria-label':'当前委托目标'},guideTitle,guideText,h('div',{class:'case-goal-controls'},guideAction,h('button',{type:'button',class:'case-goal-action',onclick:()=>openNotebook('board')},'查看推理')),saveText);
+  const guide=h('details',{class:'case-goal','aria-label':'当前委托目标',open:true},guideTitle,guideText,h('div',{class:'case-goal-controls'},guideAction,h('button',{type:'button',class:'case-goal-action',onclick:()=>openNotebook('board')},'查看推理')),saveText);
   let lastGuide='';
   function refreshGuide(){
     const next=caseObjective(item,state),signature=JSON.stringify([next,state.words.size,state.evidence.length,saveFailed]);
     if(signature===lastGuide)return;lastGuide=signature;
-    guideTitle.textContent=state.phase==='look'?`当前目标：${next.found<next.total?'调查现场':'搜索代码与推理'} · 线索 ${next.found}/${next.total}`:`当前目标：${next.stage}`;guideText.textContent=next.text;guideAction.textContent=next.action;guideAction.disabled=!next.target;
-    saveText.textContent=saveFailed?'浏览器无法保存进度，请保持当前页面打开。':`名字 ${state.words.size} · 证据 ${state.evidence.length} · 进度自动保存在本浏览器`;
+    // The bar states the request, not a to-do list: what to look at is the player's call. Asking 路米
+    // (the hint) is what turns the "take me to the next clue" shortcut on.
+    guideTitle.textContent=`${client.name}的委托`;
+    guideText.textContent=puzzle.ask||next.text;
+    guideAction.textContent=next.action;guideAction.hidden=!(state.hints>0&&next.target);guideAction.disabled=!next.target;
+    saveText.textContent=saveFailed?'浏览器无法保存进度，请保持当前页面打开。':`线索 ${next.found}/${next.total} · 名字 ${state.words.size} · 证据 ${state.evidence.length} · 进度自动保存在本浏览器`;
   }
   refreshGuide();
   window.addEventListener('pagehide',checkpoint);
