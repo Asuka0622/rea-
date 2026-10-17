@@ -52,6 +52,8 @@
 
 **对话头像**：朵朵四表情与小雨缺的三种表情已出 320×320 WebP，登记为「待验收」；小雨 normal 保留现有资源。裁切对照见 `docs/art/review/portraits/avatar-crops-320-review.png`，接入方需核对头像裁切和表情映射。
 
+**还缺王奶奶**：客厅这一关已经能玩，但王奶奶没有头像，对话框里显示写着「王」字的木框。需要四张 `grandma-normal.webp` / `grandma-happy.webp` / `grandma-thinking.webp` / `grandma-surprised.webp`，规格同其他角色（320×320、透明、头肩）。设计要点：灰白短发、老花镜挂在领口、深绿开衫，和客厅占位里的形象一致。
+
 ## 五、验收怎么算过
 
 1. 图落在目标路径，PNG 有真实透明通道，四周没有白底或棋盘格。
