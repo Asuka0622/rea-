@@ -1,3 +1,4 @@
+import { mountRhythm, mountTower, mountPipes } from "./case-minigames.js";
 import { fromBase64, toBase64, checksum, openSave } from "./save-lab.js";
 
 // 动手实验: each detective case's own hands-on step, between gathering evidence and closing the case.
@@ -698,7 +699,8 @@ function mountPermissions({ h, icon, lab, onMistake = () => {}, onDone = () => {
     list, say);
 }
 
-const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions };
+const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
+  rhythm: mountRhythm, tower: mountTower, pipes: mountPipes };
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint

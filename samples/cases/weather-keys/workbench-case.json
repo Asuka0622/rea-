@@ -136,8 +136,8 @@
       "closing": "学长：「好险！幸好发布前查了一遍。我这就把密钥都挪到服务器上去。」"
     },
     "lab": {
-      "kind": "secrets",
-      "sampleTitle": "天气小助手 2.1.0",
+      "kind": "pipes",
+      "sampleTitle": "数据流向 · 密钥该去哪",
       "files": [
         "main.js",
         "config.json",
@@ -206,14 +206,109 @@
         {
           "text": "四串都能直接用。去和他把话说完吧。"
         }
-      ]
+      ],
+      "pipes": {
+        "size": 4,
+        "start": [
+          0,
+          1
+        ],
+        "tiles": [
+          {
+            "x": 0,
+            "y": 1,
+            "fixed": true,
+            "dirs": [
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "x": 1,
+            "y": 1,
+            "dirs": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "x": 2,
+            "y": 1,
+            "dirs": [
+              0,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "x": 2,
+            "y": 0,
+            "fixed": true,
+            "dirs": [
+              0,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "x": 3,
+            "y": 0,
+            "fixed": true,
+            "dirs": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "dirs": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "fixed": true,
+            "dirs": [
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "exits": [
+          {
+            "x": 3,
+            "y": 0,
+            "kind": "server"
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "kind": "package"
+          }
+        ]
+      }
     },
     "puzzle": {
       "title": "天晴之前：钥匙挂在门上",
       "ask": "我写的软件下周要发给全校用。发布前想做次安全自查——总觉得代码里留了些不该留的东西。",
       "sampleName": "天气小助手",
       "computerLabel": "阿哲的电脑",
-      "labSource": "密钥自查",
+      "labSource": "流向模拟",
       "room": {
         "top": 130,
         "spawn": {
@@ -501,7 +596,7 @@
       "labEvidence": [
         {
           "id": "secrets-scan",
-          "text": "密钥自查：在发布包里直接读到了四串能用出去的东西：两串接口凭证、一条带着登录密码的数据库地址、一个管理员密码。"
+          "text": "数据流向：把 WEATHER_API_KEY、MAP_ACCESS_TOKEN、STATS_DB_URL 和 adminPassword 都接回了服务器，没有留在要发出去的发布包里。"
         }
       ],
       "confront": {

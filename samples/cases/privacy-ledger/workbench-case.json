@@ -683,7 +683,8 @@
           ]
         },
         "characterScale": 1.875
-      }
+      },
+      "labSource": "沙盒抓包"
     }
   },
   "scene": {

@@ -7,6 +7,7 @@ import { SKILL_TREE, skillsFrom } from "./game-skills.js";
 import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
 import { renderSkillTree } from "./game-skilltree.js";
 import { caseFor } from "./game-drills.js";
+import { mountLab } from "./case-labs.js";
 import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
 import { createCaseSession } from "./case-session.js";
@@ -733,6 +734,21 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         setTimeout(tryEnter, 700);
       };
       setTimeout(tryEnter, 800);
+    }
+    // ?debug&mini=<case id> drops a case's mini-game straight onto the page, to try it without playing
+    // the whole case first.
+    const mini = new URLSearchParams(location.search).get("mini");
+    if (mini) {
+      setTimeout(() => {
+        const item = cases().find((entry) => entry.id === mini);
+        if (!item?.game?.lab) return;
+        const kind = new URLSearchParams(location.search).get("kind");
+        const lab = kind ? { ...item.game.lab, kind } : item.game.lab;
+        const host = h("div", { class: "mini-standalone" },
+          h("div", { class: "mini-standalone-bar" }, h("span", {}, "试玩入口（调试用）· 这一关正式接入的是 " + item.game.lab.kind)),
+          mountLab({ h, icon, lab, finishLabel: "做完了" }));
+        document.body.append(host);
+      }, 1000);
     }
   }
   function walkTo(point, then) {

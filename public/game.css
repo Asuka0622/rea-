@@ -982,3 +982,51 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 /* 房间背景是画出来的（不是像素图）：按显示分辨率交付，缩放时用平滑采样，别用最近邻把它切成方块。
    小镇地图、精灵和道具仍是像素图，继续 pixelated。 */
 .game-bg.art {image-rendering:auto;}
+
+/* 小游戏 (public/case-minigames.js): 节奏 / 塔防 / 管道，共用一套外壳。 */
+.mini {display:flex;flex-direction:column;gap:8px;padding:10px;color:#d6f5da;}
+.mini-head {display:flex;align-items:center;gap:10px;font:13px/1 var(--font-body);}
+.mini-head .btn {margin-left:auto;}
+.mini-count {font:13px/1 var(--font-mono);color:#e8c270;}
+.mini-controls {display:flex;align-items:center;gap:10px;}
+.mini-say {margin:0;padding:6px 8px;font:12px/1.6 var(--font-body);color:#cfe8d4;background:#101a14;border-left:3px solid #3f6a4c;}
+/* 节奏 */
+.mini-track {position:relative;height:96px;background:#151d18;border:2px solid #2c4a36;overflow:hidden;}
+.mini-beat {position:absolute;top:14px;transform:translateX(-50%);padding:3px 7px;font:12px/1.4 var(--font-body);color:#1b120c;background:#7fb069;border:2px solid #2c4a36;cursor:pointer;}
+.mini-beat.upload {background:#c9573e;color:#fff6dc;}
+.mini-beat.live {outline:2px solid #ffe8b0;transform:translateX(-50%) scale(1.12);}
+.mini-beat.cut {background:#3f6a4c;color:#cfe8d4;text-decoration:line-through;}
+.mini-beat.missed {background:#7a2418;}
+.mini-beat.wrong {animation:mini-shake .25s 2;}
+.mini-cursor {position:absolute;top:0;bottom:0;width:3px;background:#ffe8b0;box-shadow:0 0 6px #ffe8b0;}
+@keyframes mini-shake {50% {transform:translateX(4px);}}
+/* 塔防 */
+.mini-lanes {display:flex;flex-direction:column;gap:6px;}
+.mini-lane {display:grid;grid-template-columns:88px 1fr 110px;gap:8px;align-items:center;}
+.mini-lane-name {font:12px/1.4 var(--font-body);color:#cfe8d4;}
+.mini-lane-path {position:relative;height:34px;background:#1b241d;border:1px solid #2c4a36;}
+.mini-walker {position:absolute;top:6px;left:0;padding:2px 6px;font:11px/1 var(--font-body);color:#1b120c;background:#e8c270;}
+.mini-gate {padding:6px 8px;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.mini-gate.open {color:#1b120c;background:#e8c270;border-color:#e8c270;}
+.mini-gate.needed.open {background:#8fd08a;border-color:#8fd08a;}
+/* 管道 */
+.mini-grid {display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:3px;max-width:320px;}
+.mini-cell {position:relative;aspect-ratio:1/1;padding:0;background:#1b241d;border:1px solid #2c4a36;cursor:pointer;}
+.mini-cell.fixed {cursor:default;background:#16251c;}
+.mini-pipe i,.mini-pipe b {position:absolute;display:none;background:#c9971f;}
+.mini-pipe b {display:block;left:39%;top:39%;width:22%;height:22%;background:#e8c270;}
+.mini-pipe.u .a-u {display:block;left:39%;top:0;width:22%;height:50%;}
+.mini-pipe.d .a-d {display:block;left:39%;top:50%;width:22%;height:50%;}
+.mini-pipe.l .a-l {display:block;top:39%;left:0;height:22%;width:50%;}
+.mini-pipe.r .a-r {display:block;top:39%;left:50%;height:22%;width:50%;}
+.mini-exit {position:absolute;left:50%;bottom:2px;transform:translateX(-50%);padding:0 4px;font:10px/1.4 var(--font-body);color:#fff6dc;background:#5e5248;white-space:nowrap;pointer-events:none;}
+.mini-exit.server {background:#3f8f3a;}
+.mini-exit.package {background:#c9573e;}
+.mini-exit.start {background:#a5512b;}
+
+/* ?debug&mini=<case id>: try a mini-game on its own, without playing the case first. */
+.mini-standalone {position:fixed;inset:0;z-index:99999;padding:18px 22px;background:#101a14;overflow:auto;}
+.mini-standalone-bar {display:flex;align-items:baseline;gap:10px;margin-bottom:10px;color:#e8d8bc;font:14px/1.4 var(--font-body);}
+.mini-standalone-bar b {color:#ffe8b0;font-weight:600;}
+.mini-standalone-bar span {font-size:12px;color:#8a7c6c;}
+.mini-standalone .mini {max-width:760px;}

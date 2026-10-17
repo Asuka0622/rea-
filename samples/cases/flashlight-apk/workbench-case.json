@@ -151,8 +151,8 @@
       "closing": "王奶奶：「原来是这样！孩子，帮我点「拒绝」吧。手电筒照样亮，就够了。」"
     },
     "lab": {
-      "kind": "permissions",
-      "sampleTitle": "权限判定 · 小光手电筒 1.2",
+      "kind": "tower",
+      "sampleTitle": "权限塔防 · 小光手电筒",
       "lampLabel": "这个 App 只有一件事：按一下，灯亮。看清楚，它到底要了哪些权限。",
       "files": [
         "AndroidManifest.json"
@@ -220,14 +220,52 @@
         {
           "text": "都判完了。去和王奶奶把话说清楚吧。"
         }
-      ]
+      ],
+      "tower": {
+        "gates": [
+          {
+            "id": "flashlight",
+            "label": "闪光灯",
+            "need": true
+          },
+          {
+            "id": "contacts",
+            "label": "读取通讯录",
+            "need": false
+          },
+          {
+            "id": "location",
+            "label": "精确定位",
+            "need": false
+          },
+          {
+            "id": "boot",
+            "label": "开机自启",
+            "need": false
+          }
+        ],
+        "waves": [
+          {
+            "gate": "contacts",
+            "label": "通讯录收集器"
+          },
+          {
+            "gate": "location",
+            "label": "定位收集器"
+          },
+          {
+            "gate": "boot",
+            "label": "后台常驻"
+          }
+        ]
+      }
     },
     "puzzle": {
       "title": "只开一盏灯：手电筒要什么",
       "ask": "我想装个手电筒，晚上起夜好照亮。可它一装就问我要通讯录，还要知道我在哪儿……这是怎么回事呀？",
       "sampleName": "小光手电筒",
       "computerLabel": "王奶奶的电脑",
-      "labSource": "权限判定",
+      "labSource": "权限塔防",
       "room": {
         "top": 134,
         "spawn": {
@@ -514,7 +552,7 @@
       "labEvidence": [
         {
           "id": "perm-check",
-          "text": "权限判定：七条权限里只有闪光灯和相机是开灯要用的，其余五条都不是。"
+          "text": "权限塔防：只留 FLASHLIGHT、CAMERA 两扇门时，三波收集者全被挡下；READ_CONTACTS、ACCESS_FINE_LOCATION、RECEIVE_BOOT_COMPLETED 都是漏点。"
         }
       ],
       "confront": {
