@@ -54,7 +54,9 @@
 
 > 2026-10-17 接入时按第一关的构图重裁过：阿哲、朵朵、小雨的源图是半身全身图，用同一个缩放裁出来脸只有小林的四成。`scripts/prepare-portraits.py` 现在按角色记缩放（azhe 0.58 / duoduo 0.64 / xiaoyu 0.57，小林和路米 0.82），新角色来了先和 `kobayashi-normal.webp` 比一比再定系数，不要再图省事用一个全局值。裁切对照见 `docs/art/review/portraits/avatar-crops-320-review.png`，接入方需核对头像裁切和表情映射。
 
-**还缺王奶奶**：客厅这一关已经能玩，但王奶奶没有头像，对话框里显示写着「王」字的木框。需要四张 `grandma-normal.webp` / `grandma-happy.webp` / `grandma-thinking.webp` / `grandma-surprised.webp`，规格同其他角色（320×320、透明、头肩）。设计要点：灰白短发、老花镜挂在领口、深绿开衫，和客厅占位里的形象一致。
+王奶奶四张头像已交付并接进 `public/art/faces/`（320×320，灰白短发、老花镜、深绿开衫，和客厅占位一致），对话框里不再是「王」字木框。
+
+**还缺王奶奶房间里的小人**：她现在还是代码画的方块占位。需要 `public/art/pixel/anim-grandma.png` + `.json`，规格同其他角色（256×192，4×2 格，64×96/帧；待机 2 帧 + 一个 4 帧动作，比如「摆摆手」或「推老花镜」）。
 
 ## 五、验收怎么算过
 
