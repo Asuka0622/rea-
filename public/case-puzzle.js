@@ -15,7 +15,7 @@ const MAX_RESULTS = 6;
 export function shippedLines(sources) {
   const out = [];
   for (const [file, text] of Object.entries(sources)) {
-    if (!/\.(js|html)$/.test(file)) continue;
+    if (!/\.(js|html|json)$/.test(file)) continue; // config files ship inside the package too
     text.split("\n").forEach((line, i) => {
       if (!line.trim() || /^\s*(\/\/|<!--)/.test(line)) return;
       out.push({ file, n: i + 1, text: line, all: text.split("\n") });

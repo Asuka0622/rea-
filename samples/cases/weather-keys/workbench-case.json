@@ -134,6 +134,450 @@
       ],
       "objection": "学长：「呃……这个好像证明不了吧？」",
       "closing": "学长：「好险！幸好发布前查了一遍。我这就把密钥都挪到服务器上去。」"
+    },
+    "lab": {
+      "kind": "secrets",
+      "sampleTitle": "天气小助手 2.1.0",
+      "files": [
+        "main.js",
+        "config.json",
+        "renderer.js",
+        "preload.js",
+        "index.html"
+      ],
+      "candidates": [
+        {
+          "text": "wxk_live_4f9c2a7e81b34d6c9a05e7f3",
+          "label": "天气接口密钥",
+          "real": true
+        },
+        {
+          "text": "maptok_93ab17cd52ef46a8b0c1d2e3f4",
+          "label": "地图服务令牌",
+          "real": true
+        },
+        {
+          "text": "postgres://admin:Xiaobai2024!@db.weather-helper.example:5432/users",
+          "label": "统计库连接地址",
+          "real": true
+        },
+        {
+          "text": "letmein-8848",
+          "label": "管理员密码",
+          "real": true
+        },
+        {
+          "text": "https://api.weather-helper.example/v3/now",
+          "label": "接口网址，不是钥匙",
+          "real": false
+        },
+        {
+          "text": "2.1.0",
+          "label": "版本号，不是钥匙",
+          "real": false
+        },
+        {
+          "text": "stable",
+          "label": "更新通道，不是钥匙",
+          "real": false
+        },
+        {
+          "text": "输入城市名，例如 上海",
+          "label": "输入框提示文字，不是钥匙",
+          "real": false
+        }
+      ],
+      "intro": [
+        {
+          "who": "client",
+          "text": "阿哲：发布包我已经打好了，就在这台机器上。你帮我扫一遍，看里面有没有不该带出去的东西？",
+          "face": "thinking"
+        },
+        {
+          "text": "把整个目录扫一遍。像密钥的字符串会亮起来，但亮起来不等于就是钥匙。"
+        }
+      ],
+      "done": [
+        {
+          "who": "client",
+          "text": "阿哲：四把……我居然把四把都写里面了。",
+          "face": "surprised"
+        },
+        {
+          "text": "四串都能直接用。去和他把话说完吧。"
+        }
+      ]
+    },
+    "puzzle": {
+      "title": "天晴之前：钥匙挂在门上",
+      "sampleName": "天气小助手",
+      "computerLabel": "阿哲的电脑",
+      "labSource": "密钥自查",
+      "room": {
+        "top": 126,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 224,
+          "y": 152
+        },
+        "blocks": [
+          {
+            "x": 14,
+            "y": 44,
+            "w": 58,
+            "h": 92
+          },
+          {
+            "x": 94,
+            "y": 96,
+            "w": 132,
+            "h": 30
+          },
+          {
+            "x": 242,
+            "y": 40,
+            "w": 74,
+            "h": 100
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "阿哲：随便看，代码都在这台机器上。",
+              "face": "normal"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "阿哲：推理拼好了？那……这些真能被别人拿去用？",
+              "face": "thinking"
+            }
+          ]
+        },
+        "characterScale": 1.875
+      },
+      "terminal": "monitor",
+      "scene": {
+        "place": "阿哲的机房",
+        "look": "server",
+        "art": null,
+        "lead": "在机房里走走，靠近东西按 E 调查。",
+        "items": [
+          {
+            "id": "monitor",
+            "label": "阿哲的电脑",
+            "look": "laptop",
+            "at": [
+              160,
+              98
+            ],
+            "stand": [
+              168,
+              132
+            ],
+            "size": 30,
+            "lines": [
+              {
+                "who": "client",
+                "text": "阿哲：main.js 就开在这儿。天气和地图两个接口都从这下发请求。",
+                "face": "normal"
+              },
+              {
+                "text": "代码可以搜。用小词典里的词试试，比如密钥。"
+              }
+            ],
+            "clue": {
+              "id": "terminal",
+              "title": "发布前的自查",
+              "text": "阿哲在发布前想自己查一遍：软件里有没有不该带出去的东西。",
+              "dict": [
+                {
+                  "zh": "密钥",
+                  "code": "WEATHER_API_KEY"
+                }
+              ]
+            }
+          },
+          {
+            "id": "todo",
+            "label": "显示器上的便签",
+            "look": "chat",
+            "at": [
+              120,
+              98
+            ],
+            "stand": [
+              144,
+              132
+            ],
+            "size": 20,
+            "lines": [
+              {
+                "text": "便签写着：「TODO: 上线前把密钥挪到服务器上」。下面一行是铅笔补的：「一直没挪」。"
+              }
+            ],
+            "clue": {
+              "id": "todo",
+              "title": "没挪的密钥",
+              "text": "阿哲自己写过「上线前把密钥挪到服务器上」，一直没挪。",
+              "dict": [
+                {
+                  "zh": "令牌",
+                  "code": "MAP_ACCESS_TOKEN"
+                }
+              ]
+            }
+          },
+          {
+            "id": "printout",
+            "label": "打印出来的配置",
+            "look": "paper",
+            "at": [
+              200,
+              98
+            ],
+            "stand": [
+              196,
+              132
+            ],
+            "size": 22,
+            "lines": [
+              {
+                "text": "config.json 打印了一页：主题、更新通道、管理员密码，一行行都在。"
+              }
+            ],
+            "clue": {
+              "id": "printout",
+              "title": "打印出来的配置",
+              "text": "config.json 被打印了一页，配置里的管理员密码也在纸上。",
+              "dict": [
+                {
+                  "zh": "管理员密码",
+                  "code": "adminPassword"
+                }
+              ]
+            }
+          },
+          {
+            "id": "rack",
+            "label": "统计服务器",
+            "look": "router",
+            "at": [
+              278,
+              120
+            ],
+            "stand": [
+              272,
+              150
+            ],
+            "size": 26,
+            "wall": true,
+            "lines": [
+              {
+                "text": "机柜上贴着便签：统计功能还没做完，数据库地址先写在代码里。"
+              }
+            ],
+            "clue": {
+              "id": "rack",
+              "title": "先写死的地址",
+              "text": "统计功能还没做完，数据库地址被直接写进了代码。",
+              "dict": [
+                {
+                  "zh": "数据库地址",
+                  "code": "STATS_DB_URL"
+                }
+              ]
+            }
+          },
+          {
+            "id": "poster",
+            "label": "发布清单",
+            "look": "clock",
+            "at": [
+              118,
+              64
+            ],
+            "stand": [
+              118,
+              132
+            ],
+            "size": 20,
+            "wall": true,
+            "lines": [
+              {
+                "text": "墙上贴着三步清单：一，搜 key、token、password；二，把它们挪到服务器；三，装干净版本再发。"
+              }
+            ],
+            "clue": {
+              "id": "poster",
+              "title": "发布清单",
+              "text": "阿哲自己列的发布三步：搜 key / token / password，挪到服务器，装干净版本再发。",
+              "dict": [
+                {
+                  "zh": "请求地址",
+                  "code": "WEATHER_URL"
+                }
+              ]
+            }
+          },
+          {
+            "id": "router",
+            "label": "角落的路由器",
+            "look": "router",
+            "at": [
+              92,
+              148
+            ],
+            "stand": [
+              92,
+              164
+            ],
+            "size": 20,
+            "optional": true,
+            "lines": [
+              {
+                "text": "角落的路由器一直亮着。机房里所有机器的网络都从这里出去。"
+              }
+            ]
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "自由调查机房，把「我自己的代码」和「发出去以后」分开。需要时在手账里问路米。"
+        },
+        {
+          "text": "这里运行的是工作台原创的天气小助手样本，密钥全是编造的。"
+        }
+      ],
+      "terms": [
+        "WEATHER_API_KEY",
+        "MAP_ACCESS_TOKEN",
+        "STATS_DB_URL",
+        "adminPassword",
+        "WEATHER_URL",
+        "letmein-8848"
+      ],
+      "board": [
+        {
+          "title": "四把钥匙在哪",
+          "text": "天气接口的 {WEATHER_API_KEY}、地图的 {MAP_ACCESS_TOKEN}、统计库的 {STATS_DB_URL}，再加配置文件里的 {adminPassword}。",
+          "hint": "main.js 开头连着三行常量；配置在另一个文件里。",
+          "explain": "四样东西都能直接拿去用：两串接口凭证、一条带密码的数据库地址、一个管理员密码。"
+        },
+        {
+          "title": "密钥怎么跟着请求出去",
+          "text": "查天气时，客户端把密钥拼在网址后面请求 {WEATHER_URL}，地址里那串 {WEATHER_API_KEY} 谁都看得见。",
+          "hint": "看带上 key 参数的那个请求。",
+          "explain": "密钥放在网址里，代理、日志、浏览器记录都会留下它。"
+        },
+        {
+          "title": "发布前先做什么",
+          "text": "把 {STATS_DB_URL} 里的密码换掉，别让 {adminPassword} 跟着安装包一起发出去。",
+          "hint": "清单上的第二步：挪到服务器。",
+          "explain": "客户端只留一个短期的令牌；真正的密钥和密码留在服务器。"
+        }
+      ],
+      "toLab": [
+        {
+          "text": "别只看代码：把整个发布包扫一遍，看看除了你记得的那几处，还有没有别的。"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "secrets-scan",
+          "text": "密钥自查：在发布包里直接读到了两串接口凭证、一条带密码的数据库地址和一个管理员密码。"
+        }
+      ],
+      "confront": {
+        "lead": "拿源码和扫描结果，把「没那么严重」的说法一条条纠正。不是每句都错。",
+        "intro": [
+          {
+            "text": "阿哲把发布包推到你面前：「真有这么严重？」拿证据说明。"
+          }
+        ],
+        "statements": [
+          {
+            "text": "「密钥写在我自己的代码里，别人看不到。」",
+            "accept": [
+              "WEATHER_API_KEY"
+            ],
+            "press": [
+              {
+                "text": "安装包发出去，里头的文件谁都能打开。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "阿哲：……对，打包就是把文件交出去。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示天气接口密钥。"
+          },
+          {
+            "text": "「密钥只要够长就安全，写在哪都一样。」",
+            "accept": [
+              "STATS_DB_URL"
+            ],
+            "press": [
+              {
+                "text": "长不长，和放哪儿是两件事。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "阿哲：地址里带着密码，长度再长也白搭。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示那条数据库连接地址。"
+          },
+          {
+            "text": "「地图令牌只能查地图，泄露了也没关系。」",
+            "accept": [
+              "MAP_ACCESS_TOKEN"
+            ],
+            "press": [
+              {
+                "text": "令牌代表的是你的账号额度。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "阿哲：别人能拿我的额度去刷，账单算我的。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示地图服务令牌。"
+          },
+          {
+            "text": "「我会把密钥挪到服务器上，客户端只留登录。」",
+            "press": [
+              {
+                "text": "对。发布前还要再扫一遍，别让旧版本里的密钥跟着发出去。"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "看代码时要问：这个值发出去以后，谁能拿去用。",
+        "配置文件和代码一样会被打包，别以为「不是代码」就安全。",
+        "真正该做的是把密钥放到服务器上，客户端只留短期凭证。"
+      ]
     }
   }
 }

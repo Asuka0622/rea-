@@ -575,7 +575,86 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
   return root;
 }
 
-const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave };
+
+/**
+ * 密钥自查 (天气小助手): the sample folder is open on the desk. Point the scanner at it, the strings that
+ * look like keys light up, and the player picks out the ones that would really work if shipped. Decoys
+ * (a URL, a version number, a prompt) cost a mistake, so scanning is not the same as understanding.
+ */
+function mountSecrets({ h, icon, lab, onMistake = () => {}, onDone = () => {} }) {
+  const sources = lab.sources || {};
+  const names = Object.keys(sources);
+  const candidates = lab.candidates || [];
+  const real = candidates.filter((c) => c.real);
+  const found = new Set();
+  let scanned = false;
+  let current = names[0];
+  const say = h("p", { class: "lab-say", role: "status" }, "先点「扫一遍」，像密钥的东西会亮起来。");
+  const count = h("b", { class: "lab-count" }, `0/${real.length}`);
+  const body = h("div", { class: "lab-code" });
+  const tabs = h("div", { class: "lab-files-tabs" });
+
+  const pick = (c, el) => {
+    if (found.has(c.text)) return;
+    if (!c.real) {
+      el.classList.add("wrong");
+      el.disabled = true;
+      onMistake();
+      say.textContent = `「${c.text}」不是钥匙，${c.label || "只是普通内容"}。`;
+      return;
+    }
+    found.add(c.text);
+    el.classList.add("marked");
+    count.textContent = `${found.size}/${real.length}`;
+    say.textContent = c.note || `记下来了：${c.label || c.text}`;
+    if (found.size === real.length) onDone();
+  };
+  const chip = (c) => h("button", {
+    class: `lab-key${c.real ? "" : " fake"}${found.has(c.text) ? " marked" : ""}`,
+    type: "button",
+    title: c.label || "",
+    onclick: (event) => pick(c, event.currentTarget),
+  }, c.text);
+  // One line of a file, with every candidate it contains turned into a chip once the scan has run.
+  const line = (text) => {
+    const row = h("p", { class: "lab-line" });
+    let rest = text;
+    let guard = 0;
+    while (rest && guard < 24) {
+      guard += 1;
+      const hit = scanned ? candidates.find((c) => rest.includes(c.text)) : null;
+      if (!hit) {
+        row.append(document.createTextNode(rest));
+        break;
+      }
+      const at = rest.indexOf(hit.text);
+      if (at) row.append(document.createTextNode(rest.slice(0, at)));
+      row.append(chip(hit));
+      rest = rest.slice(at + hit.text.length);
+    }
+    return row;
+  };
+  const show = (name) => {
+    current = name;
+    tabs.querySelectorAll(".lab-file-tab").forEach((tab) => tab.classList.toggle("on", tab.dataset.file === name));
+    body.replaceChildren(...String(sources[name] || "").split("\n").map((text) => line(text)));
+  };
+  for (const name of names) tabs.append(h("button", { class: "lab-file-tab", type: "button", "data-file": name, onclick: () => show(name) }, name));
+  if (current) show(current);
+  const scan = h("button", {
+    class: "btn primary", type: "button",
+    onclick: () => {
+      scanned = true;
+      say.textContent = `亮了 ${candidates.length} 处。整包发出去以后，这些都会被人看见，挑出真能用的。`;
+      show(current);
+    },
+  }, icon("scan", { size: 14 }), "扫一遍");
+  return h("div", { class: "lab lab-secrets" },
+    h("div", { class: "lab-head" }, h("b", {}, lab.sampleTitle || "密钥自查"), h("span", {}, "找到 "), count, h("span", {}, " 把钥匙"), scan),
+    tabs, body, say);
+}
+
+const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets };
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint

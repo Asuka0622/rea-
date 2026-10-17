@@ -911,3 +911,38 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .st-drill-row-count {font-size:12px;color:#b8a68c;}
 .st-drill-row .st-stars {font-size:12px;color:#c9971f;}
 .st-drill-row.selected {background:#4a2f1c;outline:2px solid #e0a03a;}
+
+/* 阿哲的机房 (weather-keys) before its art arrives: a dark room with two racks, a desk and a wall screen.
+   Positions match the case's `room.blocks`, so walking and clicking already line up. */
+.case-room-bg.server {position:absolute;inset:0;background:linear-gradient(#2c313a 0 62%,#3d434d 62%);}
+.case-room-bg.server::after {content:"";position:absolute;left:0;right:0;top:calc(112px * var(--px));height:calc(3px * var(--px));background:#20242b;}
+.case-room-bg.server span {position:absolute;display:block;}
+.case-room-bg.server .window {left:calc(150px * var(--px));top:calc(12px * var(--px));width:calc(60px * var(--px));height:calc(34px * var(--px));
+  background:linear-gradient(#0f1620,#1b2733);border:calc(3px * var(--px)) solid #565e6a;box-shadow:inset 0 0 calc(6px * var(--px)) #4a86c4;}
+.case-room-bg.server .shelf {left:calc(14px * var(--px));top:calc(44px * var(--px));width:calc(58px * var(--px));height:calc(92px * var(--px));
+  background:repeating-linear-gradient(#3a414b 0 calc(9px * var(--px)),#2b313a calc(9px * var(--px)) calc(11px * var(--px)));border:calc(3px * var(--px)) solid #1b1f25;}
+.case-room-bg.server .bed {left:calc(242px * var(--px));top:calc(40px * var(--px));width:calc(74px * var(--px));height:calc(100px * var(--px));
+  background:repeating-linear-gradient(#333a44 0 calc(10px * var(--px)),#242a32 calc(10px * var(--px)) calc(12px * var(--px)));border:calc(3px * var(--px)) solid #1b1f25;}
+.case-room-bg.server .bed::before {content:"";position:absolute;left:calc(6px * var(--px));top:calc(14px * var(--px));width:calc(4px * var(--px));height:calc(4px * var(--px));
+  background:#7fd08a;box-shadow:0 calc(14px * var(--px)) 0 #e8c270,0 calc(28px * var(--px)) 0 #7fd08a,0 calc(42px * var(--px)) 0 #7fd08a;}
+.case-room-bg.server .desk {left:calc(94px * var(--px));top:calc(96px * var(--px));width:calc(132px * var(--px));height:calc(30px * var(--px));
+  background:linear-gradient(#4d5560 0 calc(6px * var(--px)),#3a414b calc(6px * var(--px)));border:calc(3px * var(--px)) solid #1b1f25;}
+.case-room-bg.server .rug {display:none;}
+.case-npc.azhe .game-sprite i {background:linear-gradient(180deg,#2f2b2a 0 45%,#f0c8a0 45%);}
+.case-npc.azhe .game-sprite b {background:#5c7fb8;}
+
+/* 密钥自查实验室 (case-labs.js mountSecrets): reads like the terminal it lives in. */
+.lab-secrets .lab-head {display:flex;align-items:center;gap:8px;padding:8px 10px;font:13px/1.5 var(--font-body);color:#d6f5da;border-bottom:1px solid #3f6a4c;}
+.lab-secrets .lab-head b {font-weight:600;}
+.lab-count {font:14px/1 var(--font-mono);color:#e8c270;}
+.lab-secrets .lab-head .btn {margin-left:auto;}
+.lab-files-tabs {display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px;border-bottom:1px solid #2c4a36;}
+.lab-file-tab {padding:3px 8px;font:12px/1.5 var(--font-mono);color:#a8c8b0;background:#16251c;border:1px solid #3f6a4c;cursor:pointer;}
+.lab-file-tab.on {color:#16251c;background:#8fbf9a;border-color:#8fbf9a;}
+.lab-secrets .lab-code {max-height:44vh;overflow:auto;padding:8px 10px;font:12px/1.75 var(--font-mono);color:#cfe8d4;white-space:pre-wrap;word-break:break-all;}
+.lab-line {margin:0;min-height:1.2em;}
+.lab-key {padding:0 3px;font:inherit;color:#1b120c;background:#e8c270;border:1px solid #7a4b22;cursor:pointer;}
+.lab-key:hover {background:#f6d88e;}
+.lab-key.marked {color:#12240f;background:#8fd08a;border-color:#2f6b34;}
+.lab-key.wrong {color:#fff6dc;background:#c9573e;border-color:#7a2418;cursor:default;}
+.lab-say {margin:0;padding:8px 10px;font:12px/1.6 var(--font-body);color:#cfe8d4;background:#101a14;border-top:1px solid #2c4a36;}

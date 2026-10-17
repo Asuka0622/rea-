@@ -1,0 +1,37 @@
+{
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    4,
+    2
+  ],
+  "sourceFrame": [
+    362,
+    543
+  ],
+  "smooth": false,
+  "side": "down",
+  "resample": "nearest",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "hop": {
+      "row": 1,
+      "frames": 4,
+      "ms": [
+        150,
+        120,
+        120,
+        220
+      ]
+    }
+  }
+}
