@@ -1,4 +1,4 @@
-// 进阶副本 (docs/progression.md): the story cases are the easy pass — anyone can finish them. Each
+// 复勘 (docs/progression.md): the story cases are the easy pass — anyone can finish them. Each
 // skill a case teaches also opens a ladder of drills on the same knowledge point, one step harder
 // each time. A drill reuses the case's room and puzzle, and turns up the difficulty through a few
 // plain switches: fewer hints, fewer attempts, decoys in the notebook, a clock.
@@ -6,7 +6,7 @@
 // Data only, no DOM: the skill tree renders this, case-session reads `harder`, and the tests keep the
 // ladder honest.
 
-export const TIERS = ["熟练", "精通", "专家"];
+export const TIERS = ["对照", "溯源", "定案"]; // 复勘的三档：对着看、追来源、给定论
 
 /** Words a drill slips into the notebook that the sample code never uses: searching them wastes a turn. */
 const DECOYS = [{ zh: "键盘记录", code: "keyLogger" }, { zh: "后台服务", code: "daemonWorker" }];
@@ -36,7 +36,7 @@ export const SKILL_DRILLS = {
   format: [
     { id: "format-1", tier: 1, title: "自己算校验和", why: "关掉推理提示，公式得自己从两份存档里看出来。", harder: { hints: false } },
     { id: "format-2", tier: 2, title: "改两处不能打架", why: "小词典混进两个干扰词，还有一处冗余字段会拖后腿。", harder: { hints: false, decoys: DECOYS } },
-    { id: "format-3", tier: 3, title: "只允许挖一次副本", why: "限时，对质只错一次：改坏了没有第二次。", harder: { hints: false, decoys: DECOYS, mistakes: 1, timer: 240 } },
+    { id: "format-3", tier: 3, title: "只给一次机会", why: "限时，对质只错一次：改坏了没有第二次。", harder: { hints: false, decoys: DECOYS, mistakes: 1, timer: 240 } },
   ],
   versions: [
     { id: "versions-1", tier: 1, title: "四十处无关改动", why: "关掉推理提示，重命名和缩进都会来搅局。", harder: { hints: false } },

@@ -38,7 +38,7 @@ const PROPS = {
  * A dialogue line is { who: "client" | undefined (路米), text, face }.
  */
 export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
-  // 进阶副本 (docs/progression.md): the same room and puzzle, with the hints taken away and a couple
+  // 复勘 (docs/progression.md): the same room and puzzle, with the hints taken away and a couple
   // of decoy words in the notebook. Its progress is saved apart from the story run.
   const harder = drill?.harder || {};
   const noHints = harder.hints === false;
@@ -166,7 +166,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       h("div", { class: "nb-cover-edge", "aria-hidden": "true" }),
       h("div", { class: "nb-paper" },
         h("div", { class: "nb-head" }, h("b", {}, "侦探手账 · ", item.game.puzzle.title || client.name + "的委托"),
-          noHints ? h("span", { class: "nb-nohint" }, "副本模式：没有提示") : h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问路米"),
+          noHints ? h("span", { class: "nb-nohint" }, "复勘：没有提示") : h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问路米"),
           h("button", { class: "nb-close", type: "button", "aria-label": "合上手账", onclick: close }, "✕")),
         body,
         say),
@@ -598,7 +598,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   /* ----- hints ----- */
   async function hint(sayEl) {
     if (noHints) {
-      const text = "副本里没有路米提示：自己看代码。";
+      const text = "复勘的时候没有路米提示：自己看代码。";
       if (sayEl) sayEl.textContent = `路米：${text}`;
       else await say([{ text, face: "thinking" }]);
       return;

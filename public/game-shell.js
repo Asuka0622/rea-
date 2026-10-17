@@ -179,6 +179,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     achievements.note({ type: "skills", count: skillCount() }, { quiet: true });
   }
   if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills() }, icon("learn", { size: 14 }), "技能·成就（K）"));
+  // 复勘 (docs/progression.md): the same knowledge points again, one step harder, from the toolbar.
+  if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills("drills") }, icon("scan", { size: 14 }), "复勘（R）"));
   hud.append(soundButton);
   if (demo) hud.append(h("span", { class: "game-demo-tag", title: "预告测试版：侦探事务所和三份委托，约 30 分钟" }, "预告测试版"));
   const watchButton = h("button", { class: "btn small game-watch", type: "button", onclick: () => travelHome(), title: "按一下怀表，回比特镇的钟楼" }, "⌚ 回比特镇");
@@ -1565,9 +1567,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   /** 技能树 (K): the pixel RPG skill screen (game-skilltree.js). */
-  function openSkills() {
+  function openSkills(tab = null) {
     if (!quests || windowOpen) return;
-    if (!overlay.hidden && overlay.querySelector(".st")) return closeOverlay();
+    // Already open: a different entry switches to its page, the same one closes.
+    if (!overlay.hidden && overlay.querySelector(".st") && !tab) return closeOverlay();
     const whereOf = (stepId) => {
       for (const line of quests.lines) for (const chapter of line.chapters) for (const step of chapter.steps) if (step.id === stepId) return `${line.title} · ${chapter.title}：${step.goal}`;
       return "";
@@ -1576,7 +1579,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     overlay.replaceChildren(renderSkillTree({
       h, stepDone: quests.stepDone, whereOf, onClose: closeOverlay,
       achievements: { list: ACHIEVEMENTS, got: achievements.got }, hasArt: has,
-      drills: quests.drills, onDrill: startDrill,
+      drills: quests.drills, onDrill: startDrill, start: tab,
       playable: (caseId) => Boolean(cases().find((entry) => entry.id === caseId)?.game?.puzzle?.scene),
     }));
     overlay.hidden = false;
@@ -1679,10 +1682,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let caseRoom = null; // { id, item, session } while inside
   const caseBusy = () => Boolean(caseRoom?.session.busy);
   const caseKey = (item, drill) => (drill ? `${item.id}:drill:${drill.id}` : item.id);
-  /** 进阶副本: the same room, with the story hints taken away and its own record (docs/progression.md). */
+  /** 复勘: the same room, with the story hints taken away and its own record (docs/progression.md). */
   function startDrill(drill, skill) {
     const item = cases().find((entry) => entry.id === caseFor(skill.id));
-    if (!item?.game?.puzzle?.scene) return toast("这一关还没做成能走进去的房间，副本要等它上线。");
+    if (!item?.game?.puzzle?.scene) return toast("这一关还没做成能走进去的房间，复勘要等它上线。");
     closeOverlay();
     enterCaseRoom(item, drill);
   }
@@ -1867,7 +1870,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     if (!overlay.hidden) {
-      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || (key === "k" && overlay.querySelector(".st"))) closeOverlay();
+      if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || ((key === "k" || key === "r") && overlay.querySelector(".st"))) closeOverlay();
+      return;
+    }
+    if (key === "r" && !windowOpen && quests) {
+      event.preventDefault();
+      openSkills("drills");
       return;
     }
     if (key === "k" && !windowOpen && quests) {

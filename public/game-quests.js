@@ -449,7 +449,7 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
       state.tracked = lineId;
       save();
     },
-    /** Best stars per drill, from the 进阶副本 ladder (game-drills.js). */
+    /** Best stars per drill, from the 复勘 ladder (game-drills.js). */
     get drills() {
       return state.drills;
     },

@@ -75,7 +75,9 @@ let lastBranch = null; // the page shown last time, while the game is open
  * @param whereOf    (stepId) => "主线 · 第一章 …：goal" or ""
  * @param onClose    () => void
  */
-export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null, hasArt = () => false, drills = {}, onDrill = null, playable = () => true }) {
+export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = null, hasArt = () => false, drills = {}, onDrill = null, playable = () => true, start = null }) {
+  // `start` is the page the entry point asked for (the 复勘 button in the toolbar opens "drills").
+  if (start) lastBranch = start;
   // 第一部只讲人工智能 (docs/series.md)：其它分支的数据留着，但不在本作的树上出现。
   const BRANCHES = branchesOfPart(PART);
   const states = new Map();
@@ -95,7 +97,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
   const face = (skill, state) =>
     state === "locked" ? lock() : state === "making" ? h("span", { class: "st-glyph" }, "?") : hasArt(`skills/${skill.id}`) ? h("img", { class: "st-icon", src: `/art/pixel/skills/${skill.id}.png`, alt: "" }) : h("span", { class: "st-glyph" }, skill.glyph);
 
-  /** The three drills of one skill, as buttons: the 副本 page and nothing else uses them. */
+  /** The three re-checks of one skill, as buttons: the 复勘 page and nothing else uses them. */
   function ladderEls(skill) {
     const lit = states.get(skill.id) === "lit";
     const ready = playable(caseFor(skill.id));
@@ -138,7 +140,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         opens.length ? h("p", { class: "st-card-hint" }, "通往：", ...opens.map((next) => h("span", { class: `st-chip ${states.get(next.id)}` }, next.label))) : null,
         where && state === "lit" ? h("p", { class: "st-card-hint" }, `学自 ${where}`) : null,
         state === "making" ? h("p", { class: "st-card-hint" }, "这一格的课程还在制作中，敬请期待。") : null,
-        drillsFor(skill.id).length ? h("p", { class: "st-card-hint" }, `这一格有 ${drillsFor(skill.id).length} 个进阶副本，在「副本」页挑战。`) : null,
+        drillsFor(skill.id).length ? h("p", { class: "st-card-hint" }, `这一格还能复勘 ${drillsFor(skill.id).length} 次，在「复勘」页接着查。`) : null,
       ].filter(Boolean),
     );
   }
@@ -192,7 +194,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         }));
   }
 
-  /** 副本 page: the same knowledge points again, one step harder, kept apart from the tree itself. */
+  /** 复勘 page: the same knowledge points again, one step harder, kept apart from the tree itself. */
   function drillsPage() {
     lastBranch = "drills";
     tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === "drills")));
@@ -208,7 +210,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
       card.style.setProperty("--c", row.branch.color);
       card.replaceChildren(
         h("div", { class: `st-card-gem ${state}` }, gem(state, row.branch.color), face(row.skill, state)),
-        h("p", { class: "st-card-branch" }, `【${row.branch.title} · 副本】`),
+        h("p", { class: "st-card-branch" }, `【${row.branch.title} · 复勘】`),
         h("h3", {}, row.skill.label),
         h("p", { class: "st-card-status" }, `▶ 通关 ${row.mastery.cleared}/${row.mastery.total} · ${row.mastery.stars}/${row.mastery.max} 星`),
         h("p", { class: "st-card-note" }, row.skill.note),
@@ -219,7 +221,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     };
     board.style.setProperty("--c", "#a5512b");
     board.replaceChildren(
-      h("p", { class: "st-motto" }, h("b", {}, `副本 ${total.cleared}/${total.total} 关`), `剧情关谁都能过；副本是同一个知识点再来一遍，一次比一次狠。已拿 ${total.stars}/${total.max} 星。`),
+      h("p", { class: "st-motto" }, h("b", {}, `复勘 ${total.cleared}/${total.total} 件`), `结案不算完：同一件事再查一遍，一次比一次较真。已拿到 ${total.stars}/${total.max} 星。`),
       h("div", { class: "st-drill-list" },
         ...BRANCHES.filter((branch) => rows.some((row) => row.branch === branch)).flatMap((branch) => [
           h("h4", { class: "st-drill-branch", style: `--c:${branch.color}` }, branch.title),
@@ -233,7 +235,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     );
     const first = rows.find((row) => row.ladder.some((drill) => drill.state === "open")) || rows[0];
     if (first) showSkill(first);
-    else card.replaceChildren(h("p", { class: "st-card-note" }, "还没有可以挑战的副本。"));
+    else card.replaceChildren(h("p", { class: "st-card-note" }, "还没有可以复勘的案子。"));
   }
 
   function page(branch) {
@@ -296,8 +298,8 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     const open = drillTabRows.some((row) => row.ladder.some((drill) => drill.state === "open"));
     tabs.append(
       h("button", { class: "st-tab dungeon", type: "button", role: "tab", "data-branch": "drills", style: "--c:#a5512b", onclick: () => drillsPage() },
-        h("span", { class: "st-tab-mark", "aria-hidden": "true" }, "副"), h("span", {}, "副本"), h("small", {}, `${cleared}/${drillTabRows.reduce((n, row) => n + row.mastery.total, 0)}`),
-        open ? h("i", { class: "st-tab-new", title: "有可以挑战的副本" }, "!") : null),
+        h("span", { class: "st-tab-mark", "aria-hidden": "true" }, "勘"), h("span", {}, "复勘"), h("small", {}, `${cleared}/${drillTabRows.reduce((n, row) => n + row.mastery.total, 0)}`),
+        open ? h("i", { class: "st-tab-new", title: "有可以复勘的案子" }, "!") : null),
     );
   }
 
