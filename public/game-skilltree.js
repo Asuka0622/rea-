@@ -95,34 +95,25 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
   const face = (skill, state) =>
     state === "locked" ? lock() : state === "making" ? h("span", { class: "st-glyph" }, "?") : hasArt(`skills/${skill.id}`) ? h("img", { class: "st-icon", src: `/art/pixel/skills/${skill.id}.png`, alt: "" }) : h("span", { class: "st-glyph" }, skill.glyph);
 
-  /**
-   * 进阶副本 (docs/progression.md): the story case is the easy pass; the same knowledge point comes back
-   * harder here. A drill opens once its skill is lit, and the next tier needs stars from the last one.
-   */
-  function drillBox(skill, state) {
-    const list = drillsFor(skill.id);
-    if (!list.length) return null;
-    const lit = state === "lit";
-    const mastery = skillMastery(skill.id, { lit, stars: drills });
-    const ladder = ladderFor(skill.id, { lit, stars: drills });
+  /** The three drills of one skill, as buttons: the 副本 page and nothing else uses them. */
+  function ladderEls(skill) {
+    const lit = states.get(skill.id) === "lit";
     const ready = playable(caseFor(skill.id));
-    return h("div", { class: "st-card-box st-drills" },
-      h("b", {}, "进阶副本", h("small", {}, `${mastery.cleared}/${mastery.total} 关 · ${mastery.stars}/${mastery.max} 星`)),
-      ...ladder.map((drill) => {
-        const blocked = drill.state === "closed" || drill.state === "locked" || !ready;
-        const note = !ready ? "这一关还没做成能走进去的房间" : drill.state === "closed" ? "先完成这一关的委托" : drill.state === "locked" ? drill.needs : drill.why;
-        return h("button", {
-          class: `st-drill ${drill.state}${ready ? "" : " unbuilt"}`,
-          type: "button",
-          disabled: blocked,
-          title: note,
-          onclick: () => onDrill?.(drill, skill),
-        },
-          h("span", { class: "st-drill-tier" }, TIERS[drill.tier - 1]),
-          h("span", { class: "st-drill-title" }, drill.title),
-          h("span", { class: "st-stars", "aria-label": `${drill.stars} 星` }, "★".repeat(drill.stars), "☆".repeat(3 - drill.stars)),
-          h("small", {}, note));
-      }));
+    return ladderFor(skill.id, { lit, stars: drills }).map((drill) => {
+      const blocked = drill.state === "closed" || drill.state === "locked" || !ready;
+      const note = !ready ? "这一关还没做成能走进去的房间" : drill.state === "closed" ? "先完成这一关的委托" : drill.state === "locked" ? drill.needs : drill.why;
+      return h("button", {
+        class: `st-drill ${drill.state}${ready ? "" : " unbuilt"}`,
+        type: "button",
+        disabled: blocked,
+        title: note,
+        onclick: () => onDrill?.(drill, skill),
+      },
+        h("span", { class: "st-drill-tier" }, TIERS[drill.tier - 1]),
+        h("span", { class: "st-drill-title" }, drill.title),
+        h("span", { class: "st-stars", "aria-label": `${drill.stars} 星` }, "★".repeat(drill.stars), "☆".repeat(3 - drill.stars)),
+        h("small", {}, note));
+    });
   }
 
   const card = h("aside", { class: "st-card", "aria-live": "polite" });
@@ -147,7 +138,7 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         opens.length ? h("p", { class: "st-card-hint" }, "通往：", ...opens.map((next) => h("span", { class: `st-chip ${states.get(next.id)}` }, next.label))) : null,
         where && state === "lit" ? h("p", { class: "st-card-hint" }, `学自 ${where}`) : null,
         state === "making" ? h("p", { class: "st-card-hint" }, "这一格的课程还在制作中，敬请期待。") : null,
-        drillBox(skill, state),
+        drillsFor(skill.id).length ? h("p", { class: "st-card-hint" }, `这一格有 ${drillsFor(skill.id).length} 个进阶副本，在「副本」页挑战。`) : null,
       ].filter(Boolean),
     );
   }
@@ -190,14 +181,59 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
     showTrophy(got[got.length - 1] || achievements.list[0]);
   }
 
-  /** Branch-wide drill totals for the header line. */
-  function drillOfBranch(branch) {
-    const rows = branch.skills.flatMap((skill) => {
-      const list = drillsFor(skill.id);
-      return list.length ? [skillMastery(skill.id, { lit: states.get(skill.id) === "lit", stars: drills })] : [];
-    });
-    if (!rows.length) return null;
-    return rows.reduce((all, one) => ({ cleared: all.cleared + one.cleared, total: all.total + one.total, stars: all.stars + one.stars, max: all.max + one.max }), { cleared: 0, total: 0, stars: 0, max: 0 });
+  /** Every skill in this part that has drills, with its ladder worked out. */
+  function drillRows() {
+    return BRANCHES.flatMap((branch) =>
+      branch.skills
+        .filter((skill) => drillsFor(skill.id).length)
+        .map((skill) => {
+          const lit = states.get(skill.id) === "lit";
+          return { skill, branch, lit, mastery: skillMastery(skill.id, { lit, stars: drills }), ladder: ladderFor(skill.id, { lit, stars: drills }) };
+        }));
+  }
+
+  /** 副本 page: the same knowledge points again, one step harder, kept apart from the tree itself. */
+  function drillsPage() {
+    lastBranch = "drills";
+    tabs.querySelectorAll(".st-tab").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.branch === "drills")));
+    const rows = drillRows();
+    const total = rows.reduce((all, row) => ({
+      cleared: all.cleared + row.mastery.cleared,
+      total: all.total + row.mastery.total,
+      stars: all.stars + row.mastery.stars,
+      max: all.max + row.mastery.max,
+    }), { cleared: 0, total: 0, stars: 0, max: 0 });
+    const showSkill = (row) => {
+      const state = states.get(row.skill.id) || "locked";
+      card.style.setProperty("--c", row.branch.color);
+      card.replaceChildren(
+        h("div", { class: `st-card-gem ${state}` }, gem(state, row.branch.color), face(row.skill, state)),
+        h("p", { class: "st-card-branch" }, `【${row.branch.title} · 副本】`),
+        h("h3", {}, row.skill.label),
+        h("p", { class: "st-card-status" }, `▶ 通关 ${row.mastery.cleared}/${row.mastery.total} · ${row.mastery.stars}/${row.mastery.max} 星`),
+        h("p", { class: "st-card-note" }, row.skill.note),
+        ...ladderEls(row.skill),
+      );
+      board.querySelectorAll(".st-drill-row.selected").forEach((el) => el.classList.remove("selected"));
+      board.querySelector(`.st-drill-row[data-skill="${row.skill.id}"]`)?.classList.add("selected");
+    };
+    board.style.setProperty("--c", "#a5512b");
+    board.replaceChildren(
+      h("p", { class: "st-motto" }, h("b", {}, `副本 ${total.cleared}/${total.total} 关`), `剧情关谁都能过；副本是同一个知识点再来一遍，一次比一次狠。已拿 ${total.stars}/${total.max} 星。`),
+      h("div", { class: "st-drill-list" },
+        ...BRANCHES.filter((branch) => rows.some((row) => row.branch === branch)).flatMap((branch) => [
+          h("h4", { class: "st-drill-branch", style: `--c:${branch.color}` }, branch.title),
+          ...rows.filter((row) => row.branch === branch).map((row) =>
+            h("button", { class: "st-drill-row", type: "button", "data-skill": row.skill.id, onclick: () => showSkill(row), onfocus: () => showSkill(row) },
+              h("b", {}, row.skill.label),
+              h("span", { class: "st-drill-row-count" }, `${row.mastery.cleared}/${row.mastery.total}`),
+              h("span", { class: "st-stars" }, `${row.mastery.stars}/${row.mastery.max}`)),
+          ),
+        ])),
+    );
+    const first = rows.find((row) => row.ladder.some((drill) => drill.state === "open")) || rows[0];
+    if (first) showSkill(first);
+    else card.replaceChildren(h("p", { class: "st-card-note" }, "还没有可以挑战的副本。"));
   }
 
   function page(branch) {
@@ -231,14 +267,12 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         "aria-label": `${skill.label}：${STATUS[state]}`,
         onclick: () => show({ skill, branch }),
         onfocus: () => show({ skill, branch }),
-      }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label),
-        drillsFor(skill.id).length ? h("span", { class: `st-node-drills ${state === "lit" ? "on" : ""}` }, `副本 ${skillMastery(skill.id, { lit: state === "lit", stars: drills }).cleared}/${drillsFor(skill.id).length}`) : null);
+      }, h("span", { class: "st-gem" }, gem(state, branch.color), face(skill, state)), h("span", { class: "st-node-label" }, skill.label));
     });
     const lit = branch.skills.filter((skill) => states.get(skill.id) === "lit").length;
     board.style.setProperty("--c", branch.color);
     board.replaceChildren(
-      h("p", { class: "st-motto" }, h("b", {}, `${branch.title} ${lit}/${branch.skills.length}`), branch.motto,
-        drillOfBranch(branch) ? h("small", { class: "st-motto-drills" }, `副本 ${drillOfBranch(branch).cleared}/${drillOfBranch(branch).total} 关 · ${drillOfBranch(branch).stars}/${drillOfBranch(branch).max} 星`) : null),
+      h("p", { class: "st-motto" }, h("b", {}, `${branch.title} ${lit}/${branch.skills.length}`), branch.motto),
       h("div", { class: "st-board", style: `width:${width}px;height:${height}px` }, lines, ...nodes),
     );
     const start = branch.skills.find((skill) => states.get(skill.id) === "next") || [...branch.skills].reverse().find((skill) => states.get(skill.id) === "lit") || branch.skills[0];
@@ -253,6 +287,17 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
         h("span", {}, branch.title),
         h("small", {}, `${lit}/${branch.skills.length}`),
         ready ? h("i", { class: "st-tab-new", title: "有可以学的技能" }, "!") : null),
+    );
+  }
+
+  const drillTabRows = drillRows();
+  if (drillTabRows.length) {
+    const cleared = drillTabRows.reduce((n, row) => n + row.mastery.cleared, 0);
+    const open = drillTabRows.some((row) => row.ladder.some((drill) => drill.state === "open"));
+    tabs.append(
+      h("button", { class: "st-tab dungeon", type: "button", role: "tab", "data-branch": "drills", style: "--c:#a5512b", onclick: () => drillsPage() },
+        h("span", { class: "st-tab-mark", "aria-hidden": "true" }, "副"), h("span", {}, "副本"), h("small", {}, `${cleared}/${drillTabRows.reduce((n, row) => n + row.mastery.total, 0)}`),
+        open ? h("i", { class: "st-tab-new", title: "有可以挑战的副本" }, "!") : null),
     );
   }
 
@@ -281,6 +326,10 @@ export function renderSkillTree({ h, stepDone, whereOf, onClose, achievements = 
   );
 
   // Open on the page shown last time, else the branch with something to learn next.
+  if (lastBranch === "drills" && drillTabRows.length) {
+    drillsPage();
+    return root;
+  }
   if (lastBranch === "achievements" && achievements) {
     trophies();
     return root;
