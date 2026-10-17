@@ -19,12 +19,12 @@
 |---|---|---|---|---|---|
 | 路米 | `lumi` | normal / happy / surprised / thinking | ✅ | — | 另要一张 `lumi-point`（指向右边，对质时用）🎨 P1 |
 | 小林 | `kobayashi` | normal / happy / surprised | ✅ | — | 补一张 thinking 🎨 P0 |
-| **小克**（小镇 AI 助手） | `xiaoke` | normal / happy / thinking / surprised / sorry / **unsure** | 📦 / 🎨 | **P0** | 三方向候选已交付，选型后补表情与动画。原创，白色和薄荷青，不用任何真实公司的标志和配色 |
+| **小克**（小镇 AI 助手） | `xiaoke` | normal / happy / thinking / surprised / sorry / **unsure** | 📦 / 🎨 | **P0** | 三方向候选见 `review/characters/xiaoke-design-directions-v1-candidate.png`；选型后补表情与动画。原创，白色和薄荷青 |
 | 阿哲 | `azhe` | 4 个 | 📦 有全身像 | P0 | 要按 A 节的半身规格补齐 4 个表情 |
 | 小雨 | `xiaoyu` | 4 个 | 📦 有全身像 | P0 | 同上 |
 | 朵朵 | `duoduo` | 4 个 | 📦 | P0 | 头像候选已出，动画已接入；头像待验收 |
 | 周姐 | `zhoujie` | 4 个 | 📦 | P0 | 头像候选已出，动画和办公室素材待游戏验收 |
-| 王奶奶 | `grandma` | 4 个 | 📦 | P0 | 头像与动画已交付；客厅场景和道具待验收 |
+| 王奶奶 | `grandma` | 4 个 | ✅ | P0 | 头像与动画已接入；客厅新背景和道具待验收 |
 | 星博士 | `xingbo` | normal / happy / thinking / surprised / **guilty** | 📦 | P0 | 头像五表情与标准动画已交付，待验收 |
 | 秋实（悄悄统计的经理） | `qiushi` | normal / confident / thinking / surprised / **cornered** | 🎨 | P1 | 亲切的推销员，不是凶恶的反派 |
 | 铁叔 | `smith` | 4 个 | 🎨 | P1 | 序章结尾打开钟楼 |

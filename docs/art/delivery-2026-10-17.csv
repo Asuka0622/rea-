@@ -98,10 +98,10 @@ xingbo-thinking,星博士,docs/art/review/sources/portraits-xingbo-expression-sh
 xingbo-surprised,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-surprised.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
 xingbo-guilty,星博士,docs/art/review/sources/portraits-xingbo-expression-sheet-source.png,public/art/faces/xingbo-guilty.webp,,,,320,320,是,,,待验收,320×320 透明头像候选；待对话头像裁切与表情映射验收
 anim-zhoujie,周姐,docs/art/review/sources/anim-zhoujie-source-sheet.png,public/art/pixel/anim-zhoujie.png,秋季,晴天,中午,256,192,是,64×96,待机2 / 看表4,待验收,4列×2行；待房间比例、脚底基线与动作映射验收
-anim-zhoujie-metadata,周姐,docs/art/review/animations/anim-zhoujie.json,public/art/pixel/anim-zhoujie.json,秋季,晴天,中午,,,是,64×96,待机2 / 看表4,待验收,逐帧时长与动作行元数据
+anim-zhoujie-metadata,周姐,docs/art/review/animations/anim-zhoujie.json,public/art/pixel/anim-zhoujie.json,秋季,晴天,中午,,,,64×96,待机2 / 看表4,待验收,逐帧时长与动作行元数据
 anim-xingbo,星博士,docs/art/review/sources/anim-xingbo-source-sheet.png,public/art/pixel/anim-xingbo.png,,,,256,480,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,4列×5行；复用收件目录#141；帧底对齐；透明边缘碎点已清理
-anim-xingbo-metadata,星博士,docs/art/review/animations/anim-xingbo.json,public/art/pixel/anim-xingbo.json,,,,,,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,标准行动作映射、帧时长与朝向元数据
-xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,,,否,,三种外形方向,候选,三方向对照稿；等选型后制作表情和动画全套
+anim-xingbo-metadata,星博士,docs/art/review/animations/anim-xingbo.json,public/art/pixel/anim-xingbo.json,,,,,,,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,标准行动作映射、帧时长与朝向元数据
+xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,2172,724,是,,三种外形方向,候选,三方向对照稿；等选型后制作表情和动画全套
 town-center-glow,比特镇center,docs/art/review/sources/town-center-glow-source.svg,public/art/pixel/regions/town-center-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-homes-glow,比特镇homes,docs/art/review/sources/town-homes-glow-source.svg,public/art/pixel/regions/town-homes-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-craft-glow,比特镇craft,docs/art/review/sources/town-craft-glow-source.svg,public/art/pixel/regions/town-craft-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
