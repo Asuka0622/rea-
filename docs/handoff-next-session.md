@@ -45,7 +45,14 @@
 2. **序章叙事收尾**：周姐时间线 → 线索墙 → 守夜 → 钟楼段落重排（`stakeout.png`、`town-argument.png` 两张插画已交付还没接进流程）
 3. **美术侧交接**：`docs/art/codex-cloud-handoff.md` 里挂着返工清单（`london-1843` 底部留空、`weather-keys` 六张奇数尺寸、`anim-kobayashi` 挠头补帧、秋实缺 happy 头像、`public/art/portraits/` 27 张无引用待归档）；`docs/art/asset-requirements.md` 第 9 节的 12 位 NPC 精灵表全部未开工（先画 P1 六位：老周/阿康/小石头/老陈/小铃/老宋，16×32、行序 待机2/下4/上4/侧4/说话2、脚底对齐、透明底，到位后把 `npc-chatter.js` 的 look 换成 sprite 即可）
 4. **委托板小尾巴**：「已接」状态的高亮、物件来源（object:xx）、推荐标记（`recommendQuests` 已写好没用上）
-5. 镇上的委托人 NPC（朵朵/王奶奶/老秦）目前还是占位小圆点，等第 9 节精灵表
+5. ~~镇上的委托人 NPC 目前还是占位小圆点~~ **已处理（2026-10-18）**：15 位常驻全部上台，有 `sprite-*.png` 的都换成了像素小人（老秦、铁叔没图仍是圆点，图一到自动换）；对话头像走 `faces/<id>-<face>.webp`
+
+## 素材接入机制（随时把已有素材换到部署）
+
+- **一条命令看现状**：`npm run wiring`（`scripts/art-wiring.mjs`）。它扫 `public/art/` 全部素材，分三档报：已接线 / 数据驱动（`minigames/`、`regions/`、`case-props/` 等目录，文件进目录即由 `has()`/`artBg()` 拾取）/ **孤儿**。**孤儿必须是 0**——出现孤儿就说明有交付图没接上。
+- **新素材到位后的动作**：文件放进 `public/art/pixel/<子目录>/` 或 `public/art/faces/` → 跑 `npm run wiring` → 孤儿仍为 0 即自动生效（`has()` 机制）；若出现孤儿，按 id 找它的消费点（`artImg`/`artBg`/`has`/`sprite-`/`anim-`/`faces/`）补数据字段。
+- **候选不接入**：`docs/art/review/` 下的图是候选（路米六帧、九区 expanded 地图、lumi-6f 等），验收前不进 `public/art/`，不换运行引用。
+- **立绘不进部署**：游戏只用 `faces/*.webp` 小头像；立绘源图归档在 `docs/art/portraits-archive/`（38 张，2026-10-18 从 `public/art/portraits/` 移出）。
 
 ## 陷阱与约定（踩过的坑）
 
@@ -56,3 +63,10 @@
 - 中文文案优先；对白要有称呼差异（王奶奶叫玩家「闺女」）；每个小游戏都必须有「不会也过得去、会了更快」的难度自适配思路
 
 从待办第 1 条（知识深度 L3 + 复现）开始。先读 `docs/knowledge-depth.md` 的分配表再动手。
+
+
+## 2026-10-18 后续接手补充
+
+知识深度已开始落地：forge-release / beacon-release / cobbler-booking / clock-import四个side委托分别承接硬编码密钥、权限与声明，每点两份样本。核心逻辑与编辑器在public/transfer-practice.js，样本在samples/cases同名目录；两份独立成绩才授予L3，提示辅助不授予L3。public/prologue-quests.js是元数据与聚合规则。其他10个知识点仍待迁移。当前NPC当面接取已接入，浏览器调试预览?debug&mini=<id>不会写入正式成绩。
+
+本批完成后的完整回归194/194通过。UI实测以调试预览为主，已验证编辑、证据、刷新恢复、辅助记录及844×390不横向溢出；四位NPC到正式授级的完整人工链路仍待下一轮，不能把调试通关当正式成绩。

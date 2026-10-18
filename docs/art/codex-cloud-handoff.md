@@ -73,7 +73,7 @@
 1. `anim-kobayashi.png` **挠头动画声明 4 帧但画布只有 2 帧**——第 3、4 帧全空，播放会让角色消失 720ms。已把 JSON 暂改为 `frames:2, ms:[260,240]` 兜底；请补画第 3、4 帧（收回手/恢复），补画后恢复 4 帧与 `ms:[180,160,360,360]`。
 2. `case-props/weather-keys-*.png` 六张**奇数尺寸**（60×49、40×57、44×51、52×101、40×31、40×35）：2 倍密度下会出现半格错位，请各补 1px 或按偶数重出。
 3. `faces/qiushi-happy.webp` 缺失——代码会用到 `happy`，当前静默回退 normal。请补一张秋实开心的表情。
-4. `public/art/portraits/`（27 张旧立绘 PNG）**无任何代码引用**，与在用的 `faces/*.webp` 重复，易误用；建议归档或移出运行目录。
+4. ~~`public/art/portraits/`（27 张旧立绘 PNG）无任何代码引用~~ **已处理（2026-10-18）**：38 张立绘源图已移到 `docs/art/portraits-archive/`，运行目录不再有它；游戏只用 `faces/*.webp`。接线现状随时可查：`npm run wiring`（孤儿应为 0）。
 5. 命名/归类易误导：`regions/north-clocktower-running|stopped.png` 是 96.6% 透明的"钟楼建筑叠加层"，名字却像底图；`eras/london/difference-engine.png`（64×96）是透明底道具却放在满幅场景目录。接入时注意别当满幅底图用。
 
 **观察项（非缺陷）：**
