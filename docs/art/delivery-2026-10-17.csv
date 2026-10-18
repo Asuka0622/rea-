@@ -169,7 +169,7 @@ ui-stamp-ok,侦探界面,docs/art/review/sources/stamp-ok-source.png,public/art/
 ui-stamp-closed,侦探界面,docs/art/review/sources/stamp-closed-source.png,public/art/pixel/ui/stamp-closed.png,,,,96,48,是,,,待验收,结案印章底图，关门图标，代码负责文字
 ui-claim-card,侦探界面,docs/art/review/sources/claim-card-source.png,public/art/pixel/ui/claim-card.png,,,,240,60,是,,,待验收,空白说法卡，文字由代码绘制
 ui-objection,侦探界面,docs/art/review/sources/objection-banner-source.png,public/art/pixel/ui/objection.png,,,,120,40,是,,,待验收,异议强调底条，不含文字
-ui-timemachine-dial,时光机界面,docs/art/review/sources/timemachine-dial-source.png,public/art/pixel/ui/timemachine-dial.png,,,,480,270,是,,,待验收,7个留空时代窗，当前格微光；年份由代码绘制
+ui-timemachine-dial,时光机界面,docs/art/review/sources/timemachine-dial-clean-source.png,public/art/pixel/ui/timemachine-dial.png,,,,480,270,是,,,待验收,七个圆窗已修为空透明孔，当前格边框微光；年份由代码绘制
 ui-era-1843,时光机界面,docs/art/review/sources/era-1843-source.png,public/art/pixel/ui/era-1843.png,,,,96,64,是,,,待验收,维多利亚伦敦缩略图，无年份文字
 ui-era-now,时光机界面,docs/art/review/sources/era-now-source.png,public/art/pixel/ui/era-now.png,,,,96,64,是,,,待验收,比特镇现在缩略图，无年份文字
 ui-era-locked,时光机界面,docs/art/review/sources/era-locked-source.png,public/art/pixel/ui/era-locked.png,,,,96,64,是,,,待验收,锁定时代缩略图，无文字

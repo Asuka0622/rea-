@@ -26,7 +26,7 @@
 | 周姐 | `zhoujie` | 4 个 | 📦 | P0 | 头像候选已出，动画和办公室素材待游戏验收 |
 | 王奶奶 | `grandma` | 4 个 | ✅ | P0 | 头像与动画已接入；客厅新背景和道具待验收 |
 | 星博士 | `xingbo` | normal / happy / thinking / surprised / **guilty** | 📦 | P0 | 头像五表情与标准动画已交付，待验收 |
-| 开发者（卡牌对质的对手） | `dev` | normal / **flustered**（被驳倒） | 🎨 | P1 | 小游戏「当面对质」的新角色：白衬衫工牌、抱着平板的程序员形象，别和小克撞色。**只要半身立绘与表情，不要行走表**；先交一张方向稿定人设 |
+| 开发者（卡牌对质的对手） | `dev` | normal / happy / thinking / surprised / **flustered**（被驳倒） | 📦 | P1 | 方向稿与五表情已交，白衬衫工牌、抱平板；待头像映射验收 |
 | 秋实（悄悄统计的经理） | `qiushi` | normal / confident / thinking / surprised / **cornered** | 🎨 | P1 | 亲切的推销员，不是凶恶的反派 |
 | 铁叔 | `smith` | 4 个 | 🎨 | P1 | 序章结尾打开钟楼 |
 | 爱达·洛夫莱斯 | `ada` | normal / thinking / happy / surprised | 🎨 | P1 | 已故历史人物，按「真实人物的画法」 |
@@ -61,7 +61,7 @@
 |---|---|---|---|---|
 | 侦探事务所 | `room-home.png` | ✅ → 🎨 改一处 | **P0** | 墙上的委托告示板改成**一块空的大软木板**（线索墙），周围留空 |
 | 图书馆、工具铺、驿站、诊所 | `room-learn/engines/clients/doctor.png` | ✅ 秋季；📦 其他季节 | P2 | |
-| 钟楼内部 | `room-tower-inside.png` | 🎨 | P1 | 第七批 AK：一台巨大的老式电脑，屏幕滚着数字；木梁和楼梯；最深处墙上是时光机大表盘。**取代**第三批的 `room-clocktower` |
+| 钟楼内部 | `room-tower-inside.png` | 📦 | P1 | 第七批 AK：一台巨大的老式电脑，屏幕滚着数字；木梁和楼梯；最深处墙上是时光机大表盘。**取代**第三批的 `room-clocktower` |
 | AI 研究所 | `room-ailab.png` | 🎨 | P2 | 第三批 Q 节，把「比比的充电台」改成「小克的充电台」 |
 
 **六个案发现场**（序章最重要的一组图。房间背景里**不画能调查的物品**，物品单独画，见下面第 5 节）
@@ -119,16 +119,16 @@
 | 图钉 | `ui/pin.png`（12 × 12） | 🎨 | P0 | |
 | 六条证据的小图标 | `ui/clue-icons.png`（6 个 32 × 32 一行） | 🎨 | P0 | 网址、存档上的时钟、调试页上的钟楼、钥匙、定时相机、手机里的广告 |
 | 侦探手账 | `ui/notebook.png`（约 640 × 420） | 🎨 | P0 | 皮面笔记本摊开，横格纸，右边四个书签（线索、小词典、名字和证据、推理）。现在是代码画的 |
-| 「成立」和「结案」印章 | `ui/stamp-ok.png` `ui/stamp-closed.png`（各 96 × 48） | 🎨 | P1 | 红色印泥的盖章效果 |
-| 对质的说法卡、「异议！」大字 | `ui/claim-card.png`（240 × 60）、`ui/objection.png`（约 120 × 40） | 🎨 | P1 | 第六批 AF |
-| 时光机大表盘 | `ui/timemachine-dial.png`（480 × 270） | 🎨 | P1 | **7 格**：1843、1950、1970s、1997、2012、2017、**现在**（略发光，以后会在它前面插入新格子） |
-| 时代缩略图 | `ui/era-1843.png` `ui/era-now.png` `ui/era-locked.png`（各 96 × 64） | 🎨 | P1 | |
-| 路米的怀表 | `ui/pocket-watch.png` `ui/pocket-watch-xiaoke.png`（32 × 32） | 🎨 / 📦 | P1 | 第二张的表盘玻璃后面露出小克的脸；小克那张候选已交（`review/ui/pocket-watch-xiaoke-candidate.png`，运行图已进 `public/art/pixel/ui/`），待验收 |
+| 「成立」和「结案」印章 | `ui/stamp-ok.png` `ui/stamp-closed.png`（各 96 × 48） | 📦 | P1 | 红色印泥的盖章效果 |
+| 对质的说法卡、「异议！」大字 | `ui/claim-card.png`（240 × 60）、`ui/objection.png`（约 120 × 40） | 📦 | P1 | 第六批 AF |
+| 时光机大表盘 | `ui/timemachine-dial.png`（480 × 270） | 📦 | P1 | **7 格**：1843、1950、1970s、1997、2012、2017、**现在**（略发光，以后会在它前面插入新格子） |
+| 时代缩略图 | `ui/era-1843.png` `ui/era-now.png` `ui/era-locked.png`（各 96 × 64） | 📦 | P1 | |
+| 路米的怀表 | `ui/pocket-watch.png` `ui/pocket-watch-xiaoke.png`（32 × 32） | 📦 | P1 | 第二张的表盘玻璃后面露出小克的脸；小克那张候选已交（`review/ui/pocket-watch-xiaoke-candidate.png`，运行图已进 `public/art/pixel/ui/`），待验收 |
 | 导航栏小钟 | `ui-clock.png`（32 × 32 和 16 × 16） | 🎨 | P2 | 导航栏是**小镇的时间**，一直在走，不需要停摆版 |
 | 天气和季节小图标 | `ui/weather-<晴/雨/雪>.png` `ui/season-<春/夏/秋/冬>.png`（16 × 16） | 🎨 | P2 | 放在导航栏的钟旁边 |
 | 技能树六条主干的图标 | `skill-<主干>.png`（32 × 32） | 🎨 | P2 | AI 是什么（一张打孔卡）、搜索与推理（棋盘）、机器学习（一叠标注卡）、深度学习（神经网络的圆圈和连线）、生成式 AI（对话气泡）、AI 与责任（放大镜和盾牌）。**取代**第三批的五个 |
-| 见习侦探徽章 | `badge-detective.png`（48 × 48） | 🎨 | P1 | 序章结束时获得 |
-| 复勘三档徽章 | `ui/drill-tier-compare.png` / `-trace.png` / `-verdict.png`（各 32 × 32） | 🎨 | P1 | 对照 / 溯源 / 定案；复勘页列表与结算用，星数由代码画 |
+| 见习侦探徽章 | `badge-detective.png`（48 × 48） | 📦 | P1 | 序章结束时获得 |
+| 复勘三档徽章 | `ui/drill-tier-compare.png` / `-trace.png` / `-verdict.png`（各 32 × 32） | 📦 | P1 | 对照 / 溯源 / 定案；复勘页列表与结算用，星数由代码画 |
 | 复勘面板底图 | `ui/drill-board.png`（约 640 × 420） | 🎨 | P2 | 可选；先看现有界面风格够不够，代码可顶 |
 
 ### 8. 悄悄统计的品牌（原创，暗喻现实里的数据经纪行业）
@@ -137,7 +137,7 @@
 |---|---|---|---|
 | 公司标志（圆形徽章里一根竖在嘴唇前的手指） | `ui/quiet-stats-logo.png`（64 × 64） | 📦 | P0 |
 | 传单「免费帮你统计用户量」 | `props/quiet-stats-flyer.png`（32 × 40） | 📦 | P0 |
-| 《用户协议》翻开的特写 | `ui/user-agreement.png`（240 × 320） | 🎨 | P1 |
+| 《用户协议》翻开的特写 | `ui/user-agreement.png`（240 × 320） | 📦 | P1 |
 
 ### 9. 小游戏演出素材（`public/art/pixel/minigames/`，2026-10-18 新增）
 
@@ -147,14 +147,14 @@
 
 | 内容 | 文件 | 状态 | 优先级 | 备注 |
 |---|---|---|---|---|
-| 塔防：通道/保险柜/大门/措施图标/收集者 | `mini-td-*.png`、`anim-mini-td-collector` | ✅ | P0 | 已接入王奶奶关：通道铺底、两端图标、三个措施图标、收集者走 4 帧+被拦翻倒 1 帧 |
+| 塔防：通道/保险柜/大门/措施图标/收集者 | `mini-td-*.png`、`anim-mini-td-collector` | 📦 | P0 | 已接入王奶奶关：通道铺底、两端图标、三个措施图标、收集者走 4 帧+被拦翻倒 1 帧 |
 | 经营：等距公司内景 | `mini-mg-office.png` | ✅ | P0 | 账本压在画面底部；灯一关房间变暗、风险过半房间变热 |
 | 经营：顾客/金币/三张广告贴画 | `anim-mini-mg-customer`、`mini-mg-coin`、`mini-mg-ad-*` | 📦→🎨 | P0/P1 | **参考日式 Q 版 3D 经营游戏观感**：等距45°、大头小人、糖果色；顾客与金币已画好待接入，广告贴画未画 |
-| 卡牌：对质会议室+证据卡框+六张卡面插图 | `mini-cd-room`、`mini-cd-card-frame(-on)`、`mini-cd-art-*` | ✅ | P0 | 本批美术要求最高，已全部接入；「异议！」复用 ui/objection.png |
-| 开发者（新角色）立绘四表情+心虚 | `faces/dev-*.webp` | 🎨 | P1 | 先交方向稿定人设，别和小克撞色 |
+| 卡牌：对质会议室+证据卡框+六张卡面插图 | `mini-cd-room`、`mini-cd-card-frame(-on)`、`mini-cd-art-*` | 📦 | P0 | 本批美术要求最高，已全部接入；「异议！」复用 ui/objection.png |
+| 开发者（新角色）立绘四表情+心虚 | `faces/dev-*.webp` | 📦 | P1 | 先交方向稿定人设，别和小克撞色 |
 | 节奏：CRT 监视器外框/轨道/判定线/音符 | `mini-rh-*.png`、`anim-mini-rh-*` | 📦 | P0 | 已画好，待接进节奏关 |
 | 管道：直管/弯管/钥匙/服务器/发布包 | `mini-pipe-*.png` | 📦 | P0 | 已画好，待接进阿哲关 |
-| 格斗、时间线 | 概念图各 1 张 | 🎨 | P2 | 规划中，规格先写好，**不批量出图** |
+| 格斗、时间线 | 概念图各 1 张 | 📦 | P2 | 规划中，规格先写好，**不批量出图** |
 
 ---
 
@@ -200,7 +200,7 @@
 
 | 内容 | 文件 | 帧数 | 状态 | 优先级 |
 |---|---|---|---|---|
-| 穿越特效：一圈圈齿轮和光 | `fx/time-warp.png` | 6 | 🎨 | P1 |
+| 穿越特效：一圈圈齿轮和光 | `fx/time-warp.png` | 6 | 📦 | P1 |
 | 小游戏的精灵动画：收集者（塔防）、顾客（经营）、上传/同步音符（节奏） | `anim-mini-*`，见 [requests-minigames.md](requests-minigames.md) | 4–8 | 🎨 | P0 | 逐帧规格以 requests-minigames.md 为准 |
 | 钟楼的窗户一扇扇亮起再闪烁（守夜） | 用发光层 + 代码做 | — | 不用画 | — |
 | 盖章落下、「异议！」砸下来、震屏、名字卡飞进手账 | 代码做 | — | 不用画 | — |
