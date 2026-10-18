@@ -1097,13 +1097,28 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) left center/auto 100% repeat-x #131d17;image-rendering:pixelated;}
 .mini-td-path::before {content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(180deg,rgba(6,12,8,.5) 0%,rgba(6,12,8,.06) 22%,rgba(6,12,8,.06) 78%,rgba(6,12,8,.5) 100%);}
-/* 轨道：两条折线。viewBox 压扁后笔触会被拉成扁的，所以线宽走 non-scaling-stroke。 */
+/* 轨道：两条折线。画成贴着机房的电缆桥架——暗槽打底、青铜桥面、中间一条引导虚线，
+   不再是一大块纯绿色带浮在背景上。viewBox 压扁后笔触会被拉成扁的，所以线宽走 non-scaling-stroke。 */
 .mini-td-track-wrap {position:absolute;inset:0;z-index:1;pointer-events:none;}
 .mini-td-track {position:absolute;inset:0;width:100%;height:100%;}
-.mini-td-lane {fill:none;stroke:#16241c;stroke-width:32;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
-.mini-td-lane-core {fill:none;stroke:#203426;stroke-width:22;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
-.mini-td-guard {fill:none;stroke:#2f6b34;stroke-width:26;stroke-linejoin:round;stroke-linecap:butt;vector-effect:non-scaling-stroke;opacity:.55;}
-.mini-td-guard.strong {stroke:#3f8f5c;opacity:.9;}
+.mini-td-lane {fill:none;stroke:#100d08;stroke-width:30;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.88;}
+.mini-td-lane-mid {fill:none;stroke:#2b2114;stroke-width:21;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.mini-td-lane-edge {fill:none;stroke:#4a3a20;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.7;}
+.mini-td-lane-line {fill:none;stroke:#8a6d3f;stroke-width:2;stroke-dasharray:7 9;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.42;}
+/* 分叉/汇合处的接线柱：让「为什么在这里分路」在画面上有个物件解释。 */
+.mini-td-junction {fill:#241c10;stroke:#5a4626;stroke-width:1.5;vector-effect:non-scaling-stroke;}
+/* 守卫段：一窄条微微发光的绿底加一条向左流动的亮虚线——能量朝保险柜方向巡逻，
+   读得出「这段有人守」，又不把整段路涂成一坨绿。 */
+.mini-td-guard {fill:none;stroke:#3f8f5c;stroke-width:11;stroke-linejoin:round;stroke-linecap:butt;vector-effect:non-scaling-stroke;opacity:.3;}
+.mini-td-guard-flow {fill:none;stroke:#7ee2a0;stroke-width:3;stroke-dasharray:9 13;stroke-linejoin:round;stroke-linecap:butt;vector-effect:non-scaling-stroke;opacity:.85;animation:td-flow 1.1s linear infinite;}
+.mini-td-guard.strong {stroke:#57c17e;opacity:.42;}
+.mini-td-guard.strong + .mini-td-guard-flow {stroke:#b8ffd4;}
+@keyframes td-flow {to {stroke-dashoffset:-44;}}
+/* v2 底图（mini-td-path-v2：分叉双通道画进机房内景）到位后，代码画的桥架层收起来，
+   只留守卫灯带——路线本身交给画。 */
+.mini-td-path.nolanes .mini-td-lane,.mini-td-path.nolanes .mini-td-lane-mid,
+.mini-td-path.nolanes .mini-td-lane-edge,.mini-td-path.nolanes .mini-td-lane-line,
+.mini-td-path.nolanes .mini-td-junction {display:none;}
 /* 被保护的一端：保险柜立在左端，收集者从右端进来，都在主干的高度上。 */
 .mini-td-home {position:absolute;left:5px;top:50%;transform:translateY(-50%);z-index:3;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
 .mini-td-spawn {position:absolute;right:5px;top:50%;transform:translateY(-50%);z-index:3;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}

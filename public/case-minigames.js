@@ -180,7 +180,22 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const spawn = h("div", { class: "mini-td-spawn" }, artImg(h, "mini-td-spawn", "mini-td-icon"), h("small", {}, "收集者"));
   const track = h("div", { class: "mini-td-track-wrap" });
   const path = h("div", { class: "mini-td-path" }, track, home);
-  artBg(path, "mini-td-path");
+  // 背景有两版：现在的 mini-td-path 是一条通道的横带；等美术交了 mini-td-path-v2（分叉双通道
+  // 直接画进机房内景），换底图并把代码画的桥架线收起来——路融在画里，SVG 只留守卫灯带。
+  const syncBackdrop = () => {
+    const v2 = hasMiniArt("mini-td-path-v2");
+    const id = v2 ? "mini-td-path-v2" : "mini-td-path";
+    if (hasMiniArt(id)) {
+      path.classList.add("art");
+      path.style.backgroundImage = `url(/art/pixel/minigames/${id}.png)`;
+    } else {
+      path.classList.remove("art");
+      path.style.backgroundImage = "";
+    }
+    path.classList.toggle("nolanes", v2);
+  };
+  syncBackdrop();
+  whenMiniArt(syncBackdrop);
   const say = h("p", { class: "mini-say", role: "status" },
     "数据进机房是一条主干，到分线器分成上下两路，出门前又并回一条。守在入口和出口能顾到所有人，"
     + "守在两条支路上一次只能顾一条——但那两个位置才摆得下两个人手。"
@@ -273,14 +288,22 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     let lanes = "";
     for (const lane of ["up", "down"]) {
       const pts = TD_TRACK[lane].pts.map((p) => p.join(",")).join(" ");
-      lanes += `<polyline class="mini-td-lane" points="${pts}"/><polyline class="mini-td-lane-core" points="${pts}"/>`;
+      // 四层叠出一条电缆桥架：暗槽、青铜桥面、两侧棱线、中央引导虚线——不是一坨绿。
+      lanes += `<polyline class="mini-td-lane" points="${pts}"/><polyline class="mini-td-lane-mid" points="${pts}"/>`
+        + `<polyline class="mini-td-lane-edge" points="${pts}"/><polyline class="mini-td-lane-line" points="${pts}"/>`;
     }
+    // 分线器和并线器：路在这里分岔/合流，画面上得有个物件解释这件事。
+    lanes += `<rect class="mini-td-junction" x="70.4" y="38" width="3.2" height="24" rx="1"/>`
+      + `<rect class="mini-td-junction" x="26.4" y="38" width="3.2" height="24" rx="1"/>`;
     let guards = "";
     for (const slot of slots) {
       if (!slot.unit) continue;
       for (const g of slot.guards || []) {
         for (const lane of g.lanes) {
-          guards += `<polyline class="${cls(["mini-td-guard", slot.unit.strong && "strong"])}" points="${tdGuardPoints(lane, g.t0, g.t1)}"/>`;
+          const pts = tdGuardPoints(lane, g.t0, g.t1);
+          // 一条微光的绿底加一条朝保险柜流动的亮虚线：守卫段是「灯带」，不是一坨绿。
+          guards += `<polyline class="${cls(["mini-td-guard", slot.unit.strong && "strong"])}" points="${pts}"/>`
+            + `<polyline class="mini-td-guard-flow" points="${pts}"/>`;
         }
       }
     }
