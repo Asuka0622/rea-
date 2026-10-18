@@ -1,0 +1,91 @@
+/* 排雷 · 权限扫描：格子是清单条目，不是地雷。数字、旗子、放行都沿用扫雷的读法。 */
+
+.mini-mines {gap: calc(2px * var(--px));}
+.mines-bar {display: flex; flex-wrap: wrap; gap: 6px 14px; font: 11px/1.4 var(--font-body); color: #cfd8c8;}
+.mines-stat {padding: 1px 6px; border: 1px solid #3d4a35; border-radius: 3px; background: #1a2018; letter-spacing: .02em;}
+.mines-tools {display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
+.mines-tools .btn.small {font-size: 11px; padding: 2px 8px;}
+.mines-tools .btn.on {border-color: #e8c270; background: #2a2418; color: #ffe8b0;}
+.mines-mode {font: 11px/1.4 var(--font-body); color: #8fa58a;}
+
+.mines-grid {
+  --n: 6;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 4px;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 8px;
+  background: #14180f;
+  border: 2px solid #2c4a36;
+  border-radius: 4px;
+}
+.mines-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 1px solid #3d4a35;
+  border-radius: 3px;
+  background: #232b1d;
+  color: #e8d8bc;
+  font: 11px/1.2 var(--font-body);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background .12s, border-color .12s;
+}
+.mines-cell:hover {border-color: #7ea06a; background: #2b3524;}
+.mines-cell:focus-visible {outline: 2px solid #e8c270; outline-offset: 1px;}
+
+/* 翻开的：安全项露出名字，空格留白（一片干净的地方）。 */
+.mines-cell.safe {background: #1b2117; border-color: #2e3a27; cursor: default;}
+.mines-cell.blank {background: #171c13;}
+.mines-cell.safe:hover {border-color: #2e3a27; background: #1b2117;}
+.mines-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0 2px;
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  word-break: break-all;
+  color: #cfd8c8;
+}
+
+/* 数字：周围有几个危险项。色阶和扫雷一致——1 蓝、2 绿、3 红，再多就暗红。 */
+.mines-num {position: absolute; top: 2px; right: 3px; font: 700 10px/1 var(--font-mono, monospace); font-style: normal; opacity: .95;}
+.mines-cell.n1 .mines-num {color: #7fb2e5;}
+.mines-cell.n2 .mines-num {color: #97c459;}
+.mines-cell.n3 .mines-num {color: #e28a6a;}
+.mines-cell.n4 .mines-num,
+.mines-cell.n5 .mines-num,
+.mines-cell.n6 .mines-num,
+.mines-cell.n7 .mines-num,
+.mines-cell.n8 .mines-num {color: #d1564a;}
+
+/* 插旗：标的是「可疑」。 */
+.mines-cell.flagged {background: #2a2416; border-color: #b08a3a; border-style: dashed;}
+.mines-flag {font-style: normal; font-size: 14px; color: #f0c25a; line-height: 1;}
+
+/* 放行了：看见它到底是什么。 */
+.mines-cell.risk {background: #3a1d18; border-color: #8a3a2a; cursor: default;}
+.mines-cell.risk .mines-name {color: #f2c0ad; font-size: 9px;}
+.mines-cell.risk:hover {background: #3a1d18; border-color: #8a3a2a;}
+.mines-boom {position: absolute; top: 1px; right: 3px; font-style: normal; font-size: 11px; color: #e2685a; line-height: 1;}
+
+.mines-result {padding: 8px 10px; border: 1px solid #3d4a35; border-radius: 4px; background: #1a2018;}
+.mines-result.won {border-color: #4f8a5a; background: #16220f;}
+.mines-result.lost {border-color: #8a3a2a; background: #241512;}
+.mines-result h4 {margin: 0 0 4px; font: 600 13px/1.3 var(--font-body); color: #efe0c0;}
+.mines-result p {margin: 3px 0; font: 11px/1.55 var(--font-body); color: #cfd8c8;}
+.mines-result ul {margin: 4px 0 4px 16px; padding: 0; font: 11px/1.55 var(--font-body); color: #d8c8b0;}
+.mines-result li {margin: 2px 0;}
+.mines-lesson {color: #f0d8a8 !important;}
+
+.mines-say {margin: 4px 0 0; font: 11px/1.55 var(--font-body); color: #d8dcc8; min-height: 2.4em;}
+.mines-legend {margin: 2px 0 0; font: 10px/1.4 var(--font-body); color: #7f8f7a;}

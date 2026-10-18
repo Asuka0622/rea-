@@ -50,3 +50,6 @@ export { mountManage } from './manage-game.js';
  * 逆转裁判式交叉询问：追问、出示证据、或判属实。规则在 cards-engine.js，画面在 cards-game.js。
  */
 export { mountCards } from './cards-game.js';
+// 排雷 · 权限扫描：格子是「新版悄悄加上去的条目」，插旗标记 + 数字推理就是安全排查。
+// 规则在 mines-engine.js，画面在 mine-game.js。
+export { mountMines } from './mine-game.js';

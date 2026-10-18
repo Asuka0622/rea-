@@ -1,6 +1,6 @@
 import { createPermissionLab } from "./permission-lab.js";
 import { cls } from "./mini-art.js";
-import { mountRhythm, mountTower, mountPipes, mountManage, mountCards } from "./case-minigames.js";
+import { mountRhythm, mountTower, mountPipes, mountManage, mountCards, mountMines } from "./case-minigames.js";
 import { fromBase64, toBase64, checksum, openSave } from "./save-lab.js";
 
 // 动手实验: each detective case's own hands-on step, between gathering evidence and closing the case.
@@ -1042,7 +1042,7 @@ function mountPacked({ h, icon, lab, onDone = () => {} }) {
 }
 
 const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
-  rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, packed: mountPacked };
+  rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, mines: mountMines, packed: mountPacked };
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint
