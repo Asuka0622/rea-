@@ -1049,6 +1049,14 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-slot i {display:block;font-style:normal;color:#e8c270;}
 .mini-td-enemy {position:absolute;top:26%;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;}
 .mini-td-enemy.sprite {padding:0;background:none;image-rendering:pixelated;}
+/* What kind of collector it is has to be readable at a glance — that is the whole decision. */
+.mini-td-tag {position:absolute;left:50%;top:-14px;transform:translateX(-50%);padding:1px 4px;font:9px/1.3 var(--font-body);
+  font-style:normal;color:#fff6dc;background:#2a1f33;border:1px solid #56406b;white-space:nowrap;}
+.mini-td-enemy[data-kind="contacts"] .mini-td-tag {background:#1c2c44;border-color:#3f6390;color:#cfe0f5;}
+.mini-td-enemy[data-kind="location"] .mini-td-tag {background:#16321f;border-color:#2f6b34;color:#cfe8d4;}
+.mini-td-enemy[data-kind="upload"] .mini-td-tag {background:#3a1c14;border-color:#7a3a26;color:#f5d8cf;}
+.mini-td-enemy.elite .mini-td-tag {border-width:2px;}
+.mini-td-stat.next {background:#231d2c;border-color:#56406b;color:#d8cbe8;}
 /* Where a collector was stopped: the sheet's "blocked" frame, left behind for a beat. */
 .mini-td-fall {position:absolute;top:26%;transform:translateX(-50%);image-rendering:pixelated;opacity:.9;}
 .mini-td-units {display:flex;flex-wrap:wrap;gap:8px;}

@@ -1,6 +1,6 @@
 # 小游戏素材需求：七种玩法（2026-10-18）
 
-小游戏跑在案件实验室面板里，现在全部是**代码画的占位**（色块、文字牌「空位/数据包/隐私」）。本清单把七种玩法从「代码占位」换成「像素演出」需要的东西一次列全。玩法本身的设计见 [minigame-genres.md](../minigame-genres.md)；委托房间的素材不在这里，见 [requests-case-rooms.md](requests-case-rooms.md)。
+小游戏跑在案件实验室面板里。本清单记录替换占位所需的像素演出素材，以及接入和验收状态；塔防、经营、卡牌已接入，节奏与管道素材待接入，格斗与时间线目前各保留一张概念图。玩法本身的设计见 [minigame-genres.md](../minigame-genres.md)；委托房间的素材不在这里，见 [requests-case-rooms.md](requests-case-rooms.md)。
 
 ## 一、统一规格（这一批都适用）
 

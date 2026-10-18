@@ -201,3 +201,66 @@ smith-thinking,铁叔,docs/art/review/sources/smith-thinking-source.png,public/a
 smith-surprised,铁叔,docs/art/review/sources/smith-surprised-source.png,public/art/faces/smith-surprised.webp,,,,320,320,是,,,待验收,铁叔四表情之一；透明PNG源稿，运行图透明WebP；待角色身份与头像裁切验收
 anim-smith,铁叔,docs/art/review/sources/anim-smith-source.png,public/art/pixel/anim-smith.png,,,,256,480,是,64×96,idle2 / walk-down4 / walk-up4 / walk-side4 / talk2,待验收,"4-column by 5-row transparent pixel sprite; normalized 64x96 baseline; review movement, timing and in-game scale"
 anim-smith-metadata,铁叔,docs/art/review/sources/anim-smith-source.png,public/art/pixel/anim-smith.json,,,,,,,64×96,idle2 / walk-down4 / walk-up4 / walk-side4 / talk2,待验收,Frame rows and per-frame timing metadata
+anim-qiushi,秋实,docs/art/review/sources/anim-qiushi-source.png,public/art/pixel/anim-qiushi.png,,,,256,576,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2 / 翻协议2,待验收,4列×6行透明像素精灵表，帧基线统一；待动作节奏与游戏接入验收
+anim-qiushi-metadata,秋实,docs/art/review/sources/anim-qiushi-source.png,public/art/pixel/anim-qiushi.json,,,,,,,64×96,idle2 / walk-down4 / walk-up4 / walk-side4 / talk2 / open-agreement2,待验收,行、帧数和逐帧时长元数据
+ada-normal,阿达·洛夫莱斯,docs/art/review/sources/ada-normal-source.png,public/art/faces/ada-normal.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+ada-thinking,阿达·洛夫莱斯,docs/art/review/sources/ada-thinking-source.png,public/art/faces/ada-thinking.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+ada-happy,阿达·洛夫莱斯,docs/art/review/sources/ada-happy-source.png,public/art/faces/ada-happy.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+ada-surprised,阿达·洛夫莱斯,docs/art/review/sources/ada-surprised-source.png,public/art/faces/ada-surprised.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+anim-ada,阿达·洛夫莱斯,docs/art/review/sources/anim-ada-source.png,public/art/pixel/anim-ada.png,,,,128,192,是,64×96,2×2；idle 2 + talk 2；见同名 JSON,待验收,第一章站立与说话精灵候选；脚底对齐，待游戏内确认
+anim-ada-metadata,阿达·洛夫莱斯,docs/art/review/sources/anim-ada-source.png,public/art/pixel/anim-ada.json,,,,,,,64×96,idle2/talk2；默认朝下；逐帧时长见 JSON,待验收,精灵表动画元数据
+babbage-normal,查尔斯·巴贝奇,docs/art/review/sources/babbage-normal-source.png,public/art/faces/babbage-normal.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+babbage-thinking,查尔斯·巴贝奇,docs/art/review/sources/babbage-thinking-source.png,public/art/faces/babbage-thinking.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+babbage-happy,查尔斯·巴贝奇,docs/art/review/sources/babbage-happy-source.png,public/art/faces/babbage-happy.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+babbage-surprised,查尔斯·巴贝奇,docs/art/review/sources/babbage-surprised-source.png,public/art/faces/babbage-surprised.webp,,,,320,320,是,,,待验收,1843年历史人物四表情候选；透明头像，沿用现有对话立绘风格
+anim-babbage,查尔斯·巴贝奇,docs/art/review/sources/anim-babbage-source.png,public/art/pixel/anim-babbage.png,,,,128,192,是,64×96,2×2；idle 2 + talk 2；见同名 JSON,待验收,第一章站立与说话精灵候选；脚底对齐，待游戏内确认
+anim-babbage-metadata,查尔斯·巴贝奇,docs/art/review/sources/anim-babbage-source.png,public/art/pixel/anim-babbage.json,,,,,,,64×96,idle2/talk2；默认朝下；逐帧时长见 JSON,待验收,精灵表动画元数据
+town-center-wet,比特镇雨天层,docs/art/review/sources/town-center-wet-source.png,public/art/pixel/regions/town-center-wet.png,,,,960,540,是,,,待验收,透明水洼与湿路反光；对齐对应秋季分区图，雨滴由代码绘制
+town-homes-wet,比特镇雨天层,docs/art/review/sources/town-homes-wet-source.png,public/art/pixel/regions/town-homes-wet.png,,,,960,540,是,,,待验收,透明水洼与湿路反光；对齐对应秋季分区图，雨滴由代码绘制
+town-craft-wet,比特镇雨天层,docs/art/review/sources/town-craft-wet-source.png,public/art/pixel/regions/town-craft-wet.png,,,,960,540,是,,,待验收,透明水洼与湿路反光；对齐对应秋季分区图，雨滴由代码绘制
+town-north-wet,比特镇雨天层,docs/art/review/sources/town-north-wet-source.png,public/art/pixel/regions/town-north-wet.png,,,,960,540,是,,,待验收,透明水洼与湿路反光；对齐对应秋季分区图，雨滴由代码绘制
+town-south-wet,比特镇雨天层,docs/art/review/sources/town-south-wet-source.png,public/art/pixel/regions/town-south-wet.png,,,,960,540,是,,,待验收,透明水洼与湿路反光；对齐对应秋季分区图，雨滴由代码绘制
+london-difference-engine,1843伦敦,docs/art/review/sources/difference-engine-source.png,public/art/pixel/eras/london/difference-engine.png,,,,64,96,是,,,待验收,黄铜差分机样机；无文字，待游戏内锚点验收
+london-operation-card,1843伦敦,docs/art/review/sources/operation-card-source.png,public/art/pixel/eras/london/operation-card.png,,,,24,36,是,,,待验收,打孔运算卡，无文字
+london-variable-card,1843伦敦,docs/art/review/sources/variable-card-source.png,public/art/pixel/eras/london/variable-card.png,,,,24,36,是,,,待验收,图形变量卡，无文字
+anim-lumi-victorian,维多利亚路米,docs/art/review/sources/anim-lumi-victorian-source.png,public/art/pixel/anim-lumi-victorian.png,,,,384,960,是,96×192,标准行；idle2/down4/up4/side4/talk2；见同名 JSON,待验收,薄荷发色与耳机保留，深色斗篷和小礼帽；待动作验收
+anim-lumi-victorian-metadata,维多利亚路米,docs/art/review/sources/anim-lumi-victorian-source.png,public/art/pixel/anim-lumi-victorian.json,,,,,,,96×192,标准行元数据,待验收,逐行帧数、时长与朝向见 JSON
+room-ailab,AI研究所,docs/art/review/sources/room-ailab-320x180-source.png,public/art/pixel/room-ailab.png,,,,320,180,否,,,待验收,比特镇AI研究所室内候选；前半地板留作可走区，待锚点与碰撞验收
+north-clocktower-running,北区钟楼,docs/art/review/sources/north-clocktower-running-source.png,public/art/pixel/regions/north-clocktower-running.png,,,,960,540,是,,,待验收,沿用停摆版建筑与位置，只将表针改为运行态；待游戏叠图验收
+town-north-night,北区夜景,docs/art/review/sources/town-north-night-source.png,public/art/pixel/regions/town-north-night.png,,,,960,540,否,,,待验收,秋季地图夜间候选；基于夜色调暗并叠加对齐的发光层，待亮度验收
+ui-clock,比特镇导航栏,docs/art/review/sources/ui-clock-source.png,public/art/pixel/ui/ui-clock.png,,,,32,32,是,,,待验收,木框正常走时小钟；32×32透明像素图标，待导航栏尺寸与显示验收
+ui-clock-small,比特镇导航栏,docs/art/review/sources/ui-clock-small-source.png,public/art/pixel/ui/ui-clock-small.png,,,,16,16,是,,,待验收,32×32小钟按最近邻缩为16×16，待导航栏显示验收
+weather-clear,比特镇导航栏,docs/art/review/sources/weather-clear-source.png,public/art/pixel/ui/weather-clear.png,,,,16,16,是,,,待验收,晴天太阳图标；16×16透明像素图标
+weather-rain,比特镇导航栏,docs/art/review/sources/weather-rain-source.png,public/art/pixel/ui/weather-rain.png,,,,16,16,是,,,待验收,雨云图标；16×16透明像素图标
+weather-snow,比特镇导航栏,docs/art/review/sources/weather-snow-source.png,public/art/pixel/ui/weather-snow.png,,,,16,16,是,,,待验收,雪云图标；16×16透明像素图标
+season-spring,比特镇导航栏,docs/art/review/sources/season-spring-source.png,public/art/pixel/ui/season-spring.png,,,,16,16,是,,,待验收,春季嫩芽图标；16×16透明像素图标
+season-summer,比特镇导航栏,docs/art/review/sources/season-summer-source.png,public/art/pixel/ui/season-summer.png,,,,16,16,是,,,待验收,夏季向日葵图标；16×16透明像素图标
+season-autumn,比特镇导航栏,docs/art/review/sources/season-autumn-source.png,public/art/pixel/ui/season-autumn.png,,,,16,16,是,,,待验收,秋季红叶图标；16×16透明像素图标
+season-winter,比特镇导航栏,docs/art/review/sources/season-winter-source.png,public/art/pixel/ui/season-winter.png,,,,16,16,是,,,待验收,冬季雪花图标；16×16透明像素图标
+skill-ai-basics,技能树,docs/art/review/sources/skill-ai-basics-source.png,public/art/pixel/skills/skill-ai-basics.png,,,,32,32,是,,,待验收,AI是什么打孔卡图标；32×32透明像素图标
+skill-search-reasoning,技能树,docs/art/review/sources/skill-search-reasoning-source.png,public/art/pixel/skills/skill-search-reasoning.png,,,,32,32,是,,,待验收,搜索与推理棋盘加放大镜图标；32×32透明像素图标
+skill-machine-learning,技能树,docs/art/review/sources/skill-machine-learning-source.png,public/art/pixel/skills/skill-machine-learning.png,,,,32,32,是,,,待验收,机器学习标注卡片图标；32×32透明像素图标
+skill-deep-learning,技能树,docs/art/review/sources/skill-deep-learning-source.png,public/art/pixel/skills/skill-deep-learning.png,,,,32,32,是,,,待验收,深度学习神经网络图标；32×32透明像素图标
+skill-generative-ai,技能树,docs/art/review/sources/skill-generative-ai-source.png,public/art/pixel/skills/skill-generative-ai.png,,,,32,32,是,,,待验收,生成式AI对话气泡图标；32×32透明像素图标
+skill-ai-responsibility,技能树,docs/art/review/sources/skill-ai-responsibility-source.png,public/art/pixel/skills/skill-ai-responsibility.png,,,,32,32,是,,,待验收,AI与责任的盾牌和放大镜图标；32×32透明像素图标
+town-center-spring,比特镇中心区,docs/art/review/sources/town-center-spring-source.png,public/art/pixel/regions/town-center-spring.png,春季,晴天,中午,960,540,否,,,待验收,复用收件箱#86并缩至运行尺寸；道路布局对应秋季中心区，待出口与碰撞验收
+town-homes-spring,比特镇住宅区,docs/art/review/sources/town-homes-spring-source.png,public/art/pixel/regions/town-homes-spring.png,春季,晴天,中午,960,540,否,,,待验收,复用收件箱#87并缩至运行尺寸；道路布局对应秋季住宅区，待出口与碰撞验收
+town-craft-spring,比特镇手艺街,docs/art/review/sources/town-craft-spring-source.png,public/art/pixel/regions/town-craft-spring.png,春季,晴天,中午,960,540,否,,,待验收,复用收件箱#88并缩至运行尺寸；道路布局对应秋季手艺街，待出口与碰撞验收
+town-north-spring,比特镇北区,docs/art/review/sources/town-north-spring-source.png,public/art/pixel/regions/town-north-spring.png,春季,晴天,中午,960,540,否,,,待验收,复用收件箱#89并缩至运行尺寸；道路布局对应秋季北区，待出口与碰撞验收
+town-south-spring,比特镇南岸,docs/art/review/sources/town-south-spring-source.png,public/art/pixel/regions/town-south-spring.png,春季,晴天,中午,960,540,否,,,待验收,复用收件箱#90并缩至运行尺寸；道路布局对应秋季南岸，待出口与碰撞验收
+town-center-summer,比特镇中心区,docs/art/review/sources/town-center-summer-source.png,public/art/pixel/regions/town-center-summer.png,夏季,晴天,中午,960,540,否,,,待验收,复用收件箱#71并缩至运行尺寸；道路布局对应秋季中心区，待出口与碰撞验收
+town-homes-summer,比特镇住宅区,docs/art/review/sources/town-homes-summer-source.png,public/art/pixel/regions/town-homes-summer.png,夏季,晴天,中午,960,540,否,,,待验收,复用收件箱#72并缩至运行尺寸；道路布局对应秋季住宅区，待出口与碰撞验收
+town-craft-summer,比特镇手艺街,docs/art/review/sources/town-craft-summer-source.png,public/art/pixel/regions/town-craft-summer.png,夏季,晴天,中午,960,540,否,,,待验收,复用收件箱#73并缩至运行尺寸；道路布局对应秋季手艺街，待出口与碰撞验收
+town-north-summer,比特镇北区,docs/art/review/sources/town-north-summer-source.png,public/art/pixel/regions/town-north-summer.png,夏季,晴天,中午,960,540,否,,,待验收,复用收件箱#74并缩至运行尺寸；道路布局对应秋季北区，待出口与碰撞验收
+town-south-summer,比特镇南岸,docs/art/review/sources/town-south-summer-source.png,public/art/pixel/regions/town-south-summer.png,夏季,晴天,中午,960,540,否,,,待验收,复用收件箱#75并缩至运行尺寸；道路布局对应秋季南岸，待出口与碰撞验收
+town-center-winter,比特镇中心区,docs/art/review/sources/town-center-winter-source.png,public/art/pixel/regions/town-center-winter.png,冬季,晴天,中午,960,540,否,,,待验收,复用收件箱#96并缩至运行尺寸；道路布局对应秋季中心区，待出口与碰撞验收
+town-homes-winter,比特镇住宅区,docs/art/review/sources/town-homes-winter-source.png,public/art/pixel/regions/town-homes-winter.png,冬季,晴天,中午,960,540,否,,,待验收,复用收件箱#97并缩至运行尺寸；道路布局对应秋季住宅区，待出口与碰撞验收
+town-craft-winter,比特镇手艺街,docs/art/review/sources/town-craft-winter-source.png,public/art/pixel/regions/town-craft-winter.png,冬季,晴天,中午,960,540,否,,,待验收,复用收件箱#98并缩至运行尺寸；道路布局对应秋季手艺街，待出口与碰撞验收
+town-north-winter,比特镇北区,docs/art/review/sources/town-north-winter-source.png,public/art/pixel/regions/town-north-winter.png,冬季,晴天,中午,960,540,否,,,待验收,复用收件箱#99并缩至运行尺寸；道路布局对应秋季北区，待出口与碰撞验收
+town-south-winter,比特镇南岸,docs/art/review/sources/town-south-winter-source.png,public/art/pixel/regions/town-south-winter.png,冬季,晴天,中午,960,540,否,,,待验收,复用收件箱#100并缩至运行尺寸；道路布局对应秋季南岸，待出口与碰撞验收
+archivist-normal,老秦,docs/art/review/sources/archivist-normal-source.png,public/art/faces/archivist-normal.webp,,,,320,320,是,,,待验收,档案馆老秦正常表情；透明头像候选
+archivist-thinking,老秦,docs/art/review/sources/archivist-thinking-source.png,public/art/faces/archivist-thinking.webp,,,,320,320,是,,,待验收,档案馆老秦思考表情；透明头像候选
+archivist-happy,老秦,docs/art/review/sources/archivist-happy-source.png,public/art/faces/archivist-happy.webp,,,,320,320,是,,,待验收,档案馆老秦微笑表情；透明头像候选
+archivist-surprised,老秦,docs/art/review/sources/archivist-surprised-source.png,public/art/faces/archivist-surprised.webp,,,,320,320,是,,,待验收,档案馆老秦惊讶表情；透明头像候选
+anim-guests,维多利亚沙龙宾客,docs/art/review/sources/anim-guests-source.png,public/art/pixel/anim/anim-guests.png,,,,128,384,是,64×96,四人各一行；每人待机2帧；见同名JSON,待验收,四位宾客统一脚底线与角色比例；待沙龙位置和动作验收
+anim-guests-metadata,维多利亚沙龙宾客,docs/art/review/sources/anim-guests-source.png,public/art/pixel/anim/anim-guests.json,,,,,,,64×96,四行；guest-*-idle 2帧；520ms,待验收,四种宾客服饰和逐行映射见JSON

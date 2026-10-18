@@ -223,18 +223,41 @@
         }
       ],
       "tower": {
-        "budget": 26,
-        "regen": 1.6,
+        "budget": 20,
+        "regen": 1,
         "hp": 3,
+        "weak": 0.2,
+        "eliteHp": 1.8,
+        "eliteSpeed": 0.7,
+        "kinds": {
+          "contacts": {
+            "label": "通讯录",
+            "why": "它想读你的联系人——手电筒根本用不上"
+          },
+          "location": {
+            "label": "定位",
+            "why": "它想知道你在哪——手电筒根本用不上"
+          },
+          "upload": {
+            "label": "后台上传",
+            "why": "它想定时把数据发走，你没点过同步"
+          }
+        },
         "slots": [
           {
-            "at": 30
+            "at": 20
+          },
+          {
+            "at": 36
           },
           {
             "at": 52
           },
           {
-            "at": 74
+            "at": 68
+          },
+          {
+            "at": 84
           }
         ],
         "units": [
@@ -243,43 +266,78 @@
             "art": "lock",
             "label": "最小权限",
             "cost": 8,
-            "dps": 2.2,
+            "dps": 4.2,
             "range": 24,
-            "note": "只给开灯要用的权限"
+            "strong": [
+              "contacts",
+              "location"
+            ],
+            "note": "不给权限，它读不到"
           },
           {
             "id": "throttle",
             "label": "限速节流",
             "cost": 5,
-            "dps": 1.0,
+            "dps": 0.8,
             "range": 20,
             "slow": true,
-            "note": "让收集走得慢一点"
+            "note": "只拖慢，杀不掉任何一个"
           },
           {
             "id": "sandbox",
             "label": "沙盒隔离",
             "cost": 10,
-            "dps": 3.0,
+            "dps": 4.8,
             "range": 28,
-            "note": "关起来跑，出不去"
+            "strong": [
+              "upload"
+            ],
+            "note": "关起来跑，发不出去"
           }
         ],
         "waves": [
           {
             "count": 2,
-            "hp": 2.5,
-            "speed": 9
-          },
-          {
-            "count": 3,
-            "hp": 3,
+            "kind": "contacts",
+            "hp": 6,
             "speed": 10
           },
           {
-            "count": 4,
-            "hp": 4,
+            "count": 3,
+            "kind": "upload",
+            "hp": 7,
             "speed": 11
+          },
+          {
+            "count": 3,
+            "kinds": [
+              "contacts",
+              "upload"
+            ],
+            "hp": 8,
+            "speed": 11
+          },
+          {
+            "count": 4,
+            "kinds": [
+              "contacts",
+              "location",
+              "upload"
+            ],
+            "hp": 8,
+            "speed": 12,
+            "elite": 1
+          },
+          {
+            "count": 5,
+            "kinds": [
+              "upload",
+              "contacts",
+              "location"
+            ],
+            "hp": 9,
+            "speed": 12,
+            "elite": 2
           }
         ]
       }

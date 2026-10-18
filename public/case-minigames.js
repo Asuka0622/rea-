@@ -85,19 +85,41 @@ function head(h, icon, title, onHint) {
 
 /**
  * 塔防 · 权限 (王奶奶)
- * 数据：{ budget, regen, hp, slots:[{at}], units:[{id,label,cost,dps,range,slow,note}], waves:[{count,hp,speed}] }
+ * 数据：{ budget, regen, hp, weak, eliteHp, eliteSpeed,
+ *        kinds:{id:{label,why}}, slots:[{at}],
+ *        units:[{id,label,cost,dps,range,slow,strong:[kind],note}],
+ *        waves:[{count,kind|kinds[],hp,speed,elite}] }
+ *
+ * 每个措施只克制它真能管住的那类收集者（最小权限管"读"、沙盒管"发"、限速谁也杀不掉，
+ * 只拖慢）。克错的也能打，但只打 weak 折——所以铺满不再等于赢，得看清来的是什么。
  */
 export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
   const spec = lab.tower || {};
   const units = spec.units || [];
   const slots = (spec.slots || []).map((slot) => ({ ...slot, unit: null }));
   const waves = spec.waves || [];
+  const kinds = spec.kinds || {};
+  const kindLabel = (id) => kinds[id]?.label || id;
+  /** A measure that names no `strong` list (throttle) hits everything for the same small amount. */
+  const dpsOn = (unit, kind) => (unit.strong ? (unit.strong.includes(kind) ? unit.dps : unit.dps * (spec.weak ?? 0.4)) : unit.dps);
+  const counterOf = (kind) => units.find((u) => u.strong?.includes(kind));
+  const waveKinds = (w) => (w.kind ? [w.kind] : w.kinds || []);
+  const waveText = (w) => {
+    const tally = new Map();
+    for (let i = 0; i < (w.count || 0); i += 1) {
+      const list = waveKinds(w);
+      const k = list[i % list.length];
+      tally.set(k, (tally.get(k) || 0) + 1);
+    }
+    return [...tally].map(([k, n]) => `${kindLabel(k)}×${n}`).join("、") + (w.elite ? `（${w.elite} 个厚皮）` : "");
+  };
   let budget = spec.budget ?? 24;
   let hp = spec.hp ?? 3;
   let wave = -1;
   let enemies = [];
   let picked = units[0]?.id || null;
   let running = false;
+  let idle = false;
   let last = 0;
 
   const bar = h("div", { class: "mini-td-bar" });
@@ -107,7 +129,8 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const spawn = h("div", { class: "mini-td-spawn" }, artImg(h, "mini-td-spawn", "mini-td-icon"), h("small", {}, "收集者"));
   const path = h("div", { class: "mini-td-path" }, home);
   artBg(path, "mini-td-path");
-  const say = h("p", { class: "mini-say", role: "status" }, "先选一个措施，点路径上的位置放下去。收集者从右边来，走到最左边就泄出去了。");
+  const say = h("p", { class: "mini-say", role: "status" },
+    "看清楚来的是什么：想「读」的用最小权限挡住，想「发」的用沙盒关住，限速只拖慢、杀不掉。预算不够铺满，得挑。");
   const palette = h("div", { class: "mini-td-units" });
   const start = h("button", { class: "btn primary", type: "button", onclick: () => nextWave() }, icon("scan", { size: 14 }), "放下一波");
   const root = h("div", { class: "mini mini-td" }, head(h, icon, lab.sampleTitle || "权限塔防", onHint), bar, path, palette, h("div", { class: "mini-controls" }, start), say);
@@ -149,7 +172,7 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     if (budget < unit.cost) { say.textContent = `${unit.label}：预算不够升级。`; return; }
     budget -= unit.cost;
     unit.level += 1;
-    unit.dps = Math.round(unit.dps * 1.6);
+    unit.dps = Math.round(unit.dps * 1.6 * 10) / 10;
     say.textContent = `${unit.label} 升到 ${unit.level} 级。`;
     paint();
   };
@@ -163,10 +186,13 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
 
   const paint = () => {
     const maxHp = spec.hp ?? 3;
+    const next = waves[wave + 1];
     bar.replaceChildren(
       h("span", { class: "mini-td-stat" }, `预算 ${Math.round(budget)}`),
       h("span", { class: "mini-td-stat" }, `隐私 ${"●".repeat(Math.max(0, hp))}${"○".repeat(Math.max(0, maxHp - hp))}`),
-      h("span", { class: "mini-td-stat" }, `第 ${Math.max(1, wave + 1)}/${waves.length} 波`));
+      h("span", { class: "mini-td-stat" }, `第 ${Math.max(1, wave + 1)}/${waves.length} 波`),
+      // What is coming next is shown on purpose: knowing the kind is what makes the pick a decision.
+      next ? h("span", { class: "mini-td-stat next" }, `下一波 ${waveText(next)}`) : null);
     slotEls.forEach((el, i) => {
       const slot = slots[i];
       el.className = cls(["mini-td-slot", slot.unit && "placed"]);
@@ -191,8 +217,8 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const drawEnemies = (now = performance.now()) => {
     for (const enemy of enemies) {
       if (!enemy.el) {
-        enemy.el = h("div", { class: cls(["mini-td-enemy", sheet && "sprite"]) });
-        if (!sheet) enemy.el.textContent = "数据包";
+        enemy.el = h("div", { class: cls(["mini-td-enemy", sheet && "sprite", enemy.elite && "elite"]), "data-kind": enemy.kind },
+          h("i", { class: "mini-td-tag" }, kindLabel(enemy.kind), enemy.elite ? " · 厚" : ""));
         path.append(enemy.el);
       }
       enemy.el.style.left = `${enemy.x}%`;
@@ -221,27 +247,33 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
         enemy.dead = true;
         hp -= 1;
         onMistake();
-        say.textContent = "泄出去了：有收集者走到了最左边。";
+        const fix = counterOf(enemy.kind);
+        say.textContent = `泄出去了「${kindLabel(enemy.kind)}」：${kinds[enemy.kind]?.why || ""}`
+          + (fix ? ` 它的路上要放「${fix.label}」。` : "");
       }
     }
-    for (const enemy of enemies) for (const slot of slots) {
+    // One measure shoots one collector at a time — the one closest to getting out. With splash
+    // damage a crowd was no harder than a single one, and the whole game collapsed into "fill it up".
+    for (const slot of slots) {
       const unit = slot.unit;
-      if (!unit || enemy.dead) continue;
-      if (Math.abs(enemy.x - slot.at) <= (unit.range ?? 22)) {
-        enemy.hp -= unit.dps * dt;
-        if (unit.slow) enemy.slow = 1.2;
-        if (enemy.hp <= 0) {
-          enemy.dead = true;
-          say.textContent = `${unit.label}拦下了一个。`;
-          // Leave the "blocked" frame lying where it fell for a moment, so a kill reads as a kill.
-          const fall = sheet?.animations["blocked-fall"];
-          if (fall) {
-            // Not .mini-td-enemy: drawEnemies() sweeps those every frame, and this one has to stay.
-            const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0]}px;height:${sheet.frame[1]}px` });
-            spriteCss(ghost, fall.row, fall.start || 0);
-            path.append(ghost);
-            setTimeout(() => ghost.remove(), (Array.isArray(fall.ms) ? fall.ms[0] : fall.ms) + 60);
-          }
+      if (!unit) continue;
+      const enemy = enemies.filter((e) => !e.dead && Math.abs(e.x - slot.at) <= (unit.range ?? 22))
+        .sort((a, b) => a.x - b.x)[0];
+      if (!enemy) continue;
+      enemy.hp -= dpsOn(unit, enemy.kind) * dt;
+      if (unit.slow) enemy.slow = 1.2;
+      if (enemy.hp <= 0) {
+        enemy.dead = true;
+        const exact = unit.strong?.includes(enemy.kind);
+        say.textContent = `${unit.label}${exact ? "拦下了" : "勉强拖住了"}一个${kindLabel(enemy.kind)}。`;
+        // Leave the "blocked" frame lying where it fell for a moment, so a kill reads as a kill.
+        const fall = sheet?.animations["blocked-fall"];
+        if (fall) {
+          // Not .mini-td-enemy: drawEnemies() sweeps those every frame, and this one has to stay.
+          const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0]}px;height:${sheet.frame[1]}px` });
+          spriteCss(ghost, fall.row, fall.start || 0);
+          path.append(ghost);
+          setTimeout(() => ghost.remove(), (Array.isArray(fall.ms) ? fall.ms[0] : fall.ms) + 60);
         }
       }
     }
@@ -249,8 +281,14 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     paint();
     drawEnemies(now);
     if (hp <= 0) return finish(false);
-    if (!enemies.length && wave < waves.length - 1) return nextWave();
     if (!enemies.length && wave >= waves.length - 1) return finish(true);
+    // Between waves the clock keeps running — budget keeps coming — but the next wave waits for the
+    // player. Otherwise there is no time to save up for the measure the next kind needs.
+    if (!enemies.length && !idle) {
+      idle = true;
+      const nxt = waves[wave + 1];
+      if (nxt) say.textContent = `这一波清了。下一波是 ${waveText(nxt)}——趁现在补措施，攒够了再点「放下一波」。`;
+    }
     requestAnimationFrame(tick);
   };
 
@@ -258,10 +296,22 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     if (running && enemies.length) return; // mashing the button must not stack two waves on the path
     if (wave >= waves.length - 1) return finish(true);
     wave += 1;
-    const spec2 = waves[wave];
-    say.textContent = `第 ${wave + 1} 波：${spec2.count} 个收集者。`;
-    for (let i = 0; i < spec2.count; i += 1) enemies.push({ x: 100 - i * 8, hp: spec2.hp ?? 3, speed: spec2.speed ?? 6, slow: 0 });
+    const w = waves[wave];
+    const list = waveKinds(w);
+    say.textContent = `第 ${wave + 1} 波：${waveText(w)}。`;
+    for (let i = 0; i < (w.count || 0); i += 1) {
+      const elite = i < (w.elite || 0);
+      enemies.push({
+        x: 100 - i * 8,
+        hp: (w.hp ?? 3) * (elite ? (spec.eliteHp ?? 2.6) : 1),
+        speed: (w.speed ?? 6) * (elite ? (spec.eliteSpeed ?? 0.7) : 1),
+        slow: 0,
+        kind: list[i % list.length],
+        elite,
+      });
+    }
     running = true;
+    idle = false;
     last = performance.now();
     paint();
     drawEnemies(last);

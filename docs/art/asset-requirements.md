@@ -168,11 +168,23 @@
 
 2026-10-18：五张序章/伦敦剧情插画已生成640×360候选并登记在交付表，预览见 `docs/art/review/scenes-p1-contact.png`；待剧情和游戏内验收。
 
+2026-10-18：阿达与巴贝奇的四表情透明头像及站立/说话精灵候选已交，预览见 `docs/art/review/ada-babbage-portraits-contact.png`、`docs/art/review/animations/anim-ada-babbage-contact.png`；人物和动作映射待游戏验收。
+
+2026-10-18：五区透明雨天叠层已按现有步行遮罩生成；差分机样机、运算卡、变量卡已交，预览见 `docs/art/review/wet/town-wet-contact.png`、`docs/art/review/london-props-contact.png`。路米维多利亚标准行也已交，预览见 `docs/art/review/animations/anim-lumi-victorian-contact.png`。以上候选仍需游戏内叠图、锚点与动作验收。
+
+2026-10-18：AI 研究所 320×180 房间、北区夜景图和正常版钟楼覆盖图已交候选；预览见 `docs/art/review/room-ailab-preview.png`、`docs/art/review/town/town-north-night-preview.png`、`docs/art/review/town/north-clocktower-running-composite.png`。三项均待游戏内亮度、锚点与碰撞验收。
+
 2026-10-18：钟楼内部与1843年伦敦街区、沙龙、书房已提交运行尺寸候选；预览见 `docs/art/review/room-tower-inside-contact.png`、`docs/art/review/london-p1-contact.png`。需游戏内核对可走区、门口/桌面锚点与互动摆位。
+
+2026-10-18：导航栏正常钟、晴雨雪与春夏秋冬图标、AI技能树六个主干图标已交统一像素调色板候选；预览见 `docs/art/review/p2-icons-contact.png`。待界面映射与缩放验收。
+
+2026-10-18：春、夏、冬三套五区地图均从已登记收件图复用，按中心、住宅、手艺、北区、南岸映射并缩放至960×540；预览见 `docs/art/review/seasonal-maps-contact.png`。布局与道路目测对齐，仍需逐区验收出口、碰撞和遮挡。
+
+2026-10-18：老秦四表情头像与四位维多利亚沙龙宾客两帧待机精灵候选已出；预览见 `docs/art/review/archivist-portraits-contact.png`、`docs/art/review/anim-guests-contact.png`。六种小动物已按收件箱 #167–#172 动作行整理，需比例与游戏锚点验收。
 
 ## 6. P2 与暂停范围
 
-**以后再做**：春夏冬地图和室内版本接入、喷泉/水车/烟囱/跳鱼等环境小动画、正常版钟楼、AI研究所、天气季节图标、六条AI技能主干图标、老秦、沙龙宾客。
+**待后续验收/接入**：春夏冬地图和室内版本、喷泉/水车/烟囱/跳鱼等环境小动画、正常版钟楼、AI研究所、天气季节图标、六条AI技能主干图标、老秦、沙龙宾客。已生成的候选以 `docs/art/delivery-2026-10-17.csv` 为准。
 
 **本轮不要继续制作**：汴京、旧中世纪/工业革命路线、二进制灯和两个抽屉等旧章节道具、旧角色比比、旧五主干技能图标、旧齿轮版钟楼内部。已有文件保留归档，不删除。
 
