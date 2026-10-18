@@ -33,3 +33,27 @@ test("each lab finds what it needs in the sample code", () => {
   assert.equal(typeof packed.body, "string");
   assert.equal(typeof JSON.parse(packed.body).gold, "number");
 });
+
+test("catching the ledger in the act: each claim only accepts the record that really proves it", async () => {
+  const { networkProves, NETWORK_CLAIMS } = await import("../public/case-labs.js");
+  const ctx = { syncUrl: "https://api.ledger-sync.example/v1/sync", statsUrl: "https://collect.quiet-stats.example/v2/report", bait: "诱饵-AB12" };
+  const startup = { kind: "net", url: ctx.statsUrl, body: { device: {}, clipboard: "" } };
+  const later = { kind: "net", url: ctx.statsUrl, body: { device: {}, clipboard: "诱饵-AB12" } };
+  const sync = { kind: "net", url: ctx.syncUrl, body: [{ note: "奶茶", amount: 18 }] };
+  const emptySync = { kind: "net", url: ctx.syncUrl, body: [] };
+  const peek = { kind: "clip", text: "诱饵-AB12" };
+  const emptyPeek = { kind: "clip", text: "" };
+  assert.deepEqual(NETWORK_CLAIMS.map((c) => c.id), ["online", "peek", "exfil", "control"]);
+  assert.equal(networkProves("online", startup, ctx).ok, true);
+  assert.equal(networkProves("online", sync, ctx).ok, false, "a sync the user pressed is not 'online without asking'");
+  assert.equal(networkProves("peek", peek, ctx).ok, true);
+  assert.equal(networkProves("peek", emptyPeek, ctx).ok, false, "reading an empty clipboard proves nothing was taken");
+  assert.equal(networkProves("exfil", startup, ctx).ok, false, "the first startup report is still empty: the twist");
+  assert.equal(networkProves("exfil", peek, ctx).ok, false, "reading is not sending");
+  const caught = networkProves("exfil", later, ctx);
+  assert.equal(caught.ok, true);
+  assert.equal(caught.baited, true);
+  assert.equal(networkProves("control", sync, ctx).ok, true);
+  assert.equal(networkProves("control", emptySync, ctx).ok, false);
+  assert.equal(networkProves("control", startup, ctx).ok, false);
+});

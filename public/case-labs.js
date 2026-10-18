@@ -109,45 +109,95 @@ const appWindow = (h, title, tools, body) => h("div", { class: "lab-window" }, h
 function ledgerShim(config) {
   window.ledger = { add: (entry) => __invoke("ledger:add", entry), list: () => __invoke("ledger:list"), sync: () => __invoke("ledger:sync") };
   window.helper = { peek: () => __invoke("helper:peek-clipboard") };
-  // 沙盒时间加速：定时器按倍速走
+  // 沙盒时间：定时器照常按倍速走；「快进」时把登记过的定时任务都跑一次（就像时间真的过去了）。
   const every = window.setInterval;
-  window.setInterval = (fn, ms, ...rest) => every(fn, ms / config.speed, ...rest);
+  const timers = [];
+  window.setInterval = (fn, ms, ...rest) => {
+    timers.push(() => fn(...rest));
+    return every(fn, ms / (config.speed || 1), ...rest);
+  };
+  addEventListener("message", (event) => {
+    if (event.data?.lab === "ff") for (const run of timers) run();
+  });
 }
 
 const LEDGER_CSS = `body{margin:0;padding:14px;font:14px/1.6 system-ui,sans-serif;background:#fbf6e6;color:#2b2b25}h1{margin:0 0 10px;font-size:18px}input{width:42%;margin:0 6px 8px 0;padding:6px;border:2px solid #b19b69;background:#fff}button{margin:0 6px 8px 0;padding:6px 12px;border:2px solid #2b2b25;background:#e8c270;font:inherit;cursor:pointer}ul{margin:4px 0;padding-left:18px}`;
+
+/**
+ * 行为监视器的四件「要证明的事」。玩家自己做实验，再从监视器里挑一条记录钉上去当证据；
+ * 判断这条记录证不证明这件事的，就是下面这个函数（Node 测试也用它）。
+ * ctx: { syncUrl, statsUrl, bait }：bait 是玩家放进剪贴板的诱饵（可以为空）。
+ */
+export const NETWORK_CLAIMS = [
+  { id: "online", text: "没点同步，它也在联网", hint: "启动它，什么都别点，看监视器里有没有网络请求。" },
+  { id: "peek", text: "它在偷看你的剪贴板", hint: "先复制点东西进剪贴板。读剪贴板的是一个定时任务，时间不会自己走快——试试「快进 30 秒」。" },
+  { id: "exfil", text: "你复制的东西会被它发走", hint: "剪贴板被读走以后先存在本地。它什么时候会往外发东西？想想一启动时那个请求。用一个独一无二的「诱饵」更容易认出来。" },
+  { id: "control", text: "对照：同步本身没问题，只发了账目", hint: "冤枉好人也不行。记一笔账，自己点「同步」，看看那个请求里装的是什么。" },
+];
+
+export function networkProves(claimId, row, ctx) {
+  if (!row) return { ok: false, why: "先从监视器里挑一条记录。" };
+  const isStats = row.kind === "net" && row.url === ctx.statsUrl;
+  const isSync = row.kind === "net" && row.url === ctx.syncUrl;
+  const sent = isStats ? row.body?.clipboard || "" : "";
+  switch (claimId) {
+    case "online":
+      if (isStats) return { ok: true, why: "没人点任何按钮，它一启动就往统计服务器发了一个请求。" };
+      if (isSync) return { ok: false, why: "这条是你自己点「同步」发的，证明不了「没点也联网」。" };
+      return { ok: false, why: "这条不是网络请求。" };
+    case "peek":
+      if (row.kind === "clip" && row.text) return { ok: true, why: "界面上没有这个按钮，定时任务却把剪贴板读走了。" };
+      if (row.kind === "clip") return { ok: false, why: "它确实去读了，可那时剪贴板是空的——先复制点东西，才证明它读到了。" };
+      return { ok: false, why: "这条是网络请求，不是读剪贴板。" };
+    case "exfil":
+      if (isStats && sent) {
+        const baited = ctx.bait && sent.includes(ctx.bait);
+        return { ok: true, baited, why: baited ? `你的诱饵「${ctx.bait}」原样出现在发往统计服务器的请求里——铁证。` : "你复制过的文字出现在发往统计服务器的请求里。" };
+      }
+      if (isStats) return { ok: false, why: "这个请求里的 clipboard 还是空的。剪贴板是先被存下来的——它要到什么时候才会发出去？" };
+      if (row.kind === "clip") return { ok: false, why: "这条只证明它读了剪贴板，还没证明发出去。" };
+      return { ok: false, why: "同步请求里只有账目，没有剪贴板。" };
+    case "control":
+      if (isSync && Array.isArray(row.body) && row.body.length) return { ok: true, why: "同步是你自己点的，发往它自己的同步服务器，里面只有账目。这一项冤枉不了它。" };
+      if (isSync) return { ok: false, why: "这次同步里一笔账都没有，看不出它发了什么。先记一笔再同步。" };
+      return { ok: false, why: "对照要用你自己点「同步」发出的那条。" };
+    default:
+      return { ok: false, why: "" };
+  }
+}
 
 function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
   const { sources } = lab;
   const syncUrl = sources["main.js"].match(/SYNC_URL = "([^"]+)"/)?.[1];
   const statsUrl = sources["main.js"].match(/STATS_URL = "([^"]+)"/)?.[1];
-  const speed = 10;
+  // 时间按真实的走（30 秒才读一次剪贴板）；想快点看到定时任务，玩家得自己去点「快进」。
+  const speed = 1;
   const device = { host: "XIAOLIN-PC", user: "xiaolin", platform: "win32", memory: 17179869184 };
-  const store = { entries: [], lastClipboard: "" }; // electron-store: kept on disk across restarts
-  const clips = ["取件码 5208，明天下午去驿站拿", "周末聚餐 AA：每人 86 元"];
+  const store = { entries: [], lastClipboard: "" }; // electron-store：存在硬盘上，重启也在
+  const samples = ["取件码 5208，明天下午去驿站拿", "周末聚餐 AA：每人 86 元"];
   let clipboard = "";
+  let bait = "";
   let boots = 0;
-  let bootAt = 0;
+  let clock = 0; // 沙盒里过了多少秒（这一次运行）
   let pendingBoot = false;
-  let open = null; // log row shown in detail
+  let open = null;
   let finished = false;
+  let selected = null; // 选中的「要证明的事」，接下来点的记录钉给它
   const log = [];
-  const ticks = new Set();
+  const proofs = new Map(); // claim id -> row
+  const claims = NETWORK_CLAIMS.map((c) => ({ ...c, ...lab.tasks?.[c.id] }));
   const say = h("p", { class: "lab-say", role: "status" });
 
-  const stamp = () => {
-    const s = Math.floor(((Date.now() - bootAt) / 1000) * speed);
-    return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-  };
+  const stamp = () => `${String(Math.floor(clock / 60)).padStart(2, "0")}:${String(Math.floor(clock % 60)).padStart(2, "0")}`;
   function record(row) {
     const last = log.at(-1);
     if (last && row.kind === "clip" && last.kind === "clip" && last.text === row.text && last.boot === boots) last.count += 1;
     else log.push({ ...row, id: log.length, boot: boots, at: stamp(), count: 1 });
-    check();
     render();
   }
-  const post = (url, body) => record({ kind: "net", url, body, label: url === syncUrl ? "normal" : "bad" });
+  const post = (url, body) => record({ kind: "net", url, body: JSON.parse(JSON.stringify(body)) });
 
-  // main.js, played here.
+  // main.js，在这里扮演。
   const handlers = {
     "ledger:add": (entry) => {
       store.entries.push({ ...entry, at: Date.now() });
@@ -160,7 +210,7 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
     },
     "helper:peek-clipboard": () => {
       store.lastClipboard = clipboard;
-      record({ kind: "clip", text: clipboard, label: "bad" });
+      record({ kind: "clip", text: clipboard });
       return clipboard.length;
     },
   };
@@ -169,7 +219,7 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
     if (data.lab !== "ready" || !pendingBoot) return;
     pendingBoot = false;
     boots += 1;
-    bootAt = Date.now();
+    clock = 0;
     // app.whenReady → reportDevice()
     post(statsUrl, { device, clipboard: store.lastClipboard });
   });
@@ -179,19 +229,50 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
     app.boot({ speed });
     render();
   };
+  const fastForward = () => {
+    if (!boots) {
+      say.textContent = "小账本还没启动，快进也没有东西会发生。";
+      return;
+    }
+    clock += 30;
+    app.send({ lab: "ff" });
+    render();
+  };
+  const copy = (text) => {
+    clipboard = text;
+    say.textContent = `剪贴板里现在是「${text}」。`;
+    render();
+  };
+  const makeBait = () => {
+    bait = `诱饵-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    copy(bait);
+    say.textContent = `做了一个诱饵「${bait}」放进剪贴板：它独一无二，之后在哪个请求里出现，就证明数据流到了哪里。`;
+  };
 
-  const tasks = [
-    { id: "boot", text: "点「启动」，在沙盒里运行小账本，看监视器记下了什么。", hint: "监视器会记下它发往网上的每一个请求。点一条记录可以看到发出去的内容。" },
-    { id: "sync", text: "像正常用户一样：记一笔账，再点「同步」。", hint: "在小账本里填好「买了什么」和金额，点「记一笔」，再点「同步」。" },
-    { id: "peek", text: "在右边「你的电脑」里复制一段文字，什么都别点，等一会儿。", hint: "报告说它每 30 秒偷偷调用一次。沙盒里时间走得快 10 倍，等 3 秒左右。" },
-    { id: "again", text: "重启小账本，看它一启动发出去的包里多了什么。", hint: "剪贴板的内容先被存在本地，下次启动时跟着设备信息一起发走。" },
-  ];
-  for (const task of tasks) Object.assign(task, lab.tasks?.[task.id]);
-  function check() {
-    if (boots >= 1) ticks.add("boot");
-    if (log.some((r) => r.url === syncUrl && r.body.length)) ticks.add("sync");
-    if (log.some((r) => r.kind === "clip" && r.text)) ticks.add("peek");
-    if (log.some((r) => r.url === statsUrl && r.body.clipboard && r.boot >= 2)) ticks.add("again");
+  function pin(row) {
+    if (finished) return;
+    if (!selected) {
+      open = open === row.id ? null : row.id;
+      render();
+      return;
+    }
+    const claim = claims.find((c) => c.id === selected);
+    const res = networkProves(selected, row, { syncUrl, statsUrl, bait });
+    if (res.ok) {
+      proofs.set(selected, row);
+      say.textContent = `证明了「${claim.text}」：${res.why}`;
+      selected = claims.find((c) => !proofs.has(c.id))?.id || null;
+      if (proofs.size === claims.length) {
+        finished = true;
+        selected = null;
+        say.textContent = "四件事都证明了：小账本正常的功能只有记账和同步，读剪贴板、开机上报、把你复制的东西发走，全是背着用户做的。";
+        onDone();
+      }
+    } else {
+      onMistake();
+      say.textContent = `这条证明不了「${claim.text}」：${res.why}`;
+    }
+    render();
   }
 
   const describe = (row) => row.kind === "clip" ? `读取剪贴板${row.text ? `：「${row.text}」` : "（是空的）"}` : `POST ${new URL(row.url).host}`;
@@ -199,74 +280,60 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
   function detail(row) {
     if (row.kind === "clip") return h("div", { class: "lab-detail" }, h("p", {}, "界面上没有任何按钮会做这件事。调用它的是 renderer.js 里的定时器："), h("pre", {}, "setInterval(() => window.helper.peek(), 30000);"), h("p", {}, "读到的内容被存进 lastClipboard，留在本地。"));
     return h("div", { class: "lab-detail" }, h("p", {}, h("b", {}, "发往："), row.url), h("p", {}, h("b", {}, "内容：")), h("pre", {}, JSON.stringify(row.body, null, 2)),
-      row.url === statsUrl && h("p", {}, `电脑名 ${row.body.device.host}、用户名 ${row.body.device.user}、系统 ${row.body.device.platform}、内存 ${sizeOf(row.body.device.memory)}`, row.body.clipboard ? `，还有你复制过的「${row.body.clipboard}」。` : "。剪贴板这次还是空的。"));
+      row.url === statsUrl && h("p", {}, `电脑名 ${row.body.device.host}、用户名 ${row.body.device.user}、系统 ${row.body.device.platform}、内存 ${sizeOf(row.body.device.memory)}`, row.body.clipboard ? `，还有剪贴板里的「${row.body.clipboard}」。` : "。剪贴板这次是空的。"));
   }
 
-  const why = {
-    normal: "同步是你自己点的按钮，账本发到它自己的同步服务器，界面上看得见。这是正常功能。",
-    net: "这个请求不是你点出来的：一启动就把电脑名、用户名，连同剪贴板，发给了一个统计网站。",
-    clip: "没人点按钮，它却在定时读你的剪贴板。这就是报告里那个不在界面上的通道。",
-  };
-  const labeling = () => ticks.size === tasks.length;
-  // Labels go by what a record is (the sync, the report, the clipboard read), so later repeats share them.
-  const sortOf = (row) => row.kind === "clip" ? "clip" : row.url === syncUrl ? "sync" : "stats";
-  const labels = new Map();
-  function judge(row, label, button) {
-    if (label === row.label) {
-      labels.set(sortOf(row), label);
-      say.textContent = row.kind === "clip" ? why.clip : row.url === syncUrl ? why.normal : why.net;
-      if (log.every((r) => labels.has(sortOf(r))) && !finished) {
-        finished = true;
-        say.textContent = "全部标对了！小账本正常的功能只有记账和同步，剩下的都是它背着用户在做。";
-        onDone();
-      }
-      render();
-    } else {
-      onMistake();
-      say.textContent = row.label === "normal" ? "再想想：这次请求是你自己点「同步」发出的，内容也只是账本。" : "再看看内容：用户没有点任何东西，它却发出了这些。";
-      button.classList.remove("lab-shake");
-      void button.offsetWidth;
-      button.classList.add("lab-shake");
-    }
-  }
-
-  const tasksBox = h("div", {});
+  const claimsBox = h("div", { class: "lab-claims" });
   const pcBox = h("div", { class: "lab-pc" });
   const monitorBox = h("div", { class: "lab-monitor" });
   const startButton = h("button", { class: "btn small primary", type: "button", onclick: start }, "启动");
+  const baitInput = h("input", { class: "lab-bait-input", type: "text", placeholder: "自己输入要复制的文字", "aria-label": "要复制到剪贴板的文字" });
   const root = h("div", { class: "lab lab-network" },
-    h("h4", {}, icon("scan", { size: 18 }), "动手实验 · 行为监视器"),
-    h("p", { class: "lab-intro" }, "报告里看到的是代码。现在把小账本放进沙盒真的运行一次，监视器会记下它做的每一件事。（沙盒是假网络，什么都发不出去。）"),
-    tasksBox,
+    h("h4", {}, icon("scan", { size: 18 }), "动手实验 · 抓现行"),
+    h("p", { class: "lab-intro" }, "下面四件事，每一件都要拿监视器里的一条记录当证据。怎么做实验你自己定：启动、记账、复制、快进、重启都行。（沙盒是假网络，什么都发不出去。）"),
+    claimsBox,
     h("div", { class: "lab-bench" }, appWindow(h, "小账本", startButton, app.frame), pcBox),
     monitorBox,
     say);
 
   function render() {
     startButton.textContent = boots ? "重启" : "启动";
-    tasksBox.replaceChildren(checklist(h, icon, tasks, (id) => ticks.has(id), { onHint }));
+    claimsBox.replaceChildren(...claims.map((c, i) => {
+      const proof = proofs.get(c.id);
+      const tip = h("small", { class: "lab-claim-hint", hidden: true }, c.hint);
+      return h("div", { class: `lab-claim ${proof ? "proved" : ""} ${selected === c.id ? "selected" : ""}` },
+        h("button", { type: "button", class: "lab-claim-pick", disabled: Boolean(proof) || finished, onclick: () => {
+          selected = selected === c.id ? null : c.id;
+          say.textContent = selected ? `去监视器里点一条记录，钉给「${c.text}」。` : "";
+          render();
+        } }, h("span", { class: "lab-task-mark", "aria-hidden": "true" }, proof ? "✓" : i + 1), h("b", {}, c.text)),
+        proof ? h("span", { class: "lab-claim-proof" }, `证据：第 ${proof.boot} 次运行 ${proof.at} · ${describe(proof)}`)
+          : h("button", { class: "btn small ghost", type: "button", onclick: (e) => { onHint(); tip.hidden = false; e.currentTarget.remove(); } }, icon("bulb", { size: 13 }), "提示"),
+        tip);
+    }));
     pcBox.replaceChildren(
       h("b", {}, "你的电脑"),
-      h("p", { class: "lab-pc-clock" }, boots ? `沙盒时间 ${stamp()}（×${speed}）` : "小账本还没启动"),
+      h("p", { class: "lab-pc-clock" }, boots ? `第 ${boots} 次运行 · 沙盒时间 ${stamp()}` : "小账本还没启动"),
+      h("button", { class: "btn small", type: "button", onclick: fastForward }, "快进 30 秒"),
       h("p", {}, "剪贴板：", h("code", {}, clipboard || "（空）")),
-      ...clips.map((text) => h("button", { class: "btn small", type: "button", onclick: () => ((clipboard = text), render()) }, icon("copy", { size: 13 }), `复制「${text}」`)));
+      h("div", { class: "lab-bait" }, baitInput, h("button", { class: "btn small", type: "button", onclick: () => baitInput.value.trim() && copy(baitInput.value.trim()) }, icon("copy", { size: 13 }), "复制")),
+      h("button", { class: "btn small primary", type: "button", onclick: makeBait }, "生成一个诱饵"),
+      ...samples.map((text) => h("button", { class: "btn small ghost", type: "button", onclick: () => copy(text) }, icon("copy", { size: 13 }), `复制「${text}」`)));
     const rows = log.length
-      ? h("ul", { class: "lab-log" }, log.map((row) => h("li", { class: `${row.kind} ${labels.has(sortOf(row)) ? `tag-${row.label}` : ""}` },
-        h("button", { type: "button", class: "lab-log-row", "aria-expanded": String(open === row.id), onclick: () => ((open = open === row.id ? null : row.id), render()) },
-          h("small", {}, `第 ${row.boot} 次运行 · ${row.at}`),
-          h("span", { class: "lab-log-kind" }, row.kind === "clip" ? "系统" : "网络"),
-          h("span", {}, describe(row), row.count > 1 ? ` ×${row.count}` : "")),
-        labeling() && !labels.has(sortOf(row)) && h("span", { class: "lab-sort-bins" },
-          h("button", { type: "button", class: "lab-bin", onclick: (e) => judge(row, "normal", e.currentTarget) }, "正常"),
-          h("button", { type: "button", class: "lab-bin bad", onclick: (e) => judge(row, "bad", e.currentTarget) }, "可疑")),
-        labels.has(sortOf(row)) && h("span", { class: `lab-tag ${row.label}` }, row.label === "normal" ? "正常" : "可疑"),
-        open === row.id && detail(row))))
-      : h("p", { class: "lab-empty" }, "还没有记录。");
-    monitorBox.replaceChildren(h("b", {}, icon("scan", { size: 14 }), " 行为监视器", labeling() && !finished ? " · 现在给每条记录贴上「正常」或「可疑」" : ""), rows);
+      ? h("ul", { class: "lab-log" }, log.map((row) => {
+        const usedFor = [...proofs].filter(([, r]) => r.id === row.id).map(([id]) => claims.find((c) => c.id === id)?.text);
+        return h("li", { class: `${row.kind} ${usedFor.length ? "pinned" : ""} ${selected ? "pickable" : ""}` },
+          h("button", { type: "button", class: "lab-log-row", "aria-expanded": String(open === row.id), onclick: () => pin(row) },
+            h("small", {}, `第 ${row.boot} 次运行 · ${row.at}`),
+            h("span", { class: "lab-log-kind" }, row.kind === "clip" ? "系统" : "网络"),
+            h("span", {}, describe(row), row.count > 1 ? ` ×${row.count}` : "")),
+          usedFor.length > 0 && h("span", { class: "lab-tag bad" }, "已作证"),
+          !selected && h("button", { type: "button", class: "lab-log-more", onclick: () => ((open = open === row.id ? null : row.id), render()) }, open === row.id ? "收起" : "看内容"),
+          open === row.id && detail(row));
+      }))
+      : h("p", { class: "lab-empty" }, "还没有记录。启动小账本试试。");
+    monitorBox.replaceChildren(h("b", {}, icon("scan", { size: 14 }), " 行为监视器", selected ? ` · 点一条记录钉给「${claims.find((c) => c.id === selected)?.text}」` : ""), rows);
   }
-  setInterval(() => {
-    if (boots && root.isConnected) pcBox.querySelector(".lab-pc-clock").textContent = `沙盒时间 ${stamp()}（×${speed}）`;
-  }, 1000);
   render();
   return root;
 }

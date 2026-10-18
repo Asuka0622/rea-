@@ -629,3 +629,20 @@ body.case-hud-on main {padding-bottom:170px;}
 .pz-evidence-pick .case-bag-item {width:100%;text-align:left;}
 .pz-progress {margin:0;font:12px var(--font-mono);color:var(--ink-soft);}
 .lab-pc .btn {max-width:100%;white-space:normal;text-align:left;height:auto;}
+
+/* 行为监视器 · 抓现行（case-labs.js mountNetwork）：四件要证明的事，各钉一条证据 */
+.lab-claims {display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:6px;}
+.lab-claim {display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:6px 8px;background:var(--sheet-2);border:2px solid var(--rule);font-size:13px;}
+.lab-claim.selected {border-color:#e8c270;box-shadow:0 0 0 2px rgba(232,194,112,.35);}
+.lab-claim.proved {border-color:#5d8a4e;background:#e2edcf;}
+.lab-claim-pick {display:flex;gap:8px;align-items:center;padding:0;text-align:left;font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+.lab-claim-pick:disabled {cursor:default;}
+.lab-claim.proved .lab-task-mark {background:#5d8a4e;color:#fff;border-color:#2f4a28;}
+.lab-claim-proof {font:11px/1.5 var(--font-mono);color:#2f4a28;overflow-wrap:anywhere;}
+.lab-claim-hint {color:var(--ink-soft);font-size:12px;}
+.lab-bait {display:flex;gap:4px;align-self:stretch;}
+.lab-bait-input {flex:1;min-width:0;padding:4px 6px;font:12px var(--font-mono);}
+.lab-log li.pickable .lab-log-row {cursor:crosshair;}
+.lab-log li.pickable:hover {outline:2px solid #e8c270;}
+.lab-log li.pinned {border-left-color:#e8c270;}
+.lab-log-more {padding:0 6px;font:11px var(--font-mono);color:#9aa3b5;background:none;border:1px solid #3a4560;cursor:pointer;}

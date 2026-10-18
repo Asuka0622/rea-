@@ -1277,3 +1277,9 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 
 /* Isolate parchment actions from the dark sandbox theme inherited by the debug host. */
 .transfer-practice .btn.ghost {color:#5a3c23!important;border-color:#805631!important;}
+/* 抓现行在小林电脑的终端里：同一套绿屏 */
+.term-lab .lab-claim {background:#16251c;border-color:#2f4a38;color:#d6f5da;}
+.term-lab .lab-claim.selected {border-color:#ffd36b;}
+.term-lab .lab-claim.proved {background:#173322;border-color:#7fd08f;}
+.term-lab .lab-claim-proof {color:#9fe8a8;}
+.term-lab .lab-claim-hint {color:#7fae8a;}
