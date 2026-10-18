@@ -1,0 +1,33 @@
+{
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    2,
+    2
+  ],
+  "smooth": false,
+  "side": "down",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "talk": {
+      "row": 1,
+      "frames": 2,
+      "ms": [
+        240,
+        240
+      ]
+    }
+  },
+  "character": "babbage",
+  "resample": "nearest",
+  "defaultFacing": "down"
+}

@@ -1,0 +1,51 @@
+{
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    4,
+    6
+  ],
+  "smooth": false,
+  "side": "down",
+  "resample": "nearest",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "walk-down": {
+      "row": 1,
+      "frames": 4,
+      "ms": 140
+    },
+    "walk-up": {
+      "row": 2,
+      "frames": 4,
+      "ms": 140
+    },
+    "walk-side": {
+      "row": 3,
+      "frames": 4,
+      "ms": 140
+    },
+    "talk": {
+      "row": 4,
+      "frames": 2,
+      "ms": 250
+    },
+    "open-agreement": {
+      "row": 5,
+      "frames": 2,
+      "ms": [
+        420,
+        720
+      ]
+    }
+  }
+}

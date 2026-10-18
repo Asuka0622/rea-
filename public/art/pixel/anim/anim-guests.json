@@ -1,0 +1,43 @@
+{
+  "character": "salon-guests",
+  "frame": [
+    64,
+    96
+  ],
+  "sheet": [
+    128,
+    384
+  ],
+  "layout": "4 guest rows; each row contains two idle frames",
+  "resample": "nearest",
+  "defaultFacing": "down",
+  "guests": [
+    "burgundy-gown",
+    "olive-frock",
+    "navy-waistcoat",
+    "teal-cape"
+  ],
+  "animations": {
+    "burgundy-gown-idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": 520
+    },
+    "olive-frock-idle": {
+      "row": 1,
+      "frames": 2,
+      "ms": 520
+    },
+    "navy-waistcoat-idle": {
+      "row": 2,
+      "frames": 2,
+      "ms": 520
+    },
+    "teal-cape-idle": {
+      "row": 3,
+      "frames": 2,
+      "ms": 520
+    }
+  },
+  "source": "4 columns x 2 vertically stacked poses in generated atlas; source in docs/art/review/sources/anim-guests-atlas-source.png"
+}

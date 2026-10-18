@@ -1,0 +1,42 @@
+{
+  "baseState": {
+    "season": "spring/summer/winter",
+    "weather": "clear",
+    "time": "noon"
+  },
+  "size": [
+    960,
+    540
+  ],
+  "regions": [
+    "center",
+    "homes",
+    "craft",
+    "north",
+    "south"
+  ],
+  "sourceNumbers": {
+    "summer": [
+      71,
+      72,
+      73,
+      74,
+      75
+    ],
+    "spring": [
+      86,
+      87,
+      88,
+      89,
+      90
+    ],
+    "winter": [
+      96,
+      97,
+      98,
+      99,
+      100
+    ]
+  },
+  "stateNote": "These are candidate seasonal overlays of the autumn region layouts; verify each exit, walk mask and occlusion in-game before activation."
+}
