@@ -1098,14 +1098,18 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-cd-card.art {position:relative;aspect-ratio:3/2;padding:0;border:0;background:url(/art/pixel/minigames/mini-cd-card-frame.png) center/100% 100% no-repeat;image-rendering:pixelated;}
 .mini-cd-card.art:hover,.mini-cd-card.art:focus-visible {background-image:url(/art/pixel/minigames/mini-cd-card-frame-on.png);}
 .mini-cd-card.art small {display:none;}
-.mini-cd-card.art b {position:absolute;left:7%;right:7%;top:69%;height:23%;display:flex;align-items:center;justify-content:center;text-align:center;font:11px/1.2 var(--font-body);overflow:hidden;}
+/* The frame's name plate arrives painted (mid-tone, textured), so the name sits on its own
+   dark plate: readable whether the plate is light or dark, and it survives a repaint. */
+.mini-cd-card.art b {position:absolute;left:8%;right:8%;top:70%;height:21%;display:flex;align-items:center;justify-content:center;text-align:center;font:11px/1.2 var(--font-body);overflow:hidden;color:#fff6dc;background:rgba(24,16,30,.72);border-radius:2px;}
 .mini-cd-card-art {display:none;}
 .mini-cd-card.art .mini-cd-card-art {position:absolute;left:13%;right:13%;top:20%;height:46%;display:flex;align-items:center;justify-content:center;}
 .mini-cd-card-art img {max-width:100%;max-height:100%;image-rendering:pixelated;}
 /* What a card proves is one line under the hand, so the cards themselves stay clean. */
 .mini-cd-peek {margin:0;padding:5px 8px;font:11px/1.5 var(--font-body);color:#9db0a4;background:#101a14;border-left:3px solid #2f4a38;min-height:28px;}
 /* The room is the studio's picture; until it arrives the stand is drawn here in CSS. */
-.mini-cd-stage {position:relative;overflow:hidden;aspect-ratio:16/9;max-height:360px;background:#171226;border:1px solid #3a2f4d;}
+/* The room is 16:9, but at panel width that pushes the claim's own explanation out of view —
+   cap the stage so the verdict, the hand, the count and the teaching line all fit one screen. */
+.mini-cd-stage {position:relative;overflow:hidden;aspect-ratio:16/9;max-height:min(32vh,224px);background:#171226;border:1px solid #3a2f4d;}
 .mini-cd-bg {display:block;width:100%;height:100%;object-fit:cover;object-position:center 45%;image-rendering:pixelated;}
 .mini-cd-stage .mini-cd-claim {position:absolute;left:0;right:0;bottom:0;border-left-width:0;border-top:2px solid #8a5fb0;background:rgba(30,22,40,.94);}
 .mini-cd-stage.drawn .window {position:absolute;left:7%;top:12%;width:20%;height:32%;background:#2b3a5a;border:2px solid #4a5f86;}
