@@ -55,12 +55,12 @@
     971,
     1620
   ],
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": {
     "down": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-down-8f-v2-strip.png",
     "up": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-up-8f-v2-strip.png",
     "left": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-left-8f-v2-strip.png",
     "right": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-right-8f-v2-strip.png"
   },
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating gait phases (A lead/max stride, stride closes through weight transfer, B lead/max stride, stride closes through weight transfer, then loop), opposite lead legs in frames 1 and 5, natural counter-swinging arms, stable held props, correct independent left/right facing, map camera angle and in-game scale before integration."
+  "note": "Rejected after user visual review: the down row changes feet, but the lead-leg switch and weight transfer are abrupt across the full 8-frame cycle, so the walk does not read as natural or continuous. Other directions also failed strict phase review. Review-only; do not integrate."
 }

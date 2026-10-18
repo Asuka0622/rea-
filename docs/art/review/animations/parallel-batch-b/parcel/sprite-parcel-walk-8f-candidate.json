@@ -55,7 +55,42 @@
     971,
     1619
   ],
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": "D:/gpt/rea/docs/art/review/animations/parallel-batch-b/parcel/walk-atlas-v1.png",
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration."
+  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration.",
+  "batchReview": {
+    "overall": "rejected",
+    "criteria": "Accept a direction only when frames 1 and 5 clearly exchange lead legs and counter-swinging arms, held props stay fixed, facing is correct, and no cell bleed or clipping is visible.",
+    "directions": {
+      "down": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: atlas contact shows clipping, row or cell bleed, or fragmented feet; the sheet is not suitable for motion acceptance.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "not verified due rejection"
+      },
+      "up": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: atlas contact shows clipping, row or cell bleed, or fragmented feet; the sheet is not suitable for motion acceptance.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "not verified due rejection"
+      },
+      "left": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: atlas contact shows clipping, row or cell bleed, or fragmented feet; the sheet is not suitable for motion acceptance.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "not verified due rejection"
+      },
+      "right": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: atlas contact shows clipping, row or cell bleed, or fragmented feet; the sheet is not suitable for motion acceptance.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "not verified due rejection"
+      }
+    },
+    "reviewNote": "No direction from this variant passes the strict review."
+  }
 }

@@ -92,7 +92,8 @@ export const PROLOGUE_QUESTS = [
       { text: "……那就不算接活了，这事儿已经撞上来了。", face: "thinking" },
     ],
     after: [],
-    needs: [],
+    // 查隐藏调用前，先在任一基础委托学会搜索与静态读代码。
+    needs: ["static-read:L2"],
     knowledge: [
       { id: "hidden-entry", depth: "L2" },
       { id: "local-check", depth: "L2" },

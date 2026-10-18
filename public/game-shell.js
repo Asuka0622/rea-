@@ -1,3 +1,4 @@
+import { createStoryBeats } from "./story-beats.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
@@ -15,7 +16,7 @@ import { createCaseSession } from "./case-session.js";
 import { unlockedTools, progressFromStars } from "./case-tension.js";
 import { PROLOGUE_QUESTS, KNOWLEDGE_POINTS, takeKind, onBoard } from "./prologue-quests.js";
 import { loadProgress, saveProgress, readNotices, markCompleted, markDiscovered, markAccepted, playerFor } from "./quest-progress.js";
-import { boardLines, questState } from "./quest-board.js";
+import { boardLines, questState, prerequisiteMessage } from "./quest-board.js";
 import { BASE_SPEED, sprintSpeed } from "./world-scale.js";
 import { eggsInRegion, loadFound, saveFound, collect as collectEgg } from "./easter-eggs.js";
 import { npcsInRegion, loadTalked, saveTalked, markTalked } from "./npc-chatter.js";
@@ -536,7 +537,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     if (status !== "available") {
       // 条件还不够：他欲言又止，先不把事情摊开——省得剧透了又接不了。
-      return void say([...greeting, sayAs(npc.later || npc.after, "unsure")]);
+      const why = prerequisiteMessage(quest, playerFor(progress, PROLOGUE_QUESTS), PROLOGUE_QUESTS, KNOWLEDGE_POINTS);
+      return void say([...greeting, sayAs(why || npc.later || npc.after, "unsure")]);
     }
     void say([...greeting, ...(quest.ask || [])], null, () => {
       showMenu([
@@ -1514,6 +1516,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const cinema = h("div", { class: "game-cinema", "aria-hidden": "true" });
   cinema.hidden = true;
   shell.append(cinema);
+  const storyBeats = createStoryBeats({ host: shell, h, sound: (name, pitch) => sound[name]?.(pitch) });
   /** Show one picture; art is a path under /art/pixel/ without .png, checked against /api/art. */
   function showCinema(art, caption = "") {
     const picture = has(art);
@@ -1540,6 +1543,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     cinema.hidden = false;
   }
   function hideCinema() {
+    storyBeats.stop();
     cinema.hidden = true;
     cinema.replaceChildren();
   }
@@ -1698,7 +1702,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         { text: "停摆的钟楼里，好像藏着一台能穿越时间的机器……", face: "thinking" },
       ] },
       /* ① 打开钟楼：门后不是齿轮，是一台大电脑（scenes/tower-open） */
+      { call: () => storyBeats.play("key") },
       { call: () => showCinema("scenes/tower-open") },
+      { call: () => storyBeats.play("boot") },
       { sound: "door" },
       { wait: 500 },
       { say: [
@@ -1709,7 +1715,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         { who: "xiaoke", text: "1843……我、我也要去！", face: "surprised" },
       ] },
       /* ② 穿越白闪，落在雾夜的伦敦街头（scenes/london-1843） */
-      { flash: 1200, color: "#ffffff" },
+      { call: () => storyBeats.play("watch") },
       { sound: "unlock" },
       { wait: 400 },
       { call: () => showCinema("scenes/london-1843", "1843 年 · 伦敦 · 雾夜") },
@@ -2027,6 +2033,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (spotData(id).soon && regionData()?.era) return say([{ text: `「${info(id).place}」……现在进不去，以后再来看看吧。`, face: "thinking" }]);
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
+    const commission = PROLOGUE_QUESTS.find(q => q.caseId === id);
+    if (commission && inDemo(id)) {
+      const progress = loadProgress();
+      const playerState = playerFor(progress, PROLOGUE_QUESTS);
+      const status = questState(commission, playerState).status;
+      if (status === "locked") return say([{ text: prerequisiteMessage(commission, playerState, PROLOGUE_QUESTS, KNOWLEDGE_POINTS), face: "thinking" }]);
+      if (status === "undiscovered") return say([{ text: "还没听说这份委托。先在镇上打听，或找委托人聊聊。", face: "thinking" }]);
+    }
     const practice=cases().find(c=>c.id===id && c.game?.practice);
     if(practice) return enterTransferPractice(practice);
     if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。这次先帮委托板上的三位吧！`, face: "thinking" }]);
@@ -2269,7 +2283,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         line.status === "done"
           ? "这份委托已经结案了。"
           : line.status === "locked"
-            ? `还接不了：${line.reason}`
+            ? `还接不了：${prerequisiteMessage(PROLOGUE_QUESTS.find(q => q.id === line.id), player, PROLOGUE_QUESTS, KNOWLEDGE_POINTS)}`
             : "还没听说这件事。去广场的公告板看看，或者问问镇上的人。";
       return say([{ text: why, face: "thinking" }]);
     };

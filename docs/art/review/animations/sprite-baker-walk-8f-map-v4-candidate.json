@@ -55,12 +55,12 @@
     972,
     1619
   ],
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": {
     "down": "docs/art/review/sources/baker-walk-down-8f-map-camera-v2.png",
     "up": "docs/art/review/sources/baker-walk-up-8f-map-camera-v2.png",
     "left": "docs/art/review/sources/baker-walk-left-8f-map-camera-v2.png",
     "right": "docs/art/review/sources/baker-walk-right-8f-map-camera-v3.png"
   },
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration."
+  "note": "Rejected after strict frame 1/5 review: all four directions keep essentially the same lead-leg pose; arm exchange is also too subtle. Keep as review-only; do not integrate."
 }

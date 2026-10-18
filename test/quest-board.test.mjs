@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  prerequisiteMessage,
   parseNeed,
   levelRank,
   questState,
@@ -85,4 +86,19 @@ test("recommendations are a short list of what is open right now", () => {
 test("replays are listed separately from the first run", () => {
   assert.deepEqual(replayableQuests(QUESTS, { completed: { ledger: true } }).map((q) => q.id), ["drill"]);
   assert.deepEqual(replayableQuests(QUESTS, {}).map((q) => q.id), []);
+});
+
+
+test("prerequisite guidance names available teachers without spoiling unknown tasks", () => {
+  const learner = { id: "later", needs: ["read:L2"], discover: "board" };
+  const teachers = [
+    { id: "base", title: "基础读码", knowledge: [{ id: "read", depth: "L2" }] },
+    { id: "secret", title: "未发现的秘密", discover: "npc:秘密", knowledge: [{ id: "read", depth: "L2" }] },
+    { id: "blocked", title: "尚锁住的课", after: ["other"], knowledge: [{ id: "read", depth: "L2" }] },
+  ];
+  const text = prerequisiteMessage(learner, {}, teachers, { read: "静态读代码（搜索）" });
+  assert.ok(text.includes("静态读代码") && text.includes("基础读码"));
+  assert.ok(!text.includes("未发现的秘密") && !text.includes("尚锁住的课"));
+  assert.equal(prerequisiteMessage({ after: ["base"] }, {}, teachers), "先完成「基础读码」");
+  assert.equal(prerequisiteMessage(learner, { knowledge: { read: "L2" } }, teachers), "");
 });

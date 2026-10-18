@@ -55,12 +55,47 @@
     971,
     1619
   ],
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": {
     "down": "D:/gpt/rea/docs/art/review/animations/parallel-batch-b/lighthouse-keeper/walk-down-strip-v1.png",
     "up": "D:/gpt/rea/docs/art/review/animations/parallel-batch-b/lighthouse-keeper/walk-up-strip-v1.png",
     "left": "D:/gpt/rea/docs/art/review/animations/parallel-batch-b/lighthouse-keeper/walk-left-strip-v1.png",
     "right": "D:/gpt/rea/docs/art/review/animations/parallel-batch-b/lighthouse-keeper/walk-right-strip-v1.png"
   },
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating gait phases (A lead/max stride, stride closes through weight transfer, B lead/max stride, stride closes through weight transfer, then loop), opposite lead legs in frames 1 and 5, natural counter-swinging arms, stable held props, correct independent left/right facing, map camera angle and in-game scale before integration."
+  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating gait phases (A lead/max stride, stride closes through weight transfer, B lead/max stride, stride closes through weight transfer, then loop), opposite lead legs in frames 1 and 5, natural counter-swinging arms, stable held props, correct independent left/right facing, map camera angle and in-game scale before integration.",
+  "batchReview": {
+    "overall": "rejected",
+    "criteria": "Accept a direction only when frames 1 and 5 clearly exchange lead legs and counter-swinging arms, held props stay fixed, facing is correct, and no cell bleed or clipping is visible.",
+    "directions": {
+      "down": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: frame 1 and frame 5 do not show a sufficiently clear opposite lead-leg pose together with the corresponding opposite arm swing.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "lantern remains on the same hand and is visually stable"
+      },
+      "up": {
+        "status": "rejected",
+        "facing": "not independently verified",
+        "frame1Vs5": "Rejected: frame 1 and frame 5 do not show a sufficiently clear opposite lead-leg pose together with the corresponding opposite arm swing.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "lantern remains on the same hand and is visually stable"
+      },
+      "left": {
+        "status": "rejected",
+        "facing": "passes: face/nose points left; back of head is on the right",
+        "frame1Vs5": "Rejected: frame 1 and frame 5 do not show a sufficiently clear opposite lead-leg pose together with the corresponding opposite arm swing.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "lantern remains on the same hand and is visually stable"
+      },
+      "right": {
+        "status": "rejected",
+        "facing": "passes: face/nose points right; back of head is on the left",
+        "frame1Vs5": "Rejected: frame 1 and frame 5 do not show a sufficiently clear opposite lead-leg pose together with the corresponding opposite arm swing.",
+        "arms": "does not meet the required clearly opposite counter-swing at frames 1 and 5",
+        "prop": "lantern remains on the same hand and is visually stable"
+      }
+    },
+    "reviewNote": "The v3 independent strips keep the lantern stable and left/right facing is correct, but no direction passes the strict frame-1/frame-5 gait check."
+  }
 }

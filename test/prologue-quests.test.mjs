@@ -150,3 +150,16 @@ test("not every commission is taken from the board: some are handed over in pers
     assert.ok(quest.encounter?.length >= 2, `${quest.id} 得有「撞上来」的台词`);
   }
 });
+
+
+test("hidden-entry investigation requires static reading from either foundation, not a fixed chapter order", () => {
+  const calculator = PROLOGUE_QUESTS.find(q => q.id === "calculator-eggs");
+  const player = { discovered: ["rumor:计算器"], completed: {}, knowledge: {} };
+  assert.equal(questState(calculator, player).status, "locked");
+  for (const teacher of ["privacy-ledger", "weather-keys"]) {
+    const completed = { [teacher]: true };
+    assert.equal(questState(calculator, { ...player, completed, knowledge: knowledgeFromCompletion(PROLOGUE_QUESTS, completed) }).status, "available");
+  }
+  assert.equal(questState(calculator, { ...player, knowledge: { "static-read": "L1" } }).status, "locked");
+  assert.equal(questState(PROLOGUE_QUESTS.find(q => q.id === "farm-save"), { discovered: ["npc:朵朵"] }).status, "available");
+});

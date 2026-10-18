@@ -12,8 +12,8 @@ Specs: preserve original character design and all non-walk rows; 8 frames per di
 | Pigeon Uncle | Left / right | Reject | Profiles face the requested directions and keep the pouch, but the leading leg is not clearly exchanged at frame 5. The first atlas's left row also faced right and was rejected. |
 | Student | Down / up | Hold | Uniform and backpack charm are preserved; opposite lead-leg phase is not clear enough at frames 1 and 5. |
 | Student | Left / right | Reject | Both profiles face correctly and the charm stays fixed, but frame 1 and frame 5 retain essentially the same lead leg; arms do not exchange clearly with the legs. |
-| Watchmaker | Down | Candidate pass | Front-facing identity, monocle and waist tool are stable; frames 1 and 5 visibly exchange the leading foot and counter-swinging arm. Copy is in `passed-directions/watchmaker/`. |
+| Watchmaker | Down | Reject | A second visual review found the leg switch abrupt and the full 8-frame weight transfer insufficiently smooth. The F1/F5 difference alone does not establish a natural cycle. Contact and strip are retained under `rejected-directions/watchmaker/`. |
 | Watchmaker | Up | Hold | Tool stays at the waist, but the back-view foot exchange is ambiguous. |
 | Watchmaker | Left / right | Reject | Side profiles and monocle are correctly oriented and the tool stays fixed; the frame 1 to 5 leading-leg change is still not clear enough. |
 
-**No complete four-direction atlas in this batch is cleared for runtime integration.** The assembled `*-candidate.png` files are review-only. Image generation hit its usage limit before the held/rejected directions could be regenerated; do not infer approval from the available candidate sheets.
+**No direction or complete four-direction atlas in this batch is cleared for runtime integration.** The assembled `*-candidate.png` files are review-only. Image generation hit its usage limit before the held/rejected directions could be regenerated; do not infer approval from the available candidate sheets.

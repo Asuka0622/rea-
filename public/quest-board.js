@@ -176,3 +176,24 @@ export function boardLines(quests = [], playerState = {}) {
     })
     .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || b.gain.score - a.gain.score || a.id.localeCompare(b.id));
 }
+
+
+/** 给玩家说明缺少什么，并指向可教授该知识的已知任务。纯展示，不放宽前置。 */
+export function prerequisiteMessage(quest, player, quests = [], labels = {}) {
+  const state = questState(quest, player);
+  if (state.status !== "locked") return state.reasons.join("；");
+  const levelNames = { L1: "见过", L2: "能解释", L3: "能独立操作", L4: "能判断局限" };
+  return state.missing.map(reason => {
+    const after = reason.match(/^先完成 (.+)$/);
+    if (after) return '先完成「' + (quests.find(q => q.id === after[1])?.title || after[1]) + '」';
+    const match = reason.match(/^(.+?) 要到 (L[1-4])$/);
+    if (!match) return reason;
+    const [, id, level] = match;
+    const teachers = quests.filter(q => q.id !== quest.id && sourceSeen(q, player) &&
+      questState(q, player).status === "available" &&
+      (q.knowledge || []).some(k => k.id === id && levelRank(k.depth) >= levelRank(level)));
+    const label = (labels[id] || id).split("（")[0];
+    return '先学会「' + label + '」（' + levelNames[level] + '）' +
+      (teachers.length ? '，可以先做' + teachers.map(q => '「' + q.title + '」').join('或') : '，先寻找相关基础委托');
+  }).join("；");
+}

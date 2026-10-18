@@ -44,7 +44,7 @@
       "ms": 250
     }
   },
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": "docs/art/review/sources/lumi-walk-atlas-8f-map-camera-v1.png",
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration."
+  "note": "Rejected after strict frame 1/5 review: down, up, left and right do not clearly exchange the leading leg and counter-swinging arm. Keep as review-only; do not integrate."
 }

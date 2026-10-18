@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>剧情动画预览 · 比特镇</title><link rel="stylesheet" href="/fonts/noto-serif-sc/600.css"><link rel="stylesheet" href="/game.css"><link rel="stylesheet" href="/story-beats.css">
+<style>body{margin:0;padding:clamp(20px,5vw,60px);font:16px/1.8 system-ui,sans-serif;background:#111722;color:#f0e3bf}main{max-width:760px;margin:auto}h1{font-size:28px;color:#e7c36b}button{font:inherit;padding:10px 16px;margin:8px 8px 8px 0;background:#263e37;color:#f0e3bf;border:1px solid #d6aa57;cursor:pointer}button:focus-visible{outline:3px solid #e7c36b;outline-offset:3px}label{display:block;margin:16px 0}#result{min-height:2em}a{color:#e7c36b}</style></head>
+<body><main><h1>剧情动画预览</h1><p>三个短演出已接入试玩结尾。这一页只预览动画，不写入任务或星级。机关与数字是程序表现示意，人物专属表演仍待美术交付。</p>
+<div id="controls"></div><button id="sequence" type="button">连续播放三个片段</button><label><input id="reduced" type="checkbox"> 减少动态效果（系统偏好也会生效）</label><p id="result" role="status">选择一个片段。预览会停在最后画面，按“关闭动画”返回。</p><a href="/?demo">返回试玩</a></main>
+<script type="module">
+import {createStoryBeats,STORY_BEATS} from './story-beats.js';
+function h(tag,props={},...children){const el=document.createElement(tag);for(const [k,v]of Object.entries(props)){if(k==='class')el.className=v;else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v);}el.append(...children);return el;}
+const beats=createStoryBeats({host:document.body,h,reduced:()=>document.querySelector('#reduced').checked||matchMedia('(prefers-reduced-motion:reduce)').matches});
+document.querySelector('#sequence').addEventListener('click',async()=>{
+ const control=document.querySelector('#sequence');control.disabled=true;
+ try{for(const id of Object.keys(STORY_BEATS)){document.querySelector('#result').textContent='连续播放：'+STORY_BEATS[id].title;await beats.play(id);}
+ document.querySelector('#result').textContent='三个片段已播放完毕，控制已恢复。';}
+ finally{control.disabled=false;}
+});
+for(const [id,spec]of Object.entries(STORY_BEATS)){
+ const button=h('button',{type:'button'},spec.title);
+ button.addEventListener('click',async()=>{document.querySelector('#result').textContent='正在播放：'+spec.title;await beats.play(id,{hold:true});document.querySelector('#result').textContent='已关闭：'+spec.title;});
+ document.querySelector('#controls').append(button);
+}
+</script></body></html>
