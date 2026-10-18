@@ -90,106 +90,10 @@ export { mountTower } from './tower-game.js';
 
 /**
  * 节奏 · 定时上报 (小林)
- * 数据：{ bpm, lead, approach, notes:[{beat, kind:'upload'|'sync', label}] }
+ * 信标检测：一条轨道、请求长得都一样，靠节奏分出程序自动上传（F 拦截）和你点的同步（D 放行）。
+ * 谱面默认用 rhythm-engine.js 的 makeBeaconChart；lab.rhythm.notes 有内容时用旧格式 makeChart。
  */
-export function mountRhythm({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
-  const pattern = lab.rhythm || { bpm: 100, lead: 3, approach: 2.4, notes: [
-    { beat: 0, kind: "sync", label: "你点的同步" },
-    { beat: 2, kind: "upload", label: "自动上传" },
-    { beat: 3.5, kind: "upload", label: "自动上传" },
-    { beat: 5, kind: "sync", label: "你点的同步" },
-    { beat: 6.5, kind: "upload", label: "自动上传" },
-    { beat: 8, kind: "upload", label: "自动上传" }] };
-  const beatMs = 60000 / (pattern.bpm || 100);
-  const approach = (pattern.approach || 2.4) * beatMs;
-  const notes = (pattern.notes || []).map((note, i) => ({ ...note, i, at: (pattern.lead ?? 3) * beatMs + note.beat * beatMs, judged: null }));
-  const lane = h("div", { class: "mini-rh-lane" }, h("div", { class: "mini-rh-line" }));
-  const say = h("p", { class: "mini-say", role: "status" }, "红色是它在偷偷上传——拍点上按空格切断；绿色是你自己点的同步，别切。");
-  const score = h("div", { class: "mini-rh-score" });
-  let running = false, start0 = 0, combo = 0, best = 0, perfect = 0, good = 0, missed = 0;
-  const noteEls = notes.map((note) => h("div", { class: cls(["mini-rh-note", note.kind]), "data-note": note.i }, note.kind === "upload" ? "上传" : "同步"));
-  const hit = h("div", { class: "mini-rh-hit", hidden: true }, "");
-  lane.append(...noteEls, hit);
-  const root = h("div", { class: "mini mini-rhythm" }, head(h, icon, lab.rhythmTitle || lab.sampleTitle || "定时上报", onHint), lane,
-    h("div", { class: "mini-controls" }, h("button", { class: "btn primary", type: "button", onclick: () => go() }, icon("scan", { size: 14 }), "开始"), score), say);
-
-  const show = (text, kind) => {
-    hit.textContent = text;
-    hit.className = cls(["mini-rh-hit", kind]);
-    hit.hidden = false;
-    clearTimeout(hit.timer);
-    hit.timer = setTimeout(() => { hit.hidden = true; }, 550);
-  };
-  const paintScore = () => {
-    const acc = Math.round(((perfect + good * 0.6) / (notes.length || 1)) * 100);
-    score.replaceChildren(h("span", {}, `连击 ${combo}（最高 ${best}）`), h("span", {}, `准度 ${acc}%`), h("span", {}, `漏 ${missed}`));
-  };
-  const finish = () => {
-    running = false;
-    paintScore();
-    say.textContent = missed ? `有 ${missed} 拍漏了——那些已经发出去了。` : "一拍没漏：它确实是自己在定时传。";
-    onDone();
-  };
-  const step = (now) => {
-    if (!running) return;
-    const t = now - start0;
-    for (const note of notes) {
-      noteEls[note.i].style.left = `${100 - 85 * ((t - (note.at - approach)) / approach)}%`;
-      if (!note.judged && t > note.at + 190) {
-        if (note.kind === "upload") {
-          note.judged = "miss";
-          missed += 1;
-          combo = 0;
-          onMistake();
-          say.textContent = `${note.label || "上传"}：漏了，东西已经发走了。`;
-          show("漏掉", "miss");
-        } else {
-          note.judged = "ok";
-          combo += 1;
-          best = Math.max(best, combo);
-          show("没切（对）", "good");
-        }
-      }
-    }
-    paintScore();
-    if (t > (notes[notes.length - 1]?.at || 6000) + 900) return finish();
-    requestAnimationFrame(step);
-  };
-  const press = (event) => {
-    if (!running) return;
-    if (event.type === "keydown" && event.key !== " ") return;
-    event.preventDefault?.();
-    const t = performance.now() - start0;
-    const near = notes.filter((n) => !n.judged).sort((a, b) => Math.abs(a.at - t) - Math.abs(b.at - t))[0];
-    if (!near || Math.abs(near.at - t) > 260) return;
-    const grade = Math.abs(near.at - t) <= 90 ? "perfect" : "good";
-    near.judged = grade;
-    if (near.kind === "upload") {
-      if (grade === "perfect") perfect += 1; else good += 1;
-      combo += 1;
-      best = Math.max(best, combo);
-      show(grade === "perfect" ? "完美切断" : "还行", grade);
-      say.textContent = `${near.label || "上传"}：${grade === "perfect" ? "干净地切断了" : "切断了，但慢了半拍"}。`;
-    } else {
-      onMistake();
-      combo = 0;
-      show("切错了", "miss");
-      say.textContent = `${near.label || "同步"}：这是你要的同步，切了反而坏了。`;
-    }
-    paintScore();
-  };
-  const go = () => {
-    if (running) return;
-    running = true;
-    start0 = performance.now();
-    say.textContent = "来了——红拍上按空格。";
-    requestAnimationFrame(step);
-  };
-  document.addEventListener("keydown", press);
-  lane.addEventListener("click", () => press({ type: "click", preventDefault: () => {} }));
-  paintScore();
-  return root;
-}
+export { mountRhythm } from './rhythm-game.js';
 
 /**
  * 管道 · 数据流向 (阿哲): route the secret into the server, not into the package you are about to ship.
