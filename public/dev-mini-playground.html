@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小游戏试玩台 · REA</title>
+<style>
+  :root { --bg:#101a14; --panel:#16231b; --line:#2c4a36; --ink:#e8d8bc; --dim:#8a7c6c; --hot:#ffe8b0; --accent:#8fd08a; }
+  * {box-sizing:border-box;}
+  html,body {height:100%;margin:0;}
+  body {display:flex;font:14px/1.6 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);}
+  aside {flex:0 0 300px;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel);}
+  header {padding:14px 16px 10px;border-bottom:1px solid var(--line);}
+  header h1 {margin:0 0 4px;font-size:15px;color:var(--hot);font-weight:600;}
+  header p {margin:0;font-size:12px;color:var(--dim);}
+  nav {flex:1;overflow:auto;padding:8px;}
+  .item {display:block;width:100%;text-align:left;padding:9px 11px;margin-bottom:5px;border:1px solid var(--line);
+    background:#1b2a1f;color:var(--ink);font:inherit;cursor:pointer;border-radius:3px;}
+  .item:hover {border-color:#4d7a5c;background:#20332a;}
+  .item.on {border-color:var(--accent);background:#254030;box-shadow:inset 3px 0 0 var(--accent);}
+  .item .name {display:flex;align-items:center;gap:6px;font-size:13px;color:var(--hot);}
+  .item .sub {font-size:11px;color:var(--dim);margin-top:2px;}
+  .tag {flex:0 0 auto;font-size:10px;padding:1px 5px;border-radius:2px;border:1px solid;}
+  .tag.live {color:#8fd08a;border-color:#2f6b34;background:#132218;}
+  .tag.trial {color:#e8c270;border-color:#6b5520;background:#221c10;}
+  .tag.nodata {color:#c98a7a;border-color:#6b3a2c;background:#221410;}
+  .item.nodata {opacity:.55;cursor:not-allowed;}
+  footer {padding:9px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--dim);}
+  main {flex:1;display:flex;flex-direction:column;min-width:0;}
+  .bar {display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--panel);}
+  .bar .now {font-size:13px;color:var(--hot);}
+  .bar .hint {font-size:11px;color:var(--dim);}
+  .bar a {margin-left:auto;font-size:12px;color:var(--accent);text-decoration:none;border:1px solid #2f6b34;padding:3px 9px;border-radius:3px;}
+  .bar a:hover {background:#132218;}
+  iframe {flex:1;width:100%;border:0;background:#0b120e;}
+</style>
+</head>
+<body>
+<aside>
+  <header>
+    <h1>小游戏试玩台</h1>
+    <p>点左边直接玩，右边就是真实关卡里的那个玩法。</p>
+  </header>
+  <nav id="list"></nav>
+  <footer>调试页 · 走 <code>?debug&amp;mini=&amp;kind=</code> 入口</footer>
+</aside>
+<main>
+  <div class="bar">
+    <span class="now" id="now">—</span>
+    <span class="hint" id="hint"></span>
+    <a id="open" href="#" target="_blank" rel="noopener">在新标签打开</a>
+  </div>
+  <iframe id="frame" src="about:blank"></iframe>
+</main>
+<script>
+const GAMES = [
+  { name:"权限塔防", kind:"tower", case:"flashlight-apk", state:"live",
+    sub:"王奶奶关 · 三波收集者，只留开灯要用的权限", hint:"先选一个措施，再点通道上的空位放下；放完了点「放下一波」。" },
+  { name:"数据流向", kind:"pipes", case:"weather-keys", state:"live",
+    sub:"阿哲关 · 转管道把密钥接到服务器，别接进发布包", hint:"点格子转 90°，接通「服务器」就成；接通「发布包」会立刻告诉你走错了。" },
+  { name:"行为监视器", kind:"network", case:"privacy-ledger", state:"live",
+    sub:"小林关 · 抓包看小账本到底发了什么", hint:"走完这一关正式的实验步骤。" },
+  { name:"像素计算器彩蛋", kind:"calculator", case:"calculator-eggs", state:"live",
+    sub:"计算器关 · 找出藏起来的那串输入", hint:"在计算器上按出彩蛋序列。" },
+  { name:"种田存档", kind:"save", case:"farm-save", state:"live",
+    sub:"存档关 · 改金币数，看校验和怎么反应", hint:"改完存档值，看它会不会被校验和挡下来。" },
+  { name:"定时上报（节奏）", kind:"rhythm", case:"privacy-ledger", state:"trial",
+    sub:"试玩 · 红色上传拍点按空格切断，绿色同步别切", hint:"空格或点拍点判定；红色是它在偷偷传，绿色是你要的同步。" },
+  { name:"权限的代价（经营）", kind:"manage", case:"flashlight-apk", state:"trial",
+    sub:"试玩 · 经营手电筒公司一周，每项权限一个开关", hint:"关掉不用的权限，但别关掉开灯本身要用的那个；点「过一天」结账。" },
+  { name:"当面对质（卡牌）", kind:"cards", case:"privacy-ledger", state:"trial",
+    sub:"试玩 · 开发者一句句狡辩，你出对应的证据牌", hint:"先听清这句话在主张什么，再挑对得上它的那张牌。" },
+  { name:"开灯用得上吗", kind:"permissions", case:"flashlight-apk", state:"trial",
+    sub:"试玩 · 一条条判这个权限开灯要不要", hint:"判错了会说为什么，不是只说「错了」。" },
+  { name:"找钥匙（扫描）", kind:"secrets", case:"weather-keys", state:"nodata",
+    sub:"缺 sources 数据，开出来是空的", hint:"这一关没有 sources 字段，先别试。" },
+];
+const TAG = { live:["live","已接入"], trial:["trial","试玩"], nodata:["nodata","缺数据"] };
+const list = document.getElementById("list");
+const frame = document.getElementById("frame");
+const nowEl = document.getElementById("now");
+const hintEl = document.getElementById("hint");
+const openEl = document.getElementById("open");
+
+const urlOf = (g) => `/?debug&mini=${g.case}${g.kind ? "&kind=" + g.kind : ""}`;
+
+GAMES.forEach((g, i) => {
+  const [cls, label] = TAG[g.state];
+  const btn = document.createElement("button");
+  btn.className = "item" + (g.state === "nodata" ? " nodata" : "");
+  btn.innerHTML = `<div class="name">${g.name}<span class="tag ${cls}">${label}</span></div><div class="sub">${g.sub}</div>`;
+  btn.onclick = () => {
+    if (g.state === "nodata") { hintEl.textContent = g.hint; return; }
+    [...list.children].forEach((el) => el.classList.remove("on"));
+    btn.classList.add("on");
+    nowEl.textContent = g.name;
+    hintEl.textContent = g.hint;
+    openEl.href = urlOf(g);
+    frame.src = urlOf(g);
+  };
+  list.append(btn);
+  if (i === 0) btn.click();
+});
+</script>
+</body>
+</html>

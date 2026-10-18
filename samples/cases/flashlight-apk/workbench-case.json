@@ -153,6 +153,7 @@
     "lab": {
       "kind": "tower",
       "sampleTitle": "权限塔防 · 小光手电筒",
+      "permTitle": "开灯用得上吗",
       "lampLabel": "这个 App 只有一件事：按一下，灯亮。看清楚，它到底要了哪些权限。",
       "files": [
         "AndroidManifest.json"

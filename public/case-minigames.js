@@ -300,7 +300,7 @@ export function mountRhythm({ h, icon, lab, onMistake = () => {}, onHint = () =>
   const noteEls = notes.map((note) => h("div", { class: cls(["mini-rh-note", note.kind]), "data-note": note.i }, note.kind === "upload" ? "上传" : "同步"));
   const hit = h("div", { class: "mini-rh-hit", hidden: true }, "");
   lane.append(...noteEls, hit);
-  const root = h("div", { class: "mini mini-rhythm" }, head(h, icon, lab.sampleTitle || "行为监视器", onHint), lane,
+  const root = h("div", { class: "mini mini-rhythm" }, head(h, icon, lab.rhythmTitle || lab.sampleTitle || "定时上报", onHint), lane,
     h("div", { class: "mini-controls" }, h("button", { class: "btn primary", type: "button", onclick: () => go() }, icon("scan", { size: 14 }), "开始"), score), say);
 
   const show = (text, kind) => {

@@ -694,7 +694,7 @@ function mountPermissions({ h, icon, lab, onMistake = () => {}, onDone = () => {
     list.append(rowEl);
   }
   return h("div", { class: "lab lab-permissions" },
-    h("div", { class: "lab-head" }, h("b", {}, lab.sampleTitle || "权限判定"), h("span", {}, "判好 "), count, h("span", {}, " 条")),
+    h("div", { class: "lab-head" }, h("b", {}, lab.permTitle || lab.sampleTitle || "权限判定"), h("span", {}, "判好 "), count, h("span", {}, " 条")),
     h("p", { class: "lab-lamp" }, icon("scan", { size: 14 }), lab.lampLabel || "这个 App 只有一件事：按一下，灯亮。"),
     list, say);
 }
