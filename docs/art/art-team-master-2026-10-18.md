@@ -84,6 +84,10 @@
 
 交付中心后先用路米与一位NPC站到门边、桌边核比例，再做住宅西/手艺西样板，最后扩余六区。已有五张 expanded 候选先查主工作树 `docs/art/review/sources/`，不得无视已有图重新出整套。
 
+**中心 v2 的母版要求已经单独成单**：`docs/art/briefs/center-v2-brief.md`（坐标表 / 尺度 / 分层 / 候选图与它的偏差）。
+候选在 `docs/art/review/regions/center-v2-candidate.png`，坐标校验在 `center-v2-blockout-check.png`。
+**注意：生成图的建筑位置与 plan 坐标有偏移（校验图可直接看出），只能定风格与气氛，运行图必须按坐标重画。**
+
 ## 5. D批：NPC生活素材
 
 已有12位：阿桃baker、老魏watchmaker、小满student、阿飞disk-vendor、小鹿barista、大壮parcel、老周pigeon-uncle、阿康oncall、小石头paperboy、老陈lighthouse-keeper、小铃apprentice、老宋cobbler。先认领已有精灵表、小头像和P0立绘，不新建同名重复角色。
