@@ -342,6 +342,8 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
 
 function calcShim(config) {
   window.calc = { license: () => __invoke("calc:license"), buyPro: () => __invoke("calc:buy-pro"), history: () => __invoke("calc:history"), unlock: () => __invoke("debug:unlock-pro") };
+  // 修复版删掉了 preload 里的 unlock：页面上再也拿不到这个函数。
+  if (config.noUnlock) delete window.calc.unlock;
   // The address typed in the lab's address bar: the page reads location.hash when it loads.
   if (config.hash) location.hash = config.hash;
   const post = (data) => parent.postMessage({ lab: "state", ...data }, "*");
@@ -381,36 +383,91 @@ function calcShim(config) {
 
 const CALC_CSS = `body{margin:0;padding:12px;font:16px system-ui,sans-serif;background:#1d2433;color:#f0e3bf;min-height:100vh;box-sizing:border-box}#screen{padding:10px 12px;margin-bottom:10px;min-height:28px;background:#9fb88a;color:#1d2a1b;font:20px/1.4 monospace;text-align:right;border:3px solid #0d1119;overflow-wrap:anywhere}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.keys button{padding:12px 0;font:600 18px monospace;background:#f0e3bf;color:#1d2433;border:3px solid #0d1119;box-shadow:0 3px 0 #0d1119;cursor:pointer}.keys button:active{transform:translateY(2px);box-shadow:0 1px 0 #0d1119}#debug-panel{margin-top:10px;padding:8px;border:2px dashed #e8c270;color:#e8c270;font:13px monospace}body.rainbow{animation:rb 2s linear infinite}body.rainbow .keys button{animation:rb 2s linear infinite}@keyframes rb{0%{background:#ff6b6b}20%{background:#ffd93d}40%{background:#6bcB77}60%{background:#4d96ff}80%{background:#c77dff}100%{background:#ff6b6b}}`;
 
+/**
+ * 像素计算器：网上的五条传言。每条先在代码里找到（needle 匹配到的那一行），再在沙盒里亲手试出来；
+ * 最后以开发者的身份决定删哪几个——删掉的就是后门（door），留着的是彩蛋（egg）。
+ */
+export const CALC_RUMORS = [
+  { id: "egg", kind: "egg", rumor: "听说在计算器里算出某个特别的数字，屏幕上会冒出一句话。", search: "试试搜 display：看看按「=」的时候它在比较什么。", needle: /display === "(\d+)"/, file: "renderer.js", found: (m) => `算出 ${m[1]} 再按「=」` },
+  { id: "rainbow", kind: "egg", rumor: "有人说按一串神秘的按键，计算器会变成彩虹色。", search: "试试搜 KEYS 或 key：找一串按键的名单。", needle: /SECRET_KEYS = \[/, file: "renderer.js", found: () => "依次按 ↑ ↑ ↓ ↓ ← → ← → B A" },
+  { id: "debug", kind: "door", rumor: "地址后面加点什么，就能打开一个隐藏页面。", search: "试试搜 hash：页面加载时看了地址的哪一部分。", needle: /location\.hash === "([^"]+)"/, file: "renderer.js", found: (m) => `地址后面加上 ${m[1]}` },
+  { id: "devtools", kind: "door", rumor: "开发者留了一个快捷键，能打开调试工具。", search: "试试搜 Shortcut：主进程注册了哪个全局快捷键。", needle: /globalShortcut\.register\("([^"]+)"/, file: "main.js", found: (m) => `按 ${m[1].replace("CommandOrControl", "Ctrl")}` },
+  { id: "pro", kind: "door", rumor: "不用花钱也能打开专业版？", search: "试试搜 unlock：有没有一个不收钱的解锁通道。", needle: /debug:unlock-pro/, file: "main.js", found: () => "调试工具的控制台里执行 calc.unlock()" },
+];
+
+/** 在发布出去的代码里（去掉开发者注释）搜一个词，最多 6 行；顺便看看哪条传言被这次搜索证实了。 */
+export function searchCalc(sources, query) {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return { hits: [], found: [] };
+  const hits = [];
+  for (const file of ["renderer.js", "main.js", "preload.js"]) {
+    const lines = (sources[file] || "").split("\n");
+    lines.forEach((text, i) => {
+      if (/^\s*\/\//.test(text) || !text.trim()) return;
+      if (words.every((w) => text.toLowerCase().includes(w))) hits.push({ file, n: i + 1, text: text.trim() });
+    });
+  }
+  const shown = hits.slice(0, 6);
+  const found = CALC_RUMORS.filter((r) => shown.some((hit) => hit.file === r.file && r.needle.test(hit.text)));
+  return { hits: shown, more: Math.max(0, hits.length - 6), found };
+}
+
+/** 删掉这些入口以后，代码里还剩什么：彩蛋留没留、后门关没关。 */
+export function judgePatch(removed) {
+  const doorsLeft = CALC_RUMORS.filter((r) => r.kind === "door" && !removed.has(r.id)).map((r) => r.id);
+  const eggsLost = CALC_RUMORS.filter((r) => r.kind === "egg" && removed.has(r.id)).map((r) => r.id);
+  return { ok: !doorsLeft.length && !eggsLost.length, doorsLeft, eggsLost };
+}
+
+/** 把删除落到真代码上：渲染进程的三处改字符串，主进程和 preload 的两处由沙盒里扮演的主进程关掉。 */
+function patchRenderer(source, removed) {
+  let out = source;
+  if (removed.has("egg")) out = out.replace(/display === "\d+"/, "false");
+  if (removed.has("rainbow")) out = out.replace('document.body.classList.add("rainbow");', "");
+  if (removed.has("debug")) out = out.replace(/location\.hash === "[^"]+"/, "false");
+  return out;
+}
+
 function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
-  const { sources } = lab;
-  const egg = sources["renderer.js"].match(/screen\.textContent = "([^"]+)"/)?.[1] || "";
+  const sources0 = lab.sources;
   const base = "app://pixel-calc/index.html";
+  const eggText = sources0["renderer.js"].match(/screen\.textContent = "([^"]+)"/)?.[1] || "";
+  const rumors = CALC_RUMORS.map((r) => {
+    const file = sources0[r.file] || "";
+    const line = file.split("\n").find((l) => r.needle.test(l)) || "";
+    const m = line.match(r.needle);
+    return { ...r, line: line.trim(), detail: m ? r.found(m) : "", ...lab.tasks?.[r.id] };
+  });
   let license = { pro: false };
-  let state = {};
   let devtools = false;
   let hash = "";
-  const ticks = new Set();
+  let phase = "hunt"; // hunt（找和试）· fix（删哪几个）· done
+  const found = new Set();
+  const tried = new Set();
+  const removed = new Set();
+  let patched = null; // 修过以后的状态：{ removed }
   const lines = [];
-  const say = h("p", { class: "lab-say", role: "status" });
-  // main.js, played here.
+  const say = h("p", { class: "lab-say", role: "status" }, "先挑一条传言，到代码里找证据，再在沙盒里亲手试出来。");
+
+  // main.js，在这里扮演；修过以后，删掉的两个入口就不存在了。
   const handlers = {
     "calc:license": () => license,
     "calc:buy-pro": () => ({ url: "https://shop.pixel-calc.example/pro" }),
     "calc:history": () => [],
     "debug:unlock-pro": () => {
+      if (patched?.removed.has("pro")) return { error: "没有这个通道" };
       license = { pro: true };
       return license;
     },
   };
-  const app = appFrame(h, { title: "像素计算器（在沙盒里运行）", sources, page: "index.html", css: CALC_CSS, shim: calcShim, handlers });
-  const tasks = [
-    { id: "egg", text: "在计算器里算出那个数字，看屏幕上冒出的话。", hint: "这个计算器没有清零键：先点「重启」，再依次按 1 3 1 4 5 2 0，最后按 =。" },
-    { id: "rainbow", text: "输入那串最有名的秘籍，让计算器变成彩虹色。", hint: "先点一下计算器，再用键盘（或下面的按键板）按：↑ ↑ ↓ ↓ ← → ← → B A。" },
-    { id: "debug", text: "用地址栏打开隐藏的调试页。", hint: "调试页要在地址后面加上 #/__debug，再点「前往」。" },
-    { id: "devtools", text: "按下开发者的快捷键，打开调试工具。", hint: "报告里那组全局快捷键：Ctrl+Shift+D。键盘按不出来，就用按键板上的那颗。" },
-    { id: "pro", text: "在调试工具的控制台里，不花钱解锁专业版。", hint: "控制台里能直接用 preload 交给页面的 calc。试试 calc.unlock()，再用 calc.license() 看看。" },
-  ];
-  for (const task of tasks) Object.assign(task, lab.tasks?.[task.id]);
+  let sources = sources0;
+  let app = null;
+  const frameBox = h("div", { class: "lab-calc-frame" });
+  function makeApp() {
+    app = appFrame(h, { title: "像素计算器（在沙盒里运行）", sources, page: "index.html", css: CALC_CSS, shim: calcShim, handlers });
+    app.on(onFrame);
+    frameBox.replaceChildren(app.frame);
+  }
   const praise = {
     egg: "冒出来了！一句藏起来的祝福，无伤大雅。",
     rainbow: "彩虹色！这就是著名的 Konami 秘籍。",
@@ -418,35 +475,38 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     devtools: "调试工具打开了。在这里能直接调用页面里的一切。",
     pro: "{pro: true}——一分钱没花，专业版到手。这可不是彩蛋了。",
   };
-  const tick = (id) => {
-    if (ticks.has(id)) return;
-    ticks.add(id);
-    say.textContent = praise[id];
+  const tryIt = (id) => {
+    if (phase !== "hunt" || tried.has(id)) return;
+    tried.add(id);
+    say.textContent = found.has(id) ? praise[id] : `${praise[id]}（这条传言你还没在代码里找到依据，去搜一搜。）`;
+    if (tried.size === rumors.length && found.size === rumors.length) toFix();
     render();
   };
-  app.on((data) => {
+  function onFrame(data) {
     if (data.lab === "state") {
-      state = data;
-      if (egg && data.screen === egg) tick("egg");
-      if (data.rainbow) tick("rainbow");
-      if (data.debug) tick("debug");
+      if (eggText && data.screen === eggText) tryIt("egg");
+      if (data.rainbow) tryIt("rainbow");
+      if (data.debug) tryIt("debug");
     }
     if (data.lab === "shortcut") openDevtools();
     if (data.lab === "result") {
       lines.push({ kind: data.ok ? "out" : "err", text: data.text });
-      if (license.pro) tick("pro");
+      if (license.pro) tryIt("pro");
       renderConsole();
     }
-  });
-  const boot = () => app.boot({ hash });
+  }
+  const boot = () => app.boot({ hash, noUnlock: Boolean(patched?.removed.has("pro")) });
   function openDevtools() {
+    if (patched?.removed.has("devtools")) {
+      say.textContent = "按了 Ctrl+Shift+D，什么都没发生——快捷键已经删掉了。";
+      return;
+    }
     if (devtools) return;
     devtools = true;
-    tick("devtools");
+    tryIt("devtools");
     render();
     consoleBox.querySelector("input")?.focus();
   }
-  // globalShortcut: works wherever the focus is, while this lab is on screen.
   window.addEventListener("keydown", (event) => {
     if (!root.isConnected) return;
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === "d") {
@@ -455,6 +515,26 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     }
   });
 
+  /* ----- 找：在发布出去的代码里搜 ----- */
+  const searchInput = h("input", { class: "lab-address", placeholder: "在代码里搜一个词，比如 display", spellcheck: "false", "aria-label": "搜索代码", onkeydown: (e) => e.key === "Enter" && search() });
+  const results = h("div", { class: "lab-calc-hits" });
+  function search() {
+    const q = searchInput.value.trim();
+    if (!q) return;
+    const res = searchCalc(sources0, q);
+    const fresh = res.found.filter((r) => !found.has(r.id)).map((r) => rumors.find((x) => x.id === r.id));
+    for (const r of fresh) found.add(r.id);
+    results.replaceChildren(...(res.hits.length ? res.hits.map((hit) => {
+      const r = rumors.find((x) => x.file === hit.file && x.needle.test(hit.text));
+      return h("p", { class: r ? "hit rumor" : "hit" }, h("small", {}, `${hit.file}:${hit.n}`), h("code", {}, hit.text), r ? h("em", {}, `← 传言「${r.rumor.slice(0, 12)}…」的依据：${r.detail}`) : null);
+    }) : [h("p", { class: "miss" }, /[一-鿿]/.test(q) ? "没找到。代码里的名字都是英文的。" : "没找到，换个词试试。")]),
+    ...(res.more ? [h("p", { class: "miss" }, `还有 ${res.more} 行，多写一个词缩小范围。`)] : []));
+    if (fresh.length) say.textContent = `找到了！${fresh.map((r) => r.detail).join("；")}。去沙盒里亲手试试。`;
+    if (tried.size === rumors.length && found.size === rumors.length) toFix();
+    render();
+  }
+
+  /* ----- 试：沙盒、地址栏、按键板、控制台 ----- */
   const address = h("input", { class: "lab-address", value: base, "aria-label": "地址栏", spellcheck: "false", onkeydown: (e) => e.key === "Enter" && go() });
   function go() {
     const value = address.value.trim();
@@ -466,10 +546,12 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     }
     boot();
   }
-  const pad = h("div", { class: "lab-pad", "aria-label": "按键板" },
-    [["ArrowUp", "↑"], ["ArrowDown", "↓"], ["ArrowLeft", "←"], ["ArrowRight", "→"], ["b", "B"], ["a", "A"]].map(([key, text]) => h("button", { type: "button", class: "lab-key", onclick: () => app.send({ lab: "press", key }) }, text)),
-    h("button", { type: "button", class: "lab-key wide", onclick: openDevtools }, "Ctrl+Shift+D"));
-
+  const pad = h("div", { class: "lab-pad", "aria-label": "按键板" });
+  function paintPad() {
+    pad.replaceChildren(
+      ...(found.has("rainbow") ? [["ArrowUp", "↑"], ["ArrowDown", "↓"], ["ArrowLeft", "←"], ["ArrowRight", "→"], ["b", "B"], ["a", "A"]].map(([key, text]) => h("button", { type: "button", class: "lab-key", onclick: () => app.send({ lab: "press", key }) }, text)) : [h("small", {}, "（在代码里找到按键名单后，这里会出现按键板；也可以点一下计算器直接用键盘）")]),
+      found.has("devtools") ? h("button", { type: "button", class: "lab-key wide", onclick: openDevtools }, "Ctrl+Shift+D") : null);
+  }
   const input = h("input", { class: "lab-console-input", placeholder: "在这里输入代码，回车运行", spellcheck: "false", "aria-label": "控制台", onkeydown: (event) => {
     if (event.key !== "Enter" || !event.target.value.trim()) return;
     const code = event.target.value.trim();
@@ -485,51 +567,78 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     consoleLog.scrollTop = consoleLog.scrollHeight;
   }
 
-  const tasksBox = h("div", {});
+  /* ----- 修：以开发者的身份决定删哪几个 ----- */
+  const fixBox = h("div", { class: "lab-calc-fix", hidden: true });
+  function toFix() {
+    if (phase !== "hunt") return;
+    phase = "fix";
+    say.textContent = "五条传言都是真的。现在你是开发者：哪几处该在发布前删掉？彩蛋可以留着逗人开心。";
+  }
+  function applyPatch() {
+    const verdict = judgePatch(removed);
+    if (!verdict.ok) {
+      onMistake();
+      const lost = verdict.eggsLost.map((id) => rumors.find((r) => r.id === id).rumor.slice(0, 10));
+      say.textContent = verdict.doorsLeft.length
+        ? `还有 ${verdict.doorsLeft.length} 处后门没删：普通用户还能摸到只有开发者该用的东西。`
+        : `你把彩蛋也删了（${lost.join("、")}…）。它们只是在屏幕上变个花样，不碰数据也不碰钱——小雨会伤心的。`;
+      return;
+    }
+    patched = { removed: new Set(removed) };
+    sources = { ...sources0, "renderer.js": patchRenderer(sources0["renderer.js"], removed) };
+    license = { pro: false };
+    devtools = false;
+    hash = "";
+    address.value = base;
+    lines.length = 0;
+    makeApp();
+    boot();
+    phase = "done";
+    say.textContent = "修好了，新版本已经在沙盒里重新跑起来：再按 Ctrl+Shift+D、加 #/__debug、调 calc.unlock() 都没用了，算出那个数字和按秘籍还是会有惊喜。彩蛋留着，后门关上。";
+    onDone();
+    render();
+  }
+
+  const rumorBox = h("div", { class: "lab-claims" });
   const licenseBox = h("p", { class: "lab-license" });
-  const sortBox = h("div", {});
-  let sorted = false;
   const root = h("div", { class: "lab lab-calculator" },
-    h("h4", {}, icon("wrench", { size: 18 }), "动手实验 · 亲手试一试"),
-    h("p", { class: "lab-intro" }, "报告里找到的入口，到底是不是真的？把像素计算器放进沙盒运行，一个个亲手试出来。"),
-    tasksBox,
+    h("h4", {}, icon("wrench", { size: 18 }), "动手实验 · 传言是真的吗"),
+    h("p", { class: "lab-intro" }, "网上流传着五条关于像素计算器的传言。每一条都先在代码里找到依据，再在沙盒里亲手试出来；最后以开发者的身份，决定发布前删掉哪些。"),
+    rumorBox,
+    h("div", { class: "lab-calc-search" }, h("b", {}, "在代码里搜（发布版，没有开发者注释）"), h("div", { class: "lab-address-bar" }, searchInput, h("button", { class: "btn small", type: "button", onclick: search }, "搜索")), results),
     h("div", { class: "lab-bench" },
-      appWindow(h, "像素计算器", h("button", { class: "btn small", type: "button", onclick: boot }, "重启"), h("div", { class: "lab-calc-body" }, h("div", { class: "lab-address-bar" }, address, h("button", { class: "btn small", type: "button", onclick: go }, "前往")), app.frame)),
+      appWindow(h, "像素计算器", h("button", { class: "btn small", type: "button", onclick: () => boot() }, "重启"), h("div", { class: "lab-calc-body" }, h("div", { class: "lab-address-bar" }, address, h("button", { class: "btn small", type: "button", onclick: go }, "前往")), frameBox)),
       h("div", { class: "lab-side" }, pad, licenseBox, consoleBox)),
-    say,
-    sortBox);
+    fixBox,
+    say);
 
   function render() {
-    tasksBox.replaceChildren(checklist(h, icon, tasks, (id) => ticks.has(id), { onHint }));
+    rumorBox.replaceChildren(...rumors.map((r, i) => {
+      const tip = h("small", { class: "lab-claim-hint", hidden: true }, r.search);
+      const state = tried.has(r.id) && found.has(r.id) ? "proved" : "";
+      return h("div", { class: `lab-claim ${state}` },
+        h("div", { class: "lab-claim-pick" }, h("span", { class: "lab-task-mark", "aria-hidden": "true" }, state ? "✓" : i + 1), h("b", {}, r.rumor)),
+        h("span", { class: "lab-claim-proof" }, `${found.has(r.id) ? `代码：${r.detail}` : "代码：还没找到"} · ${tried.has(r.id) ? "试过了，是真的" : "还没试"}`),
+        !state && h("button", { class: "btn small ghost", type: "button", onclick: (e) => { onHint(); tip.hidden = false; e.currentTarget.remove(); } }, icon("bulb", { size: 13 }), "提示"),
+        tip);
+    }));
+    paintPad();
     consoleBox.hidden = !devtools;
     licenseBox.replaceChildren("主进程里的 license：", h("code", {}, JSON.stringify(license)));
-    if (ticks.size === tasks.length && !sortBox.childElementCount) {
-      sortBox.append(
-        h("p", { class: "lab-intro" }, "五个入口都试过了。哪些是好玩的彩蛋，哪些是该删掉的开发者入口？"),
-        sorter(h, {
-          items: [
-            { id: "egg", text: `算出 1314520 冒出「${egg}」`, bin: "egg" },
-            { id: "rainbow", text: "按秘籍变彩虹色", bin: "egg" },
-            { id: "debug", text: "地址加 #/__debug 打开调试页", bin: "door" },
-            { id: "devtools", text: "Ctrl+Shift+D 打开调试工具", bin: "door" },
-            { id: "pro", text: "calc.unlock() 免费变专业版", bin: "door" },
-          ],
-          bins: [{ id: "egg", text: "好玩的彩蛋" }, { id: "door", text: "该删掉的开发者入口" }],
-          onRight: (item) => (say.textContent = item.bin === "egg" ? "对，只是逗人开心，不碰数据也不碰钱。" : "对，它让普通用户摸到了只有开发者该用的东西。"),
-          onWrong: (item) => {
-            onMistake();
-            say.textContent = item.bin === "egg" ? "再想想：它只是在屏幕上变个花样，什么也没打开。" : "再想想：靠它能看到或改掉本不该给用户的东西。";
-          },
-          onAll: () => {
-            if (sorted) return;
-            sorted = true;
-            say.textContent = "分得清清楚楚！彩蛋只是逗人开心；调试入口和免费解锁，是发布前该删掉的后门。";
-            onDone();
-          },
-        }));
+    fixBox.hidden = phase === "hunt";
+    if (phase !== "hunt") {
+      fixBox.replaceChildren(
+        h("b", {}, phase === "done" ? "已发布的修复版" : "发布前的修复：每一处选「删除」或「保留」"),
+        ...rumors.map((r) => h("div", { class: `lab-calc-patch ${removed.has(r.id) ? "removed" : ""}` },
+          h("small", {}, r.file), h("code", {}, r.line),
+          h("span", { class: "lab-sort-bins" },
+            h("button", { type: "button", class: `lab-bin ${!removed.has(r.id) ? "picked" : ""}`, disabled: phase === "done", onclick: () => { removed.delete(r.id); render(); } }, "保留"),
+            h("button", { type: "button", class: `lab-bin bad ${removed.has(r.id) ? "picked" : ""}`, disabled: phase === "done", onclick: () => { removed.add(r.id); render(); } }, "删除")))),
+        phase === "fix" && h("button", { class: "btn primary", type: "button", onclick: applyPatch }, "修好了，重新发布并复查"));
     }
   }
-  app.boot({ hash });
+  makeApp();
+  boot();
   render();
   renderConsole();
   return root;

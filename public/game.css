@@ -1283,3 +1283,6 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .term-lab .lab-claim.proved {background:#173322;border-color:#7fd08f;}
 .term-lab .lab-claim-proof {color:#9fe8a8;}
 .term-lab .lab-claim-hint {color:#7fae8a;}
+.term-lab .lab-calc-search,.term-lab .lab-calc-fix {background:#16251c;border-color:#2f4a38;color:#d6f5da;}
+.term-lab .lab-calc-hits p.rumor,.term-lab .lab-calc-patch {background:#0f1a14;color:#d6f5da;}
+.term-lab .lab-calc-hits p.rumor em {color:#ffb0a0;}

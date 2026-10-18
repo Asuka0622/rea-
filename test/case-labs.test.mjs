@@ -57,3 +57,19 @@ test("catching the ledger in the act: each claim only accepts the record that re
   assert.equal(networkProves("control", emptySync, ctx).ok, false);
   assert.equal(networkProves("control", startup, ctx).ok, false);
 });
+
+test("pixel calculator: searching the shipped code backs each rumour, and only removing the backdoors passes", async () => {
+  const { CALC_RUMORS, searchCalc, judgePatch } = await import("../public/case-labs.js");
+  const { caseCatalog } = await import("../lib/cases.mjs");
+  const sources = caseCatalog().find((c) => c.id === "calculator-eggs").game.lab.sources;
+  // every rumour's line exists in the sample, and a plain search word finds it
+  const words = { egg: "display", rainbow: "SECRET_KEYS", debug: "hash", devtools: "globalShortcut", pro: "unlock" };
+  for (const r of CALC_RUMORS) {
+    assert.ok(sources[r.file].split("\n").some((l) => r.needle.test(l)), `${r.id} is in ${r.file}`);
+    assert.ok(searchCalc(sources, words[r.id]).found.some((f) => f.id === r.id), `searching ${words[r.id]} backs ${r.id}`);
+  }
+  assert.equal(searchCalc(sources, "彩蛋").hits.length, 0, "the shipped code has no Chinese comments to search");
+  assert.equal(judgePatch(new Set(["debug", "devtools", "pro"])).ok, true);
+  assert.deepEqual(judgePatch(new Set(["debug", "devtools"])).doorsLeft, ["pro"]);
+  assert.deepEqual(judgePatch(new Set(["debug", "devtools", "pro", "egg"])).eggsLost, ["egg"]);
+});

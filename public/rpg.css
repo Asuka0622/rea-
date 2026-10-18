@@ -646,3 +646,19 @@ body.case-hud-on main {padding-bottom:170px;}
 .lab-log li.pickable:hover {outline:2px solid #e8c270;}
 .lab-log li.pinned {border-left-color:#e8c270;}
 .lab-log-more {padding:0 6px;font:11px var(--font-mono);color:#9aa3b5;background:none;border:1px solid #3a4560;cursor:pointer;}
+
+/* 像素计算器 · 传言是真的吗（case-labs.js mountCalculator）：搜代码、亲手试、发布前修掉后门 */
+.lab-calc-search {display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:var(--sheet-2);border:1px solid var(--rule);}
+.lab-calc-search > b {font-size:13px;}
+.lab-calc-hits p {margin:0;padding:3px 6px;font:12px/1.6 var(--font-mono);border-left:3px solid var(--rule);overflow-wrap:anywhere;}
+.lab-calc-hits p small {margin-right:8px;color:var(--ink-soft);}
+.lab-calc-hits p.rumor {border-left-color:#e8c270;background:#fbf3dc;}
+.lab-calc-hits p.rumor em {display:block;font-style:normal;color:#a6463c;}
+.lab-calc-hits p.miss {border-left-color:#a6463c;color:var(--ink-soft);}
+.lab-calc-frame {display:block;}
+.lab-calc-fix {display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--sheet-2);border:2px solid #e8c270;}
+.lab-calc-fix[hidden] {display:none;}
+.lab-calc-patch {display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:4px 6px;background:var(--sheet);border:1px solid var(--rule);}
+.lab-calc-patch small {color:var(--ink-soft);font:11px var(--font-mono);}
+.lab-calc-patch code {flex:1;min-width:200px;font:12px var(--font-mono);overflow-wrap:anywhere;}
+.lab-calc-patch.removed code {text-decoration:line-through;text-decoration-color:#a6463c;color:var(--ink-soft);}
