@@ -105,6 +105,7 @@ test("chained labs: every stage of every case is a known lab, and its story line
     }
   };
   for (const item of caseCatalog()) {
+    for (const talk of Object.values(item.game?.lab?.talk || {})) lines(talk, `${item.id} talk`);
     for (const [i, stage] of (item.game?.lab?.stages || []).entries()) {
       const where = `${item.id} stage ${i}`;
       assert.ok(MOUNTABLE_KINDS.includes(stage.kind), `${where}: ${stage.kind}`);

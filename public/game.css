@@ -1320,3 +1320,6 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .lab-stages li.done::before {content:"✓";background:#6fbf73;}
 .term-lab .rh2-highway {height:clamp(150px,30vh,250px);}
 .term-lab .mini.rh2 {padding:12px;gap:8px;}
+/* 沙盒是深色终端：全站 code 的浅色底在这里会把浅色字吃掉 */
+.term-lab code {background:#0d1410;color:#d6f5da;border:1px solid #2f4a38;}
+.term-lab .hit.rumor code {border-color:#e8c270;}

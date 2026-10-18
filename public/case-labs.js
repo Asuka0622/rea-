@@ -436,7 +436,17 @@ function patchRenderer(source, removed) {
   return out;
 }
 
-function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
+function mountCalculator({ h, icon, lab, onMistake, onHint, onDone, story = async () => {} }) {
+  // 委托人在旁边说话（lab.talk）：每条传言证实时（代码找到 + 亲手试过）用传言的 id，
+  // 进入修复时用 fix，修复版发布后用 patched。每段只说一次。
+  const told = new Set();
+  let speaking = Promise.resolve();
+  const talk = (key) => {
+    if (told.has(key) || !lab.talk?.[key]) return speaking;
+    told.add(key);
+    return (speaking = speaking.then(() => story(lab.talk[key]))); // 一段说完再说下一段
+  };
+  const provedNow = (ids) => ids.filter((id) => found.has(id) && tried.has(id)).forEach((id) => talk(id));
   const sources0 = lab.sources;
   const base = "app://pixel-calc/index.html";
   const eggText = sources0["renderer.js"].match(/screen\.textContent = "([^"]+)"/)?.[1] || "";
@@ -487,6 +497,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     if (phase !== "hunt" || tried.has(id)) return;
     tried.add(id);
     say.textContent = found.has(id) ? praise[id] : `${praise[id]}（这条传言你还没在代码里找到依据，去搜一搜。）`;
+    provedNow([id]);
     if (tried.size === rumors.length && found.size === rumors.length) toFix();
     render();
   };
@@ -532,9 +543,10 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     const res = searchCalc(sources0, q);
     const fresh = res.found.filter((r) => !found.has(r.id)).map((r) => rumors.find((x) => x.id === r.id));
     for (const r of fresh) found.add(r.id);
+    provedNow(fresh.map((r) => r.id));
     results.replaceChildren(...(res.hits.length ? res.hits.map((hit) => {
       const r = rumors.find((x) => x.file === hit.file && x.needle.test(hit.text));
-      return h("p", { class: r ? "hit rumor" : "hit" }, h("small", {}, `${hit.file}:${hit.n}`), h("code", {}, hit.text), r ? h("em", {}, `← 传言「${r.rumor.slice(0, 12)}…」的依据：${r.detail}`) : null);
+      return h("p", { class: r ? "hit rumor" : "hit" }, h("small", {}, `${hit.file}:${hit.n}`), h("code", {}, hit.text), ...(r ? [h("em", {}, `← 传言「${r.rumor.slice(0, 12)}…」的依据：${r.detail}`)] : []));
     }) : [h("p", { class: "miss" }, /[一-鿿]/.test(q) ? "没找到。代码里的名字都是英文的。" : "没找到，换个词试试。")]),
     ...(res.more ? [h("p", { class: "miss" }, `还有 ${res.more} 行，多写一个词缩小范围。`)] : []));
     if (fresh.length) say.textContent = `找到了！${fresh.map((r) => r.detail).join("；")}。去沙盒里亲手试试。`;
@@ -558,7 +570,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
   function paintPad() {
     pad.replaceChildren(
       ...(found.has("rainbow") ? [["ArrowUp", "↑"], ["ArrowDown", "↓"], ["ArrowLeft", "←"], ["ArrowRight", "→"], ["b", "B"], ["a", "A"]].map(([key, text]) => h("button", { type: "button", class: "lab-key", onclick: () => app.send({ lab: "press", key }) }, text)) : [h("small", {}, "（在代码里找到按键名单后，这里会出现按键板；也可以点一下计算器直接用键盘）")]),
-      found.has("devtools") ? h("button", { type: "button", class: "lab-key wide", onclick: openDevtools }, "Ctrl+Shift+D") : null);
+      ...(found.has("devtools") ? [h("button", { type: "button", class: "lab-key wide", onclick: openDevtools }, "Ctrl+Shift+D")] : []));
   }
   const input = h("input", { class: "lab-console-input", placeholder: "在这里输入代码，回车运行", spellcheck: "false", "aria-label": "控制台", onkeydown: (event) => {
     if (event.key !== "Enter" || !event.target.value.trim()) return;
@@ -581,6 +593,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     if (phase !== "hunt") return;
     phase = "fix";
     say.textContent = "五条传言都是真的。现在你是开发者：哪几处该在发布前删掉？彩蛋可以留着逗人开心。";
+    talk("fix");
   }
   function applyPatch() {
     const verdict = judgePatch(removed);
@@ -603,8 +616,8 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
     boot();
     phase = "done";
     say.textContent = "修好了，新版本已经在沙盒里重新跑起来：再按 Ctrl+Shift+D、加 #/__debug、调 calc.unlock() 都没用了，算出那个数字和按秘籍还是会有惊喜。彩蛋留着，后门关上。";
-    onDone();
     render();
+    talk("patched").then(() => onDone());
   }
 
   const rumorBox = h("div", { class: "lab-claims" });
@@ -717,7 +730,12 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone, story = async () =
   // 委托人在关键的几步说话（lab.talk：decoded 第一次还原、caught 第一次被游戏抓到、salt 第一次搜到盐、
   // success 改成功）。每段只说一次。lab.defend === false 时改成功就结束——串联的下一关接着讲。
   const told = new Set();
-  const talk = (key) => (told.has(key) || !lab.talk?.[key] ? Promise.resolve() : (told.add(key), story(lab.talk[key])));
+  let speaking = Promise.resolve();
+  const talk = (key) => {
+    if (told.has(key) || !lab.talk?.[key]) return speaking;
+    told.add(key);
+    return (speaking = speaking.then(() => story(lab.talk[key]))); // 一段说完再说下一段
+  };
   const hints = [
     "存档是一长串字母和数字：先试试「Base64 还原」。",
     "还原后外面一层是 { v, body, sum }。body 里的 gold 就是金币；sum 是校验码。",

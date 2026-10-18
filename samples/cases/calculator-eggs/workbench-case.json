@@ -149,15 +149,116 @@
       ],
       "done": [
         {
-          "who": "client",
-          "text": "小雨：原来彩蛋和后门长得这么像……",
-          "face": "thinking"
-        },
-        {
-          "text": "都试过了，证据也在袋子里。去结案吧。",
-          "face": "normal"
+          "text": "证据齐了。小雨还有几个想不通的地方——去一句句说给她听。",
+          "face": "happy"
         }
-      ]
+      ],
+      "talk": {
+        "egg": [
+          {
+            "who": "client",
+            "text": "小雨：「祝你天天开心」……原来做计算器的人还挺可爱的。",
+            "face": "happy"
+          },
+          {
+            "text": "这种只在屏幕上变个花样的，就叫彩蛋：不碰你的数据，也不碰钱。",
+            "face": "happy"
+          }
+        ],
+        "rainbow": [
+          {
+            "who": "client",
+            "text": "小雨：彩虹色！我按了三年，一次都没按对顺序！",
+            "face": "surprised"
+          },
+          {
+            "text": "按键的顺序就写在代码里。藏得再深，也只是「没告诉你」，不是「你拿不到」。",
+            "face": "normal"
+          }
+        ],
+        "debug": [
+          {
+            "who": "client",
+            "text": "小雨：调试面板……上面写着「上传服务器：tower.bit-town」？",
+            "face": "thinking"
+          },
+          {
+            "who": "client",
+            "text": "小雨：tower……钟楼？钟楼不是早就坏了吗？",
+            "face": "surprised"
+          },
+          {
+            "text": "还有「每晚 23:58 自动上传」。难怪你说它没人碰，也会自己亮一下。",
+            "face": "thinking"
+          },
+          {
+            "text": "23:58……这个时间，我好像在哪儿见过。先记下来。",
+            "face": "thinking"
+          }
+        ],
+        "devtools": [
+          {
+            "who": "client",
+            "text": "小雨：按 Ctrl+Shift+D，冒出来一个好大的窗口！",
+            "face": "surprised"
+          },
+          {
+            "text": "开发者自己用的调试工具。打开它，页面里的一切都能直接摆弄。",
+            "face": "normal"
+          }
+        ],
+        "pro": [
+          {
+            "who": "client",
+            "text": "小雨：专业版！一分钱没花！",
+            "face": "happy"
+          },
+          {
+            "text": "可这不是彩蛋了：这是开发者测试时留的门，发布前忘了删。做计算器的人，是靠专业版吃饭的。",
+            "face": "thinking"
+          },
+          {
+            "who": "client",
+            "text": "小雨：……那我们这么用，算不算偷？",
+            "face": "thinking"
+          }
+        ],
+        "fix": [
+          {
+            "text": "五条传言，全是真的。现在换你当开发者：发布之前，哪些留、哪些删？",
+            "face": "normal"
+          },
+          {
+            "who": "client",
+            "text": "小雨：彩蛋能留着吗？我最喜欢那个彩虹！",
+            "face": "happy"
+          },
+          {
+            "text": "能。只问一句：它只是逗人开心，还是让人摸到了不该摸的东西？",
+            "face": "happy"
+          }
+        ],
+        "patched": [
+          {
+            "who": "client",
+            "text": "小雨：彩虹还在，专业版的门关上了！",
+            "face": "happy"
+          },
+          {
+            "text": "彩蛋和后门长得很像，都是藏起来的入口。区别只在于，门后面是什么。",
+            "face": "normal"
+          },
+          {
+            "who": "client",
+            "text": "小雨：那调试页上那个钟楼……也一起关掉了吗？",
+            "face": "thinking"
+          },
+          {
+            "text": "页面是藏起来了。可它每晚把东西发到哪儿去——那是另一件事。",
+            "face": "thinking"
+          }
+        ]
+      }
     },
     "puzzle": {
       "title": "惊喜还是不该留下的入口？",
@@ -485,6 +586,10 @@
         {
           "id": "calculator-tested",
           "text": "计算器实验：祝福和彩虹只改变显示；隐藏页面与快捷键打开调试工具，测试解锁通道会改变专业版状态。"
+        },
+        {
+          "id": "tower-server",
+          "text": "调试页上写着：上传服务器 tower.bit-town.example，每晚 23:58 自动上传"
         }
       ],
       "confront": {
@@ -550,6 +655,35 @@
               }
             ],
             "hint": "找到主进程注册快捷键，或页面检查地址的那一行。"
+          },
+          {
+            "text": "「计算器就是个计算器，又不会往外发东西。」",
+            "accept": [
+              "tower.bit-town"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "小雨：它连网都不用连啊，就是算个数。",
+                "face": "normal"
+              },
+              {
+                "text": "你打开调试页的时候，上面写了什么来着？",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "小雨：每晚 23:58，往「钟楼」发东西……它到底在发什么？",
+                "face": "surprised"
+              },
+              {
+                "text": "这件事，委托里没问，可它不对劲。我把它记进手账了。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示沙盒里记下的调试页那一行。"
           },
           {
             "text": "「开发者可以在自己的测试版本中使用调试工具。」",
