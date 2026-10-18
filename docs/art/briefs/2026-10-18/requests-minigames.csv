@@ -1,0 +1,45 @@
+asset_id,game,target_file,deliver_w,deliver_h,frames,priority,status,notes
+td-path,塔防,public/art/pixel/minigames/mini-td-path.png,1440,192,,P0,已接入,已接入：.mini-td-path.art 铺底，游戏内验收通过
+td-home,塔防,public/art/pixel/minigames/mini-td-home.png,64,64,,P0,已接入,已接入：保险柜图标压在通道左端，游戏内验收通过
+td-spawn,塔防,public/art/pixel/minigames/mini-td-spawn.png,64,64,,P0,已接入,已接入：大门图标压在通道右端，游戏内验收通过
+td-unit-lock,塔防,public/art/pixel/minigames/mini-td-unit-lock.png,32,32,,P0,已接入,已接入：least-privilege 用 art=lock 映射；待游戏内细看
+td-unit-throttle,塔防,public/art/pixel/minigames/mini-td-unit-throttle.png,32,32,,P0,已接入,已接入：待游戏内细看
+td-unit-sandbox,塔防,public/art/pixel/minigames/mini-td-unit-sandbox.png,32,32,,P0,已接入,已接入：待游戏内细看
+anim-td-collector,塔防,public/art/pixel/minigames/anim-mini-td-collector.png,96,96,4+1,P0,已接入,已接入：走4帧+被拦翻倒1帧，实测 9 次拦截各留一帧
+td-fx,塔防,public/art/pixel/minigames/mini-td-fx.png,96,32,3,P2,待验收,拦截特效；代码可顶；优先级最低；PNG及帧JSON已交，待游戏验收
+mg-office,经营,public/art/pixel/minigames/mini-mg-office.png,1280,720,,P0,待验收,新绘1280×720严格45°等距版本；广告位内框留空，运行图已替换，待小游戏内复核整体比例与贴画位置。
+mg-ad-lamp,经营,public/art/pixel/minigames/mini-mg-ad-lamp.png,96,64,,P1,待验收,灯泡广告贴画（正经）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
+mg-ad-contacts,经营,public/art/pixel/minigames/mini-mg-ad-contacts.png,96,64,,P1,待验收,「找朋友」广告（读了通讯录后）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
+mg-ad-nearby,经营,public/art/pixel/minigames/mini-mg-ad-nearby.png,96,64,,P1,待验收,「附近」广告（开了定位后）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
+anim-mg-customer,经营,public/art/pixel/minigames/anim-mini-mg-customer.png,80,168,2行×8,P0,待验收,Q版大头顾客两行（男/女）；walk4+满意2+皱眉2；20×28/帧；附json；源图、逐帧数据已入仓，需游戏内验收
+mg-coin,经营,public/art/pixel/minigames/mini-mg-coin.png,16,16,,P0,待验收,金币一枚；飞出粒子用；源图、逐帧数据已入仓，需游戏内验收
+mg-alert,经营,public/art/pixel/minigames/mini-mg-alert.png,32,32,,P1,待验收,风险警铃；摆动由代码做；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
+mg-notice,经营,public/art/pixel/minigames/mini-mg-notice.png,48,64,,P1,待验收,盖红章的通报文件；章是图形不写字；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
+mg-office-evening,经营,,1280,720,,P2,已验收,经检查 public/game.css 已有 .mini-mg-office.dark/.hot 调色，独立傍晚图不再需要
+cd-room,卡牌,public/art/pixel/minigames/mini-cd-room.png,1280,720,,P0,已接入,已接入：主张气泡压在画面底部，驳回时白光一闪
+cd-card-frame,卡牌,public/art/pixel/minigames/mini-cd-card-frame.png,240,160,,P0,待验收,重绘240×160；插图窗与标题条内侧均透明，卡面和标题由代码绘制；运行图已替换，待卡牌试玩复核。
+cd-card-frame-on,卡牌,public/art/pixel/minigames/mini-cd-card-frame-on.png,240,160,,P0,待验收,重绘240×160选中态；边框保留高亮，插图窗与标题条内侧透明；运行图已替换，待卡牌试玩复核。
+cd-art-capture,卡牌,public/art/pixel/minigames/mini-cd-art-capture.png,96,64,,P0,已接入,已接入
+cd-art-timer,卡牌,public/art/pixel/minigames/mini-cd-art-timer.png,96,64,,P0,已接入,已接入
+cd-art-sdk,卡牌,public/art/pixel/minigames/mini-cd-art-sdk.png,96,64,,P0,已接入,已接入
+cd-art-terms,卡牌,public/art/pixel/minigames/mini-cd-art-terms.png,96,64,,P0,已接入,已接入
+cd-art-changelog,卡牌,public/art/pixel/minigames/mini-cd-art-changelog.png,96,64,,P0,已接入,已接入
+cd-art-lamp,卡牌,public/art/pixel/minigames/mini-cd-art-lamp.png,96,64,,P0,已接入,已接入
+dev-face,卡牌,public/art/faces/dev-normal.webp,320,320,,P1,待验收,方向稿已入仓；白衬衫工牌、抱平板；五表情见 dev-normal/happy/thinking/surprised/flustered.webp，待游戏验收
+rh-frame,节奏,public/art/pixel/minigames/mini-rh-frame.png,1520,440,,P0,待验收,CRT监视器外框；屏幕区留空；源图、逐帧数据已入仓，需游戏内验收
+rh-lane,节奏,public/art/pixel/minigames/mini-rh-lane.png,1440,160,,P0,待验收,光纤带轨道底；源图、逐帧数据已入仓，需游戏内验收
+rh-line,节奏,public/art/pixel/minigames/mini-rh-line.png,24,160,,P0,待验收,发光闸刀判定线；源图、逐帧数据已入仓，需游戏内验收
+anim-rh-upload,节奏,public/art/pixel/minigames/anim-mini-rh-upload.png,144,108,2+1+1,P0,待验收,红色上传包；呼吸2+命中1+漏1；48×36/帧；附json；源图、逐帧数据已入仓，需游戏内验收
+anim-rh-sync,节奏,public/art/pixel/minigames/anim-mini-rh-sync.png,144,108,2+1+1,P0,待验收,绿色同步；同规格；形状要有区分度；源图、逐帧数据已入仓，需游戏内验收
+pipe-straight,管道,public/art/pixel/minigames/mini-pipe-straight.png,64,64,,P0,待验收,直管；端头法兰边；只画一个朝向；源图、逐帧数据已入仓，需游戏内验收
+pipe-elbow,管道,public/art/pixel/minigames/mini-pipe-elbow.png,64,64,,P0,待验收,弯管；同上；源图、逐帧数据已入仓，需游戏内验收
+pipe-key,管道,public/art/pixel/minigames/mini-pipe-key.png,32,32,,P0,待验收,钥匙形数据块（起点）；源图、逐帧数据已入仓，需游戏内验收
+pipe-exit-server,管道,public/art/pixel/minigames/mini-pipe-exit-server.png,48,48,,P0,待验收,绿色机柜（出口一）；源图、逐帧数据已入仓，需游戏内验收
+pipe-exit-package,管道,public/art/pixel/minigames/mini-pipe-exit-package.png,48,48,,P0,待验收,贴单子的红色包装箱（出口二）；源图、逐帧数据已入仓，需游戏内验收
+pipe-flow,管道,public/art/pixel/minigames/mini-pipe-flow.png,128,32,4,P2,待验收,接通光流；代码可顶；PNG及帧JSON已交，待游戏验收
+fv-arena-concept,格斗（规划）,docs/art/review/sources/mini-fv-arena-concept.png,1280,720,,P2,候选,先只出1张概念图；定稿后按requests-minigames.md第七节补全；单张概念稿已交，待玩法定稿确认
+tl-board-concept,时间线（规划）,docs/art/review/sources/mini-tl-board-concept.png,1440,160,,P2,候选,先只出1张概念图；事件图标定稿后点名；单张概念稿已交，待玩法定稿确认
+dev-happy,卡牌,public/art/faces/dev-happy.webp,320,320,,P1,待验收,开发者开心/释然表情；沿用方向稿人设
+dev-thinking,卡牌,public/art/faces/dev-thinking.webp,320,320,,P1,待验收,开发者思考表情；沿用方向稿人设
+dev-surprised,卡牌,public/art/faces/dev-surprised.webp,320,320,,P1,待验收,开发者惊讶表情；沿用方向稿人设
+dev-flustered,卡牌,public/art/faces/dev-flustered.webp,320,320,,P1,待验收,开发者被驳倒心虚表情；沿用方向稿人设

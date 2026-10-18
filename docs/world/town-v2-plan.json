@@ -1,0 +1,3038 @@
+{
+  "schemaVersion": 1,
+  "status": "design-proposal-not-runtime",
+  "date": "2026-10-18",
+  "coordinateSystem": {
+    "world": [
+      2560,
+      1440
+    ],
+    "artMaster": [
+      3840,
+      2160
+    ],
+    "baseArtGrid": [
+      1280,
+      720
+    ],
+    "worldUnitsPerBasePixel": 2,
+    "masterPixelsPerBasePixel": 3,
+    "viewport": [
+      640,
+      360
+    ],
+    "playerFootAnchor": "bottom-center",
+    "warning": "All locations are proposed blockout anchors, not measurements of delivered art."
+  },
+  "zones": [
+    {
+      "id": "forest",
+      "name": "北坡林",
+      "grid": [
+        0,
+        0
+      ],
+      "theme": "松针、坡道、风声；不造建筑街墙",
+      "color": "#b7cbb0",
+      "kind": "exploration",
+      "buildings": [
+        {
+          "id": "ranger-hut",
+          "name": "护林服务小屋",
+          "role": "future-service",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 230,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 518
+          },
+          "interaction": "inspect-exterior",
+          "phase": "reserved"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "north",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "homes-west",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [],
+      "interactionExamples": [
+        {
+          "id": "trail-post",
+          "name": "步道标",
+          "verb": "read",
+          "response": "岔路与返回方向",
+          "rule": "可重复看",
+          "status": "design-only"
+        },
+        {
+          "id": "bird-hide",
+          "name": "观鸟位",
+          "verb": "observe",
+          "response": "停留看到小鸟",
+          "rule": "不强制收集",
+          "status": "design-only"
+        },
+        {
+          "id": "ore-sample",
+          "name": "岩石样本",
+          "verb": "inspect",
+          "response": "观察层理",
+          "rule": "不开采经济",
+          "status": "design-only"
+        },
+        {
+          "id": "fallen-log",
+          "name": "倒木",
+          "verb": "inspect",
+          "response": "林间绕行提示",
+          "rule": "碰撞真实可绕",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "north",
+      "name": "北区",
+      "grid": [
+        1,
+        0
+      ],
+      "theme": "钟楼与工坊；窄高轮廓，院落留白",
+      "color": "#c3bed1",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "clocktower",
+          "name": "钟楼",
+          "role": "story",
+          "questBinding": null,
+          "footprint": {
+            "x": 1760,
+            "y": 120,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1950,
+            "y": 408
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "office",
+          "name": "周姐办公楼",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 170,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 458
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "engines",
+          "name": "铁叔工具铺",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 1238
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "watchmaker-stall",
+          "name": "老魏修表摊",
+          "role": "daily",
+          "questBinding": null,
+          "footprint": {
+            "x": 1770,
+            "y": 1000,
+            "w": 240,
+            "h": 128
+          },
+          "door": {
+            "x": 1890,
+            "y": 1176
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "north-home",
+          "name": "工匠住宅",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1850,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 2000,
+            "y": 660
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "forest",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "riverside",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "center",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "north-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "north-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "north-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "clocktower",
+          "width": 96,
+          "points": [
+            [
+              1950,
+              408
+            ],
+            [
+              1754,
+              408
+            ],
+            [
+              1754,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "office",
+          "width": 96,
+          "points": [
+            [
+              540,
+              458
+            ],
+            [
+              540,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "engines",
+          "width": 96,
+          "points": [
+            [
+              540,
+              1238
+            ],
+            [
+              254,
+              1238
+            ],
+            [
+              254,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "watchmaker-stall",
+          "width": 96,
+          "points": [
+            [
+              1890,
+              1176
+            ],
+            [
+              2106,
+              1176
+            ],
+            [
+              2106,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "north-home",
+          "width": 96,
+          "points": [
+            [
+              2000,
+              660
+            ],
+            [
+              2000,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "clock-dial",
+          "name": "钟楼钟面",
+          "verb": "inspect",
+          "response": "主线停在11:58",
+          "rule": "不是日常时钟",
+          "status": "design-only"
+        },
+        {
+          "id": "watch-tray",
+          "name": "修表零件盘",
+          "verb": "inspect",
+          "response": "看修表工序",
+          "rule": "不顺走零件",
+          "status": "design-only"
+        },
+        {
+          "id": "tool-sample",
+          "name": "工具铺样件",
+          "verb": "use",
+          "response": "发布检查练习入口",
+          "rule": "满足知识前置",
+          "status": "design-only"
+        },
+        {
+          "id": "office-window",
+          "name": "公告橱窗",
+          "verb": "read",
+          "response": "周姐日程与版本公告",
+          "rule": "不自动泄露案件答案",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "riverside",
+      "name": "河堤",
+      "grid": [
+        2,
+        0
+      ],
+      "theme": "芦苇、浅滩、旧船；最多一处轻量服务点",
+      "color": "#a8ccce",
+      "kind": "exploration",
+      "buildings": [
+        {
+          "id": "river-shelter",
+          "name": "河堤避雨小屋",
+          "role": "future-service",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 230,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 518
+          },
+          "interaction": "inspect-exterior",
+          "phase": "reserved"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "north",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "craft-west",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [],
+      "interactionExamples": [
+        {
+          "id": "reed",
+          "name": "芦苇",
+          "verb": "inspect",
+          "response": "风与湿地声音",
+          "rule": "环境",
+          "status": "design-only"
+        },
+        {
+          "id": "old-boat",
+          "name": "搁浅旧船",
+          "verb": "inspect",
+          "response": "船号与修补痕迹",
+          "rule": "不自动解锁支线",
+          "status": "design-only"
+        },
+        {
+          "id": "water-gauge",
+          "name": "水位尺",
+          "verb": "inspect",
+          "response": "今天的水位记录",
+          "rule": "代码显示数字",
+          "status": "design-only"
+        },
+        {
+          "id": "rest-stone",
+          "name": "平石",
+          "verb": "sit",
+          "response": "看鱼群和远处灯塔",
+          "rule": "环境",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "homes-west",
+      "name": "住宅西区",
+      "grid": [
+        0,
+        1
+      ],
+      "theme": "老院落、晾衣绳、邻里共用长椅",
+      "color": "#d2c7a5",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "privacy-ledger",
+          "name": "小林宿舍",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 340,
+            "y": 160,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 530,
+            "y": 448
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "weather-keys",
+          "name": "阿哲住处",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 1750,
+            "y": 150,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1940,
+            "y": 438
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "flashlight-apk",
+          "name": "王奶奶家",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 340,
+            "y": 920,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 530,
+            "y": 1208
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "oncall-home",
+          "name": "阿康家",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1780,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1970,
+            "y": 1238
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "west-neighbor",
+          "name": "普通邻居小院",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1850,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 2000,
+            "y": 660
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "forest",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "center",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "homes-east",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "homes-west-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "homes-west-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "homes-west-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "privacy-ledger",
+          "width": 96,
+          "points": [
+            [
+              530,
+              448
+            ],
+            [
+              530,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "weather-keys",
+          "width": 96,
+          "points": [
+            [
+              1940,
+              438
+            ],
+            [
+              1754,
+              438
+            ],
+            [
+              1754,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "flashlight-apk",
+          "width": 96,
+          "points": [
+            [
+              530,
+              1208
+            ],
+            [
+              244,
+              1208
+            ],
+            [
+              244,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "oncall-home",
+          "width": 96,
+          "points": [
+            [
+              1970,
+              1238
+            ],
+            [
+              2256,
+              1238
+            ],
+            [
+              2256,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "west-neighbor",
+          "width": 96,
+          "points": [
+            [
+              2000,
+              660
+            ],
+            [
+              2000,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "washing-line",
+          "name": "晾衣绳",
+          "verb": "inspect",
+          "response": "风大衣服往哪边摆",
+          "rule": "景物",
+          "status": "design-only"
+        },
+        {
+          "id": "doorbell",
+          "name": "邻居门铃",
+          "verb": "knock",
+          "response": "屋里应答或无人",
+          "rule": "日常",
+          "status": "design-only"
+        },
+        {
+          "id": "dog-bowl",
+          "name": "狗水碗",
+          "verb": "inspect",
+          "response": "阿康的狗刚喝过",
+          "rule": "生活线索",
+          "status": "design-only"
+        },
+        {
+          "id": "shared-bench",
+          "name": "院落长椅",
+          "verb": "sit",
+          "response": "和邻居短聊",
+          "rule": "不强制课程",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "center",
+      "name": "中心广场",
+      "grid": [
+        1,
+        1
+      ],
+      "theme": "集合、相遇、问路；喷泉和树荫",
+      "color": "#ddc18e",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "home",
+          "name": "路米事务所",
+          "role": "story",
+          "questBinding": null,
+          "footprint": {
+            "x": 360,
+            "y": 160,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 550,
+            "y": 448
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "learn",
+          "name": "图书馆",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1720,
+            "y": 140,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1910,
+            "y": 428
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "archive",
+          "name": "老秦档案馆",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 360,
+            "y": 930,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 550,
+            "y": 1218
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "disk-stall",
+          "name": "阿飞旧硬盘摊",
+          "role": "daily",
+          "questBinding": null,
+          "footprint": {
+            "x": 1730,
+            "y": 980,
+            "w": 240,
+            "h": 128
+          },
+          "door": {
+            "x": 1850,
+            "y": 1156
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "center-home",
+          "name": "广场居民楼",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1830,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 1980,
+            "y": 660
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "north",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "homes-west",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "craft-west",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "south",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "center-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "center-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "center-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "home",
+          "width": 96,
+          "points": [
+            [
+              550,
+              448
+            ],
+            [
+              550,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "learn",
+          "width": 96,
+          "points": [
+            [
+              1910,
+              428
+            ],
+            [
+              1734,
+              428
+            ],
+            [
+              1734,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "archive",
+          "width": 96,
+          "points": [
+            [
+              550,
+              1218
+            ],
+            [
+              264,
+              1218
+            ],
+            [
+              264,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "disk-stall",
+          "width": 96,
+          "points": [
+            [
+              1850,
+              1156
+            ],
+            [
+              2066,
+              1156
+            ],
+            [
+              2066,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "center-home",
+          "width": 96,
+          "points": [
+            [
+              1980,
+              660
+            ],
+            [
+              1980,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "noticeboard",
+          "name": "公告板",
+          "verb": "read",
+          "response": "今日生活告示 / 委托另页",
+          "rule": "不自动接取",
+          "status": "design-only"
+        },
+        {
+          "id": "fountain",
+          "name": "喷泉边",
+          "verb": "sit",
+          "response": "坐下听水声",
+          "rule": "无任务",
+          "status": "design-only"
+        },
+        {
+          "id": "newspaper",
+          "name": "旧报纸",
+          "verb": "inspect",
+          "response": "比较日期与照片",
+          "rule": "传闻需明确点击",
+          "status": "design-only"
+        },
+        {
+          "id": "lost-scarf",
+          "name": "失物围巾",
+          "verb": "inspect",
+          "response": "记下失物描述",
+          "rule": "不擅自领取居民物品",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "craft-west",
+      "name": "手艺西街",
+      "grid": [
+        2,
+        1
+      ],
+      "theme": "面包香、木屑、修鞋声；有后巷",
+      "color": "#cdb493",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "bakery",
+          "name": "阿桃面包店",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 340,
+            "y": 160,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 530,
+            "y": 448
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "woodshop",
+          "name": "公共作坊",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1720,
+            "y": 170,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1910,
+            "y": 458
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "cobbler-shop",
+          "name": "老宋鞋铺",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 340,
+            "y": 930,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 530,
+            "y": 1218
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "pottery-home",
+          "name": "陶艺人住宅",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1770,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1960,
+            "y": 1238
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "tailor-front",
+          "name": "裁缝小店",
+          "role": "daily",
+          "questBinding": null,
+          "footprint": {
+            "x": 1840,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 1990,
+            "y": 660
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "riverside",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "center",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "craft-east",
+          "edge": "S",
+          "anchor": [
+            1280,
+            1392
+          ],
+          "arrival": [
+            1280,
+            48
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "craft-west-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "craft-west-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "craft-west-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "bakery",
+          "width": 96,
+          "points": [
+            [
+              530,
+              448
+            ],
+            [
+              530,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "woodshop",
+          "width": 96,
+          "points": [
+            [
+              1910,
+              458
+            ],
+            [
+              1744,
+              458
+            ],
+            [
+              1744,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "cobbler-shop",
+          "width": 96,
+          "points": [
+            [
+              530,
+              1218
+            ],
+            [
+              244,
+              1218
+            ],
+            [
+              244,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "pottery-home",
+          "width": 96,
+          "points": [
+            [
+              1960,
+              1238
+            ],
+            [
+              2246,
+              1238
+            ],
+            [
+              2246,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "tailor-front",
+          "width": 96,
+          "points": [
+            [
+              1990,
+              660
+            ],
+            [
+              1990,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "order-slip",
+          "name": "面包订单牌",
+          "verb": "read",
+          "response": "排队顺序",
+          "rule": "正式支线另确认",
+          "status": "design-only"
+        },
+        {
+          "id": "shoe-display",
+          "name": "鞋铺样鞋",
+          "verb": "inspect",
+          "response": "观察鞋底纹路",
+          "rule": "日常",
+          "status": "design-only"
+        },
+        {
+          "id": "workbench",
+          "name": "作坊样件",
+          "verb": "rotate",
+          "response": "看接缝结构",
+          "rule": "样件非任务物",
+          "status": "design-only"
+        },
+        {
+          "id": "shavings",
+          "name": "木屑堆",
+          "verb": "inspect",
+          "response": "工坊今天开过工",
+          "rule": "景物",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "homes-east",
+      "name": "住宅东区",
+      "grid": [
+        0,
+        2
+      ],
+      "theme": "菜园、快递柜、小孩活动空地",
+      "color": "#cfcea0",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "farm-save",
+          "name": "朵朵家与菜园",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 360,
+            "y": 160,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 550,
+            "y": 448
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "calculator-eggs",
+          "name": "小雨家",
+          "role": "case",
+          "questBinding": null,
+          "footprint": {
+            "x": 1710,
+            "y": 140,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1900,
+            "y": 428
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "parcel-lockers",
+          "name": "大壮快递站",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1750,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1940,
+            "y": 1238
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "student-home",
+          "name": "小满家",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 920,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 1208
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "east-neighbor",
+          "name": "普通邻居住宅",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 500,
+            "y": 660
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "homes-west",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "south",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "homes-east-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "homes-east-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "homes-east-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "farm-save",
+          "width": 96,
+          "points": [
+            [
+              550,
+              448
+            ],
+            [
+              746,
+              448
+            ],
+            [
+              746,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "calculator-eggs",
+          "width": 96,
+          "points": [
+            [
+              1900,
+              428
+            ],
+            [
+              1900,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "parcel-lockers",
+          "width": 96,
+          "points": [
+            [
+              1940,
+              1238
+            ],
+            [
+              2226,
+              1238
+            ],
+            [
+              2226,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "student-home",
+          "width": 96,
+          "points": [
+            [
+              540,
+              1208
+            ],
+            [
+              254,
+              1208
+            ],
+            [
+              254,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "east-neighbor",
+          "width": 96,
+          "points": [
+            [
+              500,
+              660
+            ],
+            [
+              500,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "parcel-screen",
+          "name": "快递柜屏",
+          "verb": "use",
+          "response": "模拟样本排队状态",
+          "rule": "不显示他人真实包裹",
+          "status": "design-only"
+        },
+        {
+          "id": "garden",
+          "name": "菜园",
+          "verb": "inspect",
+          "response": "看当天作物变化",
+          "rule": "不改存档数值",
+          "status": "design-only"
+        },
+        {
+          "id": "ball",
+          "name": "皮球",
+          "verb": "nudge",
+          "response": "小幅滚动后停下",
+          "rule": "不能堵门",
+          "status": "design-only"
+        },
+        {
+          "id": "xiaoyu-door",
+          "name": "小雨门口",
+          "verb": "encounter",
+          "response": "已听计算器传闻才触发",
+          "rule": "一次且可稍后",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "south",
+      "name": "南岸",
+      "grid": [
+        1,
+        2
+      ],
+      "theme": "驿站、灯塔、码头；潮声与晚灯",
+      "color": "#adc3c3",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "clients",
+          "name": "驿站",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 160,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 448
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "doctor",
+          "name": "诊所",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 1238
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "lighthouse",
+          "name": "老陈灯塔",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1760,
+            "y": 150,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1950,
+            "y": 438
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "fisher-home",
+          "name": "渔家小院",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 1760,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1950,
+            "y": 1238
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "dock-kiosk",
+          "name": "码头茶水铺",
+          "role": "daily",
+          "questBinding": null,
+          "footprint": {
+            "x": 1850,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 2000,
+            "y": 660
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "center",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "homes-east",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        },
+        {
+          "to": "craft-east",
+          "edge": "E",
+          "anchor": [
+            2512,
+            720
+          ],
+          "arrival": [
+            48,
+            720
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "south-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "south-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "south-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "clients",
+          "width": 96,
+          "points": [
+            [
+              540,
+              448
+            ],
+            [
+              540,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "doctor",
+          "width": 96,
+          "points": [
+            [
+              540,
+              1238
+            ],
+            [
+              254,
+              1238
+            ],
+            [
+              254,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "lighthouse",
+          "width": 96,
+          "points": [
+            [
+              1950,
+              438
+            ],
+            [
+              1754,
+              438
+            ],
+            [
+              1754,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "fisher-home",
+          "width": 96,
+          "points": [
+            [
+              1950,
+              1238
+            ],
+            [
+              2236,
+              1238
+            ],
+            [
+              2236,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "dock-kiosk",
+          "width": 96,
+          "points": [
+            [
+              2000,
+              660
+            ],
+            [
+              2000,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "post-box",
+          "name": "邮筒",
+          "verb": "inspect",
+          "response": "今日收件时段",
+          "rule": "不读取居民信件",
+          "status": "design-only"
+        },
+        {
+          "id": "dock-bench",
+          "name": "码头长椅",
+          "verb": "sit",
+          "response": "潮声与短聊",
+          "rule": "无任务",
+          "status": "design-only"
+        },
+        {
+          "id": "lamp-switch",
+          "name": "灯塔检修牌",
+          "verb": "read",
+          "response": "开放时段与老陈去向",
+          "rule": "不能乱开航标",
+          "status": "design-only"
+        },
+        {
+          "id": "ferry-sign",
+          "name": "渡口牌",
+          "verb": "read",
+          "response": "河堤步道方向",
+          "rule": "无收费门槛",
+          "status": "design-only"
+        }
+      ]
+    },
+    {
+      "id": "craft-east",
+      "name": "手艺东街",
+      "grid": [
+        2,
+        2
+      ],
+      "theme": "咖啡、画室、游戏和模型展示",
+      "color": "#cbb2be",
+      "kind": "town",
+      "buildings": [
+        {
+          "id": "cafe",
+          "name": "小鹿咖啡店",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 360,
+            "y": 170,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 550,
+            "y": 458
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "arcade",
+          "name": "像素游戏厅",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1730,
+            "y": 150,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1920,
+            "y": 438
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "figures",
+          "name": "模型工作室",
+          "role": "service",
+          "questBinding": null,
+          "footprint": {
+            "x": 1730,
+            "y": 950,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 1920,
+            "y": 1238
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "painter",
+          "name": "彩姐画室门廊",
+          "role": "daily",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 920,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 540,
+            "y": 1208
+          },
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal"
+        },
+        {
+          "id": "music-home",
+          "name": "乐手住宅",
+          "role": "private",
+          "questBinding": null,
+          "footprint": {
+            "x": 350,
+            "y": 516,
+            "w": 300,
+            "h": 96
+          },
+          "door": {
+            "x": 500,
+            "y": 660
+          },
+          "interaction": "knock",
+          "phase": "layout-proposal"
+        }
+      ],
+      "size": [
+        2560,
+        1440
+      ],
+      "masterSize": [
+        3840,
+        2160
+      ],
+      "exits": [
+        {
+          "to": "craft-west",
+          "edge": "N",
+          "anchor": [
+            1280,
+            48
+          ],
+          "arrival": [
+            1280,
+            1392
+          ],
+          "width": 160
+        },
+        {
+          "to": "south",
+          "edge": "W",
+          "anchor": [
+            48,
+            720
+          ],
+          "arrival": [
+            2512,
+            720
+          ],
+          "width": 160
+        }
+      ],
+      "reservedLots": [
+        {
+          "id": "craft-east-reserve-a",
+          "x": 70,
+          "y": 420,
+          "w": 260,
+          "h": 180
+        },
+        {
+          "id": "craft-east-reserve-b",
+          "x": 760,
+          "y": 180,
+          "w": 300,
+          "h": 210
+        },
+        {
+          "id": "craft-east-reserve-c",
+          "x": 1450,
+          "y": 990,
+          "w": 260,
+          "h": 210
+        }
+      ],
+      "spawn": [
+        1280,
+        820
+      ],
+      "paths": [
+        {
+          "building": "cafe",
+          "width": 96,
+          "points": [
+            [
+              550,
+              458
+            ],
+            [
+              746,
+              458
+            ],
+            [
+              746,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "arcade",
+          "width": 96,
+          "points": [
+            [
+              1920,
+              438
+            ],
+            [
+              1920,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "figures",
+          "width": 96,
+          "points": [
+            [
+              1920,
+              1238
+            ],
+            [
+              2206,
+              1238
+            ],
+            [
+              2206,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "painter",
+          "width": 96,
+          "points": [
+            [
+              540,
+              1208
+            ],
+            [
+              254,
+              1208
+            ],
+            [
+              254,
+              720
+            ]
+          ]
+        },
+        {
+          "building": "music-home",
+          "width": 96,
+          "points": [
+            [
+              500,
+              660
+            ],
+            [
+              500,
+              720
+            ]
+          ]
+        }
+      ],
+      "interactionExamples": [
+        {
+          "id": "menu",
+          "name": "咖啡菜单",
+          "verb": "read",
+          "response": "看今日菜单",
+          "rule": "不强制货币系统",
+          "status": "design-only"
+        },
+        {
+          "id": "arcade-demo",
+          "name": "试玩机",
+          "verb": "play",
+          "response": "原创30秒试玩",
+          "rule": "明确退出",
+          "status": "design-only"
+        },
+        {
+          "id": "model-cabinet",
+          "name": "模型柜",
+          "verb": "inspect",
+          "response": "转动授权/原创模型",
+          "rule": "不假装已装Mod",
+          "status": "design-only"
+        },
+        {
+          "id": "easel",
+          "name": "门廊画架",
+          "verb": "inspect",
+          "response": "看本地画作说明",
+          "rule": "日常",
+          "status": "design-only"
+        }
+      ]
+    }
+  ],
+  "links": [
+    [
+      "forest",
+      "north"
+    ],
+    [
+      "north",
+      "riverside"
+    ],
+    [
+      "forest",
+      "homes-west"
+    ],
+    [
+      "north",
+      "center"
+    ],
+    [
+      "riverside",
+      "craft-west"
+    ],
+    [
+      "homes-west",
+      "center"
+    ],
+    [
+      "center",
+      "craft-west"
+    ],
+    [
+      "homes-west",
+      "homes-east"
+    ],
+    [
+      "center",
+      "south"
+    ],
+    [
+      "craft-west",
+      "craft-east"
+    ],
+    [
+      "homes-east",
+      "south"
+    ],
+    [
+      "south",
+      "craft-east"
+    ]
+  ],
+  "npcs": [
+    {
+      "id": "baker",
+      "name": "阿桃",
+      "region": "craft-west",
+      "home": "bakery",
+      "quest": "外卖排序",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "炉子热着，面包也得慢慢等。",
+        "repeat": "我不是要第一名，我是要别老最后一名。",
+        "rain": "雨天的外卖袋得套两层。",
+        "completed": "单子看清了，今天我按顺序来。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "bakery.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "bakery.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "craft-west.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "bakery.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "bakery.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "bakery.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "watchmaker",
+      "name": "老魏",
+      "region": "north",
+      "home": "watchmaker-stall",
+      "quest": "钟停之后",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "表放这儿，我先听一听。",
+        "repeat": "表没问题，是时间的问题。",
+        "rain": "下雨别把表放窗台。",
+        "completed": "钟楼的事我还在想，今天先把这只表修好。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "watchmaker-stall.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "watchmaker-stall.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "north.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "watchmaker-stall.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "watchmaker-stall.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "watchmaker-stall.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "student",
+      "name": "小满",
+      "region": "homes-east",
+      "home": "student-home",
+      "quest": "AI写的作业",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "你也觉得这句话读着很厉害吗？",
+        "repeat": "我查过资料的……算是查过吧。",
+        "rain": "作业本淋湿了可不能怪AI。",
+        "completed": "这次我能用自己的话讲那一页了。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "student-home.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "off-map-school",
+          "anchor": "student-home.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "homes-east.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "student-home.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "student-home.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "student-home.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "disk-vendor",
+      "name": "阿飞",
+      "region": "center",
+      "home": "disk-stall",
+      "quest": "没删干净",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "买盘先看容量，也得问清来路。",
+        "repeat": "格式化过了，我发誓——大概。",
+        "rain": "盘怕水，先帮我把箱盖扣上。",
+        "completed": "旧盘我先处理干净，再摆出来。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "disk-stall.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "disk-stall.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "center.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "disk-stall.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "disk-stall.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "disk-stall.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "barista",
+      "name": "小鹿",
+      "region": "craft-east",
+      "home": "cafe",
+      "quest": "记不住名字",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "先坐，杯垫还是温的。",
+        "repeat": "您上次喝的是……哪一杯来着？",
+        "rain": "窗边今天能听见雨打棚顶。",
+        "completed": "便签排好了，名字终于不会串杯了。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "cafe.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "cafe.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "craft-east.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "cafe.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "cafe.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "cafe.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "parcel",
+      "name": "大壮",
+      "region": "homes-east",
+      "home": "parcel-lockers",
+      "quest": "柜子总满",
+      "questStatus": "proposed",
+      "dialogue": {
+        "first": "取件码自己看，我不替你念。",
+        "repeat": "柜子就24个，人一天来60个！",
+        "rain": "大箱子先放屋檐下，别堵过道。",
+        "completed": "现在柜子腾得开，我也能喝口水。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "parcel-lockers.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "parcel-lockers.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "homes-east.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "parcel-lockers.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "parcel-lockers.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "parcel-lockers.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "pigeon-uncle",
+      "name": "老周",
+      "region": "center",
+      "home": "center-home",
+      "quest": null,
+      "questStatus": "chatter",
+      "dialogue": {
+        "first": "钟楼没停之前，镇上没人看表。",
+        "repeat": "钟楼停了以后，鸽子倒是准时。",
+        "rain": "雨大了，面包屑就留到明天。",
+        "completed": "你办事的时候，镇上也没闲着。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "center-home.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "center-home.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "center.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "center-home.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "center-home.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "center-home.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "oncall",
+      "name": "阿康",
+      "region": "homes-west",
+      "home": "oncall-home",
+      "quest": null,
+      "questStatus": "chatter",
+      "dialogue": {
+        "first": "（手机响了）这条我已经看了四百次。",
+        "repeat": "狗都知道这是老提醒了。",
+        "rain": "今天它走得快，怕弄湿爪子。",
+        "completed": "这回我先看清原因，再关提醒。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "oncall-home.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "oncall-home.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "homes-west.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "walk-dog",
+          "anchor": "oncall-home.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "oncall-home.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "oncall-home.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "paperboy",
+      "name": "小石头",
+      "region": "center",
+      "home": "center-home",
+      "quest": null,
+      "questStatus": "chatter",
+      "dialogue": {
+        "first": "号外！今天的纸可不是昨天那张。",
+        "repeat": "头版没换，背面天气倒换了。",
+        "rain": "报纸收里头，别拿湿的。",
+        "completed": "这次头版真换了，你瞧日期。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "center-home.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "delivery-route",
+          "anchor": "center-home.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "center.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "delivery-route",
+          "anchor": "center-home.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "center-home.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "center-home.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "lighthouse-keeper",
+      "name": "老陈",
+      "region": "south",
+      "home": "lighthouse",
+      "quest": "beacon-release",
+      "questStatus": "implemented-transfer",
+      "dialogue": {
+        "first": "白天不亮灯，灯罩也得擦。",
+        "repeat": "万一今晚要用呢。",
+        "rain": "雾大就少往栈桥外头走。",
+        "completed": "这回我把能公开的和钥匙分开装。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "lighthouse.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "lighthouse.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "south.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "lighthouse.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "check-lamp",
+          "anchor": "lighthouse.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "night-duty",
+          "anchor": "lighthouse.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "apprentice",
+      "name": "小铃",
+      "region": "north",
+      "home": "engines",
+      "quest": "clock-import",
+      "questStatus": "implemented-transfer",
+      "dialogue": {
+        "first": "你说，差半秒算不算准？",
+        "repeat": "误差小不等于没有误差。",
+        "rain": "潮天拆表，零件盘得盖好。",
+        "completed": "导入前先看去向，这句我记下了。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "engines.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "engines.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "north.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "engines.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "engines.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "engines.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    },
+    {
+      "id": "cobbler",
+      "name": "老宋",
+      "region": "craft-west",
+      "home": "cobbler-shop",
+      "quest": "cobbler-booking",
+      "questStatus": "implemented-transfer",
+      "dialogue": {
+        "first": "你这双，走的是河边近路。",
+        "repeat": "坐，鞋底比嘴老实。",
+        "rain": "雨天别踩门口那块松砖。",
+        "completed": "预约只问该问的，鞋码我当面量。",
+        "leaving": "我还得忙一会儿，你先逛。"
+      },
+      "schedule": [
+        {
+          "from": "06:00",
+          "to": "09:00",
+          "activity": "opening",
+          "anchor": "cobbler-shop.door"
+        },
+        {
+          "from": "09:00",
+          "to": "12:00",
+          "activity": "work",
+          "anchor": "cobbler-shop.work"
+        },
+        {
+          "from": "12:00",
+          "to": "14:00",
+          "activity": "rest",
+          "anchor": "craft-west.rest"
+        },
+        {
+          "from": "14:00",
+          "to": "18:00",
+          "activity": "work",
+          "anchor": "cobbler-shop.work"
+        },
+        {
+          "from": "18:00",
+          "to": "21:00",
+          "activity": "closing",
+          "anchor": "cobbler-shop.door"
+        },
+        {
+          "from": "21:00",
+          "to": "06:00",
+          "activity": "home",
+          "anchor": "cobbler-shop.interior"
+        }
+      ],
+      "scheduleStatus": "design-only; resolve named anchors before runtime"
+    }
+  ],
+  "legacyMigration": {
+    "center": "center",
+    "homes": [
+      "homes-west",
+      "homes-east"
+    ],
+    "craft": [
+      "craft-west",
+      "craft-east"
+    ],
+    "north": "north",
+    "south": "south"
+  },
+  "persistentState": {
+    "version": 2,
+    "fields": [
+      "npcMet",
+      "dialogueSeen",
+      "objectStates",
+      "encounterCooldowns",
+      "questFlags",
+      "playerLocation"
+    ],
+    "neverStore": [
+      "secretValues",
+      "otherPlayersData",
+      "derivedPerFramePaths"
+    ]
+  }
+}
