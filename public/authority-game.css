@@ -1,0 +1,26 @@
+/* 谁说了算（种田日记联网版）。代码画的占位，美术交图后替换。 */
+.au {display:grid;gap:8px;}
+.au-lead {display:flex;justify-content:space-between;gap:8px;margin:0;font:12px var(--font-body);color:#cfe8d4;}
+.au-round {color:#e8c270;}
+.au-slots {color:#ffb39e;}
+.au-pool {display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;padding:8px;background:#101a14;border:1px dashed #4d7a5c;}
+.au-board {display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media (max-width:560px) {.au-board {grid-template-columns:1fr;}}
+.au-col {display:flex;flex-direction:column;gap:6px;min-height:120px;padding:8px;font:12px/1.5 var(--font-body);color:#cfe8d4;border:1px solid #4d7a5c;}
+.au-col.local {background:#1a2a20;}
+.au-col.server {background:#1b2233;border-color:#5b6a8a;}
+.au-col > b {color:#ffe8b0;}
+.au-col > small {color:#8aa894;margin-top:-4px;}
+.au-card {display:flex;flex-direction:column;gap:3px;padding:6px 8px;font:12px/1.4 var(--font-body);color:#fff6dc;background:#2a3f30;border:1px solid #6b8f74;}
+.au-col.server .au-card {background:#2a3350;border-color:#7d8db8;}
+.au-card.locked {opacity:.6;}
+.au-tag {font-size:11px;color:#9fd3a8;}
+.au-tag.others {color:#ffb39e;}
+.au-moves {display:flex;flex-wrap:wrap;gap:4px;}
+.au-report {display:flex;flex-direction:column;gap:3px;padding:8px;font:12px/1.5 var(--font-body);color:#cfe8d4;background:#101a14;border:1px solid #e8c270;}
+.au-report > b {color:#ffe8b0;}
+.au-report p {margin:0;}
+.au-report p span {display:inline-block;min-width:68px;}
+.au-report p.ok span {color:#6fbf73;}
+.au-report p.exploited span, .au-report p.exploited strong {color:#ff9d86;}
+.au-report p.wasted span {color:#e8c270;}

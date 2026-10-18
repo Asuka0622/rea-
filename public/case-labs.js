@@ -1,4 +1,5 @@
 import { createPermissionLab } from "./permission-lab.js";
+import { mountAuthority } from "./authority-game.js";
 import { cls } from "./mini-art.js";
 import { mountRhythm, mountTower, mountPipes, mountManage, mountCards, mountMines } from "./case-minigames.js";
 import { fromBase64, toBase64, checksum, openSave } from "./save-lab.js";
@@ -704,7 +705,7 @@ export const SAVE_DEFENSE = [
   },
 ];
 
-function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
+function mountSave({ h, icon, lab, onMistake, onHint, onDone, story = async () => {} }) {
   const { sources } = lab;
   const code = sources["save.js"];
   const gameSalt = code.match(/const SAVE_SALT\s*=\s*"([^"]+)"/)?.[1] || "";
@@ -713,6 +714,10 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
   let loads = 0;
   let phase = "edit"; // edit · defend · done
   let answered = {};
+  // 委托人在关键的几步说话（lab.talk：decoded 第一次还原、caught 第一次被游戏抓到、salt 第一次搜到盐、
+  // success 改成功）。每段只说一次。lab.defend === false 时改成功就结束——串联的下一关接着讲。
+  const told = new Set();
+  const talk = (key) => (told.has(key) || !lab.talk?.[key] ? Promise.resolve() : (told.add(key), story(lab.talk[key])));
   const hints = [
     "存档是一长串字母和数字：先试试「Base64 还原」。",
     "还原后外面一层是 { v, body, sum }。body 里的 gold 就是金币；sum 是校验码。",
@@ -721,7 +726,7 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
   ];
   let hintAt = 0;
 
-  const say = h("p", { class: "lab-say", role: "status" }, `朵朵：「帮我把金币改成 ${target} 吧！」下面是她的存档文件，工具随便用，顺序你自己定。`);
+  const say = h("p", { class: "lab-say", role: "status" }, lab.goalLine || `朵朵：「帮我把金币改成 ${target} 吧！」下面是她的存档文件，工具随便用，顺序你自己定。`);
   const file = h("textarea", { class: "lab-save-file", spellcheck: "false", "aria-label": "存档文件内容", rows: 7 });
   file.value = raw;
   const farm = h("div", { class: "lab-farm" }, h("b", {}, "种田日记 · 读档"), h("p", {}, "还没读档。"));
@@ -735,6 +740,7 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
       const text = fromBase64(file.value.trim());
       if (!/^[\x09\x0a\x0d\x20-\x7e -￿]*$/.test(text) || !text.trim()) throw new Error();
       setFile(text, "还原出来了：Base64 只是换一种写法，谁都能还原，它不是加密。");
+      talk("decoded");
     } catch {
       say.textContent = "这段内容不是 Base64（也许已经还原过了？）。";
     }
@@ -779,11 +785,18 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
       farm.className = "lab-farm bad";
       farm.replaceChildren(h("b", {}, "种田日记 · 读档"), h("p", {}, res.reason === "checksum" ? "「存档被修改过，已重新开始」 新农夫 · 第 1 天 · 金币 50" : "读档失败"));
       say.textContent = res.why;
+      if (res.reason === "checksum") talk("caught");
       return;
     }
     farm.className = "lab-farm ok";
     farm.replaceChildren(h("b", {}, "种田日记 · 读档"), h("p", {}, `${res.state.player} · 第 ${res.state.day} 天 · 金币 ${res.state.gold}`));
     if (res.state.gold === target && phase === "edit") {
+      if (lab.defend === false) {
+        phase = "done";
+        say.textContent = `读档成功，金币 ${target}！看懂了代码，就能做出游戏认可的存档。`;
+        await talk("success");
+        return onDone();
+      }
       phase = "defend";
       say.textContent = `读档成功，金币 ${target}！看懂了代码，就能做出游戏认可的存档。最后换你当开发者想一想。`;
       render();
@@ -799,6 +812,7 @@ function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
     const q = searchInput.value.trim();
     if (!q) return;
     const hits = searchSaveCode(code, q);
+    if (hits.some((hit) => /SAVE_SALT\s*=/.test(hit.text))) talk("salt");
     hitsBox.replaceChildren(...(hits.length ? hits.map((hit) => h("p", { class: /SAVE_SALT\s*=|createHash/.test(hit.text) ? "hit rumor" : "hit" }, h("small", {}, `save.js:${hit.n}`), h("code", {}, hit.text.trim())))
       : [h("p", { class: "miss" }, /[一-鿿]/.test(q) ? "没找到。代码里的名字都是英文的。" : "没找到，换个词试试。")]));
   }
@@ -1046,7 +1060,7 @@ function mountPacked({ h, icon, lab, onDone = () => {} }) {
     h("div", { class: "case-actions" }, button));
 }
 
-const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
+const MOUNTS = { authority: mountAuthority, network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
   rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, mines: mountMines, packed: mountPacked };
 /** Every kind a case's lab (or one of its chained stages) can name. */
 export const MOUNTABLE_KINDS = Object.keys(MOUNTS);
