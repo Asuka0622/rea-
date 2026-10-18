@@ -181,9 +181,23 @@ ui-drill-tier-verdict,复勘界面,docs/art/review/sources/drill-tier-verdict-so
 case-props-gear-1843,钟楼,docs/art/review/sources/gear-1843-source.png,public/art/pixel/case-props/gear-1843.png,,,,64,64,是,,,待验收,黄铜齿轮；铭文由代码叠加
 ui-user-agreement,用户协议界面,docs/art/review/sources/user-agreement-source.png,public/art/pixel/ui/user-agreement.png,,,,240,320,是,,,待验收,翻开的协议页面，放大镜与抽象排版纹理，无伪文字
 fx-time-warp,穿越特效,docs/art/review/sources/time-warp-atlas-source.png,public/art/pixel/fx/time-warp.png,,,,576,96,是,96x96,,待验收,6帧齿轮与光；90–120ms，JSON随图交付
-scene-clueboard-strings,序章/1843伦敦剧情插画,docs/art/review/sources/scene-clueboard-strings-refined-source.png,public/art/pixel/scenes/clueboard-strings.png,,,,640,360,否,,,待验收,剧情插画候选；五张外围证据卡加中央卡，运行尺寸640×360；待剧情与游戏内验收
-scene-stakeout,序章/1843伦敦剧情插画,docs/art/review/sources/scene-stakeout-source.png,public/art/pixel/scenes/stakeout.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
-scene-tower-open,序章/1843伦敦剧情插画,docs/art/review/sources/scene-tower-open-source.png,public/art/pixel/scenes/tower-open.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
-scene-town-argument,序章/1843伦敦剧情插画,docs/art/review/sources/scene-town-argument-source.png,public/art/pixel/scenes/town-argument.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
-scene-london-1843,序章/1843伦敦剧情插画,docs/art/review/sources/scene-london-1843-source.png,public/art/pixel/scenes/london-1843.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
+scene-clueboard-strings,序章/1843伦敦剧情插画,docs/art/review/sources/scene-clueboard-strings-refined-source.png,public/art/pixel/scenes/clueboard-strings.png,,,,640,360,否,,,待验收,剧情插画候选；五张外围证据卡加中央卡；中央文字为「悄悄统计」；640×360不透明PNG；待剧情与游戏内验收
+scene-stakeout,序章/1843伦敦剧情插画,docs/art/review/sources/scene-stakeout-source.png,public/art/pixel/scenes/stakeout.png,,,,640,360,否,,,待验收,剧情插画候选；钟楼四窗已调为冷白光，钟面指针校正为11:58；640×360不透明PNG；待剧情与游戏内验收
+scene-tower-open,序章/1843伦敦剧情插画,docs/art/review/sources/scene-tower-open-source.png,public/art/pixel/scenes/tower-open.png,,,,640,360,否,,,待验收,剧情插画候选；铁叔推门、门后数字墙、晨光；640×360不透明PNG；待剧情与游戏内验收
+scene-town-argument,序章/1843伦敦剧情插画,docs/art/review/sources/scene-town-argument-source.png,public/art/pixel/scenes/town-argument.png,,,,640,360,否,,,待验收,剧情插画候选；八位居民与低头的小克；640×360不透明PNG；待角色身份与情绪、游戏内验收
+scene-london-1843,序章/1843伦敦剧情插画,docs/art/review/sources/scene-london-1843-source.png,public/art/pixel/scenes/london-1843.png,,,,640,360,否,,,待验收,剧情插画候选；1843伦敦煤气灯、马车与雾街，底部留字幕区；640×360不透明PNG；待剧情与游戏内验收
 room-tower-inside,钟楼内部,docs/art/review/sources/room-tower-inside-source.png,public/art/pixel/room-tower-inside.png,,,,320,180,否,,,待验收,16:9可行走房间候选；空地板通道、七格黄铜时光机表盘、老式数字终端；待人物站位、碰撞与遮挡验收
+london-street,街区地图,docs/art/review/sources/london-street-source.png,public/art/pixel/eras/london/street.png,秋季,雾,夜晚,960,540,否,,,待验收,1843伦敦像素场景候选；待场景/行走区或人物站位与游戏内验收
+london-room-salon,巴贝奇家沙龙,docs/art/review/sources/london-room-salon-source.png,public/art/pixel/eras/london/room-salon.png,秋季,雾,夜晚,320,180,否,,,待验收,1843伦敦像素场景候选；待场景/行走区或人物站位与游戏内验收
+london-room-study,爱达书房,docs/art/review/sources/london-room-study-source.png,public/art/pixel/eras/london/room-study.png,秋季,雾,夜晚,320,180,否,,,待验收,1843伦敦像素场景候选；待场景/行走区或人物站位与游戏内验收
+qiushi-normal,秋实,docs/art/review/sources/qiushi-normal-source.png,public/art/faces/qiushi-normal.webp,,,,320,320,是,,,待验收,秋实五表情之一；透明PNG源稿，运行图透明WebP；待头像裁切与人物身份验收
+qiushi-confident,秋实,docs/art/review/sources/qiushi-confident-source.png,public/art/faces/qiushi-confident.webp,,,,320,320,是,,,待验收,秋实五表情之一；透明PNG源稿，运行图透明WebP；待头像裁切与人物身份验收
+qiushi-thinking,秋实,docs/art/review/sources/qiushi-thinking-source.png,public/art/faces/qiushi-thinking.webp,,,,320,320,是,,,待验收,秋实五表情之一；透明PNG源稿，运行图透明WebP；待头像裁切与人物身份验收
+qiushi-surprised,秋实,docs/art/review/sources/qiushi-surprised-source.png,public/art/faces/qiushi-surprised.webp,,,,320,320,是,,,待验收,秋实五表情之一；透明PNG源稿，运行图透明WebP；待头像裁切与人物身份验收
+qiushi-cornered,秋实,docs/art/review/sources/qiushi-cornered-source.png,public/art/faces/qiushi-cornered.webp,,,,320,320,是,,,待验收,秋实五表情之一；透明PNG源稿，运行图透明WebP；待头像裁切与人物身份验收
+smith-normal,铁叔,docs/art/review/sources/smith-normal-source.png,public/art/faces/smith-normal.webp,,,,320,320,是,,,待验收,铁叔四表情之一；透明PNG源稿，运行图透明WebP；待角色身份与头像裁切验收
+smith-happy,铁叔,docs/art/review/sources/smith-happy-source.png,public/art/faces/smith-happy.webp,,,,320,320,是,,,待验收,铁叔四表情之一；透明PNG源稿，运行图透明WebP；待角色身份与头像裁切验收
+smith-thinking,铁叔,docs/art/review/sources/smith-thinking-source.png,public/art/faces/smith-thinking.webp,,,,320,320,是,,,待验收,铁叔四表情之一；透明PNG源稿，运行图透明WebP；待角色身份与头像裁切验收
+smith-surprised,铁叔,docs/art/review/sources/smith-surprised-source.png,public/art/faces/smith-surprised.webp,,,,320,320,是,,,待验收,铁叔四表情之一；透明PNG源稿，运行图透明WebP；待角色身份与头像裁切验收
+anim-smith,铁叔,docs/art/review/sources/anim-smith-source.png,public/art/pixel/anim-smith.png,,,,256,480,是,64×96,idle2 / walk-down4 / walk-up4 / walk-side4 / talk2,待验收,"4-column by 5-row transparent pixel sprite; normalized 64x96 baseline; review movement, timing and in-game scale"
+anim-smith-metadata,铁叔,docs/art/review/sources/anim-smith-source.png,public/art/pixel/anim-smith.json,,,,,,,64×96,idle2 / walk-down4 / walk-up4 / walk-side4 / talk2,待验收,Frame rows and per-frame timing metadata

@@ -17,8 +17,8 @@
 
 | 角色 | 前缀 | 表情 | 状态 | 优先级 | 备注 |
 |---|---|---|---|---|---|
-| 路米 | `lumi` | normal / happy / surprised / thinking | ✅ | — | 另要一张 `lumi-point`（指向右边，对质时用）🎨 P1 |
-| 小林 | `kobayashi` | normal / happy / surprised | ✅ | — | 补一张 thinking 🎨 P0 |
+| 路米 | `lumi` | normal / happy / surprised / thinking | ✅ | — | 另要一张 `lumi-point`（指向右边，对质时用）📦 P1 |
+| 小林 | `kobayashi` | normal / happy / surprised | ✅ | — | 补一张 thinking 📦 P0 |
 | **小克**（小镇 AI 助手） | `xiaoke` | normal / happy / thinking / surprised / sorry / **unsure** | 📦 | **P0** | 按用户指定直接采用 Claude Code Clawd 橙色像素蟹形象；六表情、4×5 专属动画和怀表候选已交付，待游戏接入验收 |
 | 阿哲 | `azhe` | 4 个 | 📦 有全身像 | P0 | 要按 A 节的半身规格补齐 4 个表情 |
 | 小雨 | `xiaoyu` | 4 个 | 📦 有全身像 | P0 | 同上 |
@@ -59,16 +59,16 @@
 
 | 地点 | 文件 | 状态 | 优先级 | 备注 |
 |---|---|---|---|---|
-| 侦探事务所 | `room-home.png` | ✅ → 🎨 改一处 | **P0** | 墙上的委托告示板改成**一块空的大软木板**（线索墙），周围留空 |
+| 侦探事务所 | `room-home.png` | ✅ → 📦 改一处 | **P0** | 墙上的委托告示板改成**一块空的大软木板**（线索墙），周围留空 |
 | 图书馆、工具铺、驿站、诊所 | `room-learn/engines/clients/doctor.png` | ✅ 秋季；📦 其他季节 | P2 | |
-| 钟楼内部 | `room-tower-inside.png` | 📦 | P1 | 第七批 AK：一台巨大的老式电脑，屏幕滚着数字；木梁和楼梯；最深处墙上是时光机大表盘。**取代**第三批的 `room-clocktower` |
+| 钟楼内部 | `room-tower-inside.png` | 📦 | P1 | 候选已出，待人物站位、碰撞与遮挡验收；第七批 AK：一台巨大的老式电脑，屏幕滚着数字；木梁和楼梯；最深处墙上是时光机大表盘。**取代**第三批的 `room-clocktower` |
 | AI 研究所 | `room-ailab.png` | 🎨 | P2 | 第三批 Q 节，把「比比的充电台」改成「小克的充电台」 |
 
 **六个案发现场**（序章最重要的一组图。房间背景里**不画能调查的物品**，物品单独画，见下面第 5 节）
 
 | 委托 | 文件 | 时段天气 | 状态 | 优先级 |
 |---|---|---|---|---|
-| 小林的宿舍 | `case-room-privacy-ledger.webp` | autumn-clear-noon | 🎨（现在是代码画的） | **P0** |
+| 小林的宿舍 | `case-room-privacy-ledger.png` | autumn-clear-noon | 📦（候选，待游戏验收） | **P0** |
 | 朵朵的房间 | `case-room-farm-save.png` | autumn-clear-morning | ✅ | **P0** |
 | 小雨的房间 | `case-room-calculator-eggs.png` | autumn-clear-evening | ✅ | **P0** |
 | 阿哲的机房 | `case-room-weather-keys.png` | autumn-**rain**-day | ✅ | P0 |
@@ -81,21 +81,21 @@
 
 | 地点 | 文件 | 状态 | 优先级 |
 |---|---|---|---|
-| 巴贝奇家的沙龙 | `eras/london/room-salon.png` | 🎨 | P1 |
-| 爱达的书房 | `eras/london/room-study.png` | 🎨 | P1 |
-| 伦敦街区地图（960 × 540，雾夜） | `eras/london/street.png` | 🎨 | P1 |
+| 巴贝奇家的沙龙 | `eras/london/room-salon.png` | 📦 | P1 |
+| 爱达的书房 | `eras/london/room-study.png` | 📦 | P1 |
+| 伦敦街区地图（960 × 540，雾夜） | `eras/london/street.png` | 📦 | P1 |
 
 ### 5. 可以调查的物品（透明 PNG，约 32 × 28 原始像素，`public/art/pixel/case-props/`）
 
 | 房间 | 物品（文件名 = id） | 状态 | 优先级 |
 |---|---|---|---|
-| 小林的宿舍 | `laptop` 笔记本电脑 · `phone` 手机 · `chat` 聊天记录 · `clock` 挂钟 · `router` 路由器 · `paper` 隐私说明 · `cat` 窗台上的橘猫 | 🎨（现在是代码画的） | **P0** |
+| 小林的宿舍 | `laptop` 笔记本电脑 · `phone` 手机 · `chat` 聊天记录 · `clock` 挂钟 · `router` 路由器 · `policy` 隐私说明 · `cat` 窗台上的橘猫 | 📦（素材已交，待房间锚点验收） | **P0** |
 | 朵朵的房间 | `console` 游戏机 · `pillow` 南瓜抱枕 · `calendar` 日历 · `usb` U 盘 · `notebook` 种田笔记 · `chick` 小鸡 | 📦 | P0 |
 | 小雨的房间 | `calculator` 计算器 · `workbook` 练习册 · `poster` 游戏海报 · `forum` 平板上的论坛帖 · `piggy` 存钱罐 · `plush` 毛绒玩具 · `checklist` 发布检查表 | 📦 | P0 |
 | 阿哲的机房 | `monitor` 双屏 · `sticky` 便利贴 · `server` 小机柜 · `launch-poster` 发布海报 · `flyer` 悄悄统计的传单 · `umbrella` 湿雨伞 | ✅ | P0 |
 | 周姐的办公室 | `screen` 显示器 · `sticky-wall` 便签墙 · `coffee` 咖啡 · `xiaoke-ad` 小克客服海报 · `printer` 打印机 · `plant` 绿植 | 📦 | P0 |
 | 王奶奶的客厅 | `grandma-phone` 手机 · `glasses` 老花镜 · `mantel-clock` 座钟 · `photo` 全家福 · `addressbook` 通讯录本 · `nightlight` 小夜灯 · `remote` 遥控器 · `slippers` 拖鞋 | 📦 | P0 |
-| 钟楼最深处 | `gear-1843` 刻着「A.A.L. 1843」的黄铜齿轮（64 × 64） | 🎨 | P1 |
+| 钟楼最深处 | `gear-1843` 刻着「A.A.L. 1843」的黄铜齿轮（64 × 64） | 📦 | P1 |
 | 第一章 | `difference-engine` 差分机样机（约 64 × 96）· `operation-card` 运算卡 · `variable-card` 变量卡（各 24 × 36） | 🎨 | P1 |
 
 > 物品文件名在不同房间里不能重复（比如两个房间都有手机，一个叫 `phone`，一个叫 `grandma-phone`）。小林以外五间的物品是草案，委托改成解谜关卡时可能微调一两件。
@@ -114,11 +114,11 @@
 
 | 内容 | 文件 | 状态 | 优先级 | 备注 |
 |---|---|---|---|---|
-| 线索墙特写 | `ui/clueboard.png`（640 × 360） | 🎨 | P0 | 空软木板，卡片、图钉、红线由界面画 |
-| 证据卡底图 | `ui/clue-card.png`（96 × 64） | 🎨 | P0 | |
-| 图钉 | `ui/pin.png`（12 × 12） | 🎨 | P0 | |
-| 六条证据的小图标 | `ui/clue-icons.png`（6 个 32 × 32 一行） | 🎨 | P0 | 网址、存档上的时钟、调试页上的钟楼、钥匙、定时相机、手机里的广告 |
-| 侦探手账 | `ui/notebook.png`（约 640 × 420） | 🎨 | P0 | 皮面笔记本摊开，横格纸，右边四个书签（线索、小词典、名字和证据、推理）。现在是代码画的 |
+| 线索墙特写 | `ui/clueboard.png`（640 × 360） | 📦 | P0 | 空软木板，卡片、图钉、红线由界面画 |
+| 证据卡底图 | `ui/clue-card.png`（96 × 64） | 📦 | P0 | |
+| 图钉 | `ui/pin.png`（12 × 12） | 📦 | P0 | |
+| 六条证据的小图标 | `ui/clue-icons.png`（6 个 32 × 32 一行） | 📦 | P0 | 网址、存档上的时钟、调试页上的钟楼、钥匙、定时相机、手机里的广告 |
+| 侦探手账 | `ui/notebook.png`（约 640 × 420） | 📦 | P0 | 皮面笔记本摊开，横格纸，右边四个书签（线索、小词典、名字和证据、推理）。现在是代码画的 |
 | 「成立」和「结案」印章 | `ui/stamp-ok.png` `ui/stamp-closed.png`（各 96 × 48） | 📦 | P1 | 红色印泥的盖章效果 |
 | 对质的说法卡、「异议！」大字 | `ui/claim-card.png`（240 × 60）、`ui/objection.png`（约 120 × 40） | 📦 | P1 | 第六批 AF |
 | 时光机大表盘 | `ui/timemachine-dial.png`（480 × 270） | 📦 | P1 | **7 格**：1843、1950、1970s、1997、2012、2017、**现在**（略发光，以后会在它前面插入新格子） |
@@ -167,7 +167,7 @@
 | 角色 | 文件 | 要的行 | 状态 | 优先级 |
 |---|---|---|---|---|
 | 路米 | `anim-lumi` | 标准行 | ✅；📦 有新版本 | — |
-| **小克** | `anim-xiaoke` | 悬浮待机 4、移动 4、说话 2、**故障闪烁 4**（身体出现错位的像素块）、**缩小钻进怀表 4**。悬浮的角色每帧在同一位置画小椭圆影子 | 🎨 | **P0** |
+| **小克** | `anim-xiaoke` | 悬浮待机 4、移动 4、说话 2、**故障闪烁 4**（身体出现错位的像素块）、**缩小钻进怀表 4**。悬浮的角色每帧在同一位置画小椭圆影子 | 📦 | **P0** |
 | 小林 | `anim-kobayashi` | 站立 2 + 挠头 4 | 📦 可能在待认出的 NPC 精灵表里 | P0 |
 | 朵朵 | `anim-duoduo` | 站立 2 + 抱紧南瓜抱枕 4 | ✅ | P0 |
 | 小雨 | `anim-xiaoyu` | 站立 2 + 蹦一下 4 | ✅ | P0 |
