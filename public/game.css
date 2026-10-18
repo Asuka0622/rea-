@@ -1123,7 +1123,7 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-cd-card.art small {display:none;}
 /* The frame's name plate arrives painted (mid-tone, textured), so the name sits on its own
    dark plate: readable whether the plate is light or dark, and it survives a repaint. */
-.mini-cd-card.art b {position:absolute;left:8%;right:8%;top:70%;height:21%;display:flex;align-items:center;justify-content:center;text-align:center;font:11px/1.2 var(--font-body);overflow:hidden;color:#fff6dc;background:rgba(24,16,30,.72);border-radius:2px;}
+.mini-cd-card.art b {position:absolute;left:11%;right:11%;top:74.5%;height:10.5%;display:flex;align-items:center;justify-content:center;text-align:center;font:10px/1.1 var(--font-body);overflow:hidden;color:#fff6dc;background:rgba(24,16,30,.6);border-radius:2px;}
 .mini-cd-card-art {display:none;}
 .mini-cd-card.art .mini-cd-card-art {position:absolute;left:13%;right:13%;top:20%;height:46%;display:flex;align-items:center;justify-content:center;}
 .mini-cd-card-art img {max-width:100%;max-height:100%;image-rendering:pixelated;}
