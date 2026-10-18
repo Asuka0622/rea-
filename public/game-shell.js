@@ -1,3 +1,5 @@
+import { createNpcDialogue, portraitCandidates } from "./npc-dialogue.js";
+import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
@@ -417,15 +419,33 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let nearNpcId = null;
   // 当前这区域里的活人：换图时重新登记，元素随 DOM 一起丢掉。
   const npcSprites = [];
+  // 每张表的帧数不一样（老一批待机 2 帧，新一批 4 帧），逐帧时长也不一样，
+  // 所以读 JSON，而不是在代码里写死。
+  const npcMeta = new Map();
+  const loadNpcMeta = (artId) => {
+    if (!npcMeta.has(artId)) {
+      npcMeta.set(artId, fetch(`/art/pixel/sprite-${artId}.json`, { cache: "no-cache" })
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null));
+    }
+    return npcMeta.get(artId);
+  };
   const npcSpriteEl = (npc) => {
-    if (!has(`sprite-${npc.id}`)) {
+    const artId = npc.sprite || npc.id;
+    if (!has(`sprite-${artId}`)) {
       return h("i", { style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};box-shadow:0 0 calc(2px * var(--px)) rgba(0,0,0,.55);` });
     }
     const el = h("span", {
       class: "game-sprite npc", "aria-hidden": "true",
-      style: `background-image:url(/art/pixel/sprite-${npc.id}.png);background-size:calc(var(--person-w) * 6 * var(--px)) calc(var(--person-h) * 5 * var(--px));background-position:0 0;`,
+      style: `background-image:url(/art/pixel/sprite-${artId}.png);background-size:calc(var(--person-w) * 6 * var(--px)) calc(var(--person-h) * 5 * var(--px));background-position:0 0;`,
     });
-    npcSprites.push({ el, npc });
+    const one = { el, npc, artId, idle: { frames: 2, ms: 1900 }, talk: { frames: 2, ms: 260 } };
+    loadNpcMeta(artId).then((meta) => {
+      const anims = meta?.animations;
+      if (!anims) return;
+      if (anims.idle?.frames) one.idle = { frames: anims.idle.frames, ms: anims.idle.ms };
+      if (anims.talk?.frames) one.talk = { frames: anims.talk.frames, ms: anims.talk.ms };
+    });
+    npcSprites.push(one);
     return el;
   };
   function npcEls() {
@@ -443,13 +463,40 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   /** 小人动两下：平时是待机两帧（站很久，偶尔眨一下）；走近正在跟他说话的那个，换成说话帧。
      对话打开时主循环早退，所以这个必须在早退之前调。 */
+  /** 按逐帧时长挑当前是第几帧：待机是「站很久、偶尔眨一下」，不能取平均。 */
+  function frameAtClock(ms, frames, now) {
+    const list = Array.isArray(ms) ? ms : [ms];
+    let total = 0;
+    for (let i = 0; i < frames; i += 1) total += list[i] ?? list[list.length - 1] ?? 200;
+    let rest = now % total;
+    for (let i = 0; i < frames; i += 1) {
+      const d = list[i] ?? list[list.length - 1] ?? 200;
+      if (rest < d) return i;
+      rest -= d;
+    }
+    return 0;
+  }
   function paintNpcFrames(now) {
     for (const one of npcSprites) {
       const talking = one.npc.id === nearNpcId;
+      const anim = talking ? one.talk : one.idle;
       const row = talking ? 4 : 0; // 第 4 行是说话
-      const col = Math.floor(now / (talking ? 260 : 1900)) % 2;
+      const col = frameAtClock(anim.ms, anim.frames, now);
       one.el.style.backgroundPosition = `calc(${-col} * var(--person-w) * var(--px)) calc(${-row} * var(--person-h) * var(--px))`;
     }
+  }
+  const npcDialogue = createNpcDialogue({ profiles: NPC_DIALOGUE_PROFILES });
+  function npcChatterContext(npc) {
+    // No weather/season system exists in this branch yet. Unknown fields must not invent weather.
+    const env = regionData()?.environment || {};
+    const stopped = quests?.clockState() === "stopped";
+    return { minutes: stopped ? 718 : clock.minutes, weather: env.weather ?? null,
+      season: env.season ?? null, shelter: npc.environment?.shelter ?? null, wind: env.wind ?? null };
+  }
+  function chatWithNpc(npc) {
+    const line = npcDialogue.select(npc.id, npcChatterContext(npc));
+    if (line) return say([line]);
+    return say([{ who: npc.id, name: npc.name, text: "我先忙一下，待会儿再聊。", face: "normal" }]);
   }
   /** 走进范围就搭一句话；委托人当场开口托付，闲聊的给传闻。 */
   function talkNearNpcs() {
@@ -466,10 +513,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         const progress = loadProgress();
         if (!progress.discovered.includes(npc.discover)) {
           saveProgress(markDiscovered(progress, [npc.discover]));
-          return void say([{ text: npc.hear, face: "normal" }]);
+          return void say([{ text: npc.hear, face: "normal", who: npc.id, name: npc.name }]);
         }
       }
-      return void toast(npc.after);
+      return void chatWithNpc(npc);
     }
     saveTalked(talked);
     achievements.note({ type: "talk", id });
@@ -483,7 +530,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         saveProgress(markDiscovered(progress, [npc.discover]));
         learned = true;
       }
-      lines.push({ text: npc.hear, face: "normal" });
+      lines.push({ text: npc.hear, face: "normal", who: npc.id, name: npc.name });
     }
     void say(lines, null, () => {
       if (learned) toast("委托板上多了一条 · 回事务所看看");
@@ -523,14 +570,19 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (status === "done") {
       if(quest.transfer)return void say([sayAs('上次的副本还留着。想换成不看提示再独立检查一次吗？')],null,()=>showMenu([
         {label:'再独立检查一次',run:()=>{try{localStorage.removeItem(`rea-transfer-work:${quest.caseId}`);}catch{}acceptQuest(quest);}},
+        {label:'随便聊聊',run:()=>{menu.hidden=true;chatWithNpc(npc);}},
         {label:'先不重做',run:()=>{menu.hidden=true;}}
       ]));
-      return void say([sayAs(npc.after, "happy")]);
+      return void say([sayAs(npc.after, "happy")], null, () => showMenu([
+        { label: "随便聊聊", run: () => { menu.hidden = true; chatWithNpc(npc); } },
+        { label: "先告辞", run: () => (menu.hidden = true) },
+      ]));
     }
     if (progress.accepted.includes(quest.id)) {
       return void say([sayAs(npc.pending || npc.after)], null, () => {
         showMenu([
           { label: `现在就去：${quest.title}`, run: () => { menu.hidden = true; enterSpot(quest.caseId); } },
+          { label: "随便聊聊", run: () => { menu.hidden = true; chatWithNpc(npc); } },
           { label: "再等一会儿", run: () => (menu.hidden = true) },
         ]);
       });
@@ -538,11 +590,15 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (status !== "available") {
       // 条件还不够：他欲言又止，先不把事情摊开——省得剧透了又接不了。
       const why = prerequisiteMessage(quest, playerFor(progress, PROLOGUE_QUESTS), PROLOGUE_QUESTS, KNOWLEDGE_POINTS);
-      return void say([...greeting, sayAs(why || npc.later || npc.after, "unsure")]);
+      return void say([...greeting, sayAs(why || npc.later || npc.after, "unsure")], null, () => showMenu([
+        { label: "随便聊聊", run: () => { menu.hidden = true; chatWithNpc(npc); } },
+        { label: "先告辞", run: () => (menu.hidden = true) },
+      ]));
     }
     void say([...greeting, ...(quest.ask || [])], null, () => {
       showMenu([
         { label: `接下「${quest.title}」`, run: () => acceptQuest(quest) },
+        { label: "随便聊聊", run: () => { menu.hidden = true; chatWithNpc(npc); } },
         { label: "先不接", run: () => { menu.hidden = true; toast(`${npc.name}还在那儿`); } },
       ]);
     });
@@ -655,7 +711,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
   // A line is "text" or { text, face }: the face picks Lumi's expression for that line.
   const portrait = (face = "normal", who = "lumi", name = "") => {
-    const file = [`${who}-${face}`, `${who}-normal`].find((n) => art().portraits.has(n));
+    const file = portraitCandidates(who, face).find((n) => art().portraits.has(n));
     if (file) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${file}.webp`, alt: "", width: 160, height: 160 }));
     // Someone without a portrait yet: a wooden frame with the first character of their name.
     if (who !== "lumi") return h("div", { class: "case-portrait game-portrait-stand-in", "aria-hidden": "true" }, h("span", {}, (name || SPEAKERS[who] || who).slice(0, 1)));

@@ -53,6 +53,7 @@
 - **新素材到位后的动作**：文件放进 `public/art/pixel/<子目录>/` 或 `public/art/faces/` → 跑 `npm run wiring` → 孤儿仍为 0 即自动生效（`has()` 机制）；若出现孤儿，按 id 找它的消费点（`artImg`/`artBg`/`has`/`sprite-`/`anim-`/`faces/`）补数据字段。
 - **候选不接入**：`docs/art/review/` 下的图是候选（路米六帧、九区 expanded 地图、lumi-6f 等），验收前不进 `public/art/`，不换运行引用。
 - **立绘不进部署**：游戏只用 `faces/*.webp` 小头像；立绘源图归档在 `docs/art/portraits-archive/`（38 张，2026-10-18 从 `public/art/portraits/` 移出）。
+- **跨分支素材**：美术常驻在另一个工作树 `D:/gpt/rea-artwork`（分支 `codex/local-seasonal-artwork`）。那边的图规格是源分辨率（精灵 971×1619、立绘 1086×1448），**不能直接拷进 `public/art/`**——要用 `scripts/convert-artwork-sprites.py`（缩成 576×960 + 补 JSON）和 `scripts/crop-artwork-faces.py`（立绘裁头肩成 320×320）。转完跑 `npm run wiring`，孤儿为 0 才算接上。
 
 ## 陷阱与约定（踩过的坑）
 

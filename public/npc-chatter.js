@@ -97,6 +97,8 @@ export const CHATTER_NPCS = [
   {
     id: "lao-qin",
     name: "老秦",
+    // 小人图交付时的名字是 archivist（档案馆员），npc id 是 lao-qin。
+    sprite: "archivist",
     region: "center",
     x: 218,
     y: 396,
