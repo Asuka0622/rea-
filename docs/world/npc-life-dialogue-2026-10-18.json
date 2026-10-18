@@ -1,0 +1,4254 @@
+{
+  "schemaVersion": 1,
+  "status": "design-not-runtime",
+  "date": "2026-10-18",
+  "scope": "16 current CHATTER_NPCS; nine-zone locations are planned, not migrated runtime coordinates",
+  "timeBands": [
+    {
+      "id": "dawn",
+      "from": 300,
+      "to": 480
+    },
+    {
+      "id": "morning",
+      "from": 480,
+      "to": 720
+    },
+    {
+      "id": "afternoon",
+      "from": 720,
+      "to": 1020
+    },
+    {
+      "id": "evening",
+      "from": 1020,
+      "to": 1260
+    },
+    {
+      "id": "night",
+      "from": 1260,
+      "to": 300,
+      "wrapsMidnight": true
+    }
+  ],
+  "clockSource": "world-clock, independent from stopped tower; no new wall-clock",
+  "rule": "All when predicates are AND; arrays mean OR; dialogue has no authority to set weather, task completion, facts or knowledge.",
+  "randomPolicy": {
+    "selection": "filter conditions/channel/speaker availability/story facts first; choose category then line using weight, not globally by all line counts",
+    "categoryWeights": {
+      "weather": 50,
+      "time": 30,
+      "season": 15,
+      "idle": 5
+    },
+    "recentPerNpc": 6,
+    "minTalkGapRealSeconds": 6,
+    "ambientMinGapRealSeconds": 60,
+    "sameEventCooldownRealSeconds": 120,
+    "maxAmbientSpeakersPerViewport": 1,
+    "eventWithinGameMinutes": 30,
+    "storeOnly": [
+      "recentLineIds",
+      "lastSpokenAt",
+      "lastAmbientAt"
+    ],
+    "fallback": "Two neutral idle lines; if both recent, release oldest neutral entry. Quest dialogue never suppressed by chatter cooldown.",
+    "stormOverride": "Use shelter-seeking before weather chat; an ongoing dialogue freezes relocation until completion.",
+    "contextHonesty": "Unknown clock/weather/season fields do not match specific conditions; use neutral idle. Never guess snow from winter."
+  },
+  "npcs": [
+    {
+      "id": "baker",
+      "name": "阿桃",
+      "status": "design-not-runtime",
+      "zone": "craft-west",
+      "home": "bakery",
+      "voice": "说话干脆、热心，忙时短句；不把每句话都变成排名抱怨。",
+      "motive": "揉面、看炉、整理订单；想让客人尝到刚出炉的面包。",
+      "priority": "P0",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "备料开炉",
+          "anchor": "bakery:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "柜台营业",
+          "anchor": "bakery:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "补货、短休",
+          "anchor": "bakery:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "清点收摊",
+          "anchor": "bakery:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "bakery:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "先把露天面包筐移入柜台内侧，再到门廊工作；保持营业并留通道。",
+        "strongWind": "压住包装纸，移至室内揉面。",
+        "season": "春花香配方、夏季发面快、秋南瓜、冬炉边；仅生活表现，不新增经营系统。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "baker.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "炉子先醒，我随后。等一会儿就有第一盘。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "面包刚摆好，袋口别系太紧，还热着。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "这会儿人少，我正好把明早的面称出来。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "最后一盘出炉了。你慢慢挑，我先收托盘。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "店里已经收好了，有事在门口叫我就行。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "先别站雨里，门口这筐我搬进去再跟你说。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "檐下还有位置。面包袋靠里面放，别贴着湿边。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了，我看看门口能不能把筐摆回去。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "风把面粉吹得到处跑，今天就在里面揉。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "雪天托盘凉得快，拿的时候我给你垫块布。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天我想试一种带花香的面包，先烤小小一盘。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天发面快，我可不敢离开炉子太久。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "南瓜到了，这几天店里都是甜香。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天守着炉子挺暖和，门也别一直敞着。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你先看，我手上的面还没揉完。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "baker.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "今天不用帮忙，坐一会儿也行。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "watchmaker",
+      "name": "老魏",
+      "status": "design-not-runtime",
+      "zone": "north",
+      "home": "watchmaker-stall",
+      "voice": "寡言、慢半拍，先观察再判断；固执但不故弄玄虚。",
+      "motive": "听表、分类零件、与小铃核对误差。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "摆零件盘",
+          "anchor": "watchmaker-stall:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "检修手表",
+          "anchor": "watchmaker-stall:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "与小铃对表",
+          "anchor": "watchmaker-stall:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "盖盘收摊",
+          "anchor": "watchmaker-stall:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内整理",
+          "anchor": "watchmaker-stall:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "收零件、盖盘，走进摊棚继续接待；雷雨转到可用有顶工坊。",
+        "strongWind": "夹图纸、盖盘，停止露天拆小零件。",
+        "season": "换桌边小道具即可，不要求四季全套衣服。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "watchmaker.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "先别说哪里坏，我听一会儿。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "表放软垫上，别碰那盘小零件。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "我歇歇眼睛，再看这根游丝。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "光暗了，今天不拆更小的东西。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "摊收了。真着急的，明早我先看。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "这盘零件得先盖起来，别让雨点进来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "棚里干燥，表放这块布上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "等桌面干了再开盘，不急这一刻。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "风里别开零件盒，一颗螺丝都难找。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "手指僵的时候不碰游丝，先进屋暖暖。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天我把旧零件重新分一遍。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天戴表出汗，表带也得记得擦。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "这光不刺眼，正适合看看细处。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "厚袖子容易勾住表冠，戴的时候留点神。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "准不准，得先知道你拿什么来比。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "watchmaker.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我这儿可以慢慢看，不用急着下结论。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "student",
+      "name": "小满",
+      "status": "design-not-runtime",
+      "zone": "homes-east",
+      "home": "student-home",
+      "voice": "嘴硬、怕露怯，熟悉后愿意追问；不把学生写成只会答题。",
+      "motive": "读书、画笔记、放学路上观察小镇。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "屋内准备上学",
+          "anchor": "student-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "在校不在街上",
+          "anchor": "off-map:school",
+          "visible": false,
+          "contact": "door-response",
+          "note": "上学日不在街上；非上学日回家阅读，不能虚构已建学校场景。"
+        },
+        {
+          "time": "afternoon",
+          "activity": "放学后看书",
+          "anchor": "student-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "回家写笔记",
+          "anchor": "student-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "student-home:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "先收练习册，走向住宅门廊，等雨小再继续原路线。",
+        "strongWind": "夹书页，改在门廊阅读。",
+        "season": "可观察花叶，不采集玩家真实信息；寒冷时缩短户外阅读。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "student.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "我书包检查过了……应该没有落东西。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.morning",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "现在还没放学，有事可以留到放学后。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "这页我想画成图，看着比一整段字清楚。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "我先把这一段写完，再出来。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "这么晚我就不出门了，明天见。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "本子先收起来。纸湿了，字就全挤一块儿了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "这儿淋不到，我等雨小一点再走。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "我先看看椅子干没干，不能直接坐。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "翻到哪页就给我吹到哪页，书签都没用。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "路边的雪我只踩脚印，不去结冰的边上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "院子里开花了，我想画到笔记封面上。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天白昼长，总觉得还能再看一页。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "这片叶子像只小手，我想夹在书里。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "厚外套口袋多，反倒总找不到橡皮。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你先别看，我还没改好。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "student.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "这回我想先自己试，卡住了再问。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "disk-vendor",
+      "name": "阿飞",
+      "status": "design-not-runtime",
+      "zone": "center",
+      "home": "disk-stall",
+      "voice": "爽快、有点心虚，玩笑后能认真说明；不把侵犯隐私当奖励。",
+      "motive": "检查旧盘外壳、贴来源标签、收纳待处理物品。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "验货摆摊",
+          "anchor": "disk-stall:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "介绍库存",
+          "anchor": "disk-stall:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "核对标签",
+          "anchor": "disk-stall:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "封箱收摊",
+          "anchor": "disk-stall:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内盘点",
+          "anchor": "disk-stall:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "关箱、把待卖箱搬至棚内，不在降雨时自动开放旧盘内容。",
+        "strongWind": "压标签、关箱；不要撒满飞纸增加负担。",
+        "season": "按库存箱/标签小变化，不按季节生成新任务。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "disk-vendor.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "先把标签贴好，免得又拿错箱。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "只看外壳随便看，里面的资料不能随便翻。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "这箱还没处理完，今天先不卖。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "收摊得数两遍，不然明天又找半天。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "箱子都锁好了，明天再挑吧。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "盘怕水，我先把箱盖扣上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "先站棚里。箱子也别挡着人家过路。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "地面干了再落箱，别急着摆。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "我得把标签压住，别又飞成一摊谜题。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "今天不把盘放地上，箱底都凉透了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天收拾旧物的人多，来源更要记清。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天箱子不能晒着，棚里也得留点通风。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "落叶别扫进箱，我还以为多了一张标签。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "手套摘了再碰接口，别把小东西掉雪里。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "容量是一回事，来路是另一回事。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "disk-vendor.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你问清楚再买，我也少一桩糊涂账。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "barista",
+      "name": "小鹿",
+      "status": "design-not-runtime",
+      "zone": "craft-east",
+      "home": "cafe",
+      "voice": "礼貌温柔，偶尔记混，纠正时不自嘲贬低自己。",
+      "motive": "磨豆、核订单、擦杯、给窗边换水。",
+      "priority": "P0",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "准备咖啡",
+          "anchor": "cafe:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "接单磨豆",
+          "anchor": "cafe:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "擦桌、短休",
+          "anchor": "cafe:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "收杯核账",
+          "anchor": "cafe:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "关店休息",
+          "anchor": "cafe:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "暂停室外接待、收椅，转为店内或门廊服务；不取消现有对话。",
+        "strongWind": "压住菜单，移走易倒杯子。",
+        "season": "季节小摆件和饮水差异，购买不是任务前置。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "barista.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "还在磨第一壶豆子，您先坐。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "您想坐窗边还是里面？我先把杯垫放好。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "下午想安静些的话，这边的位子空着。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "我把外面的椅子收一收，里面还能坐一会儿。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "打烊了，明天再给您留一杯。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "先把门外的椅子搬进来，别让下一位坐到湿的。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "窗边能听见雨打棚顶，您愿意坐这儿吗？",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了，我先擦干门口那两把椅子。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "菜单总被吹翻，我给它换个重一点的夹子。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "您先暖暖手，湿围巾可以放旁边。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天的花我只摆一小枝，别挡了窗外。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天我会多备些凉水，进门先歇歇。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天的阳光落在这张桌上，待一会儿挺舒服。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天杯垫凉得快，我给您换一块干的。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我再核对一次，免得把您的杯子拿错。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "barista.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "不点东西也可以坐一下，别急。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "parcel",
+      "name": "大壮",
+      "status": "design-not-runtime",
+      "zone": "homes-east",
+      "home": "parcel-lockers",
+      "voice": "直爽、利落，关心通路和包裹；不大声念取件码。",
+      "motive": "分拣、交接、整理空格；不查看包裹内容。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "接收货箱",
+          "anchor": "parcel-lockers:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "分拣取件",
+          "anchor": "parcel-lockers:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "整理柜格",
+          "anchor": "parcel-lockers:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "核对交接",
+          "anchor": "parcel-lockers:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "关站休息",
+          "anchor": "parcel-lockers:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "把纸箱移入雨棚，保留公共过道与取件口。",
+        "strongWind": "夹牢单据，避免快递个人资料成为拾取物。",
+        "season": "冬天先清门前通路；任务与柜格数不因季节暗改。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "parcel.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "第一车到了，先给大家留条走路的地方。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "取件码你自己给我看，不用念出来。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "这会儿空一点，我把大箱子挪低。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "还有几件没取，我把通知再核一遍。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "站关了。急件按门口写的联系方式问，别拆柜子。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "大箱子先到檐下，过道得空出来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "你站干的地方等，我把那件递过来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了也别把纸箱直接放地上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "这张单我先压好，别让它吹到别人的箱上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "门前雪我先扫开，搬箱子不能踩滑。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天寄花苗的多，朝上标记得留着。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天大家来得晚些，柜格还是得及时腾。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天寄来的箱子上常沾着叶子。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天手套一厚，小取件单真不好捏。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我认的是编号，不猜里面是什么。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "parcel.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "别挤在柜门前，给后面的人留点地方。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "pigeon-uncle",
+      "name": "老周",
+      "status": "design-not-runtime",
+      "zone": "center",
+      "home": "center-home",
+      "voice": "慢悠悠、观察细，爱看鸟；不每句都提停钟。",
+      "motive": "看鸽子、擦长椅、和熟人闲聊。",
+      "priority": "P0",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "广场散步",
+          "anchor": "center-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "观察鸽群",
+          "anchor": "center-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "树荫休息",
+          "anchor": "center-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "收拾回家",
+          "anchor": "center-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "center-home:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "停止露天观鸟，沿可达短路走到广场门廊；雷雨不到树下。",
+        "strongWind": "扶帽后去背风点，不追帽跑遍全图。",
+        "season": "选择树荫/向阳长椅；不默认所有季节都喂食。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "pigeon-uncle.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "今儿我来得早，它们倒还没到齐。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "你看那只，走两步就回头看看。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "我坐一会儿。你忙你的，不用陪我。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "我得回去了，明天再看这群小家伙。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "我已经歇下了，有事明早来吧。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "雨大了，今天就不往广场中间走。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "鸽子也躲雨去了，我就在檐下坐会儿。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "等椅子干了我再过去，不急。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "风把帽檐掀起来，倒比我还精神。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "雪地里脚印多，慢慢看也挺有意思。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天这群小家伙吵得最有劲。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天我挑树荫坐，鸟也懂得找凉快。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "叶子一落，树上的鸟倒看得更清楚了。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天出来走一小圈，活动开就回去。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "镇上有些事，坐一会儿才看得见。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "pigeon-uncle.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你不用每次经过都找我说话，我认得你。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "oncall",
+      "name": "阿康",
+      "status": "design-not-runtime",
+      "zone": "homes-west",
+      "home": "oncall-home",
+      "voice": "疲惫中带幽默，关心狗；有自己的工作边界。",
+      "motive": "核实告警、远程值班、按路线遛狗。",
+      "priority": "P0",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "短程遛狗",
+          "anchor": "oncall-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "屋内工作",
+          "anchor": "oncall-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "休息核消息",
+          "anchor": "oncall-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "遛狗回家",
+          "anchor": "oncall-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "按排班值守",
+          "anchor": "oncall-home:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "牵狗缩短路线，就近到住处门廊；狗绳不可横穿通道。",
+        "strongWind": "换背风短路线，狗跟随同一导航目标。",
+        "season": "夏早晚遛狗，冬缩短户外停留；不接入真实电话通知。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "oncall.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "它比闹钟准，天一亮就来叫我。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "我先看完这条消息，别又把真有事的按掉。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "屏幕看久了，出来转一圈。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "今天这圈走完就回去，它也该歇了。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "还在值班，没急事我就先不出来了。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "我把遛弯这圈缩短点，别在雨里磨蹭。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "我们都在檐下歇会儿，等雨小些。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "路还湿着，它非得绕着水洼走。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "它的耳朵都吹翻了，咱们换条背风的路。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "回来得擦脚，不然屋里全是小脚印。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天它每走三步就要闻一闻。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天遛弯挑早晚，正午就先歇着。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天它总追着落叶跑，跑完还装没看见。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天这圈走短些，别让它在外面等我。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "提示响不等于出事，但也不能一概按掉。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "oncall.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "手机先收口袋里，我看着路走。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "paperboy",
+      "name": "小石头",
+      "status": "design-not-runtime",
+      "zone": "center",
+      "home": "center-home",
+      "voice": "嘴快、有朝气，观察来自送报路线；不每轮重复“号外”。",
+      "motive": "送报、按地址分份、核对新旧版面。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "分报送报",
+          "anchor": "center-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "补送剩余报纸",
+          "anchor": "center-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "完成路线休息",
+          "anchor": "center-home:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "回收空袋回家",
+          "anchor": "center-home:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "center-home:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "套好报袋，转到有顶分报点；天气缓和恢复剩余送报路线。",
+        "strongWind": "压报堆、重新绑绳，不每次都触发追逐。",
+        "season": "寒冷时缩短路线；日期由程序显示，是否换头版由剧情事实决定。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "paperboy.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "这摞送东边，这摞送西边，可不能拎反。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "最后两家送完，我就能歇一口气。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "报袋轻了，肩膀都跟着轻了。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "今天不加送啦，我把袋子收好就走。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "报纸得明早才有，今晚先睡吧。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "报纸收里头，外边这一层我先包起来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "雨没小，我先在这儿重新数份数。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "棚顶还滴水，报袋不能贴墙放。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "你看着这摞，我去把吹走的绳头拿回来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "雪路慢点走也行，报纸别送错门就好。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天送报一路都能闻见花香。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天纸晒久了卷边，我都往阴处放。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天一脚一片叶子，听着像翻报纸。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天戴手套分报，得比平时更仔细。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "新闻是哪天的，先看日期。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "paperboy.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我跑的地方多，可不知道别人家里的事。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "lighthouse-keeper",
+      "name": "老陈",
+      "status": "design-not-runtime",
+      "zone": "south",
+      "home": "lighthouse",
+      "voice": "简短、稳重，先看现场；关心灯和岸边。",
+      "motive": "擦灯罩、巡查护栏、记录灯况。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "检查灯罩",
+          "anchor": "lighthouse:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "岸边巡检",
+          "anchor": "lighthouse:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "整理巡检记录",
+          "anchor": "lighthouse:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "准备夜间照明",
+          "anchor": "lighthouse:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "灯塔值守",
+          "anchor": "lighthouse:door",
+          "visible": true,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "移到灯塔门廊；强风/雷雨暂停外栈桥巡检，转室内灯具检查。",
+        "strongWind": "停止向水边走，返回安全门廊。",
+        "season": "夜长则更早准备灯；须结合实际日落，不用台词强制改变系统。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "lighthouse-keeper.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "灯罩先擦一遍，晚上才看得清。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "我去看看护栏，你走内侧。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "记录写完了，灯的事还得再核一遍。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "天色在暗，准备亮灯。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "我在灯塔里。有事敲门，别往栈桥外头找。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "先离水边远些，我把巡检本收好。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "门廊里等。雨声大，说话得靠近一点。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了，栏杆还湿，先别扶着探出去。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "风大，不往外头走；灯我在里面检查。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "先清门口这点雪，再去看灯罩。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天水边热闹，巡查时也得看脚下。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天天黑晚，灯该查还是得查。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天的风换了方向，我记在本上了。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬夜长，备灯前多核一遍。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "没看见的事，我不替它担保。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lighthouse-keeper.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "灯罩干净，灯芯也得好使。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "apprentice",
+      "name": "小铃",
+      "status": "design-not-runtime",
+      "zone": "north",
+      "home": "engines",
+      "voice": "认真、好奇、在意细节，能承认不确定；不刻板复读半秒。",
+      "motive": "整理工具、对表、请教、收好零件。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "摆工具",
+          "anchor": "engines:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "台边练习",
+          "anchor": "engines:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "与老魏核对",
+          "anchor": "engines:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "记误差收工具",
+          "anchor": "engines:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "engines:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "盖工具盘、收笔记，移到工具铺檐下继续记录。",
+        "strongWind": "夹图纸，先固定物件再走。",
+        "season": "寒冷时暖手再用镊子；不要求每季一套工具动画。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "apprentice.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "工具摆齐了，少哪一件一眼就能看见。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "你先看，我把这次的读数记下来。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "我拿同一只表再比一遍，免得比法就不一样。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "今天差在哪儿，我想睡前先记清。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "工具已经锁好了，明天再试，不赶这一会儿。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "先盖零件盘！那颗小螺丝最怕找不回来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "棚里没淋到，记录本也先合上。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "等桌面擦干再摆工具，别只看天晴了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "我用夹子压着图纸，手就能腾出来了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "手暖了再拿镊子，不然夹不稳。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天我想给工具架重新画个位置图。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天窗开着，纸边都得压好。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天这光适合抄图，我再看一页。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天先把手暖好，精细活急不得。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我不确定的时候，就再量一次。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "apprentice.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "师傅有时候也会看错，我们一起核。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "cobbler",
+      "name": "老宋",
+      "status": "design-not-runtime",
+      "zone": "craft-west",
+      "home": "cobbler-shop",
+      "voice": "朴实、短句、有眼力；不神秘推断玩家真实隐私。",
+      "motive": "量鞋码、补鞋、清理皮屑和工具。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "摆鞋楦",
+          "anchor": "cobbler-shop:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "补鞋接待",
+          "anchor": "cobbler-shop:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "量码、短休",
+          "anchor": "cobbler-shop:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "整理待取鞋",
+          "anchor": "cobbler-shop:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "收铺休息",
+          "anchor": "cobbler-shop:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "收好待取鞋，挪到檐内，提示门前湿滑但不设伤害惩罚。",
+        "strongWind": "收拢皮屑，压住鞋样。",
+        "season": "量码时有袜子差异对白，不能改变真实任务成功条件。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "cobbler.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "鞋楦摆出来了，你先坐。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "这双等胶干，不催它。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "脚走累了就歇，鞋也是这个道理。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "取鞋别急，我把左右再核一遍。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "铺子收了，明天来我还在。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "先别踩门口那块松砖，雨天容易滑。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "鞋放檐里。你站着歇也行，坐着歇也行。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了鞋也没立刻干，别急着往炉边烤。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "皮屑我先扫掉，省得吹到门口。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "鞋底沾雪，进门先蹭一蹭。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天路上泥多，回来擦干净就好。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天鞋要透气，也别一直湿着。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天好走路，磨破了再来补。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天厚袜子穿上再量，省得鞋挤。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我看的是眼前这双鞋，不猜你的去处。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "cobbler.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "修得住，就不急着换。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "duoduo",
+      "name": "朵朵",
+      "status": "design-not-runtime",
+      "zone": "homes-east",
+      "home": "farm-save",
+      "voice": "轻声、细致，关心实际种植；不在未结案前说已经修好。",
+      "motive": "照料小院、核对掌机记录、给花浇水。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "看小院",
+          "anchor": "farm-save:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "照料花草",
+          "anchor": "farm-save:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "核对记录",
+          "anchor": "farm-save:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "收掌机回屋",
+          "anchor": "farm-save:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "farm-save:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "先收掌机再避雨；雨后检查花盆，不重复浇水循环。",
+        "strongWind": "把一盆轻苗移到小院背风处。",
+        "season": "花盆/种袋按季节差异，存档调查结果只由任务状态决定。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "duoduo.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "我先看看昨晚记的那一页。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "花先浇好，再去看掌机。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "这会儿光正好，屏幕也看得清。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "我把小院收一下，等会儿就进屋。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "我已经进屋了，有事明天再慢慢说。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "掌机先收起来，不能让它淋着。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "这里淋不到，等一会儿再出门。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "花盆底下还有水，我先不添了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "我得把那盆苗挪进去，叶子都吹歪了。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "院子边的雪先别踩，我想看看明早的样子。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天总想多种一点，地方又只有这么大。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天傍晚浇花，水就没那么快晒干。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天的种子我都分袋装好了。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天小院安静，我就在屋里整理记录。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "我想把看见的和记下的对一对。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "duoduo.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你慢慢查，我先忙自己的。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "wang-nainai",
+      "name": "王奶奶",
+      "status": "design-not-runtime",
+      "zone": "homes-west",
+      "home": "flashlight-apk",
+      "voice": "亲切，称玩家“闺女”；有自己的判断，不只充当受骗老人。",
+      "motive": "整理花盆、晾晒、和邻居聊家常。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "整理窗台",
+          "anchor": "flashlight-apk:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "门口坐坐",
+          "anchor": "flashlight-apk:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "收拾家务",
+          "anchor": "flashlight-apk:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "收衣关窗",
+          "anchor": "flashlight-apk:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "flashlight-apk:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "收晾晒物，转到自家檐下；现有手电筒委托可在门口继续。",
+        "strongWind": "关窗、固定花盆后回门廊。",
+        "season": "春窗台花、秋早收衣、冬拢领；不把关怀写成强迫玩家照顾任务。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "wang-nainai.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "闺女，起得早呀。我把窗台擦一擦。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "坐一会儿？我正好歇歇脚。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "我把屋里收拾完了，出来透透气。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "天暗了，我先把晾着的东西收回去。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "闺女，我已经歇下了，没急事明天说。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "闺女，先帮自己找个干地方站，别急着说话。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "檐下够站，别往外挤。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停了也慢点走，门前还滑呢。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "我先把窗关上，你说话我听着呢。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "台阶我扫过了，雪天还是慢些走。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天我喜欢把窗台腾一点给花。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天这会儿坐着歇歇，别老在日头下跑。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天的衣服收得早，傍晚露水重。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天出门把领口拢好，闺女。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你说得明白，我才能自己拿主意。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "wang-nainai.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "不懂我就再问一遍，不怕麻烦。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "lao-qin",
+      "name": "老秦",
+      "status": "design-not-runtime",
+      "zone": "center",
+      "home": "archive",
+      "voice": "慢、严谨、珍惜旧物，能接受未知；不抢先揭露主线。",
+      "motive": "分类旧软盘、登记来源、修补封套。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "开馆除尘",
+          "anchor": "archive:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "整理档案",
+          "anchor": "archive:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "查目录、短休",
+          "anchor": "archive:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "归架关馆",
+          "anchor": "archive:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "馆内整理",
+          "anchor": "archive:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "移开门边纸箱，关闭受雨窗，回档案柜整理；门廊仍可交谈。",
+        "strongWind": "合上脆弱旧册，关窗再继续登记。",
+        "season": "季节影响保管动作，不自动解开加密猫或主线真相。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "lao-qin.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "先让屋里透透气，纸也闷了一夜。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "看哪一盒？先查目录，不直接翻。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "我歇歇眼，封套还得补几只。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "借出的先核一遍，再关柜。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "档案馆关门了，明早我替你找目录。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "纸箱先离门口远些，湿气会慢慢爬进去。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "你在檐下等等，我把这一摞放回柜里。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "地面还潮，箱子不能直接放下。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "我先关窗，旧纸经不起这么吹。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "鞋底雪蹭干净再进来，纸可受不住。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天我给封套换一批干净的。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天屋里要透气，也不能让太阳直晒。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天整理旧物的人多，来源一项不能省。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天翻页慢些，旧纸脆。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "不知道，就先写不知道。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "lao-qin.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "留着，不等于已经看懂；扔掉，也不等于从没存在。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    },
+    {
+      "id": "smith-release",
+      "name": "铁叔",
+      "status": "design-not-runtime",
+      "zone": "north",
+      "home": "engines",
+      "voice": "爽朗、耐心，愿意让玩家动手；不替玩家先下结论。",
+      "motive": "修工具、核尺寸、整理工作台；剧情时管理钟楼钥匙。",
+      "priority": "P1",
+      "anchorsStatus": "symbolic-pending-layout-navigation",
+      "schedule": [
+        {
+          "time": "dawn",
+          "activity": "开铺检查",
+          "anchor": "engines:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "morning",
+          "activity": "台边修理",
+          "anchor": "engines:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "afternoon",
+          "activity": "试量具、短休",
+          "anchor": "engines:work",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "evening",
+          "activity": "清点工具",
+          "anchor": "engines:front",
+          "visible": true,
+          "contact": "talk"
+        },
+        {
+          "time": "night",
+          "activity": "屋内休息",
+          "anchor": "engines:inside",
+          "visible": false,
+          "contact": "door-response"
+        }
+      ],
+      "reactions": {
+        "rain": "收图纸，挪至工具铺檐下；不会因为下雨取消发布检查。",
+        "strongWind": "夹图纸、挂稳工具，改在背风工作台。",
+        "season": "暖手等动作用已验收帧组合；钟楼钥匙只在剧情允许时出现。",
+        "storm": "优先有顶建筑安全位；暂停外部活动，不在大树/水边避雷；具体路线待关卡验证。"
+      },
+      "dialogues": [
+        {
+          "id": "smith-release.dawn",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "dawn"
+          },
+          "text": "先把台面腾出来，今天就好干活。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.morning",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "morning"
+          },
+          "text": "你站这边看，别挡着我手上的尺。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.afternoon",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "afternoon"
+          },
+          "text": "量两遍不丢人，少量一遍才容易返工。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.evening",
+          "kind": "time",
+          "channel": "talk",
+          "when": {
+            "timeBand": "evening"
+          },
+          "text": "工具归位了，明天就不用满屋找。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.night",
+          "kind": "time",
+          "channel": "door-response",
+          "when": {
+            "timeBand": "night"
+          },
+          "text": "铺子收了，明天咱们接着试。",
+          "weight": 30,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.rain-exposed",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": "exposed"
+          },
+          "text": "图纸收里面，手上的活先放稳。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.rain-sheltered",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "rain",
+              "storm"
+            ],
+            "shelter": [
+              "covered",
+              "indoors"
+            ]
+          },
+          "text": "檐下这块干，咱们在这儿说。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.rain-cleared",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": [
+              "clear",
+              "cloudy"
+            ],
+            "recentEvent": "rain-cleared",
+            "withinGameMinutes": 30
+          },
+          "text": "雨停先擦台面，工具不急着搬出来。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.wind-strong",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "wind": "strong",
+            "shelter": "exposed"
+          },
+          "text": "这张图得夹牢，省得风替我改尺寸。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.snow",
+          "kind": "weather",
+          "channel": "talk",
+          "when": {
+            "weather": "snow",
+            "season": "winter"
+          },
+          "text": "先暖暖手，再碰精细的东西。",
+          "weight": 50,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.spring",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "spring"
+          },
+          "text": "春天修理的活多，先把零件分好。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.summer",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "summer"
+          },
+          "text": "夏天忙一阵也得歇，别让手上打滑。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.autumn",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "autumn"
+          },
+          "text": "秋天把工具过一遍，坏的趁早补。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.winter",
+          "kind": "season",
+          "channel": "talk",
+          "when": {
+            "season": "winter"
+          },
+          "text": "冬天开工慢一点，稳当最要紧。",
+          "weight": 15,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.idle-a",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "先看看它实际怎么做，再听它怎么说。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        },
+        {
+          "id": "smith-release.idle-b",
+          "kind": "idle",
+          "channel": "talk",
+          "when": {},
+          "text": "你来动手，我在旁边看着。",
+          "weight": 5,
+          "spoiler": "none",
+          "oneShot": false
+        }
+      ]
+    }
+  ]
+}
