@@ -55,12 +55,30 @@
     971,
     1619
   ],
-  "status": "candidate",
+  "status": "rejected",
   "walkAtlasSource": {
     "down": "docs/art/review/animations/parallel-batch-a/apprentice/sources/walk-down-8f.png",
     "up": "docs/art/review/animations/parallel-batch-a/apprentice/sources/walk-up-8f.png",
     "left": "docs/art/review/animations/parallel-batch-a/apprentice/sources/walk-left-8f.png",
     "right": "docs/art/review/animations/parallel-batch-a/apprentice/sources/walk-right-8f.png"
   },
-  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration."
+  "note": "REJECTED REVIEW ATLAS. Down/up are visual-only candidates. Both side directions fail gait phase: frame 1/5 do not clearly switch the leading leg, and frame 4-to-5 does not clearly launch the opposite leg with the opposite arm phase. Do not integrate.",
+  "directionReview": {
+    "down": {
+      "status": "candidate",
+      "note": "Visual contact review looked broadly consistent; not approved for integration while the four-direction atlas is rejected."
+    },
+    "up": {
+      "status": "candidate",
+      "note": "Visual contact review looked broadly consistent; not approved for integration while the four-direction atlas is rejected."
+    },
+    "left": {
+      "status": "rejected",
+      "note": "v1 and v2 frame 1/5 do not clearly exchange the leading leg; opposite arm phase and frame 4-to-5 launch are not legible enough."
+    },
+    "right": {
+      "status": "rejected",
+      "note": "v1 and v2 frame 1/5 do not clearly exchange the leading leg; opposite arm phase and frame 4-to-5 launch are not legible enough."
+    }
+  }
 }

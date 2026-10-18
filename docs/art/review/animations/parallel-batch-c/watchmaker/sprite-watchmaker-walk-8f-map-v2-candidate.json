@@ -1,0 +1,66 @@
+{
+  "frame": [
+    96,
+    192
+  ],
+  "logicalFrame": [
+    16,
+    32
+  ],
+  "sheet": [
+    8,
+    6
+  ],
+  "smooth": true,
+  "side": "right",
+  "resample": "nearest",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "walk-down": {
+      "row": 1,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-up": {
+      "row": 2,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-left": {
+      "row": 3,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-right": {
+      "row": 4,
+      "frames": 8,
+      "ms": 75
+    },
+    "talk": {
+      "row": 5,
+      "frames": 2,
+      "ms": 250
+    }
+  },
+  "character": "watchmaker",
+  "source": "docs/art/review/sources/sprite-watchmaker-source.png",
+  "sourceCanvas": [
+    971,
+    1620
+  ],
+  "status": "candidate",
+  "walkAtlasSource": {
+    "down": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-down-8f-v2-strip.png",
+    "up": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-up-8f-v2-strip.png",
+    "left": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-left-8f-v2-strip.png",
+    "right": "docs/art/review/animations/parallel-batch-c/watchmaker/walk-right-8f-v2-strip.png"
+  },
+  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating gait phases (A lead/max stride, stride closes through weight transfer, B lead/max stride, stride closes through weight transfer, then loop), opposite lead legs in frames 1 and 5, natural counter-swinging arms, stable held props, correct independent left/right facing, map camera angle and in-game scale before integration."
+}
