@@ -1,3 +1,4 @@
+import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
@@ -52,6 +53,12 @@ const SPEAKERS = {
   "wang-nainai": "王奶奶",
   "lao-qin": "老秦",
   xiaoyu: "小雨",
+  baker: "阿桃",
+  barista: "小鹿",
+  "disk-vendor": "阿飞",
+  parcel: "大壮",
+  student: "小满",
+  watchmaker: "老魏",
 };
 
 /** The time machine's dial (docs/concept.md): the eras in story order, and the map each one opens on. */
@@ -402,18 +409,46 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
   }
 
-  /* 会说话的 NPC：暂时是带名字的占位小人，走近就搭话（npc-chatter.js）。 */
-  let nearNpcId = null;  function npcEls() {
+  /* 会说话的 NPC：走近就搭话（npc-chatter.js）。
+     12 位常驻的小人图已经交付（public/art/pixel/sprite-<id>.png，6 列 × 5 行：
+     待机2 / 下走6 / 上走6 / 侧走6 / 说话2），交付源帧是 96×192，显示时缩成 16×32 逻辑像素。
+     没有图的（委托人里的老秦）还是圆点，等图补齐再换。 */
+  let nearNpcId = null;
+  // 当前这区域里的活人：换图时重新登记，元素随 DOM 一起丢掉。
+  const npcSprites = [];
+  const npcSpriteEl = (npc) => {
+    if (!has(`sprite-${npc.id}`)) {
+      return h("i", { style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};box-shadow:0 0 calc(2px * var(--px)) rgba(0,0,0,.55);` });
+    }
+    const el = h("span", {
+      class: "game-sprite npc", "aria-hidden": "true",
+      style: `background-image:url(/art/pixel/sprite-${npc.id}.png);background-size:calc(96px * var(--px)) calc(160px * var(--px));background-position:0 0;`,
+    });
+    npcSprites.push({ el, npc });
+    return el;
+  };
+  function npcEls() {
+    npcSprites.length = 0;
     return npcsInRegion(currentRegionName()).map((npc) =>
       h("span", {
         class: "game-npc",
         "data-npc": npc.id,
         style: `left:calc(${npc.x}px * var(--px));top:calc(${npc.y}px * var(--px));position:absolute;z-index:6;pointer-events:none;text-align:center;`,
       },
-        h("i", { style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};box-shadow:0 0 calc(2px * var(--px)) rgba(0,0,0,.55);` }),
-        h("b", { style: `display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
+        npcSpriteEl(npc),
+        h("b", { style: `position:absolute;left:50%;bottom:calc(34px * var(--px));transform:translateX(-50%);display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
       ),
     );
+  }
+  /** 小人动两下：平时是待机两帧（站很久，偶尔眨一下）；走近正在跟他说话的那个，换成说话帧。
+     对话打开时主循环早退，所以这个必须在早退之前调。 */
+  function paintNpcFrames(now) {
+    for (const one of npcSprites) {
+      const talking = one.npc.id === nearNpcId;
+      const row = talking ? 4 : 0; // 第 4 行是说话
+      const col = Math.floor(now / (talking ? 260 : 1900)) % 2;
+      one.el.style.backgroundPosition = `calc(${-col * 16}px * var(--px)) calc(${-row * 32}px * var(--px))`;
+    }
   }
   /** 走进范围就搭一句话；委托人当场开口托付，闲聊的给传闻。 */
   function talkNearNpcs() {
@@ -437,7 +472,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     saveTalked(talked);
     achievements.note({ type: "talk", id });
-    const lines = npc.first.map((text) => ({ text, face: "happy" }));
+    // 他们的头像都在 faces/ 里，聊天的就是他们本人，不是路米。
+    const lines = npc.first.map((text) => ({ text, face: "happy", who: npc.id, name: npc.name }));
     // 传闻：聊到的人会把一件委托「带」到委托板上（quest-progress 的 discovered）。
     let learned = false;
     if (npc.discover) {
@@ -480,10 +516,16 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     saveProgress(markDiscovered(loadProgress(), [quest.discover]));
     const progress = loadProgress();
     const status = questStatus(quest);
-    const sayAs = (text, face = "normal") => ({ who: npc.id, text, face });
-    const greeting = first ? npc.first.map((text) => sayAs(text, "normal")) : [];
+    const sayAs = (text, face = "normal") => ({ who: npc.id, name: npc.name, text, face });
+    const greeting = first ? (npc.first || []).map((text) => sayAs(text, "normal")) : [];
 
-    if (status === "done") return void say([sayAs(npc.after, "happy")]);
+    if (status === "done") {
+      if(quest.transfer)return void say([sayAs('上次的副本还留着。想换成不看提示再独立检查一次吗？')],null,()=>showMenu([
+        {label:'再独立检查一次',run:()=>{try{localStorage.removeItem(`rea-transfer-work:${quest.caseId}`);}catch{}acceptQuest(quest);}},
+        {label:'先不重做',run:()=>{menu.hidden=true;}}
+      ]));
+      return void say([sayAs(npc.after, "happy")]);
+    }
     if (progress.accepted.includes(quest.id)) {
       return void say([sayAs(npc.pending || npc.after)], null, () => {
         showMenu([
@@ -649,7 +691,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260, duoduo: 860, "wang-nainai": 380, "lao-qin": 300, xiaoyu: 900 };
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260, duoduo: 860, "wang-nainai": 380, "lao-qin": 300, xiaoyu: 900, baker: 600, barista: 660, "disk-vendor": 480, parcel: 340, student: 780, watchmaker: 300 };
   let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
@@ -970,6 +1012,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       setTimeout(() => {
         const item = cases().find((entry) => entry.id === mini);
         if (!item?.game?.lab) return;
+        if(item.game.practice){
+          const host=h('div',{class:'mini-standalone'},h('p',{class:'mini-standalone-bar'},'支线调试预览：不写入正式委托完成记录'));
+          host.append(mountTransfer({h,item,preview:true,onComplete:()=>toast('调试副本已通过；正式知识记录保持不变'),onClose:restart=>{if(restart)location.reload();else host.remove();}}));
+          document.body.append(host);return;
+        }
         const kind = new URLSearchParams(location.search).get("kind");
         const lab = kind ? { ...item.game.lab, kind } : item.game.lab;
         const host = h("div", { class: "mini-standalone" },
@@ -1027,6 +1074,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
     lastTime = now;
+    paintNpcFrames(now);
     if (!enabled || windowOpen || caseBusy() || (stage.dataset.view !== "town" && !room)) return;
     let dx = 0;
     let dy = 0;
@@ -1758,7 +1806,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   shell.append(overlay);
   const closeOverlay = () => {
     overlay.hidden = true;
-    overlay.classList.remove("skilltree", "timemachine", "demo-end");
+    overlay.classList.remove("skilltree", "timemachine", "demo-end", "transfer-overlay");
   };
 
   /** Pick a difficulty; the first time, the story starts afterwards. */
@@ -1979,6 +2027,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (spotData(id).soon && regionData()?.era) return say([{ text: `「${info(id).place}」……现在进不去，以后再来看看吧。`, face: "thinking" }]);
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
+    const practice=cases().find(c=>c.id===id && c.game?.practice);
+    if(practice) return enterTransferPractice(practice);
     if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。这次先帮委托板上的三位吧！`, face: "thinking" }]);
     // A puzzle case is played in the client's room itself.
     const puzzleCase = cases().find((c) => c.id === id && c.game?.puzzle);
@@ -2008,6 +2058,22 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         shown?.scrollIntoView({ block: "start" });
       }
     }, 300);
+  }
+
+  function enterTransferPractice(item) {
+    const quest=PROLOGUE_QUESTS.find(q=>q.id===item.id);
+    if(!quest || !['available','done'].includes(questStatus(quest)))return toast('先和委托人聊聊，并完成对应基础练习。');
+    menu.hidden=true;dialogue.hidden=true;keys.clear();target=null;prompt.hidden=true;
+    overlay.classList.add('transfer-overlay');overlay.hidden=false;
+    const close=restart=>{closeOverlay();syncQuestTracker();if(restart)enterTransferPractice(item);};
+    overlay.replaceChildren(mountTransfer({h,item,onClose:close,onComplete:result=>{
+      const progress=loadProgress();
+      const previous=progress.completed[item.id];
+      progress.completed[item.id]=previous?.independent && !result.independent ? previous : result;
+      progress.accepted=progress.accepted.filter(id=>id!==item.id);saveProgress(progress);syncQuestTracker();
+      achievements.note({type:'side',done:PROLOGUE_QUESTS.filter(q=>q.tier==='side' && progress.completed[q.id]).length});
+      toast('修复副本与证据已保存');
+    }}));
   }
 
   /* ----- a puzzle case in the client's room (case-session.js does the case itself) ----- */
@@ -2148,7 +2214,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     const quest = active[0];
-    const region = regionOf(quest.caseId);
+    const region = regionOf(quest.caseId) || quest.at?.region;
     const where = region && REGIONS[region]?.name ? REGIONS[region].name : "镇上";
     questTracker.hidden = false;
     questTracker.title = `进行中的委托：${active.map((one) => one.title).join("、")}（点一下出发）`;

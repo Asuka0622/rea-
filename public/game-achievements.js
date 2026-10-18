@@ -15,6 +15,7 @@
 const KEY = "rea-game-achievements";
 
 export const ACHIEVEMENTS = [
+  { id: "forge-reviewer", title: "发布前过一眼", note: "听铁叔说起发布检查", when: { talk: "smith-release" } },
   { id: "first-day", title: "初来乍到", note: "第一次走进侦探事务所", when: { step: "visit-office" } },
   { id: "bookworm", title: "书虫上线", note: "去图书馆上了第一课", when: { step: "visit-library" } },
   { id: "silent-tower", title: "钟楼怎么不响了", note: "看到了停摆的钟楼", when: { step: "visit-tower" } },
@@ -70,6 +71,13 @@ export const ACHIEVEMENTS = [
   { id: "npc-lighthouse", title: "灯是给晚上准备的", note: "听老陈讲他为什么白天也擦灯", when: { talk: "lighthouse-keeper" } },
   { id: "npc-apprentice", title: "0.5 秒不算准", note: "和修表学徒小铃争论了一次误差", when: { talk: "apprentice" } },
   { id: "npc-cobbler", title: "鞋底比人诚实", note: "让老宋看了一眼你的鞋底", when: { talk: "cobbler" } },
+  // —— 手艺街与镇上的摊主：生活里的人，不是任务发布器 ——
+  { id: "npc-baker", title: "又是最后一名", note: "揉着面的阿桃说起她的店总被排在最后", when: { talk: "baker" } },
+  { id: "npc-barista", title: "您上次喝哪杯", note: "被小鹿的便签本问住了", when: { talk: "barista" } },
+  { id: "npc-disk-vendor", title: "格式化过了，大概", note: "从阿飞手里接过一块没删干净的硬盘", when: { talk: "disk-vendor" } },
+  { id: "npc-parcel", title: "24 个格子，60 个人", note: "帮大壮数过快递柜", when: { talk: "parcel" } },
+  { id: "npc-student", title: "算是查过吧", note: "撞见小满把练习册往身后藏", when: { talk: "student" } },
+  { id: "npc-watchmaker", title: "表没问题", note: "修表摊前，老魏说问题是时间的", when: { talk: "watchmaker" } },
   // —— 委托人本人：他们的委托不在板上，得走过去当面接 ——
   { id: "npc-duoduo", title: "地是对的，数是错的", note: "在门口蹲着的朵朵那儿接下了她的存档", when: { talk: "duoduo" } },
   { id: "npc-wang-nainai", title: "一个照明要通讯录？", note: "接过王奶奶手里那个不敢装的手电筒", when: { talk: "wang-nainai" } },

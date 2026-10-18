@@ -53,6 +53,9 @@ export const CHATTER_NPCS = [
   },
   {
     id: "lighthouse-keeper",
+    quest: "beacon-release",
+    pending: "副本还在，想好怎么改就再来。",
+    later: "先去办一份基础委托，理解这个问题，再来帮我吧。",
     name: "老陈",
     region: "south",
     x: 830,
@@ -104,8 +107,73 @@ export const CHATTER_NPCS = [
     after: "读不出来也是个结论——这话我记住了。",
     later: "（他翻着纸箱）等你再会点别的，我再拿出来。",
   },
+  /* ----- 手艺街与镇上的摊主：这批是「生活里」的人，不进委托板，也不点亮传闻 -----
+     每人身上挂着一件正在发生的事（docs/npc-behavior.md 第 6.2 节），台词由他们自己说。 */
+  {
+    id: "baker",
+    name: "阿桃",
+    region: "craft",
+    x: 430,
+    y: 250,
+    look: "#d9a066",
+    first: ["（揉着面，抬头看你一眼）新面孔。", "别老最后一名——我是说我的店，不是说排名。"],
+    after: "对面小鹿又被她那堆便签绕进去了，你要不要去看看热闹。",
+  },
+  {
+    id: "barista",
+    name: "小鹿",
+    region: "craft",
+    x: 560,
+    y: 300,
+    look: "#e8c9a0",
+    first: ["（笑着递上便签本）您几位？", "……抱歉，您上次喝的是哪一杯来着？"],
+    after: "便签一乱我就全错。记下来了，怎么反而更糊涂了呢。",
+  },
+  {
+    id: "disk-vendor",
+    name: "阿飞",
+    region: "center",
+    x: 620,
+    y: 430,
+    look: "#7f8f9b",
+    first: ["（拍着一箱硬盘）格式化过了，我发誓——大概。", "上一位主人？不认识了，真不认识。"],
+    after: "老秦那箱软盘，谁读谁头大。他说得找个不怕看不懂的人——我看你就不错。",
+  },
+  {
+    id: "parcel",
+    name: "大壮",
+    region: "homes",
+    x: 520,
+    y: 250,
+    look: "#b85c3c",
+    first: ["（指着一柜子包裹）24 个格子，一天 60 个人。", "你来得正好，帮我数数今天塞了几个。"],
+    after: "柜子就这么大，人不会少。阿康那个手机也是，一天响八百回，他看都不看。",
+  },
+  {
+    id: "student",
+    name: "小满",
+    region: "homes",
+    x: 450,
+    y: 430,
+    look: "#6b9bd1",
+    first: ["（把练习册往身后藏）干嘛。", "……这笔记是我自己写的。查过资料的——算是查过吧。"],
+    after: "周姐的表天天 11:58 停，邪门。你既然是弄这个的，去帮她看看呗。",
+  },
+  {
+    id: "watchmaker",
+    name: "老魏",
+    region: "north",
+    x: 736,
+    y: 320,
+    look: "#8a9a8f",
+    first: ["（头也不抬）表？", "表没问题，是时间的问题。"],
+    after: "钟停了以后，我这摊倒天天排队。小铃非要跟我争 0.5 秒算不算准——你说呢。",
+  },
   {
     id: "apprentice",
+    quest: "clock-import",
+    pending: "副本还在，想好怎么改就再来。",
+    later: "先去办一份基础委托，理解这个问题，再来帮我吧。",
     name: "小铃",
     region: "north",
     x: 620,
@@ -116,6 +184,9 @@ export const CHATTER_NPCS = [
   },
   {
     id: "cobbler",
+    quest: "cobbler-booking",
+    pending: "副本还在，想好怎么改就再来。",
+    later: "先去办一份基础委托，理解这个问题，再来帮我吧。",
     name: "老宋",
     region: "craft",
     x: 500,
@@ -124,6 +195,21 @@ export const CHATTER_NPCS = [
     first: ["你这双鞋，走的是近路。", "鞋底比人诚实。"],
     after: "鞋跟磨偏了，改天给你钉钉。",
   },
+{
+  "id": "smith-release",
+  "name": "铁叔",
+  "region": "center",
+  "x": 740,
+  "y": 220,
+  "look": "#9c7857",
+  "quest": "forge-release",
+  "first": [
+    "先别急着发布，帮我过一眼这个量尺程序。"
+  ],
+  "pending": "发布副本还没交，你慢慢核对。",
+  "later": "先去看看阿哲的钥匙问题，学会了再来帮我。",
+  "after": "量尺还能用，钥匙也不在安装包里了。"
+}
 ];
 
 export const npcsInRegion = (region) => CHATTER_NPCS.filter((npc) => npc.region === region);

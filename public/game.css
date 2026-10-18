@@ -84,6 +84,8 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
 .game-sprite.drawn u {left:calc(4px * var(--px));top:calc(24px * var(--px));width:calc(8px * var(--px));height:calc(8px * var(--px));background:repeating-linear-gradient(90deg,#4b3a2e 0 calc(3px * var(--px)),transparent calc(3px * var(--px)) calc(5px * var(--px)));}
 @keyframes game-bob {50% {translate:0 calc(-1px * var(--px));}}
 .game-sprite {animation:game-bob 1.2s steps(2) infinite;}
+/* 镇上的 NPC 小人：图是 6 列 × 5 行的交付表，一帧 16×32 逻辑像素，脚底落在坐标点上，名字在头顶。 */
+.game-sprite.npc {left:50%;width:calc(16px * var(--px));height:calc(32px * var(--px));bottom:calc(-16px * var(--px));transform:translateX(-50%);image-rendering:pixelated;}
 
 /* ----- interface on top: menu bar, dialogue, choices, window ----- */
 .game-hud {position:fixed;top:12px;left:12px;z-index:45;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100vw - 24px);}
