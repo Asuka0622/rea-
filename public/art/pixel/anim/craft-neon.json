@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "craft-neon",
+  "frame": [
+    96,
+    40
+  ],
+  "sheet": [
+    384,
+    40
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    48,
+    39
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 4,
+      "ms": 240
+    }
+  }
+}

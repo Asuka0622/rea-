@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "river-fish",
+  "frame": [
+    48,
+    32
+  ],
+  "sheet": [
+    288,
+    32
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    24,
+    31
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 6,
+      "ms": 250
+    }
+  }
+}

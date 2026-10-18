@@ -1,0 +1,26 @@
+{
+  "character": "animal-butterfly",
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    128,
+    64
+  ],
+  "resample": "nearest",
+  "defaultFacing": "down",
+  "sourceInboxIndex": 172,
+  "animations": {
+    "blue-flap": {
+      "row": 0,
+      "frames": 4,
+      "ms": 240
+    },
+    "violet-flap": {
+      "row": 1,
+      "frames": 4,
+      "ms": 240
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "river-ripple",
+  "frame": [
+    48,
+    24
+  ],
+  "sheet": [
+    192,
+    24
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    24,
+    23
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 4,
+      "ms": 360
+    }
+  }
+}

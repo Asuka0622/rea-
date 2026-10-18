@@ -1,0 +1,31 @@
+{
+  "character": "animal-dog",
+  "frame": [
+    48,
+    48
+  ],
+  "sheet": [
+    192,
+    144
+  ],
+  "resample": "nearest",
+  "defaultFacing": "side",
+  "sourceInboxIndex": 168,
+  "animations": {
+    "sit": {
+      "row": 0,
+      "frames": 2,
+      "ms": 180
+    },
+    "run": {
+      "row": 1,
+      "frames": 4,
+      "ms": 180
+    },
+    "wag": {
+      "row": 2,
+      "frames": 2,
+      "ms": 180
+    }
+  }
+}

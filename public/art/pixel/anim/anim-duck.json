@@ -1,0 +1,26 @@
+{
+  "character": "animal-duck",
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    128,
+    64
+  ],
+  "resample": "nearest",
+  "defaultFacing": "side",
+  "sourceInboxIndex": 170,
+  "animations": {
+    "swim": {
+      "row": 0,
+      "frames": 2,
+      "ms": 240
+    },
+    "walk": {
+      "row": 1,
+      "frames": 4,
+      "ms": 240
+    }
+  }
+}

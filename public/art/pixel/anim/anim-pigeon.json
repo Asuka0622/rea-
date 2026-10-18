@@ -1,0 +1,26 @@
+{
+  "character": "animal-pigeon",
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    128,
+    64
+  ],
+  "resample": "nearest",
+  "defaultFacing": "side",
+  "sourceInboxIndex": 171,
+  "animations": {
+    "stand": {
+      "row": 0,
+      "frames": 2,
+      "ms": 240
+    },
+    "fly": {
+      "row": 1,
+      "frames": 4,
+      "ms": 240
+    }
+  }
+}

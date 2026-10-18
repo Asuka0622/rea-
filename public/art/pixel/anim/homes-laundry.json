@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "homes-laundry",
+  "frame": [
+    80,
+    48
+  ],
+  "sheet": [
+    320,
+    48
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    40,
+    47
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 4,
+      "ms": 280
+    }
+  }
+}

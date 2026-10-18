@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "center-waterwheel",
+  "frame": [
+    64,
+    64
+  ],
+  "sheet": [
+    256,
+    64
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    32,
+    63
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 4,
+      "ms": 250
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "characterOrPlace": "south-pier-boat",
+  "frame": [
+    80,
+    40
+  ],
+  "sheet": [
+    320,
+    40
+  ],
+  "layout": "one horizontal row; one frame per cell",
+  "resample": "nearest",
+  "anchor": [
+    40,
+    39
+  ],
+  "animations": {
+    "loop": {
+      "row": 0,
+      "frames": 4,
+      "ms": 420
+    }
+  }
+}

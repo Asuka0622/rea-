@@ -1,0 +1,31 @@
+{
+  "character": "animal-chicken",
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    128,
+    96
+  ],
+  "resample": "nearest",
+  "defaultFacing": "down",
+  "sourceInboxIndex": 169,
+  "animations": {
+    "stand": {
+      "row": 0,
+      "frames": 2,
+      "ms": 240
+    },
+    "peck": {
+      "row": 1,
+      "frames": 2,
+      "ms": 240
+    },
+    "walk": {
+      "row": 2,
+      "frames": 4,
+      "ms": 240
+    }
+  }
+}
