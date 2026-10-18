@@ -67,6 +67,13 @@ def main() -> None:
         cell=(235, 150),
         thumb=(220, 118),
     )
+    contact(
+        "case-illustrations-review.jpg",
+        [("case", list(range(133, 140)))],
+        cols=3,
+        cell=(460, 285),
+        thumb=(440, 248),
+    )
 
 
 def review_region_order() -> None:

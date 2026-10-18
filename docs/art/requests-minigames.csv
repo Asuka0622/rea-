@@ -7,7 +7,7 @@ td-unit-throttle,塔防,public/art/pixel/minigames/mini-td-unit-throttle.png,32,
 td-unit-sandbox,塔防,public/art/pixel/minigames/mini-td-unit-sandbox.png,32,32,,P0,已接入,已接入：待游戏内细看
 anim-td-collector,塔防,public/art/pixel/minigames/anim-mini-td-collector.png,96,96,4+1,P0,已接入,已接入：走4帧+被拦翻倒1帧，实测 9 次拦截各留一帧
 td-fx,塔防,public/art/pixel/minigames/mini-td-fx.png,96,32,3,P2,待验收,拦截特效；代码可顶；优先级最低；PNG及帧JSON已交，待游戏验收
-mg-office,经营,public/art/pixel/minigames/mini-mg-office.png,1280,720,,P0,已接入,已接入：账本压在画面底部；灯关变暗、风险过半变热；验收：缺一块空的广告位框（全图最平坦处是窗户 x68% y13%，亮度221），三张贴画无处可贴；等距不足（斜向30% 垂直42%），需求要45度俯视
+mg-office,经营,public/art/pixel/minigames/mini-mg-office.png,1280,720,,P0,待验收,新绘1280×720严格45°等距版本；广告位内框留空，运行图已替换，待小游戏内复核整体比例与贴画位置。
 mg-ad-lamp,经营,public/art/pixel/minigames/mini-mg-ad-lamp.png,96,64,,P1,待验收,灯泡广告贴画（正经）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
 mg-ad-contacts,经营,public/art/pixel/minigames/mini-mg-ad-contacts.png,96,64,,P1,待验收,「找朋友」广告（读了通讯录后）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
 mg-ad-nearby,经营,public/art/pixel/minigames/mini-mg-ad-nearby.png,96,64,,P1,待验收,「附近」广告（开了定位后）；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
@@ -17,8 +17,8 @@ mg-alert,经营,public/art/pixel/minigames/mini-mg-alert.png,32,32,,P1,待验收
 mg-notice,经营,public/art/pixel/minigames/mini-mg-notice.png,48,64,,P1,待验收,盖红章的通报文件；章是图形不写字；运行素材已入仓，待游戏验收；运行素材已入仓，待游戏验收
 mg-office-evening,经营,,1280,720,,P2,已验收,经检查 public/game.css 已有 .mini-mg-office.dark/.hot 调色，独立傍晚图不再需要
 cd-room,卡牌,public/art/pixel/minigames/mini-cd-room.png,1280,720,,P0,已接入,已接入：主张气泡压在画面底部，驳回时白光一闪
-cd-card-frame,卡牌,public/art/pixel/minigames/mini-cd-card-frame.png,240,160,,P0,已接入,已接入：3:2 卡面，上窗下名牌；验收：插图窗92%透明合格，标题条被画满（RGB 175/121/66 亮棕），需求要留空由代码写，代码已加深色衬底兜底
-cd-card-frame-on,卡牌,public/art/pixel/minigames/mini-cd-card-frame-on.png,240,160,,P0,已接入,已接入：悬停/聚焦时换高亮框；验收：同普通框，标题条画满，代码已加衬底兜底
+cd-card-frame,卡牌,public/art/pixel/minigames/mini-cd-card-frame.png,240,160,,P0,待验收,重绘240×160；插图窗与标题条内侧均透明，卡面和标题由代码绘制；运行图已替换，待卡牌试玩复核。
+cd-card-frame-on,卡牌,public/art/pixel/minigames/mini-cd-card-frame-on.png,240,160,,P0,待验收,重绘240×160选中态；边框保留高亮，插图窗与标题条内侧透明；运行图已替换，待卡牌试玩复核。
 cd-art-capture,卡牌,public/art/pixel/minigames/mini-cd-art-capture.png,96,64,,P0,已接入,已接入
 cd-art-timer,卡牌,public/art/pixel/minigames/mini-cd-art-timer.png,96,64,,P0,已接入,已接入
 cd-art-sdk,卡牌,public/art/pixel/minigames/mini-cd-art-sdk.png,96,64,,P0,已接入,已接入

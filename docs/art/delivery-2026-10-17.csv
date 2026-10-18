@@ -6,13 +6,13 @@ azhe-happy,阿哲,docs/art/public/art/azhe-happy.png,public/art/faces/azhe-happy
 azhe-thinking,阿哲,docs/art/public/art/azhe-thinking.png,public/art/faces/azhe-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 azhe-surprised,阿哲,docs/art/public/art/azhe-surprised.png,public/art/faces/azhe-surprised.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 xiaoyu-normal,小雨,docs/art/public/art/xiaoyu-normal.png,public/art/faces/xiaoyu-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
-lumi-happy-fullbody-source,路米,docs/art/public/art/lumi-happy.png,public/art/portraits/lumi-happy.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-lumi-normal-fullbody-source,路米,docs/art/public/art/lumi-normal.png,public/art/portraits/lumi-normal.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-lumi-surprised-fullbody-source,路米,docs/art/public/art/lumi-surprised.png,public/art/portraits/lumi-surprised.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-lumi-thinking-fullbody-source,路米,docs/art/public/art/lumi-thinking.png,public/art/portraits/lumi-thinking.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-kobayashi-normal-fullbody-source,小林,docs/art/public/art/kobayashi-normal.png,public/art/portraits/kobayashi-normal.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-kobayashi-happy-fullbody-source,小林,docs/art/public/art/kobayashi-happy.png,public/art/portraits/kobayashi-happy.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
-kobayashi-surprised-fullbody-source,小林,docs/art/public/art/kobayashi-surprised.png,public/art/portraits/kobayashi-surprised.png,,,,1024,1536,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-happy-fullbody-source,路米,docs/art/public/art/lumi-happy.png,public/art/portraits/lumi-happy.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-normal-fullbody-source,路米,docs/art/public/art/lumi-normal.png,public/art/portraits/lumi-normal.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-surprised-fullbody-source,路米,docs/art/public/art/lumi-surprised.png,public/art/portraits/lumi-surprised.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+lumi-thinking-fullbody-source,路米,docs/art/public/art/lumi-thinking.png,public/art/portraits/lumi-thinking.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-normal-fullbody-source,小林,docs/art/public/art/kobayashi-normal.png,public/art/portraits/kobayashi-normal.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-happy-fullbody-source,小林,docs/art/public/art/kobayashi-happy.png,public/art/portraits/kobayashi-happy.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
+kobayashi-surprised-fullbody-source,小林,docs/art/public/art/kobayashi-surprised.png,public/art/portraits/kobayashi-surprised.png,,,,1086,1448,是,,,候选,全身版本与当前半身头像源不同；保留归档，不覆盖在用头像
 case-props-laptop,小林宿舍,docs/art/review/sources/case-props-laptop-source.png,public/art/pixel/case-props/laptop.png,秋季,晴天,中午,40,28,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；打开式笔记本，屏幕空白；实装站位待场景对位
 case-props-phone,小林宿舍,docs/art/review/sources/case-props-phone-source.png,public/art/pixel/case-props/phone.png,秋季,晴天,中午,20,28,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；手机屏幕空白，留给游戏显示线索；实装站位待场景对位
 case-props-chat,小林宿舍,docs/art/review/sources/case-props-chat-source.png,public/art/pixel/case-props/chat.png,秋季,晴天,中午,30,24,是,,,已验收,透明PNG，最近邻缩至逻辑尺寸；平板聊天气泡，无可读小字；实装站位待场景对位
@@ -22,25 +22,25 @@ case-props-policy,小林宿舍,docs/art/review/sources/case-props-policy-source.
 case-props-cat,小林宿舍,docs/art/review/sources/case-props-cat-source-sheet.png,public/art/pixel/case-props/cat.png,秋季,晴天,中午,32,28,是,,,已验收,复用收件图#167第一行第一帧坐姿橘猫；透明裁帧并最近邻缩放
 anim-kobayashi,小林,docs/art/review/sources/anim-kobayashi-existing-source.png,public/art/pixel/anim-kobayashi.png,秋季,晴天,中午,256,192,是,64x96,idle 2帧；scratch-head 4帧,已验收,身份匹配收件图#140；待机与挠头分别补帧；帧基线统一；已接入游戏待机及悬停挠头，桌面预览通过
 anim-kobayashi-metadata,小林,docs/art/review/sources/anim-kobayashi-existing-source.png,public/art/pixel/anim-kobayashi.json,秋季,晴天,中午,,,,64x96,idle 2帧；scratch-head 4帧,已验收,记录帧宽高、行列、默认朝向和逐帧时长
-case-room-privacy-ledger,小林宿舍,docs/art/review/case-room-privacy-ledger-v1.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1672,941,否,,,候选,16:9氛围与美术可用；书桌、窗台与现有调查物品锚点不匹配，暂不放入运行目录
-case-room-privacy-ledger-v3-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v3-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1664,936,否,,,已接入,空桌与空窗台背景；桌面锚点y=76、猫锚点y=56；床铺碰撞已调整；桌面及844×390横屏预览验收，手机调查路径通过
-case-room-privacy-ledger-v4-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v4-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1664,936,否,,,候选,空桌、空窗台与中心出口通道；桌面两件物品底锚点建议改为 y=80，猫锚点改为 y=56；需接入方核对调查站位、遮挡与碰撞
-case-room-farm-save-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,1664,936,否,,,候选,农场小屋阁楼；空床、空桌与开放地面；农场菜地和谷仓在窗外；未烘焙游戏机、南瓜抱枕、日历、U盘、笔记或小鸡；16:9候选，等待道具锚点及走路区验收
-case-room-calculator-eggs-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,1664,936,否,,,候选,粉色点缀的学生卧室；黄昏斜光；空书桌、空墙面与开放地面；未烘焙计算器、练习册、海报、论坛、存钱罐或玩偶；16:9候选，等待道具锚点及走路区验收
-case-room-farm-save-v2-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-v2-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,640,360,否,,,已接入,按320×180栅格缩到640×360；空桌空床与中央通路；桌面y=72、床上y≈100、墙面y=60；碰撞为床/床头柜/书桌椅/衣柜；六件调查物锚点已重排，站位在1.2倍屏幕下实测可走
-case-room-calculator-eggs-v2-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-v2-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,640,360,否,,,已接入,按320×180栅格缩到640×360；空书桌空墙与开放地面；桌面y=71、床上y≈104、墙面y=56；碰撞为床/床头柜/书桌椅/书架；七件调查物锚点已重排，椅子上的玩偶不再被委托人挡住
+case-room-privacy-ledger,小林宿舍,docs/art/review/case-room-privacy-ledger-v1.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1280,720,否,,,候选,16:9氛围与美术可用；书桌、窗台与现有调查物品锚点不匹配，暂不放入运行目录
+case-room-privacy-ledger-v3-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v3-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1280,720,否,,,已接入,空桌与空窗台背景；桌面锚点y=76、猫锚点y=56；床铺碰撞已调整；桌面及844×390横屏预览验收，手机调查路径通过
+case-room-privacy-ledger-v4-candidate,小林宿舍,docs/art/review/case-room-privacy-ledger-v4-candidate.png,public/art/pixel/case-room-privacy-ledger.png,秋季,晴天,中午,1280,720,否,,,候选,空桌、空窗台与中心出口通道；桌面两件物品底锚点建议改为 y=80，猫锚点改为 y=56；需接入方核对调查站位、遮挡与碰撞
+case-room-farm-save-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,1280,720,否,,,候选,农场小屋阁楼；空床、空桌与开放地面；农场菜地和谷仓在窗外；未烘焙游戏机、南瓜抱枕、日历、U盘、笔记或小鸡；16:9候选，等待道具锚点及走路区验收
+case-room-calculator-eggs-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,1280,720,否,,,候选,粉色点缀的学生卧室；黄昏斜光；空书桌、空墙面与开放地面；未烘焙计算器、练习册、海报、论坛、存钱罐或玩偶；16:9候选，等待道具锚点及走路区验收
+case-room-farm-save-v2-candidate,朵朵房间,docs/art/review/sources/case-room-farm-save-v2-source.png,public/art/pixel/case-room-farm-save.png,秋季,晴天,早晨,1280,720,否,,,已接入,按320×180栅格缩到640×360；空桌空床与中央通路；桌面y=72、床上y≈100、墙面y=60；碰撞为床/床头柜/书桌椅/衣柜；六件调查物锚点已重排，站位在1.2倍屏幕下实测可走
+case-room-calculator-eggs-v2-candidate,小雨房间,docs/art/review/sources/case-room-calculator-eggs-v2-source.png,public/art/pixel/case-room-calculator-eggs.png,秋季,晴天,傍晚,1280,720,否,,,已接入,按320×180栅格缩到640×360；空书桌空墙与开放地面；桌面y=71、床上y≈104、墙面y=56；碰撞为床/床头柜/书桌椅/书架；七件调查物锚点已重排，椅子上的玩偶不再被委托人挡住
 case-props-console,朵朵房间,docs/art/review/sources/case-props-console-source.png,public/art/pixel/case-props/console.png,秋季,晴天,早晨,28,20,是,,,已接入,"掌机横放；底边锚点(84,100)；显示14逻辑宽；屏幕内容由游戏给"
 case-props-pillow,朵朵房间,docs/art/review/sources/case-props-pillow-source.png,public/art/pixel/case-props/pillow.png,秋季,晴天,早晨,32,28,是,,,已接入,"南瓜抱枕；底边锚点(52,98)；显示16逻辑宽；压在床沿"
 case-props-calendar,朵朵房间,docs/art/review/sources/case-props-calendar-source.png,public/art/pixel/case-props/calendar.png,秋季,晴天,早晨,22,28,是,,,已接入,"挂墙日历兼便签；锚点(282,58)；纸面无可读字"
 case-props-notebook,朵朵房间,docs/art/review/sources/case-props-notebook-source.png,public/art/pixel/case-props/notebook.png,秋季,晴天,早晨,28,24,是,,,已接入,"摊开的种田笔记；锚点(272,72)；页面留空"
 case-props-usb,朵朵房间,docs/art/review/sources/case-props-usb-source.png,public/art/pixel/case-props/usb.png,秋季,晴天,早晨,18,12,是,,,已接入,"U盘；锚点(118,150)地板；显示9逻辑宽"
-case-props-chick,朵朵房间,docs/art/review/sources/case-props-chick-source-sheet.png,docs/art/review/case-props/chick-candidate.png,,,,20,20,是,,,待验收,精灵表首帧；场景暂无小鸡调查点，留作地板装饰，未进运行目录
+case-props-chick,朵朵房间,docs/art/review/sources/case-props-chick-source-sheet.png,public/art/pixel/case-props/chick-candidate.png,,,,20,20,是,,,待验收,小鸡候选已复制到运行素材目录；关卡尚无调查点，暂作可选地板装饰。
 case-props-calculator,小雨房间,docs/art/review/sources/case-props-calculator-source.png,public/art/pixel/case-props/calculator.png,秋季,晴天,傍晚,20,28,是,,,已接入,"像素计算器；锚点(264,72)书桌右半边；显示10逻辑宽"
 case-props-plush,小雨房间,docs/art/review/sources/case-props-plush-source.png,public/art/pixel/case-props/plush.png,秋季,晴天,傍晚,24,28,是,,,已接入,"玩偶；锚点(248,100)椅子坐面；挡不挡书桌已核对"
 case-props-workbook,小雨房间,docs/art/review/sources/case-props-workbook-source.png,public/art/pixel/case-props/workbook.png,秋季,晴天,傍晚,28,24,是,,,已接入,"摊开的练习册；锚点(52,108)床上；页面留空"
 case-props-poster,小雨房间,docs/art/review/sources/case-props-poster-source.png,public/art/pixel/case-props/poster.png,秋季,晴天,傍晚,24,28,是,,,已接入,"墙面便签；锚点(82,58)；与论坛屏相距56逻辑单位"
 case-props-forum,小雨房间,docs/art/review/sources/case-props-forum-source.png,public/art/pixel/case-props/forum.png,秋季,晴天,傍晚,30,24,是,,,已接入,"贴墙屏幕；锚点(26,56)；无可读小字"
-case-props-piggy,小雨房间,docs/art/review/sources/case-props-piggy-source.png,docs/art/review/case-props/piggy-candidate.png,,,,24,22,是,,,待验收,存钱罐；关卡暂无调查点，未进运行目录
+case-props-piggy,小雨房间,docs/art/review/sources/case-props-piggy-source.png,public/art/pixel/case-props/piggy.png,,,,24,22,是,,,待验收,存钱罐候选已复制到运行素材目录；关卡尚无调查点，暂不布置。
 duoduo-normal-portrait-candidate,朵朵,docs/art/review/sources/portrait-duoduo-normal-source.png,public/art/faces/duoduo-normal.webp,,,,320,320,是,,,待验收,透明3:4肖像源图按统一上方正方形裁切并缩为320×320 RGBA WebP；原PNG源已归档；裁切对照见docs/art/review/portraits/avatar-crops-320-review.png；待游戏头像裁切与表情映射验收
 duoduo-happy-portrait-candidate,朵朵,docs/art/review/sources/portrait-duoduo-happy-source.png,public/art/faces/duoduo-happy.webp,,,,320,320,是,,,待验收,透明3:4肖像源图按统一上方正方形裁切并缩为320×320 RGBA WebP；原PNG源已归档；裁切对照见docs/art/review/portraits/avatar-crops-320-review.png；待游戏头像裁切与表情映射验收
 duoduo-thinking-portrait-candidate,朵朵,docs/art/review/sources/portrait-duoduo-thinking-source.png,public/art/faces/duoduo-thinking.webp,,,,320,320,是,,,待验收,透明3:4肖像源图按统一上方正方形裁切并缩为320×320 RGBA WebP；原PNG源已归档；裁切对照见docs/art/review/portraits/avatar-crops-320-review.png；待游戏头像裁切与表情映射验收
@@ -50,7 +50,7 @@ xiaoyu-thinking-portrait-candidate,小雨,docs/art/review/sources/portrait-xiaoy
 xiaoyu-surprised-portrait-candidate,小雨,docs/art/review/sources/portrait-xiaoyu-surprised-source.png,public/art/faces/xiaoyu-surprised.webp,,,,320,320,是,,,待验收,透明3:4肖像源图按统一上方正方形裁切并缩为320×320 RGBA WebP；原PNG源已归档；裁切对照见docs/art/review/portraits/avatar-crops-320-review.png；待游戏头像裁切与表情映射验收
 anim-duoduo,朵朵,docs/art/review/sources/anim-duoduo-source.png,public/art/pixel/anim-duoduo.png,秋季,晴天,早晨,256,192,是,64×96,待机2 / 抱枕拥抱4,已接入,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、动作节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/；已检查旧#143：图集动作行与64×96像素格不匹配，未直接接入；本候选按朵朵头像统一身份；运行文件已存在且与审阅表像素一致
 anim-xiaoyu,小雨,docs/art/review/sources/anim-xiaoyu-source.png,public/art/pixel/anim-xiaoyu.png,秋季,晴天,傍晚,256,192,是,64×96,待机2 / 蹦跳4,已接入,4列×2行；透明底已核对；按64×96最近邻降采样；待房间内比例、跳跃节奏和脚底基线验收；候选 PNG/JSON 见 docs/art/review/animations/；风格参照小林运行精灵和朵朵候选，表情/衣着按小雨头像；运行文件已存在且与审阅表像素一致
-case-room-weather-keys,阿哲机房,docs/art/review/sources/case-room-weather-keys-v2-source.png,public/art/pixel/case-room-weather-keys.png,秋季,雨天,白天,640,360,否,,,已接入,640×360合成背景已由scene.art接入；六件调查物已烘焙进背景，items[].hidden保留交互热点；无道具源稿和当前运行图见docs/art/review/weather-keys/
+case-room-weather-keys,阿哲机房,docs/art/review/sources/case-room-weather-keys-v2-source.png,public/art/pixel/case-room-weather-keys.png,秋季,雨天,白天,1280,720,否,,,已接入,640×360合成背景已由scene.art接入；六件调查物已烘焙进背景，items[].hidden保留交互热点；无道具源稿和当前运行图见docs/art/review/weather-keys/
 weather-keys-monitor,阿哲机房,docs/art/review/sources/weather-keys-props-sheet-source.png,public/art/pixel/case-props/weather-keys-monitor.png,秋季,雨天,白天,60,49,是,,,已接入,独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png
 weather-keys-todo,阿哲机房,docs/art/review/sources/weather-keys-props-sheet-source.png,public/art/pixel/case-props/weather-keys-todo.png,秋季,雨天,白天,40,35,是,,,已接入,独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png
 weather-keys-printout,阿哲机房,docs/art/review/sources/weather-keys-props-sheet-source.png,public/art/pixel/case-props/weather-keys-printout.png,秋季,雨天,白天,44,51,是,,,已接入,独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png
@@ -101,7 +101,7 @@ anim-zhoujie,周姐,docs/art/review/sources/anim-zhoujie-source-sheet.png,public
 anim-zhoujie-metadata,周姐,docs/art/review/animations/anim-zhoujie.json,public/art/pixel/anim-zhoujie.json,秋季,晴天,中午,,,,64×96,待机2 / 看表4,待验收,逐帧时长与动作行元数据
 anim-xingbo,星博士,docs/art/review/sources/anim-xingbo-source-sheet.png,public/art/pixel/anim-xingbo.png,,,,256,480,是,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,4列×5行；复用收件目录#141；帧底对齐；透明边缘碎点已清理
 anim-xingbo-metadata,星博士,docs/art/review/animations/anim-xingbo.json,public/art/pixel/anim-xingbo.json,,,,,,,64×96,待机2 / 下走4 / 上走4 / 侧走4 / 说话2,待验收,标准行动作映射、帧时长与朝向元数据
-xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,2172,724,是,,三种外形方向,已归档,旧白色机器人方向稿；按用户指定采用Clawd橙色像素蟹后归档，不作为当前形象
+xiaoke-design-directions-v1,小克,docs/art/review/sources/xiaoke-design-directions-source.png,docs/art/review/characters/xiaoke-design-directions-v1-candidate.png,,,,2172,724,是,,三种外形方向,候选,旧白色机器人方向稿；按用户指定采用Clawd橙色像素蟹后归档，不作为当前形象
 town-center-glow,比特镇center,docs/art/review/sources/town-center-glow-source.svg,public/art/pixel/regions/town-center-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-homes-glow,比特镇homes,docs/art/review/sources/town-homes-glow-source.svg,public/art/pixel/regions/town-homes-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
 town-craft-glow,比特镇craft,docs/art/review/sources/town-craft-glow-source.svg,public/art/pixel/regions/town-craft-glow.png,秋季,晴天,夜晚,960,540,是,,,待验收,与分区地图对齐的透明发光层；待游戏内亮度和叠图验收
@@ -122,15 +122,15 @@ anim-xiaoke,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/a
 anim-xiaoke-metadata,小克,docs/art/review/animations/anim-xiaoke.json,public/art/pixel/anim-xiaoke.json,,,,,,,64×96,悬浮待机4 / 移动4 / 说话2 / 故障闪烁4 / 缩小进怀表4,待验收,动作行帧数朝向与逐帧时长元数据
 xiaoke-pocket-watch,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/art/pixel/ui/pocket-watch-xiaoke.png,,,,32,32,是,,,待验收,小克进入怀表的像素图标；待UI缩放验收
 cd-room,卡牌小游戏,docs/art/review/sources/mini-cd-room-source.png,public/art/pixel/minigames/mini-cd-room.png,,,,1280,720,否,,,待验收,卡牌对质会议室背景；源图按 1280×720 缩放；待游戏内位置验收
-cd-card-frame,卡牌小游戏,docs/art/review/sources/minigame-frame-source.png,public/art/pixel/minigames/mini-cd-card-frame.png,,,,240,160,是,,,待验收,空白通用证据卡框；中心插图区透明、底部标题条留空；待界面验收
-cd-card-frame-on,卡牌小游戏,docs/art/review/sources/mini-cd-card-frame-on-derived.png,public/art/pixel/minigames/mini-cd-card-frame-on.png,,,,240,160,是,,,待验收,由基础卡框派生的选中态琥珀外沿；待界面验收
+cd-card-frame,卡牌小游戏,docs/art/review/sources/mini-cd-card-frame-v2-source.png,public/art/pixel/minigames/mini-cd-card-frame.png,,,,240,160,是,,,待验收,240×160透明证据卡框；插图窗和标题条内侧透明，待卡牌试玩核对。
+cd-card-frame-on,卡牌小游戏,docs/art/review/sources/mini-cd-card-frame-on-v2-source.png,public/art/pixel/minigames/mini-cd-card-frame-on.png,,,,240,160,是,,,待验收,240×160透明选中态证据卡框；保留高亮边框，插图窗和标题条内侧透明，待卡牌试玩核对。
 cd-art-capture,卡牌小游戏,docs/art/review/sources/mini-cd-art-capture-source.png,public/art/pixel/minigames/mini-cd-art-capture.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
 cd-art-timer,卡牌小游戏,docs/art/review/sources/mini-cd-art-timer-source.png,public/art/pixel/minigames/mini-cd-art-timer.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
 cd-art-sdk,卡牌小游戏,docs/art/review/sources/mini-cd-art-sdk-source.png,public/art/pixel/minigames/mini-cd-art-sdk.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
 cd-art-terms,卡牌小游戏,docs/art/review/sources/mini-cd-art-terms-source.png,public/art/pixel/minigames/mini-cd-art-terms.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
 cd-art-changelog,卡牌小游戏,docs/art/review/sources/mini-cd-art-changelog-source.png,public/art/pixel/minigames/mini-cd-art-changelog.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
 cd-art-lamp,卡牌小游戏,docs/art/review/sources/mini-cd-art-lamp-source.png,public/art/pixel/minigames/mini-cd-art-lamp.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
-mg-office,经营小游戏,docs/art/review/sources/minigame-office-source.png,public/art/pixel/minigames/mini-mg-office.png,,,,1280,720,否,,,待验收,45°等距手电筒公司经营场景；空广告位；待游戏内验收
+mg-office,经营小游戏,docs/art/review/sources/mini-mg-office-isometric-source.png,public/art/pixel/minigames/mini-mg-office.png,,,,1280,720,否,,,待验收,严格45°等距经营办公室，空广告位；1280×720运行图已替换，待游戏内核对广告贴画位置、比例与调色。
 td-path,塔防,docs/art/review/sources/td-path-source.png,public/art/pixel/minigames/mini-td-path.png,,,,1440,192,否,,,待验收,机房通道连续带，左右门位与中段细节待游戏位置验收
 td-home,塔防,docs/art/review/sources/mini-td-home-source.png,public/art/pixel/minigames/mini-td-home.png,,,,64,64,是,,,待验收,暖色隐私保险柜像素道具
 td-spawn,塔防,docs/art/review/sources/mini-td-spawn-source.png,public/art/pixel/minigames/mini-td-spawn.png,,,,64,64,是,,,待验收,冷色SDK大门像素道具
@@ -314,3 +314,11 @@ room-learn-winter,冬季图书馆,docs/art/review/sources/room-learn-winter-sour
 room-engines-winter,冬季工具铺,docs/art/review/sources/room-engines-winter-source.png,public/art/pixel/room-engines-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#103；积雪窗景与室内暖光，待室内照明与站位验收
 room-clients-winter,冬季驿站,docs/art/review/sources/room-clients-winter-source.png,public/art/pixel/room-clients-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#104；积雪窗景与室内暖光，待室内照明与站位验收
 room-doctor-winter,冬季诊所,docs/art/review/sources/room-doctor-winter-source.png,public/art/pixel/room-doctor-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#105；积雪窗景与室内暖光，待室内照明与站位验收
+ui-drill-board,复勘面板,docs/art/review/sources/drill-board-source.png,public/art/pixel/ui/drill-board.png,,,,640,420,否,,,待验收,胡桃木与羊皮纸空白底图；预览见docs/art/review/drill-board-preview.png，待现有复勘布局适配验收
+scene-case-privacy-ledger,小林隐私账本委托,docs/art/review/sources/case-privacy-ledger-source.png,public/art/pixel/scenes/case-privacy-ledger.png,,,,640,360,否,,,待验收,复用收件箱#133；账本、电脑和桌面线索气氛插画，待卡片使用与剧情验收
+scene-case-weather-keys,阿哲天气委托,docs/art/review/sources/case-weather-keys-source.png,public/art/pixel/scenes/case-weather-keys.png,,,,640,360,否,,,待验收,复用收件箱#134；天气监视器与雨夜电脑桌气氛插画，待卡片使用与剧情验收
+scene-case-calculator-eggs,小雨计算器委托,docs/art/review/sources/case-calculator-eggs-source.png,public/art/pixel/scenes/case-calculator-eggs.png,,,,640,360,否,,,待验收,复用收件箱#135；计算器、掌机与学生卧室气氛插画，待卡片使用与剧情验收
+scene-case-farm-save,朵朵农场委托,docs/art/review/sources/case-farm-save-source.png,public/art/pixel/scenes/case-farm-save.png,,,,640,360,否,,,待验收,复用收件箱#136；农场作物与存档线索气氛插画，待卡片使用与剧情验收
+scene-case-archive,档案委托,docs/art/review/sources/case-archive-source.png,public/art/pixel/scenes/case-archive.png,,,,640,360,否,,,待验收,复用收件箱#137；档案照片、地图和放大镜气氛插画，待卡片使用与剧情验收
+scene-case-flashlight-apk,王奶奶手电筒委托,docs/art/review/sources/case-flashlight-apk-source.png,public/art/pixel/scenes/case-flashlight-apk.png,,,,640,360,否,,,待验收,复用收件箱#138；夜间客厅与手机光束气氛插画，待卡片使用与剧情验收
+scene-case-notes-versions,周姐版本委托,docs/art/review/sources/case-notes-versions-source.png,public/art/pixel/scenes/case-notes-versions.png,,,,640,360,否,,,待验收,复用收件箱#139；资料夹、电脑和版本线索气氛插画，待卡片使用与剧情验收
