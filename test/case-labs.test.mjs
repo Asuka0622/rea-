@@ -73,3 +73,25 @@ test("pixel calculator: searching the shipped code backs each rumour, and only r
   assert.deepEqual(judgePatch(new Set(["debug", "devtools"])).doorsLeft, ["pro"]);
   assert.deepEqual(judgePatch(new Set(["debug", "devtools", "pro", "egg"])).eggsLost, ["egg"]);
 });
+
+test("farm save editor: the game reads saves the way save.js does, and each developer question has one right answer", async () => {
+  const { gameReadsSave, searchSaveCode, SAVE_DEFENSE } = await import("../public/case-labs.js");
+  const { fromBase64, toBase64, checksum } = await import("../public/save-lab.js");
+  const { caseCatalog } = await import("../lib/cases.mjs");
+  const sources = caseCatalog().find((c) => c.id === "farm-save").game.lab.sources;
+  const salt = sources["save.js"].match(/const SAVE_SALT\s*=\s*"([^"]+)"/)[1];
+  const raw = sources["saves/slot1.sav"].trim();
+  const original = await gameReadsSave(raw, salt);
+  assert.equal(original.ok, true);
+  const outer = JSON.parse(fromBase64(raw));
+  const body = JSON.stringify({ ...JSON.parse(outer.body), gold: 9999 });
+  const naive = await gameReadsSave(toBase64(JSON.stringify({ ...outer, body })), salt);
+  assert.equal(naive.reason, "checksum", "changing gold without a new checksum is caught");
+  const fixed = await gameReadsSave(toBase64(JSON.stringify({ ...outer, body, sum: await checksum(salt, body) })), salt);
+  assert.equal(fixed.ok, true);
+  assert.equal(fixed.state.gold, 9999);
+  assert.equal((await gameReadsSave(JSON.stringify(outer), salt)).reason, "format", "a save that was not encoded back is not read");
+  assert.ok(searchSaveCode(sources["save.js"], "SALT").some((hit) => hit.text.includes(salt)));
+  assert.equal(searchSaveCode(sources["save.js"], "校验码").length, 0, "the shipped code has no Chinese comments");
+  for (const q of SAVE_DEFENSE) assert.equal(q.options.filter((o) => o.ok).length, 1, q.id);
+});

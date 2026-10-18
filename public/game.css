@@ -1286,3 +1286,5 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .term-lab .lab-calc-search,.term-lab .lab-calc-fix {background:#16251c;border-color:#2f4a38;color:#d6f5da;}
 .term-lab .lab-calc-hits p.rumor,.term-lab .lab-calc-patch {background:#0f1a14;color:#d6f5da;}
 .term-lab .lab-calc-hits p.rumor em {color:#ffb0a0;}
+.term-lab .lab-save-file {background:#0f1a14;color:#d6f5da;border-color:#2f4a38;}
+.term-lab .lab-save-sum {background:#0f1a14;color:#ffd36b;}

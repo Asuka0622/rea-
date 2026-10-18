@@ -662,3 +662,13 @@ body.case-hud-on main {padding-bottom:170px;}
 .lab-calc-patch small {color:var(--ink-soft);font:11px var(--font-mono);}
 .lab-calc-patch code {flex:1;min-width:200px;font:12px var(--font-mono);overflow-wrap:anywhere;}
 .lab-calc-patch.removed code {text-decoration:line-through;text-decoration-color:#a6463c;color:var(--ink-soft);}
+
+/* 种田存档 · 存档编辑器（case-labs.js mountSave）：工具随便用，目标是读档后金币 9999 */
+.lab-save-bench {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;align-items:start;}
+@media (max-width:720px) {.lab-save-bench {grid-template-columns:1fr;}}
+.lab-save-main {display:flex;flex-direction:column;gap:6px;}
+.lab-save-file {width:100%;box-sizing:border-box;min-height:120px;padding:8px;font:12px/1.6 var(--font-mono);color:var(--ink);background:#fffbe8;border:2px solid var(--rule);resize:vertical;overflow-wrap:anywhere;}
+.lab-save-salt {width:100%;box-sizing:border-box;padding:4px 6px;font:12px var(--font-mono);}
+.lab-save-sum {font:12px var(--font-mono);padding:2px 6px;background:var(--sheet);overflow-wrap:anywhere;}
+.lab-save-q {display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px dashed var(--rule);}
+.lab-save-q p {margin:0;font-size:13px;}

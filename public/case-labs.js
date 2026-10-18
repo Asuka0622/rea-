@@ -646,107 +646,206 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone }) {
 
 // ———————————————————————————— 种田存档：亲手改存档 ————————————————————————————
 
+/**
+ * 游戏读档时做的事（照着 samples/cases/farm-save/save.js 的 decodeSave）：
+ * Base64 还原 → 拆出 { body, sum } → 用盐重算校验码比对 → 读出进度。每一步失败都如实说出来。
+ */
+export async function gameReadsSave(text, salt) {
+  let outer;
+  try {
+    outer = JSON.parse(fromBase64(String(text)));
+  } catch {
+    return { ok: false, reason: "format", why: "游戏读不懂这个文件：存档要先整个用 Base64 编码回去才认。" };
+  }
+  if (typeof outer?.body !== "string" || typeof outer?.sum !== "string") return { ok: false, reason: "format", why: "格式不对：外面一层要有 body（进度）和 sum（校验码）。" };
+  if ((await checksum(salt, outer.body)) !== outer.sum) return { ok: false, reason: "checksum", why: "校验码对不上——游戏弹出「存档被修改过，已重新开始」。" };
+  let state;
+  try {
+    state = JSON.parse(outer.body);
+  } catch {
+    return { ok: false, reason: "format", why: "校验码对上了，可 body 里的进度不是合法的 JSON。" };
+  }
+  return { ok: true, state, why: "读档成功。" };
+}
+
+/** 发布出去的 save.js 里搜一个词（去掉开发者注释），最多 6 行。 */
+export function searchSaveCode(code, query) {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  return code.split("\n").map((text, i) => ({ n: i + 1, text })).filter(({ text }) => text.trim() && !/^\s*\/\//.test(text) && words.every((w) => text.toLowerCase().includes(w))).slice(0, 6);
+}
+
+/** 开发者的两道选择：单机和联网，该不该防、怎么防。 */
+export const SAVE_DEFENSE = [
+  {
+    id: "offline",
+    scene: "「种田日记」是单机游戏，玩家改的是自己电脑上的存档。作为开发者，你会怎么做？",
+    options: [
+      { id: "hide", text: "把盐藏得更深，或者给存档加密", ok: false, why: "钥匙还是在游戏自己的代码里，看懂代码的人照样能解开。藏得再深也只是多费点时间。" },
+      { id: "relax", text: "不用大费周章：玩家改的是自己的游戏", ok: true, why: "对。单机游戏里玩家给自己加金币，不影响任何人。校验码挡挡手滑改坏的就够了。" },
+      { id: "server", text: "每次存档都传到服务器校验", ok: false, why: "能做，但单机游戏为这个去建服务器、要求联网，代价比收益大多了。" },
+    ],
+  },
+  {
+    id: "online",
+    scene: "如果游戏加了联网排行榜，金币还能和别人交易呢？",
+    options: [
+      { id: "hide", text: "把盐藏得更深，或者给存档加密", ok: false, why: "只要校验是在玩家电脑上做的，就挡不住看懂代码的人。" },
+      { id: "relax", text: "还是不用防", ok: false, why: "这回改金币会挤掉别人的排名、换走别人的东西，影响的是其他玩家。" },
+      { id: "server", text: "金币记在服务器上，服务器说了算", ok: true, why: "对。重要的数据不能只在本地检查：放在服务器上，客户端只负责显示。" },
+    ],
+  },
+];
+
 function mountSave({ h, icon, lab, onMistake, onHint, onDone }) {
   const { sources } = lab;
   const code = sources["save.js"];
-  const saltLine = code.split("\n").findIndex((line) => /const SAVE_SALT\s*=/.test(line));
-  const gameSalt = code.split("\n")[saltLine]?.match(/"([^"]+)"/)?.[1] || "";
-  const newGame = { player: "新农夫", day: 1, gold: 50 };
-  const raw = sources["saves/slot1.sav"];
-  const { packed, state } = openSave(raw);
+  const gameSalt = code.match(/const SAVE_SALT\s*=\s*"([^"]+)"/)?.[1] || "";
+  const raw = sources["saves/slot1.sav"].trim();
   const target = 9999;
-  let step = 0;
-  let gold = state.gold;
-  let typed = "";
-  let attempt = null; // { text, result }
-  let fixed = null;
-  const say = h("p", { class: "lab-say", role: "status" });
-  const root = h("div", { class: "lab lab-save" });
+  let loads = 0;
+  let phase = "edit"; // edit · defend · done
+  let answered = {};
+  const hints = [
+    "存档是一长串字母和数字：先试试「Base64 还原」。",
+    "还原后外面一层是 { v, body, sum }。body 里的 gold 就是金币；sum 是校验码。",
+    "改完直接编码回去，游戏会发现校验码对不上。它是怎么算的？去代码里搜 checksum。",
+    "校验码 = SHA-256( 盐 + body ) 的前 16 位。盐写在代码里：搜 SALT。",
+  ];
+  let hintAt = 0;
 
-  /** What the game does when loading (save.js decodeSave). */
-  async function load(text) {
-    const { body, sum } = JSON.parse(fromBase64(text));
-    return (await checksum(gameSalt, body)) === sum ? { ok: true, state: JSON.parse(body) } : { ok: false, state: newGame };
+  const say = h("p", { class: "lab-say", role: "status" }, `朵朵：「帮我把金币改成 ${target} 吧！」下面是她的存档文件，工具随便用，顺序你自己定。`);
+  const file = h("textarea", { class: "lab-save-file", spellcheck: "false", "aria-label": "存档文件内容", rows: 7 });
+  file.value = raw;
+  const farm = h("div", { class: "lab-farm" }, h("b", {}, "种田日记 · 读档"), h("p", {}, "还没读档。"));
+
+  const setFile = (text, note) => {
+    file.value = text;
+    if (note) say.textContent = note;
+  };
+  function decode() {
+    try {
+      const text = fromBase64(file.value.trim());
+      if (!/^[\x09\x0a\x0d\x20-\x7e -￿]*$/.test(text) || !text.trim()) throw new Error();
+      setFile(text, "还原出来了：Base64 只是换一种写法，谁都能还原，它不是加密。");
+    } catch {
+      say.textContent = "这段内容不是 Base64（也许已经还原过了？）。";
+    }
   }
-  const farm = (result) => h("div", { class: `lab-farm ${result.ok ? "ok" : "bad"}`, role: "status" },
-    h("b", {}, "种田日记 · 读档"),
-    result.ok ? h("p", {}, `${result.state.player} · 第 ${result.state.day} 天 · 金币 ${result.state.gold}`) : h("p", {}, "「存档被修改过，已重新开始」", h("br"), `${newGame.player} · 第 ${newGame.day} 天 · 金币 ${newGame.gold}`));
-  const pre = (text) => h("pre", { class: "lab-code" }, text);
+  function encode() {
+    setFile(toBase64(file.value), "编码回去了：存档文件又变成了一串字母。");
+  }
 
-  async function packNaive() {
-    if (Number(gold) !== target) {
-      say.textContent = `朵朵说要 ${target}，先把金币改成 ${target}。`;
+  // 校验码计算器：盐 + body → SHA-256 的前 16 位，可以直接写进当前内容的 sum。
+  const saltInput = h("input", { class: "lab-save-salt", type: "text", spellcheck: "false", placeholder: "盐（在代码里找）", "aria-label": "盐" });
+  const sumOut = h("code", { class: "lab-save-sum" }, "——");
+  async function calcSum() {
+    let body;
+    try {
+      body = JSON.parse(file.value).body;
+    } catch {
+      say.textContent = "计算器要从当前内容里取 body：先把存档还原成 { v, body, sum } 的样子。";
+      return null;
+    }
+    if (typeof body !== "string") {
+      say.textContent = "当前内容里没有 body。";
+      return null;
+    }
+    const sum = await checksum(saltInput.value, body);
+    sumOut.textContent = sum;
+    return sum;
+  }
+  async function writeSum() {
+    const sum = await calcSum();
+    if (!sum) return;
+    const outer = JSON.parse(file.value);
+    outer.sum = sum;
+    setFile(JSON.stringify(outer), `把新算的校验码 ${sum} 写进了 sum。`);
+  }
+
+  async function load() {
+    loads += 1;
+    const res = await gameReadsSave(file.value.trim(), gameSalt);
+    if (!res.ok) {
+      // 第一次被游戏抓到是发现规则的一步，不算错；之后每次失败才算。
+      if (loads > 1) onMistake();
+      farm.className = "lab-farm bad";
+      farm.replaceChildren(h("b", {}, "种田日记 · 读档"), h("p", {}, res.reason === "checksum" ? "「存档被修改过，已重新开始」 新农夫 · 第 1 天 · 金币 50" : "读档失败"));
+      say.textContent = res.why;
       return;
     }
-    const body = JSON.stringify({ ...state, gold: target });
-    const text = toBase64(JSON.stringify({ ...packed, body }));
-    attempt = { text, result: await load(text) };
-    step = 2;
-    say.textContent = "糟了，游戏发现了！金币清零重来。内容变了，校验码 sum 还是旧的。";
-    render();
-  }
-  function pickLine(i) {
-    if (i === saltLine) {
-      step = 3;
-      say.textContent = "就是这行！盐明明白白写在游戏自己的代码里。把它抄下来。";
-    } else {
-      onMistake();
-      say.textContent = "这一行不是盐。找一找：算校验码时，和 body 拼在一起的那个常量。";
+    farm.className = "lab-farm ok";
+    farm.replaceChildren(h("b", {}, "种田日记 · 读档"), h("p", {}, `${res.state.player} · 第 ${res.state.day} 天 · 金币 ${res.state.gold}`));
+    if (res.state.gold === target && phase === "edit") {
+      phase = "defend";
+      say.textContent = `读档成功，金币 ${target}！看懂了代码，就能做出游戏认可的存档。最后换你当开发者想一想。`;
+      render();
+    } else if (phase === "edit") {
+      say.textContent = `游戏认了这个存档，金币是 ${res.state.gold}。朵朵想要的是 ${target}。`;
     }
-    render();
-  }
-  async function packFixed() {
-    const body = JSON.stringify({ ...state, gold: target });
-    const text = toBase64(JSON.stringify({ ...packed, body, sum: await checksum(typed, body) }));
-    fixed = { text, result: await load(text) };
-    if (fixed.result.ok) {
-      step = 4;
-      say.textContent = `读档成功，金币 ${target}！看懂了代码，就能做出游戏认可的存档。`;
-      onDone();
-    } else {
-      onMistake();
-      say.textContent = "盐抄错了一个字，算出来的校验码就完全不一样，游戏又发现了。对照代码再抄一遍。";
-    }
-    render();
   }
 
+  // 代码搜索（save.js，去掉开发者注释）
+  const searchInput = h("input", { class: "lab-address", placeholder: "在 save.js 里搜一个词，比如 checksum", spellcheck: "false", "aria-label": "搜索代码", onkeydown: (e) => e.key === "Enter" && search() });
+  const hitsBox = h("div", { class: "lab-calc-hits" });
+  function search() {
+    const q = searchInput.value.trim();
+    if (!q) return;
+    const hits = searchSaveCode(code, q);
+    hitsBox.replaceChildren(...(hits.length ? hits.map((hit) => h("p", { class: /SAVE_SALT\s*=|createHash/.test(hit.text) ? "hit rumor" : "hit" }, h("small", {}, `save.js:${hit.n}`), h("code", {}, hit.text.trim())))
+      : [h("p", { class: "miss" }, /[一-鿿]/.test(q) ? "没找到。代码里的名字都是英文的。" : "没找到，换个词试试。")]));
+  }
+
+  const defendBox = h("div", { class: "lab-calc-fix", hidden: true });
+  function renderDefend() {
+    defendBox.hidden = phase === "edit";
+    if (phase === "edit") return;
+    defendBox.replaceChildren(h("b", {}, "换你当开发者"), ...SAVE_DEFENSE.map((q) => h("div", { class: "lab-save-q" },
+      h("p", {}, q.scene),
+      h("div", { class: "lab-choices" }, q.options.map((o) => h("button", {
+        type: "button",
+        class: `case-option ${answered[q.id] === o.id ? "picked" : ""}`,
+        disabled: Boolean(answered[q.id]) && SAVE_DEFENSE.find((x) => x.id === q.id).options.find((x) => x.id === answered[q.id])?.ok,
+        onclick: () => {
+          answered[q.id] = o.id;
+          say.textContent = o.why;
+          if (!o.ok) onMistake();
+          if (SAVE_DEFENSE.every((x) => x.options.find((y) => y.id === answered[x.id])?.ok) && phase !== "done") {
+            phase = "done";
+            say.textContent = "就是这样：本地的校验只挡得住手滑，挡不住看懂代码的人。单机随它去，联网的重要数据放服务器。";
+            onDone();
+          }
+          renderDefend();
+        },
+      }, o.text))))));
+  }
+
+  const root = h("div", { class: "lab lab-save" },
+    h("h4", {}, icon("wrench", { size: 18 }), "动手实验 · 存档编辑器"),
+    h("p", { class: "lab-intro" }, `目标：让游戏读档以后，金币是 ${target}。工具都在这里，怎么做你自己决定；做不出来可以点「给个提示」。`),
+    h("div", { class: "lab-save-bench" },
+      h("div", { class: "lab-save-main" },
+        h("b", {}, "存档文件 saves/slot1.sav"), file,
+        h("div", { class: "lab-choices" },
+          h("button", { class: "btn small", type: "button", onclick: decode }, "Base64 还原"),
+          h("button", { class: "btn small", type: "button", onclick: encode }, "Base64 编码"),
+          h("button", { class: "btn small ghost", type: "button", onclick: () => setFile(raw, "换回了朵朵原来的存档。") }, "换回原存档"),
+          h("button", { class: "btn small primary", type: "button", onclick: load }, "让游戏读档")),
+        farm),
+      h("div", { class: "lab-side" },
+        h("b", {}, "校验码计算器"),
+        h("small", {}, "SHA-256( 盐 + 当前内容里的 body ) 的前 16 位"),
+        saltInput,
+        h("div", { class: "lab-choices" },
+          h("button", { class: "btn small", type: "button", onclick: calcSum }, "算一下"),
+          h("button", { class: "btn small", type: "button", onclick: writeSum }, "算好写进 sum")),
+        sumOut,
+        h("button", { class: "btn small ghost", type: "button", onclick: () => { onHint(); say.textContent = `提示 ${hintAt + 1}/${hints.length}：${hints[hintAt]}`; hintAt = Math.min(hintAt + 1, hints.length - 1); } }, icon("bulb", { size: 13 }), "给个提示"))),
+    h("div", { class: "lab-calc-search" }, h("b", {}, "在游戏代码 save.js 里搜（发布版，没有开发者注释）"), h("div", { class: "lab-address-bar" }, searchInput, h("button", { class: "btn small", type: "button", onclick: search }, "搜索")), hitsBox),
+    defendBox,
+    say);
   function render() {
-    const blocks = [
-      h("h4", {}, icon("wrench", { size: 18 }), "动手实验 · 帮朵朵改存档"),
-      h("p", { class: "lab-intro" }, `朵朵：「既然你都查清楚了……能不能帮我把金币改成 ${target}？就试一下嘛！」下面是她真实的存档 slot1.sav。`),
-      h("div", { class: "lab-step" }, h("b", {}, "① 存档文件"), pre(raw)),
-    ];
-    if (step === 0) {
-      blocks.push(h("p", {}, "这串字母要怎么还原？"), h("div", { class: "lab-choices" }, [["base64", "Base64 还原"], ["key", "用密码解密"], ["zip", "解压缩"]].map(([id, text]) => h("button", { type: "button", class: "case-option", onclick: () => {
-        if (id === "base64") {
-          step = 1;
-          say.textContent = "对，Base64 只是换了一种写法，谁都能还原。";
-        } else {
-          onMistake();
-          say.textContent = id === "key" ? "它没有加密，用不着密码。报告里说的是哪种编码？" : "它没有压缩。报告里说的是哪种编码？";
-        }
-        render();
-      } }, text))));
-    }
-    if (step >= 1) {
-      blocks.push(h("div", { class: "lab-step" }, h("b", {}, "② 还原后"), pre(JSON.stringify({ ...packed, body: state }, null, 2)),
-        h("label", { class: "lab-field" }, "金币：", h("input", { type: "number", min: "0", value: gold, disabled: step > 1, oninput: (e) => (gold = e.target.value) })),
-        step === 1 && h("button", { class: "btn", type: "button", onclick: packNaive }, "改好了，装回去让游戏读档"),
-        attempt && farm(attempt.result)));
-    }
-    if (step >= 2) {
-      blocks.push(h("div", { class: "lab-step" }, h("b", {}, "③ 在 save.js 里点出「盐」那一行"),
-        h("ol", { class: "lab-source" }, code.split("\n").map((line, i) => h("li", {}, h("button", { type: "button", class: `lab-source-line ${step >= 3 && i === saltLine ? "found" : ""}`, disabled: step >= 3, onclick: () => pickLine(i) }, line || " "))))));
-    }
-    if (step >= 3) {
-      blocks.push(h("div", { class: "lab-step" }, h("b", {}, "④ 按游戏的规则重新算校验码"),
-        h("p", {}, "校验码 = SHA-256( 盐 + body ) 的前 16 位。把盐抄进来："),
-        h("label", { class: "lab-field" }, "盐：", h("input", { type: "text", value: typed, spellcheck: "false", disabled: step > 3, oninput: (e) => (typed = e.target.value) })),
-        step === 3 && h("button", { class: "btn primary", type: "button", onclick: packFixed }, "算好校验码，再让游戏读档"),
-        fixed && farm(fixed.result)));
-    }
-    blocks.push(say);
-    root.replaceChildren(...blocks.filter(Boolean));
+    renderDefend();
   }
   render();
   return root;
