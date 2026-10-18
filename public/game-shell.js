@@ -12,8 +12,8 @@ import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
 import { createCaseSession } from "./case-session.js";
 import { unlockedTools, progressFromStars } from "./case-tension.js";
-import { PROLOGUE_QUESTS } from "./prologue-quests.js";
-import { loadProgress, saveProgress, readNotices, markCompleted, playerFor } from "./quest-progress.js";
+import { PROLOGUE_QUESTS, KNOWLEDGE_POINTS } from "./prologue-quests.js";
+import { loadProgress, saveProgress, readNotices, markCompleted, markDiscovered, playerFor } from "./quest-progress.js";
 import { boardLines } from "./quest-board.js";
 import { BASE_SPEED, sprintSpeed } from "./world-scale.js";
 import { eggsInRegion, loadFound, saveFound, collect as collectEgg } from "./easter-eggs.js";
@@ -419,13 +419,33 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     nearNpcId = id;
     if (!npc) return;
     const { talked, first } = markTalked(loadTalked(), id);
-    if (first) {
-      saveTalked(talked);
-      achievements.note({ type: "talk", id });
-      void say(npc.first.map((text) => ({ text, face: "happy" })));
-    } else {
-      toast(npc.after);
+    if (!first) {
+      // 已经聊过：再聊一次只留一句短的，但如果他提到的委托你还没接，再提醒一遍。
+      if (npc.discover) {
+        const progress = loadProgress();
+        if (!progress.discovered.includes(npc.discover)) {
+          saveProgress(markDiscovered(progress, [npc.discover]));
+          return void say([{ text: npc.hear, face: "normal" }]);
+        }
+      }
+      return void toast(npc.after);
     }
+    saveTalked(talked);
+    achievements.note({ type: "talk", id });
+    const lines = npc.first.map((text) => ({ text, face: "happy" }));
+    // 传闻：聊到的人会把一件委托「带」到委托板上（quest-progress 的 discovered）。
+    let learned = false;
+    if (npc.discover) {
+      const progress = loadProgress();
+      if (!progress.discovered.includes(npc.discover)) {
+        saveProgress(markDiscovered(progress, [npc.discover]));
+        learned = true;
+      }
+      lines.push({ text: npc.hear, face: "normal" });
+    }
+    void say(lines, null, () => {
+      if (learned) toast("委托板上多了一条 · 回事务所看看");
+    });
   }
 
   /* 可交互场景：长椅、秋千、码头、台阶（scenery.js）。坐下会真的把人放上去，按方向键站起来。 */
@@ -2036,28 +2056,65 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     ]);
   }
 
-  /** 事务所的委托板：列出所有委托、状态和原因，能接的直接进现场。 */
+  /** 事务所的委托板：一块软木板，分「能接 / 还差一点 / 没听说 / 已结案」四栏。 */
+  const BOARD_GROUPS = [
+    { key: "available", title: "现在能接", hint: "挑一份，直接去现场" },
+    { key: "locked", title: "还差一点", hint: "先把前面的事做完" },
+    { key: "undiscovered", title: "还没听说", hint: "去广场看公告板，或者和镇上的人聊聊" },
+    { key: "done", title: "已结案", hint: "" },
+  ];
+
   function openQuestBoard() {
     const player = playerFor(loadProgress(), PROLOGUE_QUESTS);
     const lines = boardLines(PROLOGUE_QUESTS, player);
-    const prefix = { available: "接 · ", locked: "还不行 · ", undiscovered: "还没听说 · ", done: "已完成 · " };
-    showMenu([
-      ...lines.map((line) => ({
-        label: `${prefix[line.status] || ""}${line.label}`,
-        run: () => {
-          menu.hidden = true;
-          if (line.status === "available") return enterSpot(line.id);
-          const why =
-            line.status === "done"
-              ? "这份委托已经结案了。"
-              : line.status === "locked"
-                ? `还接不了：${line.reason}`
-                : "还没听说这件事。去广场的公告板看看，或者问问镇上的人。";
-          return say([{ text: why, face: "thinking" }]);
-        },
-      })),
-      { label: "先把板子关上", run: () => (menu.hidden = true) },
-    ]);
+    const picks = (line) => {
+      menu.hidden = true;
+      if (line.status === "available") return enterSpot(line.id);
+      const why =
+        line.status === "done"
+          ? "这份委托已经结案了。"
+          : line.status === "locked"
+            ? `还接不了：${line.reason}`
+            : "还没听说这件事。去广场的公告板看看，或者问问镇上的人。";
+      return say([{ text: why, face: "thinking" }]);
+    };
+    /** 没听说的委托只留一张空白条：剧透标题，就没有「打听到」这件事了。 */
+    const prettyReason = (reason) =>
+      reason
+        .replace(/^先完成 (.+)$/, (_, id) => `先做完「${PROLOGUE_QUESTS.find((q) => q.id === id)?.title ?? id}」`)
+        .replace(/^(.+?) 要到 (L\d)$/, (_, id, lv) => `${KNOWLEDGE_POINTS[id]?.split("（")[0] ?? id} 得先到 ${lv}`);
+    const note = (line) => {
+      const unknown = line.status === "undiscovered";
+      const giver = unknown ? "" : `${line.giver} 托的`;
+      const bottom = unknown
+        ? "还没听说"
+        : line.status === "done"
+          ? "已结案"
+          : line.status === "locked"
+            ? `还差：${prettyReason(line.reason)}`
+            : "按一下就出发";
+      return h("button", { class: `quest-note ${line.status}`, type: "button", role: "menuitem", onclick: () => picks(line) },
+        h("span", { class: "quest-pin", "aria-hidden": "true" }),
+        h("b", {}, unknown ? "？" : line.title),
+        h("small", {}, giver),
+        h("span", { class: "quest-note-foot" }, bottom));
+    };
+    menu.hidden = false;
+    menu.replaceChildren(
+      h("div", { class: "quest-board" },
+        h("div", { class: "quest-board-head" },
+          h("b", {}, "委托板"),
+          h("small", {}, "任务不是按顺序发的，是自己挑的")),
+        ...BOARD_GROUPS.map((group) => {
+          const rows = lines.filter((line) => line.status === group.key);
+          if (!rows.length) return null;
+          return h("section", { class: `quest-group ${group.key}` },
+            h("h4", {}, group.title, group.hint ? h("span", {}, group.hint) : null),
+            h("div", { class: "quest-notes" }, ...rows.map(note)));
+        }).filter(Boolean),
+        h("button", { class: "game-choice", type: "button", role: "menuitem", onclick: () => (menu.hidden = true) }, h("span", { class: "game-cursor", "aria-hidden": "true" }, "▶"), "先把板子关上")),
+    );
+    menu.querySelector(".quest-note.available, .quest-note, button")?.focus({ preventScroll: true });
   }
 
   function roomMenu(id) {

@@ -95,6 +95,31 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
   background:#fff0c8;border:4px solid #5e3415;box-shadow:inset 0 0 0 3px #e8a95b,0 5px 0 rgba(50,25,8,.35);}
 .game-choice {position:relative;text-align:left;padding:9px 12px 9px 30px;border:0;background:none;color:#3b2312;font:16px var(--font-display,"Fusion Pixel");cursor:pointer;}
 .game-choice:hover,.game-choice:focus-visible {background:#f6cf8e;outline:none;}
+/* 事务所的软木板：任务按「能接 / 还差一点 / 没听说 / 已结案」贴成四栏纸条 */
+.quest-board {display:flex;flex-direction:column;gap:10px;max-height:min(56vh,460px);overflow:auto;padding:2px;}
+.quest-board-head {display:flex;flex-direction:column;gap:2px;padding-bottom:6px;border-bottom:2px dashed #8a5a2b;}
+.quest-board-head b {font:17px var(--font-display,"Fusion Pixel");color:#3b2312;}
+.quest-board-head small {font:11px var(--font-body);color:#7a5330;}
+.quest-group h4 {margin:0 0 6px;display:flex;align-items:baseline;gap:8px;font:13px var(--font-display,"Fusion Pixel");color:#5e3415;}
+.quest-group h4 span {font:11px var(--font-body);color:#8a6a45;}
+.quest-notes {display:flex;flex-wrap:wrap;gap:8px;}
+.quest-note {position:relative;display:flex;flex-direction:column;gap:2px;width:calc(50% - 4px);min-width:132px;padding:8px 10px 9px;text-align:left;
+  background:#fff8e2;border:2px solid #c9a86a;box-shadow:0 2px 0 rgba(90,55,20,.25);color:#3b2312;cursor:pointer;font-family:var(--font-body);}
+.quest-note:nth-child(odd) {transform:rotate(-.6deg);}
+.quest-note:nth-child(even) {transform:rotate(.5deg);}
+.quest-note b {font:14px var(--font-display,"Fusion Pixel");}
+.quest-note small {font:11px var(--font-body);color:#7a5330;}
+.quest-note-foot {font:11px var(--font-body);color:#8a5a2b;}
+.quest-pin {position:absolute;top:-5px;left:50%;translate:-50% 0;width:9px;height:9px;border-radius:50%;background:#c0453a;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25);}
+.quest-note.available {background:#fffdf0;border-color:#5e3415;}
+.quest-note.available:hover,.quest-note.available:focus-visible {background:#ffe9a8;outline:none;}
+.quest-note.available .quest-pin {background:#3f8f5c;}
+.quest-note.locked {background:#efe3cc;color:#6b5540;}
+.quest-note.undiscovered {background:#e6dcc6;color:#7c6a52;border-style:dashed;}
+.quest-note.undiscovered .quest-pin {background:#b0a48c;}
+.quest-note.done {background:#e7f0dc;border-color:#9db884;}
+.quest-note.done .quest-pin {background:#8a8f7a;}
+@media(max-width:700px) {.quest-note {width:100%;}}
 .game-cursor {position:absolute;left:10px;visibility:hidden;color:#a8642e;}
 .game-choice:hover .game-cursor,.game-choice:focus-visible .game-cursor {visibility:visible;animation:game-nudge .6s steps(2) infinite;}
 @keyframes game-nudge {50% {translate:3px 0;}}
