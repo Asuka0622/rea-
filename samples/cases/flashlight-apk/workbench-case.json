@@ -223,24 +223,59 @@
         }
       ],
       "tower": {
-        "budget": 24,
-        "regen": 1,
+        "budget": 16,
+        "maxBudget": 40,
+        "regen": 0.6,
+        "bounty": 1,
+        "waveBonus": 4,
         "hp": 3,
-        "weak": 0.2,
-        "eliteHp": 1.8,
-        "eliteSpeed": 0.7,
+        "weak": 0.15,
+        "eliteHp": 2.2,
+        "eliteSpeed": 0.8,
+        "slowFactor": 0.4,
+        "slowTime": 1.2,
+        "maxLevel": 3,
         "kinds": {
           "contacts": {
             "label": "通讯录",
-            "why": "它想读你的联系人——手电筒根本用不上"
+            "act": "read",
+            "speed": 8,
+            "hp": 4,
+            "why": "它想读你的联系人——手电筒根本用不上",
+            "permission": "READ_CONTACTS"
           },
           "location": {
             "label": "定位",
-            "why": "它想知道你在哪——手电筒根本用不上"
+            "act": "read",
+            "speed": 9,
+            "hp": 4,
+            "why": "它想知道你在哪——手电筒根本用不上",
+            "permission": "ACCESS_FINE_LOCATION"
           },
           "upload": {
             "label": "后台上传",
-            "why": "它想定时把数据发走，你没点过同步"
+            "act": "send",
+            "speed": 8,
+            "hp": 4.5,
+            "why": "它想定时把数据发走，你没点过同步",
+            "permission": "INTERNET + 后台服务"
+          },
+          "rush": {
+            "label": "加急上传",
+            "act": "send",
+            "speed": 16,
+            "hp": 7,
+            "why": "它一开机就抢着把数据发走，跑得太快，光靠沙盒来不及关",
+            "permission": "BOOT_COMPLETED + INTERNET"
+          },
+          "disguised": {
+            "label": "伪装 SDK",
+            "act": "send",
+            "speed": 7,
+            "hp": 5,
+            "hidden": true,
+            "why": "它打扮成正常的广告请求混进来，不审计根本看不出来",
+            "permission": "第三方广告 SDK"
           }
         },
         "slots": [
@@ -248,29 +283,93 @@
             "id": "entry",
             "label": "机房入口",
             "x": 84,
-            "y": 32,
-            "guards": [{"lanes": ["up", "down"], "t0": 0, "t1": 0.34}]
+            "y": 30,
+            "guards": [
+              {
+                "lanes": [
+                  "up",
+                  "down"
+                ],
+                "t0": 0,
+                "t1": 0.14
+              }
+            ]
           },
           {
             "id": "up",
-            "label": "上线路",
-            "x": 50,
+            "label": "上路前段",
+            "x": 59,
             "y": 38,
-            "guards": [{"lanes": ["up"], "t0": 0.36, "t1": 0.7}]
+            "guards": [
+              {
+                "lanes": [
+                  "up"
+                ],
+                "t0": 0.18,
+                "t1": 0.5
+              }
+            ]
+          },
+          {
+            "id": "up2",
+            "label": "上路后段",
+            "x": 41,
+            "y": 38,
+            "guards": [
+              {
+                "lanes": [
+                  "up"
+                ],
+                "t0": 0.5,
+                "t1": 0.82
+              }
+            ]
           },
           {
             "id": "down",
-            "label": "下线路",
-            "x": 50,
+            "label": "下路前段",
+            "x": 59,
             "y": 62,
-            "guards": [{"lanes": ["down"], "t0": 0.36, "t1": 0.7}]
+            "guards": [
+              {
+                "lanes": [
+                  "down"
+                ],
+                "t0": 0.18,
+                "t1": 0.5
+              }
+            ]
           },
           {
-            "id": "merge",
+            "id": "down2",
+            "label": "下路后段",
+            "x": 41,
+            "y": 62,
+            "guards": [
+              {
+                "lanes": [
+                  "down"
+                ],
+                "t0": 0.5,
+                "t1": 0.82
+              }
+            ]
+          },
+          {
+            "id": "exit",
             "label": "机房出口",
             "x": 20,
-            "y": 32,
-            "guards": [{"lanes": ["up", "down"], "t0": 0.74, "t1": 1}]
+            "y": 30,
+            "guards": [
+              {
+                "lanes": [
+                  "up",
+                  "down"
+                ],
+                "t0": 0.86,
+                "t1": 1
+              }
+            ]
           }
         ],
         "units": [
@@ -279,7 +378,7 @@
             "art": "lock",
             "label": "最小权限",
             "cost": 8,
-            "dps": 6.4,
+            "dps": 6,
             "strong": [
               "contacts",
               "location"
@@ -287,63 +386,181 @@
             "note": "不给权限，它读不到"
           },
           {
-            "id": "throttle",
-            "label": "限速节流",
-            "cost": 5,
-            "dps": 1.2,
-            "slow": true,
-            "note": "只拖慢，杀不掉任何一个"
-          },
-          {
             "id": "sandbox",
             "label": "沙盒隔离",
             "cost": 10,
-            "dps": 7,
+            "dps": 6,
             "strong": [
-              "upload"
+              "upload",
+              "rush",
+              "disguised"
             ],
             "note": "关起来跑，发不出去"
+          },
+          {
+            "id": "throttle",
+            "label": "限速节流",
+            "cost": 5,
+            "dps": 1,
+            "slow": true,
+            "note": "只拖慢、杀不掉；拖住了，别人才来得及"
+          },
+          {
+            "id": "firewall",
+            "label": "出站防火墙",
+            "cost": 10,
+            "block": true,
+            "cooldown": 3,
+            "strong": [
+              "upload",
+              "rush",
+              "disguised"
+            ],
+            "note": "隔一会儿拦死一个往外发的，血再厚也没用"
+          },
+          {
+            "id": "mask",
+            "label": "数据脱敏",
+            "cost": 7,
+            "mask": true,
+            "dps": 0,
+            "note": "拦不住，但扫过的就算溜走，拿到的也是没用的数据"
+          },
+          {
+            "id": "audit",
+            "label": "权限审计",
+            "cost": 6,
+            "reveal": true,
+            "mark": 1.5,
+            "dps": 0,
+            "note": "不伤人；照出伪装的，别的措施打被它标记的更狠"
           }
         ],
         "waves": [
           {
-            "count": 2,
-            "kinds": ["contacts", "contacts"],
-            "lanes": ["up", "up"],
-            "hp": 6,
-            "speed": 10
+            "count": 3,
+            "kind": "contacts",
+            "lanes": [
+              "up"
+            ]
           },
           {
             "count": 3,
-            "kinds": ["upload", "upload", "upload"],
-            "lanes": ["down", "down", "down"],
-            "hp": 7,
-            "speed": 10
+            "kind": "upload",
+            "lanes": [
+              "down"
+            ]
           },
           {
             "count": 4,
-            "kinds": ["contacts", "upload", "contacts", "upload"],
-            "lanes": ["up", "down", "up", "down"],
-            "hp": 8,
-            "speed": 11
-          },
-          {
-            "count": 5,
-            "kinds": ["contacts", "upload", "contacts", "upload", "contacts"],
-            "lanes": ["up", "down", "up", "down", "up"],
-            "hp": 8,
-            "speed": 11,
-            "elite": 1
+            "kinds": [
+              "contacts",
+              "upload"
+            ],
+            "lanes": [
+              "up",
+              "down"
+            ]
           },
           {
             "count": 6,
-            "kinds": ["contacts", "upload", "contacts", "upload", "upload", "contacts"],
-            "lanes": ["up", "up", "down", "down", "down", "up"],
-            "hp": 7,
-            "speed": 11,
-            "elite": 1
+            "kinds": [
+              "location",
+              "upload"
+            ],
+            "lanes": [
+              "down",
+              "up"
+            ],
+            "gap": 11
+          },
+          {
+            "count": 4,
+            "kind": "rush",
+            "lanes": [
+              "up",
+              "down"
+            ],
+            "gap": 6
+          },
+          {
+            "count": 3,
+            "kind": "disguised",
+            "lanes": [
+              "up"
+            ]
+          },
+          {
+            "count": 7,
+            "kinds": [
+              "contacts",
+              "location",
+              "upload"
+            ],
+            "lanes": [
+              "up",
+              "down"
+            ],
+            "elite": 1,
+            "gap": 11
+          },
+          {
+            "count": 6,
+            "kinds": [
+              "rush",
+              "upload"
+            ],
+            "lanes": [
+              "down",
+              "up"
+            ],
+            "elite": 2,
+            "gap": 6
+          },
+          {
+            "count": 8,
+            "kinds": [
+              "disguised",
+              "upload",
+              "contacts"
+            ],
+            "lanes": [
+              "down",
+              "up"
+            ],
+            "elite": 1,
+            "gap": 10
+          },
+          {
+            "count": 12,
+            "kinds": [
+              "contacts",
+              "rush",
+              "location",
+              "disguised",
+              "upload"
+            ],
+            "lanes": [
+              "up",
+              "down"
+            ],
+            "elite": 3,
+            "gap": 8
           }
         ],
+        "upgradeMul": 1.5,
+        "revealTime": 3,
+        "maskTime": 1.2,
+        "hints": [
+          "看顶部的「下一波」：谁来、走哪条路。来「读」的（通讯录、定位）用最小权限挡，来「发」的（上传）用沙盒关。",
+          "入口和出口两条路都管，但守的路短；上下路的前段、后段只管一条路，守得长。",
+          "「加急上传」跑得太快，沙盒来不及关。在它前面一段放限速节流把它拖住，沙盒才打得完。",
+          "「伪装 SDK」打扮成正常请求，谁都打不着。先在它走的路上放权限审计把它照出来，后面一段再放沙盒或防火墙。",
+          "厚皮的上传血很厚：出站防火墙不看血量，隔一会儿直接拦死一个往外发的。",
+          "实在拦不完，就在出口放数据脱敏兜底：溜出去的拿到的也是没用的数据，不扣隐私。",
+          "预算只在收集者走在路上时才回，拦下一个有赏金，清完一波有奖励。布防不合适，点措施可以拆掉，退一半钱。"
+        ],
+        "characterScale": 1.875,
         "clientTalk": {
           "look": [
             {
@@ -359,8 +576,7 @@
               "face": "thinking"
             }
           ]
-        },
-        "characterScale": 1.875
+        }
       },
       "terminal": "phone",
       "scene": {

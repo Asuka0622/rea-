@@ -1,0 +1,68 @@
+/* 权限塔防（tower-game.js）在 game.css 里 .mini-td-* 基础样式之上的部分：光束、预览、拆装菜单、
+   新措施的占位色块、伪装/脱敏/标记、泄漏的反馈。美术交图后，占位色块自动让位给图标。 */
+
+.td2 .mini-td-path {height:236px;}
+.td2-beams {position:absolute;inset:0;z-index:3;pointer-events:none;}
+.td2-beams svg {width:100%;height:100%;}
+.td2-beam {stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.9;}
+.td2-beam.strong {stroke:#b8ffd4;filter:drop-shadow(0 0 3px #57c17e);}
+.td2-beam.weak {stroke:#e8c270;stroke-dasharray:3 4;opacity:.7;}
+.td2-beam.slow {stroke:#8fc8ff;stroke-width:5;stroke-dasharray:2 3;opacity:.6;}
+
+/* 放之前的预览：选好措施，鼠标停在空位上，它会守的那段路先亮一条黄色虚线 */
+.td2-preview {fill:none;stroke:#ffe08a;stroke-width:9;stroke-dasharray:6 6;stroke-linecap:butt;vector-effect:non-scaling-stroke;opacity:.75;animation:td-flow 1.1s linear infinite;}
+.mini-td-guard.slow {stroke:#5f9fd8;opacity:.4;}
+
+.mini-td-slot.selected {border-color:#ffe08a;box-shadow:0 0 0 2px #ffe08a;}
+.mini-td-slot.pulsing {animation:td2-pulse .9s ease-in-out infinite;}
+@keyframes td2-pulse {50% {box-shadow:0 0 0 6px rgba(143,200,255,.35);}}
+.td2-slot-menu {display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 10px;font:12px/1.5 var(--font-body);color:#ffe8b0;background:#1b2a1f;border:1px solid #e8c270;}
+.td2-slot-menu[hidden] {display:none;}
+
+/* 占位色块：一个字代表一种措施 */
+.td2-glyph {display:inline-grid;place-items:center;width:22px;height:22px;flex:0 0 auto;font:700 13px/1 var(--font-body);color:#0e1712;background:#9fd8b0;border:1px solid #0b0906;border-radius:3px;}
+.td2-glyph:empty {display:none;}
+.td2-glyph[data-unit="least-privilege"] {background:#8fc8ff;}
+.td2-glyph[data-unit="sandbox"] {background:#7ee081;}
+.td2-glyph[data-unit="throttle"] {background:#c9b8ff;}
+.td2-glyph[data-unit="firewall"] {background:#ff9a7a;}
+.td2-glyph[data-unit="mask"] {background:#e8e2d0;}
+.td2-glyph[data-unit="audit"] {background:#ffd36b;}
+.mini-td-icon.on + .td2-glyph {display:none;}
+.mini-td-unit.poor {opacity:.55;}
+
+/* 收集者：大一点、被打中会闪 */
+.td2-enemy {font-size:11px;padding:3px 6px;}
+.td2-enemy.hit .mini-td-body,.td2-enemy.hit:not(.sprite) {filter:brightness(1.8);}
+.td2-enemy.slowed {outline:2px dashed #8fc8ff;outline-offset:2px;}
+.td2-enemy.cloaked {opacity:.35 !important;filter:blur(.6px);}
+.td2-enemy.marked .mini-td-tag {box-shadow:0 0 0 2px #ffd36b;}
+.td2-enemy.masked .mini-td-tag {background:#e8e2d0;color:#3a3326;border-color:#8a7c6c;}
+.mini-td-enemy[data-kind="rush"] .mini-td-tag {background:#4a1414;border-color:#c84a3a;color:#ffd8cf;}
+.mini-td-enemy[data-kind="disguised"] .mini-td-tag {background:#2a2a2a;border-color:#8a8a8a;color:#eee;}
+.mini-td-enemy.sprite[data-kind="rush"] .mini-td-body {filter:hue-rotate(-20deg) saturate(2.2) brightness(1.1);}
+.mini-td-enemy.sprite[data-kind="disguised"] .mini-td-body {filter:grayscale(1) brightness(1.2);}
+.mini-td-stat.now {background:#2c1d16;border-color:#7a3a26;color:#f5d8cf;}
+
+/* 打中、拦下、揪出、泄漏 */
+.td2-pop {position:absolute;z-index:6;transform:translate(-50%,-140%);padding:1px 6px;font:700 11px/1.3 var(--font-body);white-space:nowrap;pointer-events:none;border-radius:2px;animation:td2-rise .9s ease-out forwards;}
+.td2-pop.kill {color:#0e1712;background:#b8ffd4;}
+.td2-pop.reveal {color:#1b120c;background:#ffd36b;}
+.td2-pop.mask {color:#3a3326;background:#e8e2d0;}
+@keyframes td2-rise {to {transform:translate(-50%,-260%);opacity:0;}}
+.td2-shake {animation:td2-shake .45s;}
+@keyframes td2-shake {20% {translate:-4px -50%;} 40% {translate:4px -50%;} 60% {translate:-3px -50%;} 80% {translate:2px -50%;}}
+.td2-flash::after {content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:rgba(232,90,70,.28);animation:td2-fade .5s forwards;}
+@keyframes td2-fade {to {opacity:0;}}
+.td2-leak-card {position:absolute;left:12%;top:50%;z-index:7;padding:3px 8px;font:700 12px/1.4 var(--font-body);color:#fff;background:#c84a3a;border:2px solid #2a0f0a;pointer-events:none;animation:td2-leak 1.4s ease-out forwards;}
+@keyframes td2-leak {from {transform:translate(0,-50%);} to {transform:translate(-120%,-160%) rotate(-12deg);opacity:0;}}
+
+.td2-controls {display:flex;gap:8px;flex-wrap:wrap;}
+.td2.paused .mini-td-path {filter:saturate(.5) brightness(.8);}
+.td2-say {min-height:3.2em;}
+@media (prefers-reduced-motion: reduce) {
+  .td2-pop,.td2-leak-card,.td2-preview,.mini-td-slot.pulsing,.td2-shake {animation:none;}
+}
+.td2-leak-img {display:none;width:28px;height:28px;margin-right:4px;vertical-align:middle;image-rendering:pixelated;}
+.td2-leak-img.on {display:inline-block;}
+.mini-td-enemy.sprite.own-sheet .mini-td-body {filter:none !important;}
