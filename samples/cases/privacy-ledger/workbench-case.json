@@ -153,15 +153,243 @@
       ],
       "done": [
         {
-          "who": "client",
-          "text": "小林：我复制的东西……下次一打开就被发走了？！",
-          "face": "surprised"
+          "text": "证据齐了。小林手里还攥着那份隐私说明——去和他一句句对一对。",
+          "face": "happy"
+        }
+      ],
+      "stages": [
+        {
+          "kind": "network",
+          "title": "抓现行",
+          "outro": [
+            {
+              "who": "client",
+              "text": "小林：四件事全对上了……它真的一直在偷偷往外发。",
+              "face": "surprised"
+            },
+            {
+              "text": "而且收件的不是同步服务器，是 collect.quiet-stats.example。悄悄统计……广场公告屏上天天滚动的那家？",
+              "face": "thinking"
+            },
+            {
+              "who": "client",
+              "text": "小林：那我卸了它？可我三个月的账都在里面……",
+              "face": "thinking"
+            },
+            {
+              "who": "xiaoke",
+              "text": "那个……我能说句话吗？我是小克，小林手机里的 AI 助手。",
+              "face": "unsure"
+            },
+            {
+              "who": "xiaoke",
+              "text": "小林装它之前问过我。我说「评分很高，应该没问题」。对不起——我只看了评分，没看它实际在做什么。",
+              "face": "sorry"
+            },
+            {
+              "text": "知道哪里错了就好。正好，你也一起来帮忙。",
+              "face": "happy"
+            }
+          ],
+          "talk": {
+            "online": [
+              {
+                "who": "client",
+                "text": "小林：我什么都没点，它自己就连出去了？",
+                "face": "surprised"
+              },
+              {
+                "text": "而且是一启动就连。记下这条，待会儿对质用得上。",
+                "face": "thinking"
+              }
+            ],
+            "peek": [
+              {
+                "who": "client",
+                "text": "小林：它读我的剪贴板干什么？我又没按粘贴。",
+                "face": "thinking"
+              },
+              {
+                "text": "每 30 秒一次，准时得很。程序掐着表做事，就会留下这种规律。",
+                "face": "thinking"
+              }
+            ],
+            "exfil": [
+              {
+                "who": "client",
+                "text": "小林：这串诱饵……是我刚复制的！它被装进请求里发走了！",
+                "face": "surprised"
+              },
+              {
+                "text": "先悄悄存起来，下次启动再一起发。所以第一次启动时，看起来是空的。",
+                "face": "thinking",
+                "hard": "lastClipboard 先写进 electron-store，下次 reportDevice() 时再随上报一起发出：读和发不在同一时刻，只抓一次包很容易漏掉。"
+              }
+            ],
+            "control": [
+              {
+                "who": "client",
+                "text": "小林：同步这条倒是规规矩矩，只有账目。",
+                "face": "normal"
+              },
+              {
+                "text": "对照很重要：不是它做的每件事都有问题。冤枉了它，我们说的话就没人信了。",
+                "face": "happy"
+              }
+            ]
+          }
         },
         {
-          "text": "亲眼看见了吧。证据也齐了，去和小林把话说清楚。",
-          "face": "normal"
+          "kind": "rhythm",
+          "title": "防火墙值班",
+          "intro": [
+            {
+              "text": "先不卸。在小林的电脑上开一道防火墙：小账本发出的每个请求，都要从你这儿过一遍。",
+              "face": "normal"
+            },
+            {
+              "text": "是小林自己点的同步，就放行（D）；是程序自己偷偷发的，就拦下（F）。",
+              "face": "normal"
+            },
+            {
+              "who": "client",
+              "text": "小林：可它们看起来一模一样啊，都只写着「请求」。",
+              "face": "thinking"
+            },
+            {
+              "text": "所以要听。程序是掐着表发的，像节拍器；人点按钮，可没那么准。",
+              "face": "happy",
+              "hard": "所以要看时间。程序靠定时器外联，间隔几乎恒定；人的操作间隔是随机的。安全分析里管这种准点的外联叫「信标」。"
+            }
+          ],
+          "outro": [
+            {
+              "who": "client",
+              "text": "小林：三轮全守住了！小账本还能记账，就是什么都偷不走了。",
+              "face": "happy"
+            },
+            {
+              "text": "今天这招叫「信标检测」：时间规律和目的地，两个都要看。只看一个，就会被它绕过去。",
+              "face": "normal"
+            },
+            {
+              "who": "xiaoke",
+              "text": "我今天说错了两次。以后我不确定的时候，会先说「我不确定」。",
+              "face": "sorry"
+            },
+            {
+              "text": "这句话，比「应该没问题」值钱多了。",
+              "face": "happy"
+            }
+          ]
         }
-      ]
+      ],
+      "firewall": {
+        "rounds": [
+          {
+            "pass": [
+              {
+                "who": "client",
+                "text": "小林：真的！准点来的那个，每次都隔一样长。",
+                "face": "surprised"
+              },
+              {
+                "text": "计算机掐着表做事，就会留下这种规律。这就是它的破绽。",
+                "face": "happy"
+              }
+            ],
+            "fail": [
+              {
+                "text": "别急。先只听节拍器：重拍「咚」的那一下准时来的，就是它。",
+                "face": "thinking"
+              }
+            ]
+          },
+          {
+            "intro": [
+              {
+                "who": "client",
+                "text": "小林：糟了，月底了，我得把这个月的账全同步一遍……会不会更乱？",
+                "face": "surprised"
+              },
+              {
+                "text": "同步多了，请求会更密。可它的节拍不会变。",
+                "face": "normal"
+              },
+              {
+                "who": "xiaoke",
+                "text": "这次让我帮忙！我看得很快，会把判断标在每个请求旁边。",
+                "face": "happy"
+              },
+              {
+                "text": "好，你标。不过最后按哪个键，由我们自己决定。",
+                "face": "thinking"
+              }
+            ],
+            "pass": [
+              {
+                "who": "xiaoke",
+                "text": "全对！我是不是很有用？",
+                "face": "happy"
+              },
+              {
+                "text": "这一轮你确实帮上忙了。",
+                "face": "normal"
+              }
+            ],
+            "fail": [
+              {
+                "text": "同步多了也别慌，节拍器还在。小克的标签可以参考，但键是你按的。",
+                "face": "thinking"
+              }
+            ]
+          },
+          {
+            "intro": [
+              {
+                "text": "等等——上传的节奏乱了！",
+                "face": "surprised"
+              },
+              {
+                "text": "它被拦了两轮，好像学聪明了：每次故意早一点、晚一点，想混进人群里。",
+                "face": "thinking"
+              },
+              {
+                "who": "xiaoke",
+                "text": "没关系！我还是按节奏帮你判断……",
+                "face": "happy"
+              },
+              {
+                "text": "这次每个请求都写出了它要去哪儿：ledger-sync 是同步服务器，quiet-stats 是……你们都知道了。",
+                "face": "normal"
+              }
+            ],
+            "tip": "节奏乱了。看每个请求发往哪里：→ ledger-sync 放行（D），→ quiet-stats 拦截（F）。小克的标签……自己判断。",
+            "pass": [
+              {
+                "who": "xiaoke",
+                "text": "我……标错了好多。它一不准时，我就认不出来了。",
+                "face": "sorry"
+              },
+              {
+                "who": "xiaoke",
+                "text": "我只学会了看节奏，从来没想过看它要去哪儿。",
+                "face": "unsure"
+              },
+              {
+                "text": "所以不能只看一个信号，也不能只听一个助手——包括我。",
+                "face": "normal"
+              }
+            ],
+            "fail": [
+              {
+                "text": "别跟着小克的标签按。看箭头后面的名字：去 quiet-stats 的，一个都别放过去。",
+                "face": "thinking"
+              }
+            ]
+          }
+        ]
+      }
     },
     "puzzle": {
       "brief": [

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { caseCatalog } from "../lib/cases.mjs";
-import { LAB_KINDS } from "../public/case-labs.js";
+import { LAB_KINDS, MOUNTABLE_KINDS } from "../public/case-labs.js";
 import { DEMO_CASES } from "../public/game-quests.js";
 
 test("every demo case has a hands-on lab that runs the sample's own files", () => {
@@ -94,4 +94,27 @@ test("farm save editor: the game reads saves the way save.js does, and each deve
   assert.ok(searchSaveCode(sources["save.js"], "SALT").some((hit) => hit.text.includes(salt)));
   assert.equal(searchSaveCode(sources["save.js"], "校验码").length, 0, "the shipped code has no Chinese comments");
   for (const q of SAVE_DEFENSE) assert.equal(q.options.filter((o) => o.ok).length, 1, q.id);
+});
+
+test("chained labs: every stage of every case is a known lab, and its story lines are dialogue lines", () => {
+  const speakers = new Set([undefined, "client", "xiaoke"]);
+  const lines = (list, where) => {
+    for (const l of list || []) {
+      assert.equal(typeof l.text, "string", where);
+      assert.ok(speakers.has(l.who), `${where}: ${l.who}`);
+    }
+  };
+  for (const item of caseCatalog()) {
+    for (const [i, stage] of (item.game?.lab?.stages || []).entries()) {
+      const where = `${item.id} stage ${i}`;
+      assert.ok(MOUNTABLE_KINDS.includes(stage.kind), `${where}: ${stage.kind}`);
+      assert.ok(stage.title, `${where} has a title for the progress bar`);
+      lines(stage.intro, where);
+      lines(stage.outro, where);
+      for (const talk of Object.values(stage.talk || {})) lines(talk, `${where} talk`);
+    }
+  }
+  const ledger = caseCatalog().find((c) => c.id === "privacy-ledger").game.lab;
+  assert.deepEqual(ledger.stages.map((s) => s.kind), ["network", "rhythm"]);
+  for (const round of ledger.firewall.rounds) for (const key of ["intro", "pass", "fail"]) lines(round[key], `firewall ${key}`);
 });

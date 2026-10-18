@@ -168,7 +168,7 @@ export function networkProves(claimId, row, ctx) {
   }
 }
 
-function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
+function mountNetwork({ h, icon, lab, onMistake, onHint, onDone, story = async () => {} }) {
   const { sources } = lab;
   const syncUrl = sources["main.js"].match(/SYNC_URL = "([^"]+)"/)?.[1];
   const statsUrl = sources["main.js"].match(/STATS_URL = "([^"]+)"/)?.[1];
@@ -251,7 +251,7 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
     say.textContent = `做了一个诱饵「${bait}」放进剪贴板：它独一无二，之后在哪个请求里出现，就证明数据流到了哪里。`;
   };
 
-  function pin(row) {
+  async function pin(row) {
     if (finished) return;
     if (!selected) {
       open = open === row.id ? null : row.id;
@@ -264,12 +264,17 @@ function mountNetwork({ h, icon, lab, onMistake, onHint, onDone }) {
       proofs.set(selected, row);
       say.textContent = `证明了「${claim.text}」：${res.why}`;
       selected = claims.find((c) => !proofs.has(c.id))?.id || null;
-      if (proofs.size === claims.length) {
+      const done = proofs.size === claims.length;
+      if (done) {
         finished = true;
         selected = null;
         say.textContent = "四件事都证明了：小账本正常的功能只有记账和同步，读剪贴板、开机上报、把你复制的东西发走，全是背着用户做的。";
-        onDone();
       }
+      render();
+      // 每证明一件，委托人在旁边说一句（lab.talk[事的 id]，在案例数据里）。
+      await story(lab.talk?.[claim.id] || []);
+      if (done) onDone();
+      return;
     } else {
       onMistake();
       say.textContent = `这条证明不了「${claim.text}」：${res.why}`;
@@ -1043,18 +1048,50 @@ function mountPacked({ h, icon, lab, onDone = () => {} }) {
 
 const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
   rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, mines: mountMines, packed: mountPacked };
+/** Every kind a case's lab (or one of its chained stages) can name. */
+export const MOUNTABLE_KINDS = Object.keys(MOUNTS);
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint
  * as the player slips, and onDone once when everything is done; then shows a button for onFinish.
+ *
+ * A case can chain several labs in `lab.stages` ([{ kind, title, intro, outro, ...that lab's data }]):
+ * they run one after another on the same laptop, with story lines between them (story(lines) shows the
+ * game's dialogue box over the case screen and resolves when it is clicked away). Each lab gets
+ * story() too, to talk between its own rounds, and the player's difficulty (easy · normal · hard).
+ * startAt / onStage(i) let the case resume a chain at the stage the player reached.
  */
-export function mountLab({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {}, onFinish, finishLabel = "去结案" }) {
-  const mount = MOUNTS[lab.kind];
-  if (!mount) throw new Error(`没有这种实验：${lab.kind}`);
+export function mountLab({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {}, onFinish, finishLabel = "去结案", story = async () => {}, difficulty = "normal", startAt = 0, onStage = () => {} }) {
+  const stages = lab.stages?.length ? lab.stages : [{ kind: lab.kind }];
+  for (const stage of stages) if (!MOUNTS[stage.kind]) throw new Error(`没有这种实验：${stage.kind}`);
   const footer = h("div", { class: "case-actions lab-finish", hidden: true }, h("button", { class: "btn primary", type: "button", onclick: () => onFinish?.() }, finishLabel, icon("arrow", { size: 14 })));
-  const body = mount({ h, icon, lab, onMistake, onHint, onDone: () => {
-    footer.hidden = false;
-    onDone();
-  } });
-  return h("div", { class: "lab-wrap" }, body, footer);
+  const steps = h("ol", { class: "lab-stages", hidden: stages.length < 2, "aria-label": "实验进度" });
+  const slot = h("div", { class: "lab-stage-slot" });
+  const paintSteps = (at, done) => steps.replaceChildren(...stages.map((stage, i) => h("li", { class: i < at || done ? "done" : i === at ? "on" : "" }, stage.title || `实验 ${i + 1}`)));
+  function mountStage(i) {
+    const stage = stages[i];
+    onStage(i);
+    paintSteps(i, false);
+    let finished = false;
+    const stageDone = async () => {
+      if (finished) return;
+      finished = true;
+      await story(stage.outro || []);
+      if (i + 1 < stages.length) {
+        await story(stages[i + 1].intro || []);
+        return mountStage(i + 1);
+      }
+      paintSteps(stages.length, true);
+      footer.hidden = false;
+      onDone();
+    };
+    // ?debug: window.__labSkip() finishes the stage on screen, to test what comes after it.
+    if (typeof location !== "undefined" && /[?&]debug/.test(location.search)) window.__labSkip = stageDone;
+    slot.replaceChildren(MOUNTS[stage.kind]({ h, icon, lab: { ...lab, ...stage }, onMistake, onHint, story, difficulty, onDone: stageDone }));
+  }
+  const first = Math.max(0, Math.min(stages.length - 1, startAt | 0));
+  mountStage(first);
+  // The first stage's lead-in plays once the laptop is open (the element has to be on screen first).
+  if (stages[first].intro?.length) setTimeout(() => story(stages[first].intro), 60);
+  return h("div", { class: "lab-wrap" }, steps, slot, footer);
 }

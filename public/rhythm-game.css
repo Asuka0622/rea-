@@ -13,3 +13,19 @@
 .rh2 .rh2-note.neutral{left:30%;width:40%;border-color:#c9d6d3;background:#2d434a;color:#eef6f3}
 .rh2 .rh2-note.neutral.labelled{border-color:#e8c270;background:#3a3826;color:#ffeab8;font-size:11px}
 .rh2-highway.beacon~.rh2-keys .rh2-key{background:#1f3138;border-color:#6f8a90;color:#e6f1ee}
+
+/* 2026-10-19（小克）：防火墙值班——三轮、小克在旁边给建议（代码画的占位） */
+.rh3-round{display:block;margin-top:4px;color:#efd69c;font-size:13px}
+.rh3-stage{display:grid;grid-template-columns:1fr;gap:8px;position:relative}
+.rh3-stage:has(.rh3-xiaoke:not([hidden])){grid-template-columns:1fr 168px}
+.rh3 .rh2-key{background:#1f3138;border-color:#6f8a90;color:#e6f1ee}
+.rh3-xiaoke{align-self:end;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;background:#162a31;border:1px solid #4d6a72;font-size:12px;line-height:1.5;color:#dbe9e5}
+.rh3-xiaoke p{margin:0;min-height:54px;padding:6px 8px;background:#f2ecdc;color:#2b2320;border-radius:6px;position:relative}
+.rh3-xiaoke p:empty{display:none}
+.rh3-xiaoke-face{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#d9f4ff,#7fc6e6 60%,#3d7f9e);box-shadow:0 0 12px #7fc6e688;background-image:url(/art/faces/xiaoke-normal.webp),radial-gradient(circle at 35% 35%,#d9f4ff,#7fc6e6 60%,#3d7f9e);background-size:cover}
+.rh3 .rh2-note .rh3-hint{position:absolute;left:100%;top:50%;transform:translate(6px,-50%);white-space:nowrap;padding:0 5px;font-size:11px;line-height:18px;color:#16303a;background:#9fd3e8;border-radius:3px;font-weight:normal}
+.rh3-settings{margin-left:auto;font-size:12px;color:#bfcecd}
+.rh3-settings[open]{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rh3-settings summary{cursor:pointer}
+.rh3-settings label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+@media(max-width:600px){.rh3-stage:has(.rh3-xiaoke:not([hidden])){grid-template-columns:1fr}.rh3-xiaoke{flex-direction:row;align-self:stretch}.rh3-xiaoke p{min-height:0}}

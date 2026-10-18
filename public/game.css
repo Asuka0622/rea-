@@ -1310,3 +1310,13 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .lab-pl-run p {margin:0;}
 .lab-permissions .lab-head {display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
 .lab-permissions .lab-head .btn {margin-left:auto;}
+/* 多关沙盒：顶上的进度条（2026-10-19，小克） */
+.lab-stages {display:flex;flex-wrap:wrap;gap:4px;margin:0 0 8px;padding:0;list-style:none;counter-reset:stage;}
+.lab-stages li {counter-increment:stage;display:flex;align-items:center;gap:6px;padding:3px 10px 3px 6px;font:12px/1.4 var(--font-body);color:#8aa894;background:#101a14;border:1px solid #2f4a38;}
+.lab-stages li::before {content:counter(stage);display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;color:#101a14;background:#4d6a58;}
+.lab-stages li.on {color:#ffe8b0;border-color:#e8c270;}
+.lab-stages li.on::before {background:#e8c270;}
+.lab-stages li.done {color:#9fd3a8;}
+.lab-stages li.done::before {content:"✓";background:#6fbf73;}
+.term-lab .rh2-highway {height:clamp(150px,30vh,250px);}
+.term-lab .mini.rh2 {padding:12px;gap:8px;}

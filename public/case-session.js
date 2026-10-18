@@ -52,7 +52,14 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   const code = shippedLines(lab.sources);
   const terms = puzzle.terms;
   const sound = ui.sound;
-  const line = (l, face) => (l.who === "client" ? { who: client.portrait, name: client.name, text: String(l.text ?? l).replace(/^[^：「]+：/, ""), face: l.face || face || "normal" } : { text: l.text ?? l, face: l.face || face || "normal" });
+  // A line is spoken by the client, by 路米 (no who), or by another speaker the shell knows (小克: "xiaoke").
+  // Level and focus variants (easy / hard / only / focus) are passed through for the shell to pick.
+  const line = (l, face) => {
+    if (typeof l === "string") return { text: l, face: face || "normal" };
+    const base = { ...l, face: l.face || face || "normal" };
+    if (l.who === "client") return { ...base, who: client.portrait, name: client.name, text: String(l.text ?? "").replace(/^[^：「]+：/, "") };
+    return base;
+  };
   const say = (lines) => ui.say(lines.map((l) => line(l)));
 
   const saveKey=`rea-case-checkpoint-v1:${item.id}${drill ? `:drill:${drill.id}` : ""}`;
@@ -499,7 +506,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   let labEl = null;
   function openSandbox() {
     if (!labEl) {
-      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, onMistake: () => {state.mistakes += 1;checkpoint();}, onHint: () => {state.hints += 1;checkpoint();}, finishLabel: puzzle.confront ? `合上电脑，去找${client.name}` : "合上电脑，整理结论", onDone: () => {
+      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, story: (lines) => say(lines), difficulty: ui.difficulty || "normal", startAt: state.labStage, onStage: (i) => {state.labStage = i;checkpoint();}, onMistake: () => {state.mistakes += 1;checkpoint();}, onHint: () => {state.hints += 1;checkpoint();}, finishLabel: puzzle.confront ? `合上电脑，去找${client.name}` : "合上电脑，整理结论", onDone: () => {
         for (const e of puzzle.labEvidence || []) if (!state.evidence.some((x) => x.id === e.id)) state.evidence.push({ ...e, where: labSource });
         sound.beep();
         flash(`${labSource}记录记为证据`);
