@@ -9,6 +9,7 @@ import {
   noticesFor,
   readNotices,
   markDiscovered,
+  markAccepted,
   markCompleted,
   playerFor,
 } from "../public/quest-progress.js";
@@ -32,12 +33,23 @@ test("progress round-trips through storage and survives junk", () => {
 
   const saved = saveProgress({ discovered: ["board"], completed: { "privacy-ledger": true } }, storage);
   assert.equal(saved, true);
-  assert.deepEqual(loadProgress(storage), { discovered: ["board"], completed: { "privacy-ledger": true } });
+  assert.deepEqual(loadProgress(storage), { discovered: ["board"], accepted: [], completed: { "privacy-ledger": true } });
 
   storage.data[PROGRESS_KEY] = "{oops";
   assert.deepEqual(loadProgress(storage), emptyProgress());
 
-  assert.deepEqual(normalizeProgress({ discovered: ["a", "a", 3], completed: null }), { discovered: ["a"], completed: {} });
+  assert.deepEqual(normalizeProgress({ discovered: ["a", "a", 3], completed: null }), { discovered: ["a"], accepted: [], completed: {} });
+});
+
+test("a commission taken in town stays on the tracker until it is closed", () => {
+  const taken = markAccepted(markDiscovered(emptyProgress(), ["npc:朵朵"]), "farm-save");
+  assert.deepEqual(taken.accepted, ["farm-save"]);
+  assert.deepEqual(markAccepted(taken, "farm-save").accepted, ["farm-save"], "taking it twice does not stack");
+
+  // 结案之后，追踪该自己收起来（旧存档里残留的 accepted 也要被清掉）。
+  const closed = markCompleted(taken, "farm-save");
+  assert.deepEqual(closed.accepted, []);
+  assert.deepEqual(normalizeProgress({ accepted: ["farm-save"], completed: { "farm-save": true } }).accepted, []);
 });
 
 test("the notice board fills up as commissions get closed", () => {

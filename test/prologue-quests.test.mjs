@@ -10,7 +10,11 @@ import {
   knowledgeFromCompletion,
   coverageGaps,
   freshPlayer,
+  takeKind,
+  onBoard,
 } from "../public/prologue-quests.js";
+import { CHATTER_NPCS } from "../public/npc-chatter.js";
+import { REGIONS } from "../public/game-regions.js";
 import { availableQuests, questState } from "../public/quest-board.js";
 
 const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -120,4 +124,28 @@ test("the coverage report names the knowledge points that no side quest takes to
   }
   // 现在还没有任何支线把知识点推到 L3，所以整张表都是待补清单。
   assert.equal(gaps.length, Object.keys(KNOWLEDGE_POINTS).length);
+});
+
+test("not every commission is taken from the board: some are handed over in person, some just happen", () => {
+  const board = PROLOGUE_QUESTS.filter(onBoard);
+  const talk = PROLOGUE_QUESTS.filter((quest) => takeKind(quest) === "talk");
+  const encounter = PROLOGUE_QUESTS.filter((quest) => takeKind(quest) === "encounter");
+  // 板子上只留一部分——全在板上接，就没有「镇上撞见一件事」了。
+  assert.ok(board.length >= 2, "委托板上总得有几份");
+  assert.ok(board.length < PROLOGUE_QUESTS.length, "不能所有委托都从板上接");
+  assert.equal(talk.length, 3);
+  assert.equal(encounter.length, 1);
+
+  for (const quest of talk) {
+    assert.ok(quest.client, `${quest.id} 得说清是谁当面托付`);
+    assert.ok(quest.ask?.length, `${quest.id} 得有当面开口的台词`);
+    const npc = CHATTER_NPCS.find((one) => one.id === quest.client);
+    assert.ok(npc, `${quest.id} 的委托人 ${quest.client} 得真的站在镇上`);
+    assert.equal(npc.quest, quest.id, `${npc.id} 得指回这份委托`);
+    assert.ok(REGIONS[npc.region], `${npc.id} 站的地方得是真实分区`);
+  }
+  for (const quest of encounter) {
+    assert.ok(REGIONS[quest.at?.region], `${quest.id} 的遭遇地点得是真实分区`);
+    assert.ok(quest.encounter?.length >= 2, `${quest.id} 得有「撞上来」的台词`);
+  }
 });

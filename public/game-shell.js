@@ -12,9 +12,9 @@ import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
 import { createCaseSession } from "./case-session.js";
 import { unlockedTools, progressFromStars } from "./case-tension.js";
-import { PROLOGUE_QUESTS, KNOWLEDGE_POINTS } from "./prologue-quests.js";
-import { loadProgress, saveProgress, readNotices, markCompleted, markDiscovered, playerFor } from "./quest-progress.js";
-import { boardLines } from "./quest-board.js";
+import { PROLOGUE_QUESTS, KNOWLEDGE_POINTS, takeKind, onBoard } from "./prologue-quests.js";
+import { loadProgress, saveProgress, readNotices, markCompleted, markDiscovered, markAccepted, playerFor } from "./quest-progress.js";
+import { boardLines, questState } from "./quest-board.js";
 import { BASE_SPEED, sprintSpeed } from "./world-scale.js";
 import { eggsInRegion, loadFound, saveFound, collect as collectEgg } from "./easter-eggs.js";
 import { npcsInRegion, loadTalked, saveTalked, markTalked } from "./npc-chatter.js";
@@ -48,6 +48,10 @@ const SPEAKERS = {
   xiaoke: "小克",
   ada: "爱达",
   babbage: "巴贝奇",
+  duoduo: "朵朵",
+  "wang-nainai": "王奶奶",
+  "lao-qin": "老秦",
+  xiaoyu: "小雨",
 };
 
 /** The time machine's dial (docs/concept.md): the eras in story order, and the map each one opens on. */
@@ -411,13 +415,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       ),
     );
   }
-  /** 走进范围就搭一句话；第一次说完给成就，之后路过只留一句短的。 */
+  /** 走进范围就搭一句话；委托人当场开口托付，闲聊的给传闻。 */
   function talkNearNpcs() {
     const npc = npcsInRegion(currentRegionName()).find((one) => Math.hypot(player.x - one.x, player.y - one.y) <= 12) || null;
     const id = npc?.id || null;
     if (id === nearNpcId) return;
     nearNpcId = id;
     if (!npc) return;
+    if (npc.quest) return talkToClient(npc);
     const { talked, first } = markTalked(loadTalked(), id);
     if (!first) {
       // 已经聊过：再聊一次只留一句短的，但如果他提到的委托你还没接，再提醒一遍。
@@ -446,6 +451,82 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     void say(lines, null, () => {
       if (learned) toast("委托板上多了一条 · 回事务所看看");
     });
+  }
+
+  /* ----- 委托人本人：他们的委托不在板上，走过去当面接（docs/quest-board.md 第 7 节） ----- */
+  /** 一份委托现在能不能接：用委托板同一套判定（前置/知识点），只是接的地方换了。 */
+  function questStatus(quest) {
+    return questState(quest, playerFor(loadProgress(), PROLOGUE_QUESTS)).status;
+  }
+
+  /** 接下一份当面托付 / 世界遭遇的委托：记进 accepted，镇上会一直提醒。 */
+  function acceptQuest(quest, extraLines = []) {
+    menu.hidden = true;
+    saveProgress(markAccepted(loadProgress(), quest.id));
+    syncQuestTracker();
+    if (extraLines.length) return void say(extraLines, null, () => enterSpot(quest.caseId));
+    enterSpot(quest.caseId);
+  }
+
+  function talkToClient(npc) {
+    const quest = PROLOGUE_QUESTS.find((one) => one.id === npc.quest || one.client === npc.id) || null;
+    if (!quest) return void toast(npc.after);
+    const { talked, first } = markTalked(loadTalked(), npc.id);
+    if (first) {
+      saveTalked(talked);
+      achievements.note({ type: "talk", id: npc.id });
+    }
+    // 见到本人，就等于听说了这件事（不一定要先在别处听说）——所以先点亮，再判定能不能接。
+    saveProgress(markDiscovered(loadProgress(), [quest.discover]));
+    const progress = loadProgress();
+    const status = questStatus(quest);
+    const sayAs = (text, face = "normal") => ({ who: npc.id, text, face });
+    const greeting = first ? npc.first.map((text) => sayAs(text, "normal")) : [];
+
+    if (status === "done") return void say([sayAs(npc.after, "happy")]);
+    if (progress.accepted.includes(quest.id)) {
+      return void say([sayAs(npc.pending || npc.after)], null, () => {
+        showMenu([
+          { label: `现在就去：${quest.title}`, run: () => { menu.hidden = true; enterSpot(quest.caseId); } },
+          { label: "再等一会儿", run: () => (menu.hidden = true) },
+        ]);
+      });
+    }
+    if (status !== "available") {
+      // 条件还不够：他欲言又止，先不把事情摊开——省得剧透了又接不了。
+      return void say([...greeting, sayAs(npc.later || npc.after, "unsure")]);
+    }
+    void say([...greeting, ...(quest.ask || [])], null, () => {
+      showMenu([
+        { label: `接下「${quest.title}」`, run: () => acceptQuest(quest) },
+        { label: "先不接", run: () => { menu.hidden = true; toast(`${npc.name}还在那儿`); } },
+      ]);
+    });
+  }
+
+  /* ----- 世界遭遇：有些委托不用接，走到那儿事情自己撞上来 ----- */
+  const ENCOUNTERS = PROLOGUE_QUESTS.filter((quest) => takeKind(quest) === "encounter" && quest.at);
+  const encounterPlayed = new Set(); // 撞上一次就够了：接不接都别再拦着人走路
+  function checkEncounters() {
+    if (ENCOUNTERS.length === 0) return;
+    for (const quest of ENCOUNTERS) {
+      if (quest.at.region !== currentRegionName()) continue;
+      if (encounterPlayed.has(quest.id)) continue;
+      if (Math.hypot(player.x - quest.at.x, player.y - quest.at.y) > 14) continue;
+      const progress = loadProgress();
+      if (progress.completed[quest.id] || progress.accepted.includes(quest.id)) continue;
+      if (questStatus(quest) !== "available") continue; // 还没听说过，走到门口也不会有事发生
+      const lines = (quest.encounter || []).map((line) => (typeof line === "string" ? { text: line } : line));
+      if (!lines.length) continue;
+      encounterPlayed.add(quest.id);
+      void say(lines, null, () => {
+        showMenu([
+          { label: `看看这台${quest.giver ? `${quest.giver}的` : ""}机器`, run: () => acceptQuest(quest) },
+          { label: "先走开", run: () => (menu.hidden = true) },
+        ]);
+      });
+      return;
+    }
   }
 
   /* 可交互场景：长椅、秋千、码头、台阶（scenery.js）。坐下会真的把人放上去，按方向键站起来。 */
@@ -568,7 +649,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260 };
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260, duoduo: 860, "wang-nainai": 380, "lao-qin": 300, xiaoyu: 900 };
   let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
@@ -1073,6 +1154,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (room) return showRoomPrompt();
     collectNearEggs();
     talkNearNpcs();
+    checkEncounters();
     const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
     // 没有门，但附近有能坐/能摸的东西：显示“坐下 · 长椅”这类提示。
     const prop = id ? null : sceneryNear();
@@ -1972,10 +2054,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             prompt.hidden = true;
             nearDoor = null;
             hud.classList.toggle("under-case", busy);
+            // 进到现场里，追踪条让位给案件界面；出来再挂回去。
+            if (busy) questTracker.hidden = true;
+            else syncQuestTracker();
           },
           onSolved: (stars) => {
         const progress = markCompleted(loadProgress(), item.id);
         saveProgress(progress);
+        syncQuestTracker(); // 结案了，左上角那条追踪就该收起来
         achievements.note({ type: "case", stars });
         if (!item.game?.puzzle?.confront) achievements.note({ type: "claim", kind: "insufficient" });
         const active = PROLOGUE_QUESTS;
@@ -2046,6 +2132,39 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
   }
   /* ----- 委托板与公告板：任务不是按章节发的，是自己接的（docs/quest-board.md） ----- */
+  /* 进行中的委托：接了还没做完的，一直挂在左上角（像原神的任务追踪）。
+     当面托付和世界遭遇的委托都不在板上，没有这条就会忘掉自己去哪儿。 */
+  const questTracker = h("button", { class: "game-quest-track", type: "button" });
+  questTracker.hidden = true;
+  shell.append(questTracker);
+  function activeQuests() {
+    const progress = loadProgress();
+    return PROLOGUE_QUESTS.filter((quest) => progress.accepted.includes(quest.id) && !progress.completed[quest.id]);
+  }
+  function syncQuestTracker() {
+    const active = activeQuests();
+    if (!active.length) {
+      questTracker.hidden = true;
+      return;
+    }
+    const quest = active[0];
+    const region = regionOf(quest.caseId);
+    const where = region && REGIONS[region]?.name ? REGIONS[region].name : "镇上";
+    questTracker.hidden = false;
+    questTracker.title = `进行中的委托：${active.map((one) => one.title).join("、")}（点一下出发）`;
+    questTracker.onclick = () => {
+      const here = regionOf(quest.caseId);
+      if (here && here !== currentRegionName()) switchRegion(here);
+      return enterSpot(quest.caseId);
+    };
+    questTracker.replaceChildren(
+      h("span", { class: "game-quest-dot", "aria-hidden": "true" }),
+      h("b", {}, quest.title),
+      h("small", {}, `${quest.giver} · ${where}`),
+      // h() 会把 null 子节点当文本渲染，所以用展开而不是 ?: null
+      ...(active.length > 1 ? [h("i", {}, `+${active.length - 1}`)] : []),
+    );
+  }
   /** 广场的公告板：做完的委托越多，贴出来的条子越多（quest-progress.js 的 noticesFor）。 */
   function readNoticeBoard() {
     const { progress, notices, fresh } = readNotices(loadProgress());
@@ -2056,8 +2175,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     ]);
   }
 
-  /** 事务所的委托板：一块软木板，分「能接 / 还差一点 / 没听说 / 已结案」四栏。 */
+  /** 事务所的委托板：一块软木板。**不是所有委托都在板上**——委托人当面托付的、走到那儿撞上的，都不贴这儿。 */
   const BOARD_GROUPS = [
+    { key: "accepted", title: "进行中", hint: "接了还没做完，点一下回去" },
     { key: "available", title: "现在能接", hint: "挑一份，直接去现场" },
     { key: "locked", title: "还差一点", hint: "先把前面的事做完" },
     { key: "undiscovered", title: "还没听说", hint: "去广场看公告板，或者和镇上的人聊聊" },
@@ -2065,11 +2185,20 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   ];
 
   function openQuestBoard() {
-    const player = playerFor(loadProgress(), PROLOGUE_QUESTS);
-    const lines = boardLines(PROLOGUE_QUESTS, player);
+    const progress = loadProgress();
+    const player = playerFor(progress, PROLOGUE_QUESTS);
+    // 板上只贴「委托人自己贴过来」的那几份（take: "board"）。
+    const lines = boardLines(PROLOGUE_QUESTS.filter(onBoard), player);
+    // 已接未完成的，不管从哪儿接的，都在板上留一张（当作追踪）。
+    for (const quest of PROLOGUE_QUESTS) {
+      if (!progress.accepted.includes(quest.id) || progress.completed[quest.id]) continue;
+      if (lines.some((line) => line.id === quest.id)) continue;
+      lines.unshift({ id: quest.id, title: quest.title, giver: quest.giver, status: "accepted", reason: "", teaches: "", gain: { score: 0 } });
+    }
+    const elsewhere = PROLOGUE_QUESTS.filter((quest) => !onBoard(quest) && !progress.completed[quest.id]).length;
     const picks = (line) => {
       menu.hidden = true;
-      if (line.status === "available") return enterSpot(line.id);
+      if (line.status === "available" || line.status === "accepted") return enterSpot(line.id);
       const why =
         line.status === "done"
           ? "这份委托已经结案了。"
@@ -2092,7 +2221,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           ? "已结案"
           : line.status === "locked"
             ? `还差：${prettyReason(line.reason)}`
-            : "按一下就出发";
+            : line.status === "accepted"
+              ? "进行中 · 回去接着查"
+              : "按一下就出发";
       return h("button", { class: `quest-note ${line.status}`, type: "button", role: "menuitem", onclick: () => picks(line) },
         h("span", { class: "quest-pin", "aria-hidden": "true" }),
         h("b", {}, unknown ? "？" : line.title),
@@ -2104,7 +2235,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h("div", { class: "quest-board" },
         h("div", { class: "quest-board-head" },
           h("b", {}, "委托板"),
-          h("small", {}, "任务不是按顺序发的，是自己挑的")),
+          h("small", {}, elsewhere ? `这块板上只贴主动来找事务所的——还有 ${elsewhere} 件事，得在镇上遇到人、或者自己撞上。` : "任务不是按顺序发的，是自己挑的")),
         ...BOARD_GROUPS.map((group) => {
           const rows = lines.filter((line) => line.status === group.key);
           if (!rows.length) return null;
@@ -2157,6 +2288,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       shell.hidden = false;
       fit();
       goTown();
+      syncQuestTracker();
       if (quests && (!quests.difficulty || !quests.focus)) chooseDifficulty(true);
     } else {
       mainHome.parent.insertBefore(main, mainHome.next);

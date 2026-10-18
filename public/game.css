@@ -118,6 +118,22 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
 .quest-note.undiscovered {background:#e6dcc6;color:#7c6a52;border-style:dashed;}
 .quest-note.undiscovered .quest-pin {background:#b0a48c;}
 .quest-note.done {background:#e7f0dc;border-color:#9db884;}
+/* 进行中：从镇上接的（当面托付/世界遭遇）也回板上留一张，当作追踪 */
+.quest-note.accepted {background:#fff3d6;border-color:#b3812f;box-shadow:0 2px 0 rgba(90,55,20,.25),inset 0 0 0 2px rgba(224,163,60,.35);}
+.quest-note.accepted .quest-pin {background:#e0a33c;}
+
+/* 进行中的委托：左上角常驻一条，点一下直接回现场（像原神的任务追踪） */
+.game-quest-track {position:fixed;top:54px;left:12px;z-index:44;display:flex;align-items:center;gap:8px;max-width:min(340px,62vw);
+  padding:6px 11px;border:3px solid #2a170b;border-radius:2px;background:#fff0c8;box-shadow:0 3px 0 rgba(42,23,11,.4);
+  font:13px var(--font-display,"Fusion Pixel");color:#3b2312;cursor:pointer;text-align:left;}
+.game-quest-track:hover,.game-quest-track:focus-visible {background:#ffe4a8;outline:none;}
+.game-quest-track b {font-weight:normal;}
+.game-quest-track small {font:11px var(--font-body);color:#7a5330;white-space:nowrap;}
+.game-quest-track i {margin-left:2px;font:11px var(--font-body);font-style:normal;color:#a8642e;}
+.game-quest-dot {flex:none;width:8px;height:8px;border-radius:50%;background:#e0a33c;box-shadow:0 0 0 3px rgba(224,163,60,.28);animation:quest-pulse 1.8s ease-in-out infinite;}
+@keyframes quest-pulse {0%,100% {opacity:1;} 50% {opacity:.4;}}
+@media (prefers-reduced-motion:reduce) {.game-quest-dot {animation:none;}}
+@media (max-width:640px) {.game-quest-track {top:48px;left:6px;max-width:calc(100vw - 12px);font-size:12px;}}
 .quest-note.done .quest-pin {background:#8a8f7a;}
 @media(max-width:700px) {.quest-note {width:100%;}}
 .game-cursor {position:absolute;left:10px;visibility:hidden;color:#a8642e;}

@@ -8,15 +8,21 @@ import { PROLOGUE_QUESTS, knowledgeFromCompletion } from "./prologue-quests.js";
 
 export const PROGRESS_KEY = "rea-quest-progress";
 
+// 三种状态：discovered（听说过）→ accepted（接下了，还没做完）→ completed（结案）。
+// accepted 是「追踪」用的：原神接了任务会一直挂在任务栏，这里也一样——
+// 当面托付和世界遭遇的委托都不在板上，接了之后得有地方一直提醒你去哪儿。
 export function emptyProgress() {
-  return { discovered: [], completed: {} };
+  return { discovered: [], accepted: [], completed: {} };
 }
 
 export function normalizeProgress(value) {
   const raw = value && typeof value === "object" ? value : {};
+  const completed = raw.completed && typeof raw.completed === "object" ? { ...raw.completed } : {};
   return {
     discovered: Array.isArray(raw.discovered) ? [...new Set(raw.discovered.filter((id) => typeof id === "string"))] : [],
-    completed: raw.completed && typeof raw.completed === "object" ? { ...raw.completed } : {},
+    // 已结案的不再算「进行中」：旧存档里可能留着，这里顺手清掉。
+    accepted: (Array.isArray(raw.accepted) ? [...new Set(raw.accepted.filter((id) => typeof id === "string"))] : []).filter((id) => !completed[id]),
+    completed,
   };
 }
 
@@ -70,17 +76,27 @@ export function markDiscovered(progress, ids = []) {
   return current;
 }
 
-export function markCompleted(progress, questId) {
+/** 接下一份委托（当面托付、或者事情撞上来）。板上的不用记——点一下就出发了。 */
+export function markAccepted(progress, questId) {
   const current = normalizeProgress(progress);
-  if (questId) current.completed[questId] = true;
+  if (questId && !current.accepted.includes(questId) && !current.completed[questId]) current.accepted.push(questId);
   return current;
 }
 
-/** 转成 quest-board.js 的玩家状态：已发现来源、已完成委托、以及从中推导出的知识点等级。 */
+export function markCompleted(progress, questId) {
+  const current = normalizeProgress(progress);
+  if (!questId) return current;
+  current.completed[questId] = true;
+  current.accepted = current.accepted.filter((id) => id !== questId); // 结案了就从追踪上撤下来
+  return current;
+}
+
+/** 转成 quest-board.js 的玩家状态：已发现来源、已接委托、已完成委托、以及从中推导出的知识点等级。 */
 export function playerFor(progress = emptyProgress(), quests = PROLOGUE_QUESTS) {
   const current = normalizeProgress(progress);
   return {
     discovered: current.discovered,
+    accepted: current.accepted,
     completed: current.completed,
     knowledge: knowledgeFromCompletion(quests, current.completed),
   };

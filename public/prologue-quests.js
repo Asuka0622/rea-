@@ -9,7 +9,12 @@
 //   · knowledge：这份委托把哪个知识点推到哪一层（决定推荐顺序，也用来推导玩家水平）
 //   · needs：接它之前，某个知识点至少要见过/说过/做过
 //   · after：接它之前必须先完成的委托
-//   · discover：任务从哪里被找到（board / npc:某某 / rumor:关键词）
+//   · discover：任务从哪里被听说（board / npc:某某 / rumor:关键词）
+//   · take：在哪儿把它接下来——**不是所有委托都在板上接**（docs/quest-board.md 第 7 节）
+//       board     委托人贴在了事务所的软木板上，得回事务所接（默认）
+//       talk      委托人自己站在镇上，走过去当面开口，聊完就能接（朵朵、王奶奶、老秦）
+//       encounter 不用接：走到那儿事情自己撞上来（世界遭遇，比如小雨家的计算器）
+//     前两种都还要先「听说过」（discover），最后一种也要——先听人提过，走到门口才会响。
 
 /** 知识点目录（id → 给玩家看的名字）。案例 JSON 里的 knowledge 用这里的 id。 */
 export const KNOWLEDGE_POINTS = {
@@ -45,6 +50,7 @@ export const PROLOGUE_QUESTS = [
     title: "小林的记账软件",
     giver: "小林",
     discover: "board",
+    take: "board",
     after: [],
     needs: [],
     knowledge: [
@@ -61,6 +67,7 @@ export const PROLOGUE_QUESTS = [
     title: "学长的钥匙",
     giver: "阿哲",
     discover: "board",
+    take: "board",
     after: [],
     needs: [],
     knowledge: [
@@ -75,6 +82,15 @@ export const PROLOGUE_QUESTS = [
     title: "计算器的秘密",
     giver: "小雨",
     discover: "rumor:计算器",
+    // 世界遭遇：先听人提过这台计算器，再走到小雨家门口，事情自己撞上来——不用接。
+    take: "encounter",
+    at: { region: "homes", x: 305, y: 300 },
+    encounter: [
+      { text: "（叮——）", face: "surprised" },
+      { text: "门口那台计算器，没人碰它，自己亮了一下。", face: "surprised" },
+      { who: "xiaoyu", text: "你听见了？！它还会别的！我按了三年才发现！", face: "happy" },
+      { text: "……那就不算接活了，这事儿已经撞上来了。", face: "thinking" },
+    ],
     after: [],
     needs: [],
     knowledge: [
@@ -89,6 +105,13 @@ export const PROLOGUE_QUESTS = [
     title: "朵朵的存档",
     giver: "朵朵",
     discover: "npc:朵朵",
+    take: "talk",
+    client: "duoduo",
+    ask: [
+      { who: "duoduo", text: "你就是那个……能看懂程序的人？", face: "unsure" },
+      { who: "duoduo", text: "我的种田存档出怪事了：我种下去 3 棵，第二天读出来是 7 棵。", face: "thinking" },
+      { who: "duoduo", text: "地还是那块地。你能不能来看看？", face: "unsure" },
+    ],
     after: [],
     needs: [],
     knowledge: [
@@ -103,6 +126,7 @@ export const PROLOGUE_QUESTS = [
     title: "周姐的便签",
     giver: "周姐",
     discover: "board",
+    take: "board",
     after: ["privacy-ledger"],
     needs: [],
     knowledge: [{ id: "version-diff", depth: "L2" }],
@@ -114,6 +138,13 @@ export const PROLOGUE_QUESTS = [
     title: "王奶奶的手电筒",
     giver: "王奶奶",
     discover: "npc:王奶奶",
+    take: "talk",
+    client: "wang-nainai",
+    ask: [
+      { who: "wang-nainai", text: "闺女，你帮我看看这个手电筒。", face: "unsure" },
+      { who: "wang-nainai", text: "装它的时候，它跟我要通讯录。", face: "thinking" },
+      { who: "wang-nainai", text: "一个照明的，要我的通讯录做什么？", face: "unsure" },
+    ],
     // 权限这件事先在小林那里见过一次（他那份委托标了 permission-manifest L1）。
     needs: ["permission-manifest:L1"],
     after: [],
@@ -126,6 +157,13 @@ export const PROLOGUE_QUESTS = [
     title: "读不动的程序 · 加密猫",
     giver: "老秦",
     discover: "npc:老秦",
+    take: "talk",
+    client: "lao-qin",
+    ask: [
+      { who: "lao-qin", text: "这个程序，我收来三年了。谁打开都是一屏乱码。", face: "thinking" },
+      { who: "lao-qin", text: "我不敢说它坏，也不敢说它好——我没看懂，就没资格下结论。", face: "normal" },
+      { who: "lao-qin", text: "你愿意试试吗？读不出来，也算一个结论。", face: "unsure" },
+    ],
     after: [],
     // 得先会静态读代码，否则这一关只会变成「什么都看不懂」。
     needs: ["static-read:L2"],
@@ -137,6 +175,21 @@ export const PROLOGUE_QUESTS = [
     ],
   },
 ];
+
+/** 接取渠道：不是所有委托都从板上来（界面、镇上 NPC、世界遭遇都读这里）。 */
+export const QUEST_TAKES = {
+  board: "委托板：回事务所的软木板上接",
+  talk: "当面：委托人自己站在镇上，走过去聊",
+  encounter: "遭遇：走到那儿，事情自己撞上来",
+};
+
+export const takeKind = (quest = {}) => (quest.take === "talk" || quest.take === "encounter" ? quest.take : "board");
+
+/** 事务所的软木板上只贴这一类（其余要在镇上遇到人、或者自己撞上）。 */
+export const onBoard = (quest = {}) => takeKind(quest) === "board";
+
+/** 委托人在镇上的 NPC id（take: "talk" 时）。 */
+export const clientNpc = (quest = {}) => quest.client || null;
 
 /** 只看某一层（core / side）。 */
 export const questsOfTier = (tier, quests = PROLOGUE_QUESTS) => quests.filter((quest) => (quest.tier || "core") === tier);

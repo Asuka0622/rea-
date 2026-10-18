@@ -4,9 +4,13 @@
 // 第一次说完给一个成就；之后路过只留一句短的。
 // 等 `docs/art/npcs.md` 第 2 节那六张精灵表到位，只要把 look 换成 sprite-<id>.png 就行。
 //
-// 其中四位还承担「传闻」：聊过之后，对应委托才会出现在事务所的委托板上
+// 其中四位还承担「传闻」：聊过之后，你才听说了这件事
 // （discover 的值要写进 quest-progress 的 discovered，见 prologue-quests.js 的 discover 字段）。
-// 这样任务不只从公告板上来，镇上随便聊两句也能接活。
+//
+// 还有三位是**委托人本人**（下面带 quest 的那几位）：他们自己站在镇上，走过去就当面开口。
+// 他们的委托不进委托板——板子上只贴 `take: "board"` 的那几份（docs/quest-board.md 第 7 节）。
+// 委托人自己会先亮一句闲话（first），再说正事（prologue-quests.js 里的 ask），
+// 然后由玩家决定接不接；接了就记进 accepted，镇上会一直提醒你去哪儿。
 
 export const NPC_TALKED_KEY = "rea-npc-talked";
 
@@ -58,6 +62,47 @@ export const CHATTER_NPCS = [
     after: "灯擦过了。",
     discover: "npc:老秦",
     hear: "档案馆的老秦前两天收了个读不动的程序，谁打开都是一屏乱码。他说，得找个不怕看不懂的人。",
+  },
+  /* ----- 委托人本人：他们的委托不在板上，得走过去当面接 ----- */
+  {
+    id: "duoduo",
+    name: "朵朵",
+    region: "homes",
+    x: 806,
+    y: 328,
+    look: "#e08a9b",
+    quest: "farm-save",
+    first: ["（蹲在门口，掌机摊在膝盖上）", "我的地……昨天还是对的。"],
+    // 已经接下还没做完：再来一次只催一句，并给「现在就去」的选择。
+    pending: "存档还在机器里，你什么时候看都行。",
+    after: "谢谢你。地是对的，数是错的——我现在知道该信哪个了。",
+    later: "（她抱着掌机，欲言又止）……你要是懂了别的，再来找我？",
+  },
+  {
+    id: "wang-nainai",
+    name: "王奶奶",
+    region: "homes",
+    x: 452,
+    y: 428,
+    look: "#c8b28a",
+    quest: "flashlight-apk",
+    first: ["（手里攥着一个手电筒，屏幕亮着）", "这玩意儿我不敢装。"],
+    pending: "手电筒我留着呢，你什么时候看都行。",
+    after: "原来它要我的通讯录，跟照明一点关系都没有。",
+    later: "（她把手电筒收进口袋）你先忙，我等等也不碍事。",
+  },
+  {
+    id: "lao-qin",
+    name: "老秦",
+    region: "center",
+    x: 218,
+    y: 396,
+    look: "#8b7f6b",
+    quest: "packed-echo",
+    first: ["（档案馆门口，纸箱里一摞软盘）", "这些都是别人不要的，我留着。"],
+    pending: "那个程序还在箱子里，你什么时候试都行。",
+    after: "读不出来也是个结论——这话我记住了。",
+    later: "（他翻着纸箱）等你再会点别的，我再拿出来。",
   },
   {
     id: "apprentice",

@@ -70,6 +70,10 @@ export const ACHIEVEMENTS = [
   { id: "npc-lighthouse", title: "灯是给晚上准备的", note: "听老陈讲他为什么白天也擦灯", when: { talk: "lighthouse-keeper" } },
   { id: "npc-apprentice", title: "0.5 秒不算准", note: "和修表学徒小铃争论了一次误差", when: { talk: "apprentice" } },
   { id: "npc-cobbler", title: "鞋底比人诚实", note: "让老宋看了一眼你的鞋底", when: { talk: "cobbler" } },
+  // —— 委托人本人：他们的委托不在板上，得走过去当面接 ——
+  { id: "npc-duoduo", title: "地是对的，数是错的", note: "在门口蹲着的朵朵那儿接下了她的存档", when: { talk: "duoduo" } },
+  { id: "npc-wang-nainai", title: "一个照明要通讯录？", note: "接过王奶奶手里那个不敢装的手电筒", when: { talk: "wang-nainai" } },
+  { id: "npc-lao-qin", title: "读不出来也算结论", note: "从档案馆老秦的纸箱里接过一份读不动的程序", when: { talk: "lao-qin" } },
   { id: "npc-all", title: "把镇上的人聊了一半", note: "和三位镇民说过话", when: { talked: 3 } },
   // —— 能坐的地方 ——
   { id: "sit-once", title: "坐一会儿", note: "在小镇上第一次坐下来", when: { sit: 1 } },
