@@ -318,7 +318,7 @@
             "speed": 11
           },
           {
-            "count": 4,
+            "count": 5,
             "kinds": [
               "contacts",
               "location",
@@ -329,13 +329,13 @@
             "elite": 1
           },
           {
-            "count": 5,
+            "count": 6,
             "kinds": [
               "upload",
               "contacts",
               "location"
             ],
-            "hp": 9,
+            "hp": 10,
             "speed": 12,
             "elite": 2
           }
@@ -634,7 +634,7 @@
       "labEvidence": [
         {
           "id": "perm-check",
-          "text": "权限塔防：只留 FLASHLIGHT、CAMERA 两扇门时，三波收集者全被挡下；READ_CONTACTS、ACCESS_FINE_LOCATION、RECEIVE_BOOT_COMPLETED 都是漏点。"
+          "text": "权限塔防：五波收集者全被挡下——「读」的那几波（READ_CONTACTS、ACCESS_FINE_LOCATION）是最小权限挡住的，「发」的那几波（RECEIVE_BOOT_COMPLETED 之后的定时上报）是沙盒挡住的；只有闪光灯是开灯本身要用的。"
         }
       ],
       "confront": {
