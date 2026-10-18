@@ -1096,7 +1096,7 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-stat.next {background:#231d2c;border-color:#56406b;color:#d8cbe8;}
 /* 舞台：交付的机房条带只当暗底的机柜纹理，路本身交给 SVG 画——一条直线说不下去。 */
 .mini-td-path {position:relative;height:206px;overflow:hidden;background:#131d17;border:2px solid #2c4a36;border-radius:4px;}
-.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) center center/auto 100% no-repeat #131d17;image-rendering:pixelated;}
+.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) left center/auto 100% repeat-x #131d17;image-rendering:pixelated;}
 .mini-td-path::before {content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(180deg,rgba(6,12,8,.5) 0%,rgba(6,12,8,.06) 22%,rgba(6,12,8,.06) 78%,rgba(6,12,8,.5) 100%);}
 /* 轨道：两条折线。画成贴着机房的电缆桥架——暗槽打底、青铜桥面、中间一条引导虚线，
@@ -1310,9 +1310,3 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .lab-pl-run p {margin:0;}
 .lab-permissions .lab-head {display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
 .lab-permissions .lab-head .btn {margin-left:auto;}
-
-/* The delivered Kobayashi scratch sheet only contains its first two poses. */
-@media (prefers-reduced-motion:no-preference) {
-  .case-npc.kobayashi:hover .case-client-sheet,.case-npc.kobayashi:focus-visible .case-client-sheet {animation:kobayashi-scratch-delivered 500ms step-end infinite;}
-}
-@keyframes kobayashi-scratch-delivered {0%,100% {background-position:0 100%;}52% {background-position:33.333333% 100%;}}
