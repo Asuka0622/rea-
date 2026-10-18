@@ -1,0 +1,28 @@
+/* 经营 · 权限的代价（奶奶牌手电筒）。代码画的占位，美术交图后替换。 */
+.mg2 .mini-td-stat.warn {color:#ffb39e;}
+.mg2-desk {display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:8px;}
+@media (max-width:640px) {.mg2-desk {grid-template-columns:1fr;}}
+.mg2-left, .mg2-right {display:flex;flex-direction:column;gap:8px;min-width:0;}
+.mg2-card, .mg2-manifest, .mg2-dialog, .mg2-ads {padding:8px;background:#1f3326;border:1px solid #4d7a5c;color:#cfe8d4;font:12px/1.6 var(--font-body);}
+.mg2-card > b, .mg2-manifest > b, .mg2-dialog > b, .mg2-ads > b {display:block;color:#ffe8b0;margin-bottom:4px;}
+.mg2-card p {margin:2px 0 6px;}
+.mg2-from {display:inline-block;padding:0 6px;margin-bottom:4px;color:#1a1420;background:#e8c270;}
+.mg2-options {display:flex;flex-direction:column;gap:6px;}
+.mg2-option {display:flex;flex-direction:column;gap:4px;}
+.mg2-option .case-option {text-align:left;}
+.mg2-option.picked .case-option {border-color:#e8c270;background:#2a4433;box-shadow:inset 3px 0 0 #e8c270;}
+.mg2-scan {margin:0;padding:4px 6px;color:#ffb39e;background:#2a1a18;border:1px dashed #c9573e;}
+.mg2-perm {display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:2px 6px;padding:4px 6px;margin-top:4px;background:#17261d;border-left:3px solid #6fbf73;}
+.mg2-perm.bad {border-left-color:#d97a63;background:#2a1a18;}
+.mg2-perm-name {grid-column:1;}
+.mg2-perm-name code {margin-left:6px;font-size:10px;color:#8aa894;}
+.mg2-perm small {grid-column:1;grid-row:2;color:#8aa894;}
+.mg2-perm .mg2-badge {grid-column:2;grid-row:1 / span 2;font-size:11px;color:#6fbf73;}
+.mg2-perm.bad .mg2-badge {color:#ffb39e;}
+.mg2-perm .btn {grid-column:3;grid-row:1 / span 2;}
+.mg2-dialog {background:#f2ecdc;color:#2b2320;border-color:#b7a98a;}
+.mg2-dialog > b {color:#2b2320;}
+.mg2-dialog p {margin:2px 0;}
+.mg2-dialog p.bad {color:#a3402c;font-weight:bold;}
+.mg2-dialog small {color:#6b5d50;}
+.mg2-ads:empty, .mg2-card:empty {display:none;}

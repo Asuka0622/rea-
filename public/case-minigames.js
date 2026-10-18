@@ -11,9 +11,9 @@
 // graded, combo and accuracy are shown, misses say what leaked out.
 
 //
-// 经营 borrows from Game Dev Story / Papers, Please: a company, a daily ledger, one switch per
-// permission. Ad money only flows while the lamp works; 查处 risk only builds while the dangerous
-// ones stay on; when the hammer falls it names the permission that called it down.
+// 经营 borrows from Game Dev Story / Papers, Please: one proposal card per release, a ledger, a store
+// review every few versions. The player builds 王奶奶 a clean flashlight; every permission in the
+// manifest has to point at a feature the user can see, or the install dialog and the review punish it.
 //
 // 卡牌 borrows from 逆转裁判's cross-examination: the developer claims one thing at a time and the
 // player presents the one evidence card that answers exactly that claim. Wrong cards say what they
@@ -101,169 +101,10 @@ export { mountRhythm } from './rhythm-game.js';
 export { mountPipes } from './pipe-game.js';
 
 /**
- * 经营 · 权限的代价 (王奶奶手电筒公司): the board handed you every switch turned on. Run the company for
- * a week — ad income flows only while the lamp works, users drain and 查处 risk builds while the
- * dangerous permissions stay on, and rent goes out either way. When the hammer falls it names the
- * permission that called it down.
- * 数据：{ days, users, rent, riskMax, bankFloor, perms:[{id,label,need,income,churn,risk,note}],
- *         events:[{at,lose,label,text}] }
+ * 经营 · 权限的代价 (王奶奶)：王奶奶一案的复刻练习——亲手做一个「奶奶牌手电筒」，从 1.0 发到 1.8，
+ * 每版一张提案，每项权限都要对得上用户看得见的功能。规则在 manage-engine.js，画面在 manage-game.js。
  */
-export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
-  const spec = lab.manage || {
-    days: 7, users: 100, rent: 4, riskMax: 120, bankFloor: -20,
-    perms: [
-      { id: "flash", label: "闪光灯（开灯用）", need: true, income: 0, churn: 0, risk: 0, note: "灯的本职。关了它，App 就是个摆设。" },
-      { id: "internet", label: "INTERNET（联网）", income: 9, churn: 0, risk: 5, note: "广告要它；SDK 把数据传出去，也要它。" },
-      { id: "contacts", label: "READ_CONTACTS（通讯录）", income: 6, churn: 2, risk: 6, note: "广告 SDK 想认识你的朋友。" },
-      { id: "location", label: "FINE_LOCATION（精确定位）", income: 5, churn: 3, risk: 5, note: "好推「附近」的广告。" },
-      { id: "boot", label: "BOOT_COMPLETED（开机自启）", income: 2, churn: 3, risk: 3, note: "一开机就开始干活。" },
-      { id: "camera", label: "CAMERA（相机）", income: 0, churn: 1, risk: 2, note: "开灯用不着摄像头。" },
-    ],
-    events: [
-      { at: 40, lose: 15, label: "商店问询", text: "商店来问：一个手电筒，为什么要读通讯录？" },
-      { at: 80, lose: 30, label: "通报批评", text: "被通报「超范围收集」，用户吵翻了。" },
-      { at: 120, lose: 999, label: "下架", text: "应用被下架了。" },
-    ],
-  };
-  const perms = spec.perms.map((perm) => ({ ...perm, on: true }));
-  const events = spec.events || [];
-  let day = 1;
-  let users = spec.users ?? 100;
-  let cash = spec.cash ?? 0;
-  let risk = 0;
-  let fired = new Set();
-  let notified = 0;
-  let over = false;
-
-  const say = h("p", { class: "mini-say", role: "status" }, "董事会把权限全开了，广告收入到账、用户在流失、查处风险在涨。该关哪几项，你来定——每过一天结一次账。");
-  // The office: the studio's picture once it lands, a desk and a window drawn in CSS until then.
-  // It answers to the ledger the way a shop answers to the owner in 日式经营 games — the lights go
-  // out when the lamp's own permission is off, and the room runs hot when 查处 risk piles up.
-  const bar = h("div", { class: "mini-mg-bar" });
-  const officeId = lab.manageRoom || "mini-mg-office";
-  const officeDrawn = [h("span", { class: "window" }), h("span", { class: "desk" }), h("span", { class: "plant" })];
-  const office = h("div", { class: "mini-mg-office drawn" }, ...officeDrawn, bar);
-  const paintOffice = () => {
-    const has = hasMiniArt(officeId);
-    if (has === Boolean(office.querySelector("img"))) return;
-    office.className = cls(["mini-mg-office", !has && "drawn"]);
-    office.replaceChildren(...(has
-      ? [h("img", { class: "mini-mg-bg", src: `/art/pixel/minigames/${officeId}.png`, alt: "" })]
-      : officeDrawn), bar);
-  };
-  paintOffice();
-  whenMiniArt(paintOffice);
-  const log = h("div", { class: "mini-mg-log" });
-  const meter = h("span", { class: "mini-mg-meter" }, h("i", {}));
-  const next = h("button", { class: "btn primary", type: "button", onclick: () => endDay() }, icon("scan", { size: 14 }), "过一天");
-  const restart = h("button", { class: "btn", type: "button", hidden: true, onclick: () => reset() }, "重新开张");
-  const permEls = perms.map((perm) => h("button", {
-    class: "mini-mg-perm on", type: "button",
-    onclick: () => {
-      if (over) return;
-      perm.on = !perm.on;
-      if (perm.need && !perm.on) { onMistake(); say.textContent = "这是开灯本身要用的权限——灯不亮，什么都谈不上。"; }
-      else if (!perm.need && perm.on) say.textContent = `${perm.label}：${perm.note || "打开它"}。`;
-      else if (!perm.need) say.textContent = `关掉 ${perm.label}：广告少一份，风险也少一份。`;
-      paint();
-    },
-  }, h("b", {}, perm.label),
-    ...(perm.income ? [h("span", { class: "gain" }, `广告 +${perm.income}/天`)] : []),
-    ...(perm.churn ? [h("span", { class: "cost" }, `掉粉 ${perm.churn}/天`)] : []),
-    ...(perm.risk ? [h("span", { class: "cost" }, `风险 +${perm.risk}/天`)] : []),
-    ...(perm.need ? [h("span", { class: "gain" }, "开灯必须")] : []),
-    ...(perm.note ? [h("small", {}, perm.note)] : [])));
-  const root = h("div", { class: "mini mini-manage" }, head(h, icon, lab.manageTitle || "权限的代价", onHint),
-    office, h("div", { class: "mini-mg-perms" }, ...permEls), h("div", { class: "mini-controls" }, next, restart), say, log);
-
-  const paint = () => {
-    const maxRisk = spec.riskMax ?? 120;
-    bar.replaceChildren(
-      h("span", { class: "mini-td-stat" }, `第 ${Math.min(day, spec.days)}/${spec.days} 天`),
-      h("span", { class: "mini-td-stat" }, `现金 ¥${Math.round(cash)}`),
-      h("span", { class: "mini-td-stat" }, `用户 ${Math.max(0, Math.round(users))}`),
-      h("span", { class: "mini-td-stat" }, `被查风险 ${Math.round(risk)}/${maxRisk}`));
-    bar.append(meter);
-    meter.firstChild.style.width = `${Math.min(100, (risk / maxRisk) * 100)}%`;
-    permEls.forEach((el, i) => { el.className = cls(["mini-mg-perm", perms[i].on ? "on" : "off"]); });
-    // The room answers to the ledger: no lamp permission means a dark shop, heavy risk means a hot one.
-    const lamp = perms.find((perm) => perm.need);
-    office.classList.toggle("dark", Boolean(lamp) && !lamp.on);
-    office.classList.toggle("hot", risk >= maxRisk * 0.5);
-  };
-
-  const endDay = () => {
-    if (over) return;
-    const on = perms.filter((perm) => perm.on);
-    const lamp = on.find((perm) => perm.need);
-    const income = lamp ? on.reduce((sum, perm) => sum + (perm.income || 0), 0) : 0;
-    const churn = on.reduce((sum, perm) => sum + (perm.churn || 0), 0);
-    const rent = spec.rent ?? 4;
-    const topRisk = () => [...perms].filter((perm) => perm.on && !perm.need && perm.risk).sort((a, b) => b.risk - a.risk)[0];
-    cash += income - rent;
-    users -= churn;
-    risk += on.reduce((sum, perm) => sum + (perm.risk || 0), 0);
-    const lines = [`第 ${day} 天：${lamp ? `进账 ¥${income}` : "灯没亮，收入 ¥0"}，房租 ¥${rent}${churn ? `，掉粉 ${churn}` : ""}。`];
-    if (!lamp) {
-      onMistake();
-      lines.push("开灯要用的权限被关了——灯都不亮，谈不上生意。");
-      say.textContent = "灯没亮。开灯那项是本职权限，不能关。";
-    }
-    for (const event of events) {
-      if (risk >= event.at && !fired.has(event.label)) {
-        fired.add(event.label);
-        notified += 1;
-        users -= event.lose;
-        const culprit = topRisk();
-        lines.push(`【${event.label}】${event.text}${culprit ? `（风险最大的一项：${culprit.label}）` : ""}`);
-        say.textContent = `${event.label}：${event.text}`;
-        if (event.label !== "商店问询") onMistake();
-      }
-    }
-    users = Math.max(0, users);
-    log.prepend(...lines.map((line) => h("div", {}, line)));
-    if (users <= 0) return finish(false, `用户跑光了。${topRisk()?.label || "多余的权限"}把大家吓走了。`);
-    if (cash < (spec.bankFloor ?? -20)) return finish(false, `钱烧完了（¥${Math.round(cash)}）：房租都交不起。`);
-    if (day >= spec.days) return finish(true);
-    day += 1;
-    paint();
-  };
-
-  const finish = (ok, text) => {
-    over = true;
-    next.hidden = true;
-    restart.hidden = false;
-    if (ok) {
-      say.textContent = `撑过 ${spec.days} 天：现金 ¥${Math.round(cash)}，剩 ${Math.round(users)} 个用户${notified ? `，被查 ${notified} 次` : ""}。`
-        + (cash <= 10 ? "只留本职最安全，但也最穷——这就是最小权限的代价与安心。"
-          : "钱赚到了，风险也在账上写着：每一项权限都要有人负责。");
-      onDone();
-    } else {
-      say.textContent = text;
-      onMistake();
-      log.prepend(h("div", {}, text));
-    }
-    paint();
-  };
-
-  const reset = () => {
-    day = 1;
-    users = spec.users ?? 100;
-    cash = spec.cash ?? 0;
-    risk = 0;
-    fired = new Set();
-    notified = 0;
-    over = false;
-    for (const perm of perms) perm.on = true;
-    next.hidden = false;
-    restart.hidden = true;
-    log.replaceChildren();
-    say.textContent = "再开一次：这回先想好，哪几项是本职。";
-    paint();
-  };
-  paint();
-  return root;
-}
+export { mountManage } from './manage-game.js';
 
 /**
  * 卡牌 · 对质 (通用): the developer claims one thing at a time; the player presents the one evidence
