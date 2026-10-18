@@ -194,73 +194,7 @@ export function mountRhythm({ h, icon, lab, onMistake = () => {}, onHint = () =>
 /**
  * 管道 · 数据流向 (阿哲): route the secret into the server, not into the package you are about to ship.
  */
-export function mountPipes({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
-  const spec = lab.pipes || { size: 4, tiles: [], start: [0, 0], exits: [] };
-  const size = spec.size;
-  const tiles = spec.tiles.map((tile) => ({ ...tile, dirs: [...tile.dirs] }));
-  const at = (x, y) => tiles.find((t) => t.x === x && t.y === y);
-  const grid = h("div", { class: "mini-grid", style: `--n:${size}` });
-  const say = h("p", { class: "mini-say", role: "status" }, "点格子转动管道：把密钥接到「服务器」，别接到「发布包」。");
-  const count = h("span", {}, "还没接通");
-  let ended = false;
-  const rotate = (tile) => {
-    if (tile.fixed) return;
-    tile.dirs.unshift(tile.dirs.pop());
-    paint();
-  };
-  const reach = () => {
-    const [sx, sy] = spec.start;
-    const seen = new Set([`${sx},${sy}`]);
-    const queue = [[sx, sy]];
-    while (queue.length) {
-      const [x, y] = queue.shift();
-      const [up, right, down, left] = (at(x, y) || { dirs: [0, 0, 0, 0] }).dirs;
-      const move = (nx, ny, open, back) => {
-        if (!open) return;
-        const other = at(nx, ny);
-        if (!other || !other.dirs[back] || seen.has(`${nx},${ny}`)) return;
-        seen.add(`${nx},${ny}`);
-        queue.push([nx, ny]);
-      };
-      move(x, y - 1, up, 2); move(x + 1, y, right, 3); move(x, y + 1, down, 0); move(x - 1, y, left, 1);
-    }
-    return spec.exits.map((exit) => ({ exit, reached: seen.has(`${exit.x},${exit.y}`) }));
-  };
-  const cells = [];
-  for (let y = 0; y < size; y += 1) for (let x = 0; x < size; x += 1) {
-    const tile = at(x, y) || { x, y, dirs: [0, 0, 0, 0], fixed: true };
-    const pipe = h("span", { class: "mini-pipe" }, h("i", { class: "a-u" }), h("i", { class: "a-r" }), h("i", { class: "a-d" }), h("i", { class: "a-l" }), h("b", {}));
-    cells.push(h("button", { class: "mini-cell", type: "button", "data-x": x, "data-y": y, onclick: () => rotate(tile) }, pipe));
-  }
-  grid.append(...cells);
-  const cellAt = (x, y) => cells.find((cell) => Number(cell.dataset.x) === x && Number(cell.dataset.y) === y);
-  for (const exit of spec.exits) cellAt(exit.x, exit.y)?.append(h("span", { class: `mini-exit ${exit.kind}` }, exit.kind === "server" ? "服务器" : "发布包"));
-  cellAt(spec.start[0], spec.start[1])?.append(h("span", { class: "mini-exit start" }, "密钥"));
-  const paint = () => {
-    for (const cell of cells) {
-      const tile = at(Number(cell.dataset.x), Number(cell.dataset.y));
-      const [up, right, down, left] = tile?.dirs || [0, 0, 0, 0];
-      cell.classList.toggle("fixed", Boolean(tile?.fixed));
-      cell.querySelector(".mini-pipe").className = cls(["mini-pipe", up && "u", right && "r", down && "d", left && "l"]);
-    }
-    const state = reach();
-    if (state.find((s) => s.exit.kind === "package")?.reached) {
-      onMistake();
-      count.textContent = "走错了";
-      say.textContent = "密钥流进了发布包——谁拆开都能看到。转回去。";
-      return;
-    }
-    if (state.find((s) => s.exit.kind === "server")?.reached) {
-      count.textContent = "已接通服务器";
-      say.textContent = "接通了：密钥该在服务器上，不该留在要发出去的包里。";
-      if (!ended) { ended = true; onDone(); }
-      return;
-    }
-    count.textContent = "还没接通";
-  };
-  paint();
-  return h("div", { class: "mini mini-pipes" }, head(h, icon, lab.sampleTitle || "数据流向", onHint), grid, h("div", { class: "mini-controls" }, count), say);
-}
+export { mountPipes } from './pipe-game.js';
 
 /**
  * 经营 · 权限的代价 (王奶奶手电筒公司): the board handed you every switch turned on. Run the company for
