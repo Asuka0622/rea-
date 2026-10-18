@@ -58,8 +58,11 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const beams = h("div", { class: "td2-beams" });
   const path = h("div", { class: "mini-td-path td2-path" }, track, beams, home);
   const syncBackdrop = () => {
+    // 三个版本：v2（路线画在图上，收起程序画的桥架）> floor（只有机房地面，桥架留着）
+    // > v1（一条通道的旧横带）。
     const v2 = hasMiniArt("mini-td-path-v2");
-    const id = v2 ? "mini-td-path-v2" : "mini-td-path";
+    const floor = hasMiniArt("mini-td-floor");
+    const id = v2 ? "mini-td-path-v2" : floor ? "mini-td-floor" : "mini-td-path";
     if (hasMiniArt(id)) {
       path.classList.add("art");
       path.style.backgroundImage = `url(/art/pixel/minigames/${id}.png)`;

@@ -2,6 +2,13 @@
    新措施的占位色块、伪装/脱敏/标记、泄漏的反馈。美术交图后，占位色块自动让位给图标。 */
 
 .td2 .mini-td-path {height:236px;}
+/* 底图是机房（机柜 + 地板），压暗一层、边缘再深一点，让桥架浮出来——
+   画面里只该有一条「路」，就是那两条走数据的槽。 */
+.td2 .mini-td-path::before {
+  background:
+    linear-gradient(180deg,rgba(6,12,8,.62) 0%,rgba(6,12,8,.24) 20%,rgba(6,12,8,.24) 80%,rgba(6,12,8,.62) 100%),
+    radial-gradient(ellipse at 50% 55%,rgba(6,12,8,0) 35%,rgba(6,12,8,.38) 100%);
+}
 .td2-beams {position:absolute;inset:0;z-index:3;pointer-events:none;}
 .td2-beams svg {width:100%;height:100%;}
 .td2-beam {stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.9;}
