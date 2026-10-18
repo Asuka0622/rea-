@@ -181,3 +181,9 @@ ui-drill-tier-verdict,复勘界面,docs/art/review/sources/drill-tier-verdict-so
 case-props-gear-1843,钟楼,docs/art/review/sources/gear-1843-source.png,public/art/pixel/case-props/gear-1843.png,,,,64,64,是,,,待验收,黄铜齿轮；铭文由代码叠加
 ui-user-agreement,用户协议界面,docs/art/review/sources/user-agreement-source.png,public/art/pixel/ui/user-agreement.png,,,,240,320,是,,,待验收,翻开的协议页面，放大镜与抽象排版纹理，无伪文字
 fx-time-warp,穿越特效,docs/art/review/sources/time-warp-atlas-source.png,public/art/pixel/fx/time-warp.png,,,,576,96,是,96x96,,待验收,6帧齿轮与光；90–120ms，JSON随图交付
+scene-clueboard-strings,序章/1843伦敦剧情插画,docs/art/review/sources/scene-clueboard-strings-refined-source.png,public/art/pixel/scenes/clueboard-strings.png,,,,640,360,否,,,待验收,剧情插画候选；五张外围证据卡加中央卡，运行尺寸640×360；待剧情与游戏内验收
+scene-stakeout,序章/1843伦敦剧情插画,docs/art/review/sources/scene-stakeout-source.png,public/art/pixel/scenes/stakeout.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
+scene-tower-open,序章/1843伦敦剧情插画,docs/art/review/sources/scene-tower-open-source.png,public/art/pixel/scenes/tower-open.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
+scene-town-argument,序章/1843伦敦剧情插画,docs/art/review/sources/scene-town-argument-source.png,public/art/pixel/scenes/town-argument.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
+scene-london-1843,序章/1843伦敦剧情插画,docs/art/review/sources/scene-london-1843-source.png,public/art/pixel/scenes/london-1843.png,,,,640,360,否,,,待验收,剧情插画候选；运行尺寸640×360，16:9不透明PNG；待剧情构图与游戏内显示验收
+room-tower-inside,钟楼内部,docs/art/review/sources/room-tower-inside-source.png,public/art/pixel/room-tower-inside.png,,,,320,180,否,,,待验收,16:9可行走房间候选；空地板通道、七格黄铜时光机表盘、老式数字终端；待人物站位、碰撞与遮挡验收

@@ -104,11 +104,11 @@
 
 | 内容 | 文件 | 状态 | 优先级 |
 |---|---|---|---|
-| 红线织满的线索墙（第二幕中点） | `scenes/clueboard-strings.png` | 🎨 | P1 |
-| 23:58 的守夜：钟楼的窗户一起亮着 | `scenes/stakeout.png` | 🎨 | P1 |
-| 推开钟楼大门，门后是满屏数字 | `scenes/tower-open.png` | 🎨 | P1 |
-| 镇上为小克吵起来 | `scenes/town-argument.png` | 🎨 | P1 |
-| 1843 年伦敦的雾夜街道（预告测试版的结束画面） | `scenes/london-1843.png` | 🎨 | P1 |
+| 红线织满的线索墙（第二幕中点） | `scenes/clueboard-strings.png` | 📦 | P1 |
+| 23:58 的守夜：钟楼的窗户一起亮着 | `scenes/stakeout.png` | 📦 | P1 |
+| 推开钟楼大门，门后是满屏数字 | `scenes/tower-open.png` | 📦 | P1 |
+| 镇上为小克吵起来 | `scenes/town-argument.png` | 📦 | P1 |
+| 1843 年伦敦的雾夜街道（预告测试版的结束画面） | `scenes/london-1843.png` | 📦 | P1 |
 
 ### 7. 界面
 
