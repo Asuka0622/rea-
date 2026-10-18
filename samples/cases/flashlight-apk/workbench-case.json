@@ -223,7 +223,7 @@
         }
       ],
       "tower": {
-        "budget": 20,
+        "budget": 24,
         "regen": 1,
         "hp": 3,
         "weak": 0.2,
@@ -245,19 +245,32 @@
         },
         "slots": [
           {
-            "at": 20
+            "id": "entry",
+            "label": "机房入口",
+            "x": 84,
+            "y": 32,
+            "guards": [{"lanes": ["up", "down"], "t0": 0, "t1": 0.34}]
           },
           {
-            "at": 36
+            "id": "up",
+            "label": "上线路",
+            "x": 50,
+            "y": 38,
+            "guards": [{"lanes": ["up"], "t0": 0.36, "t1": 0.7}]
           },
           {
-            "at": 52
+            "id": "down",
+            "label": "下线路",
+            "x": 50,
+            "y": 62,
+            "guards": [{"lanes": ["down"], "t0": 0.36, "t1": 0.7}]
           },
           {
-            "at": 68
-          },
-          {
-            "at": 84
+            "id": "merge",
+            "label": "机房出口",
+            "x": 20,
+            "y": 32,
+            "guards": [{"lanes": ["up", "down"], "t0": 0.74, "t1": 1}]
           }
         ],
         "units": [
@@ -266,8 +279,7 @@
             "art": "lock",
             "label": "最小权限",
             "cost": 8,
-            "dps": 4.2,
-            "range": 24,
+            "dps": 6.4,
             "strong": [
               "contacts",
               "location"
@@ -278,8 +290,7 @@
             "id": "throttle",
             "label": "限速节流",
             "cost": 5,
-            "dps": 0.8,
-            "range": 20,
+            "dps": 1.2,
             "slow": true,
             "note": "只拖慢，杀不掉任何一个"
           },
@@ -287,8 +298,7 @@
             "id": "sandbox",
             "label": "沙盒隔离",
             "cost": 10,
-            "dps": 4.8,
-            "range": 28,
+            "dps": 7,
             "strong": [
               "upload"
             ],
@@ -298,88 +308,40 @@
         "waves": [
           {
             "count": 2,
-            "kind": "contacts",
+            "kinds": ["contacts", "contacts"],
+            "lanes": ["up", "up"],
             "hp": 6,
             "speed": 10
           },
           {
             "count": 3,
-            "kind": "upload",
+            "kinds": ["upload", "upload", "upload"],
+            "lanes": ["down", "down", "down"],
             "hp": 7,
-            "speed": 11
+            "speed": 10
           },
           {
-            "count": 3,
-            "kinds": [
-              "contacts",
-              "upload"
-            ],
+            "count": 4,
+            "kinds": ["contacts", "upload", "contacts", "upload"],
+            "lanes": ["up", "down", "up", "down"],
             "hp": 8,
             "speed": 11
           },
           {
             "count": 5,
-            "kinds": [
-              "contacts",
-              "location",
-              "upload"
-            ],
+            "kinds": ["contacts", "upload", "contacts", "upload", "contacts"],
+            "lanes": ["up", "down", "up", "down", "up"],
             "hp": 8,
-            "speed": 12,
+            "speed": 11,
             "elite": 1
           },
           {
             "count": 6,
-            "kinds": [
-              "upload",
-              "contacts",
-              "location"
-            ],
-            "hp": 10,
-            "speed": 12,
-            "elite": 2
-          }
-        ]
-      }
-    },
-    "puzzle": {
-      "title": "只开一盏灯：手电筒要什么",
-      "ask": "我想装个手电筒，晚上起夜好照亮。可它一装就问我要通讯录，还要知道我在哪儿……这是怎么回事呀？",
-      "sampleName": "小光手电筒",
-      "computerLabel": "王奶奶的电脑",
-      "labSource": "权限塔防",
-      "room": {
-        "top": 134,
-        "spawn": {
-          "x": 160,
-          "y": 168
-        },
-        "exit": {
-          "x": 160,
-          "y": 176
-        },
-        "client": {
-          "x": 222,
-          "y": 166
-        },
-        "blocks": [
-          {
-            "x": 18,
-            "y": 92,
-            "w": 104,
-            "h": 48
-          },
-          {
-            "x": 128,
-            "y": 100,
-            "w": 84,
-            "h": 32
-          },
-          {
-            "x": 228,
-            "y": 46,
-            "w": 74,
-            "h": 96
+            "kinds": ["contacts", "upload", "contacts", "upload", "upload", "contacts"],
+            "lanes": ["up", "up", "down", "down", "down", "up"],
+            "hp": 7,
+            "speed": 11,
+            "elite": 1
           }
         ],
         "clientTalk": {

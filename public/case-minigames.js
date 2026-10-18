@@ -93,6 +93,52 @@ function head(h, icon, title, onHint) {
  * 每个措施只克制它真能管住的那类收集者（最小权限管"读"、沙盒管"发"、限速谁也杀不掉，
  * 只拖慢）。克错的也能打，但只打 weak 折——所以铺满不再等于赢，得看清来的是什么。
  */
+/* 数据在机房里是分两路走的：进了大门是一条主干，到分线器分成上下两路，出机房前又并回一条。
+   守哪一段、放哪一种措施，就是这份玩法唯一的决定——所以路怎么分叉，必须一眼看得出来。 */
+const TD_LANES = {
+  up: [[95, 50], [72, 50], [62, 28], [38, 28], [28, 50], [10, 50]],
+  down: [[95, 50], [72, 50], [62, 72], [38, 72], [28, 50], [10, 50]],
+};
+// y 是舞台高度的百分比，按舞台长宽比折算成和 x 同样的单位，弧长才是真实的走路时间。
+const TD_YSCALE = 0.25;
+const TD_TRACK = Object.fromEntries(Object.entries(TD_LANES).map(([lane, pts]) => {
+  const segs = [];
+  let total = 0;
+  for (let i = 1; i < pts.length; i += 1) {
+    const dx = pts[i][0] - pts[i - 1][0];
+    const dy = (pts[i][1] - pts[i - 1][1]) * TD_YSCALE;
+    const len = Math.hypot(dx, dy);
+    segs.push({ from: pts[i - 1], to: pts[i], len, at: total });
+    total += len;
+  }
+  return [lane, { segs, total, pts }];
+}));
+/** 走完全程的 t（0 是刚进大门，1 是摸到保险柜）时，它站在舞台的哪个位置。 */
+const tdPosAt = (lane, t) => {
+  const track = TD_TRACK[lane] || TD_TRACK.up;
+  const d = Math.max(0, Math.min(1, t)) * track.total;
+  for (const seg of track.segs) {
+    if (d <= seg.at + seg.len) {
+      const k = seg.len ? (d - seg.at) / seg.len : 0;
+      return { x: seg.from[0] + (seg.to[0] - seg.from[0]) * k, y: seg.from[1] + (seg.to[1] - seg.from[1]) * k };
+    }
+  }
+  const tail = track.segs[track.segs.length - 1];
+  return { x: tail.to[0], y: tail.to[1] };
+};
+/** 这一段路是不是归这个措施管。射程按路算，不按直线距离——上下两条路离得太近了。 */
+const tdInRange = (slot, enemy) =>
+  (slot.guards || []).some((g) => g.lanes.includes(enemy.lane) && enemy.t >= g.t0 && enemy.t <= g.t1);
+/** 取路上 [t0,t1] 之间的 13 个点，用来把「这段有人守着」画亮。 */
+const tdGuardPoints = (lane, t0, t1) => {
+  const out = [];
+  for (let i = 0; i <= 12; i += 1) {
+    const p = tdPosAt(lane, t0 + (t1 - t0) * (i / 12));
+    out.push(`${p.x},${p.y}`);
+  }
+  return out.join(" ");
+};
+
 export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
   const spec = lab.tower || {};
   const units = spec.units || [];
@@ -104,14 +150,19 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const dpsOn = (unit, kind) => (unit.strong ? (unit.strong.includes(kind) ? unit.dps : unit.dps * (spec.weak ?? 0.4)) : unit.dps);
   const counterOf = (kind) => units.find((u) => u.strong?.includes(kind));
   const waveKinds = (w) => (w.kind ? [w.kind] : w.kinds || []);
+  /** 下一波长什么样：几种收集者、各走哪条路。路线也报出来，玩家才知道该守哪一边。 */
   const waveText = (w) => {
+    const lanes = w.lanes || ["up", "down"];
     const tally = new Map();
+    const road = { up: 0, down: 0 };
     for (let i = 0; i < (w.count || 0); i += 1) {
       const list = waveKinds(w);
       const k = list[i % list.length];
       tally.set(k, (tally.get(k) || 0) + 1);
+      road[lanes[i % lanes.length]] += 1;
     }
-    return [...tally].map(([k, n]) => `${kindLabel(k)}×${n}`).join("、") + (w.elite ? `（${w.elite} 个厚皮）` : "");
+    const names = [...tally].map(([k, n]) => `${kindLabel(k)}×${n}`).join("、");
+    return `${names}（上路 ${road.up} · 下路 ${road.down}）` + (w.elite ? ` ${w.elite} 个厚皮` : "");
   };
   let budget = spec.budget ?? 24;
   let hp = spec.hp ?? 3;
@@ -127,13 +178,19 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   // always — the words are what tells a beginner which end of the path is which.
   const home = h("div", { class: "mini-td-home" }, artImg(h, "mini-td-home", "mini-td-icon"), h("small", {}, "隐私"));
   const spawn = h("div", { class: "mini-td-spawn" }, artImg(h, "mini-td-spawn", "mini-td-icon"), h("small", {}, "收集者"));
-  const path = h("div", { class: "mini-td-path" }, home);
+  const track = h("div", { class: "mini-td-track-wrap" });
+  const path = h("div", { class: "mini-td-path" }, track, home);
   artBg(path, "mini-td-path");
   const say = h("p", { class: "mini-say", role: "status" },
-    "看清楚来的是什么：想「读」的用最小权限挡住，想「发」的用沙盒关住，限速只拖慢、杀不掉。预算不够铺满，得挑。");
+    "数据进机房是一条主干，到分线器分成上下两路，出门前又并回一条。守在入口和出口能顾到所有人，"
+    + "守在两条支路上一次只能顾一条——但那两个位置才摆得下两个人手。"
+    + "想「读」的用最小权限挡住，想「发」的用沙盒关住，限速只拖慢、杀不掉。");
   const palette = h("div", { class: "mini-td-units" });
   const start = h("button", { class: "btn primary", type: "button", onclick: () => nextWave() }, icon("scan", { size: 14 }), "放下一波");
-  const root = h("div", { class: "mini mini-td" }, head(h, icon, lab.sampleTitle || "权限塔防", onHint), bar, path, palette, h("div", { class: "mini-controls" }, start), say);
+  const tip = h("p", { class: "mini-td-tip" },
+    "先在下面挑一个措施，再点机房里的一个空位把它放上；点已经放好的可以升级。"
+    + "放之前看清楚预告：这一波谁走哪条路、想干什么。");
+  const root = h("div", { class: "mini mini-td" }, head(h, icon, lab.sampleTitle || "权限塔防", onHint), bar, path, tip, palette, h("div", { class: "mini-controls" }, start), say);
 
   // The slots are rebuilt on every animation frame, so the icon is created once and only its src is
   // swapped — a picture re-created 60 times a second flickers.
@@ -151,8 +208,9 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const slotIcons = slots.map(() => h("img", { class: "mini-td-icon", alt: "", "aria-hidden": "true" }));
   const slotNames = slots.map(() => h("b", {}, "空位"));
   const slotLevels = slots.map(() => h("i", {}, ""));
+  const slotWhere = slots.map((slot) => h("em", {}, slot.label || ""));
   const slotEls = slots.map((slot, i) => h("button", {
-    class: "mini-td-slot", type: "button", style: `left:${slot.at}%`,
+    class: "mini-td-slot", type: "button", style: `left:${slot.x}%;top:${slot.y}%`,
     onclick: () => {
       if (slot.unit) return upgrade(slot);
       const unit = units.find((u) => u.id === picked);
@@ -160,10 +218,10 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       if (budget < unit.cost) { say.textContent = `${unit.label}：预算不够（剩 ${Math.round(budget)}）。`; return; }
       budget -= unit.cost;
       slot.unit = { ...unit, level: 1 };
-      say.textContent = `${unit.label}：${unit.note || "放在这里"}。`;
+      say.textContent = `${unit.label}：守${slot.label}——${unit.note || "这一段归它"}。`;
       paint();
     },
-  }, slotIcons[i], slotNames[i], slotLevels[i]));
+  }, slotIcons[i], slotNames[i], slotLevels[i], slotWhere[i]));
   slotEls.forEach((el) => path.append(el));
   path.append(spawn);
 
@@ -181,6 +239,8 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     class: cls(["mini-td-unit", picked === unit.id && "picked"]), type: "button", onclick: () => { picked = unit.id; paint(); },
   }, artImg(h, `mini-td-unit-${artOf(unit)}`, "mini-td-icon"),
     h("div", { class: "mini-td-unit-text" }, h("b", {}, unit.label), h("span", {}, `${unit.cost} 点`),
+      // 它管得住谁，比名字更重要——这一行就是选它的理由。
+      h("em", {}, unit.strong ? `管得住：${unit.strong.map(kindLabel).join("、")}` : "只拖慢，拦不死"),
       ...(unit.note ? [h("small", {}, unit.note)] : []))));
   palette.append(...paletteEls);
 
@@ -201,6 +261,30 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       slotLevels[i].textContent = slot.unit ? `Lv${slot.unit.level}` : "";
     });
     paletteEls.forEach((el, i) => el.classList.toggle("picked", units[i].id === picked));
+    paintTrack();
+  };
+
+  /** 两条路画出来，被措施守住的那一段亮起来——守哪一段是这个玩法唯一要决定的事。 */
+  let trackSig = "";
+  const paintTrack = () => {
+    const sig = slots.map((slot) => `${slot.unit?.id || "-"}${slot.unit?.level || 0}`).join("|");
+    if (sig === trackSig) return; // 每帧重画 SVG 太浪费，只有措施动了才重画
+    trackSig = sig;
+    let lanes = "";
+    for (const lane of ["up", "down"]) {
+      const pts = TD_TRACK[lane].pts.map((p) => p.join(",")).join(" ");
+      lanes += `<polyline class="mini-td-lane" points="${pts}"/><polyline class="mini-td-lane-core" points="${pts}"/>`;
+    }
+    let guards = "";
+    for (const slot of slots) {
+      if (!slot.unit) continue;
+      for (const g of slot.guards || []) {
+        for (const lane of g.lanes) {
+          guards += `<polyline class="${cls(["mini-td-guard", slot.unit.strong && "strong"])}" points="${tdGuardPoints(lane, g.t0, g.t1)}"/>`;
+        }
+      }
+    }
+    track.innerHTML = `<svg class="mini-td-track" viewBox="0 0 100 100" preserveAspectRatio="none">${lanes}${guards}</svg>`;
   };
 
   // 收集者: the studio's sprite walks the four frames of row 0, and the "blocked" frame is left
@@ -219,11 +303,12 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const FX = "mini-td-fx";
   let fxSheet = null;
   sheetWhenReady(FX, (data) => { fxSheet = data; });
-  const playFx = (x) => {
+  const playFx = (enemy) => {
     if (!fxSheet) return;
     const anim = fxSheet.animations.intercept;
     const [fw, fh] = fxSheet.frame;
-    const el = h("div", { class: "mini-td-fx", style: `left:${x}%` });
+    const at = tdPosAt(enemy.lane, enemy.t);
+    const el = h("div", { class: "mini-td-fx", style: `left:${at.x}%;top:${at.y}%` });
     let frame = 0;
     const paint = () => {
       el.style.backgroundImage = `url(/art/pixel/minigames/${FX}.png)`;
@@ -240,20 +325,36 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     }, ms);
   };
 
-  const drawEnemies = (now = performance.now()) => {    for (const enemy of enemies) {
+  const drawEnemies = (now = performance.now()) => {
+    for (const enemy of enemies) {
       if (!enemy.el) {
+        enemy.maxHp = enemy.hp;
+        // 三种收集者共用一张走路的表，颜色按类型调开，名牌本来就有色——一眼分得清谁是谁。
+        const body = h("i", { class: "mini-td-body" });
+        const hpBar = h("i", { class: "mini-td-hp" }, h("b", {}));
         enemy.el = h("div", { class: cls(["mini-td-enemy", sheet && "sprite", enemy.elite && "elite"]), "data-kind": enemy.kind },
-          h("i", { class: "mini-td-tag" }, kindLabel(enemy.kind), enemy.elite ? " · 厚" : ""));
+          body, h("i", { class: "mini-td-tag" }, kindLabel(enemy.kind), enemy.elite ? " · 厚" : ""), hpBar);
+        enemy.body = body;
+        enemy.hpBar = hpBar;
         path.append(enemy.el);
       }
-      enemy.el.style.left = `${enemy.x}%`;
+      const at = tdPosAt(enemy.lane, enemy.t);
+      enemy.el.style.left = `${at.x}%`;
+      enemy.el.style.top = `${at.y}%`;
+      // 还没进门的排在门外，先不画——不然一堆人叠在门口看不清谁是谁。
+      enemy.el.style.opacity = enemy.t < 0 ? "0" : "1";
       if (sheet) {
         const walk = sheet.animations.walk;
         const ms = Array.isArray(walk.ms) ? walk.ms[0] : walk.ms;
         enemy.el.style.width = `${sheet.frame[0] * 2}px`;
         enemy.el.style.height = `${sheet.frame[1] * 2}px`;
-        spriteCss(enemy.el, walk.row, Math.floor(now / ms) % walk.frames);
+        spriteCss(enemy.body, walk.row, Math.floor(now / ms) % walk.frames);
       }
+      // 血条：被削到什么程度一眼可见，玩家才知道差多少。
+      const pct = Math.max(0, enemy.hp) / (enemy.maxHp || 1);
+      const fill = enemy.hpBar.firstChild;
+      fill.style.width = `${Math.min(100, Math.max(0, pct * 100))}%`;
+      fill.className = pct > 0.55 ? "" : pct > 0.25 ? "low" : "crit";
     }
     for (const el of [...path.querySelectorAll(".mini-td-enemy")]) {
       if (!enemies.some((enemy) => enemy.el === el)) el.remove();
@@ -266,43 +367,50 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     last = now;
     budget = Math.min(spec.budget ?? 24, budget + (spec.regen ?? 1.5) * dt);
     for (const enemy of enemies) {
-      enemy.x -= enemy.speed * (enemy.slow > 0 ? 0.45 : 1) * dt;
+      enemy.t += (enemy.speed * (enemy.slow > 0 ? 0.45 : 1) * dt) / (TD_TRACK[enemy.lane] || TD_TRACK.up).total;
       enemy.slow = Math.max(0, enemy.slow - dt);
-      if (enemy.x <= 0) {
+      if (enemy.t >= 1) {
         enemy.dead = true;
         hp -= 1;
         onMistake();
         const fix = counterOf(enemy.kind);
-        say.textContent = `泄出去了「${kindLabel(enemy.kind)}」：${kinds[enemy.kind]?.why || ""}`
-          + (fix ? ` 它的路上要放「${fix.label}」。` : "");
+        say.textContent = `泄出去了「${kindLabel(enemy.kind)}」（走${enemy.lane === "up" ? "上" : "下"}路）：${kinds[enemy.kind]?.why || ""}`
+          + (fix ? ` 那条路上要放「${fix.label}」。` : "");
       }
     }
     // One measure shoots one collector at a time — the one closest to getting out. With splash
     // damage a crowd was no harder than a single one, and the whole game collapsed into "fill it up".
-    for (const slot of slots) {
+    slots.forEach((slot, si) => {
       const unit = slot.unit;
-      if (!unit) continue;
-      const enemy = enemies.filter((e) => !e.dead && Math.abs(e.x - slot.at) <= (unit.range ?? 22))
-        .sort((a, b) => a.x - b.x)[0];
-      if (!enemy) continue;
+      if (!unit) return;
+      const enemy = enemies.filter((e) => !e.dead && e.t >= 0 && tdInRange(slot, e))
+        .sort((a, b) => b.t - a.t)[0];
+      if (!enemy) return;
+      // 措施干活要看得见：开火的那一下边框亮一下。
+      if (!slot.firing) {
+        slot.firing = true;
+        slotEls[si].classList.add("firing");
+        setTimeout(() => { slot.firing = false; slotEls[si].classList.remove("firing"); }, 180);
+      }
       enemy.hp -= dpsOn(unit, enemy.kind) * dt;
       if (unit.slow) enemy.slow = 1.2;
       if (enemy.hp <= 0) {
         enemy.dead = true;
         const exact = unit.strong?.includes(enemy.kind);
         say.textContent = `${unit.label}${exact ? "拦下了" : "勉强拖住了"}一个${kindLabel(enemy.kind)}。`;
-        playFx(enemy.x);
+        const at = tdPosAt(enemy.lane, enemy.t);
+        playFx(enemy);
         // Leave the "blocked" frame lying where it fell for a moment, so a kill reads as a kill.
         const fall = sheet?.animations["blocked-fall"];
         if (fall) {
           // Not .mini-td-enemy: drawEnemies() sweeps those every frame, and this one has to stay.
-          const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0] * 2}px;height:${sheet.frame[1] * 2}px` });
+          const ghost = h("div", { class: "mini-td-fall", style: `left:${at.x}%;top:${at.y}%;width:${sheet.frame[0] * 2}px;height:${sheet.frame[1] * 2}px` });
           spriteCss(ghost, fall.row, fall.start || 0);
           path.append(ghost);
           setTimeout(() => ghost.remove(), (Array.isArray(fall.ms) ? fall.ms[0] : fall.ms) + 60);
         }
       }
-    }
+    });
     enemies = enemies.filter((enemy) => !enemy.dead);
     paint();
     drawEnemies(now);
@@ -325,10 +433,13 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     const w = waves[wave];
     const list = waveKinds(w);
     say.textContent = `第 ${wave + 1} 波：${waveText(w)}。`;
+    const lanes = w.lanes || ["up", "down"];
     for (let i = 0; i < (w.count || 0); i += 1) {
       const elite = i < (w.elite || 0);
       enemies.push({
-        x: 100 - i * 8,
+        // 谁走哪条路是这一波定好的，玩家看预告就能预判。
+        lane: lanes[i % lanes.length],
+        t: -i * (16 / TD_TRACK.up.total),
         hp: (w.hp ?? 3) * (elite ? (spec.eliteHp ?? 2.6) : 1),
         speed: (w.speed ?? 6) * (elite ? (spec.eliteSpeed ?? 0.7) : 1),
         slow: 0,

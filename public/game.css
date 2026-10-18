@@ -1087,35 +1087,44 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-standalone-bar span {font-size:12px;color:#8a7c6c;}
 .mini-standalone .mini {max-width:760px;}
 
-/* 塔防（保卫萝卜 / 明日方舟那一路）：一条路、几个部署位、部署预算、可升级。 */
-.mini-td-bar {display:flex;gap:14px;font:12px/1.4 var(--font-body);color:#e8d8bc;}
+/* 塔防：数据在机房里分两路走——一条主干进，到分线器分成上下两路，出机房前又并回一条。
+   守哪一段是这个玩法唯一要决定的事，所以路怎么分叉必须一眼看得出来。 */
+.mini-td-bar {display:flex;flex-wrap:wrap;gap:8px 14px;font:12px/1.4 var(--font-body);color:#e8d8bc;}
 .mini-td-stat {padding:2px 8px;background:#1b2a1f;border:1px solid #2c4a36;}
-/* 舞台：交付的机房条带是 1440×192 的 2 倍图，按高度等比铺、平铺拉长机架，160px 高才立得住。 */
-.mini-td-path {position:relative;height:160px;overflow:hidden;background:repeating-linear-gradient(90deg,#203028 0 12px,#1b2a20 12px 24px);border:2px solid #2c4a36;border-radius:4px;}
-.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) left center/auto 100% repeat-x;background-color:#1b2a20;image-rendering:pixelated;}
-/* 前后两层景深：顶上压暗一点、脚下是传送带的影子——图里那条亮带就是收集者走的路。 */
+.mini-td-stat.next {background:#231d2c;border-color:#56406b;color:#d8cbe8;}
+/* 舞台：交付的机房条带只当暗底的机柜纹理，路本身交给 SVG 画——一条直线说不下去。 */
+.mini-td-path {position:relative;height:206px;overflow:hidden;background:#131d17;border:2px solid #2c4a36;border-radius:4px;}
+.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) left center/auto 100% repeat-x #131d17;image-rendering:pixelated;}
 .mini-td-path::before {content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
-  background:linear-gradient(180deg,rgba(8,14,10,.42) 0%,rgba(8,14,10,0) 26%,rgba(8,14,10,0) 62%,rgba(6,10,8,.5) 100%);}
-/* 被保护的一端：保险柜立在左端地上，不再用一整块颜色糊住图的边缘。 */
-.mini-td-home {position:absolute;left:6px;bottom:8px;z-index:3;transform:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
-.mini-td-spawn {position:absolute;right:6px;bottom:8px;z-index:3;transform:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
+  background:linear-gradient(180deg,rgba(6,12,8,.5) 0%,rgba(6,12,8,.06) 22%,rgba(6,12,8,.06) 78%,rgba(6,12,8,.5) 100%);}
+/* 轨道：两条折线。viewBox 压扁后笔触会被拉成扁的，所以线宽走 non-scaling-stroke。 */
+.mini-td-track-wrap {position:absolute;inset:0;z-index:1;pointer-events:none;}
+.mini-td-track {position:absolute;inset:0;width:100%;height:100%;}
+.mini-td-lane {fill:none;stroke:#16241c;stroke-width:32;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.mini-td-lane-core {fill:none;stroke:#203426;stroke-width:22;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.mini-td-guard {fill:none;stroke:#2f6b34;stroke-width:26;stroke-linejoin:round;stroke-linecap:butt;vector-effect:non-scaling-stroke;opacity:.55;}
+.mini-td-guard.strong {stroke:#3f8f5c;opacity:.9;}
+/* 被保护的一端：保险柜立在左端，收集者从右端进来，都在主干的高度上。 */
+.mini-td-home {position:absolute;left:5px;top:50%;transform:translateY(-50%);z-index:3;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
+.mini-td-spawn {position:absolute;right:5px;top:50%;transform:translateY(-50%);z-index:3;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
 .mini-td-home small,.mini-td-spawn small {padding:1px 6px;font:10px/1.4 var(--font-body);border-radius:2px;background:rgba(10,16,12,.82);}
 .mini-td-home small {color:#a9e8a4;border:1px solid #2f6b34;}
 .mini-td-spawn small {color:#f5c9b8;border:1px solid #7a3a26;}
-/* 措施是立在机架前的检修站：窄底座、上面是措施的图，名字收进小铭牌。 */
-.mini-td-slot {position:absolute;top:34%;transform:translate(-50%,-50%);z-index:3;width:58px;padding:5px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;
-  font:9px/1.3 var(--font-body);color:#cfe8d4;background:rgba(18,30,23,.88);border:1px dashed #4d7a5c;border-radius:6px;cursor:pointer;box-shadow:0 3px 0 rgba(6,10,8,.55);}
+/* 措施是立在机架前的检修站：窄底座、上面是措施的图，名字和地段收进小铭牌。位置由 JS 按路给。 */
+.mini-td-slot {position:absolute;transform:translate(-50%,-50%);z-index:4;width:62px;padding:5px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:1px;
+  font:9px/1.3 var(--font-body);color:#cfe8d4;background:rgba(12,22,16,.92);border:1px dashed #4d7a5c;border-radius:6px;cursor:pointer;box-shadow:0 3px 0 rgba(6,10,8,.55);}
 .mini-td-slot:hover,.mini-td-slot:focus-visible {border-color:#e8c270;outline:none;}
-.mini-td-slot.placed {border-style:solid;border-color:#79a888;background:rgba(28,48,36,.94);color:#e8d8bc;}
+.mini-td-slot.placed {border-style:solid;border-color:#79a888;background:rgba(20,38,28,.95);color:#e8d8bc;}
 .mini-td-slot b {display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mini-td-slot i {display:block;font-style:normal;color:#e8c270;}
+.mini-td-slot em {display:block;font-style:normal;color:#8aa894;}
 /* 图标统一 2 倍显示：交付的都是 2x 图，直接按逻辑尺寸放大会糊。 */
 .mini-td-icon {display:none;width:24px;height:24px;image-rendering:pixelated;}
 .mini-td-icon.on {display:block;}
-.mini-td-slot .mini-td-icon.on {width:28px;height:28px;}
+.mini-td-slot .mini-td-icon.on {width:26px;height:26px;}
 .mini-td-home .mini-td-icon,.mini-td-spawn .mini-td-icon {width:40px;height:40px;filter:drop-shadow(0 2px 0 rgba(6,10,8,.6));}
-/* 收集者走在图底部那条传送带上，不再悬在半空。 */
-.mini-td-enemy {position:absolute;bottom:12px;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;z-index:3;}
+/* 收集者站在轨道上（left/top 由 JS 按路算），不再悬在半空。 */
+.mini-td-enemy {position:absolute;transform:translate(-50%,-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;z-index:3;}
 .mini-td-enemy.sprite {padding:0;background:none;image-rendering:pixelated;}
 /* What kind of collector it is has to be readable at a glance — that is the whole decision. */
 .mini-td-tag {position:absolute;left:50%;top:-15px;transform:translateX(-50%);padding:1px 4px;font:9px/1.3 var(--font-body);
@@ -1124,11 +1133,11 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-enemy[data-kind="location"] .mini-td-tag {background:#16321f;border-color:#2f6b34;color:#cfe8d4;}
 .mini-td-enemy[data-kind="upload"] .mini-td-tag {background:#3a1c14;border-color:#7a3a26;color:#f5d8cf;}
 .mini-td-enemy.elite .mini-td-tag {border-width:2px;}
-.mini-td-stat.next {background:#231d2c;border-color:#56406b;color:#d8cbe8;}
+.mini-td-enemy[style*="opacity: 0"] {pointer-events:none;}
 /* Where a collector was stopped: the sheet's "blocked" frame, left behind for a beat. */
-.mini-td-fall {position:absolute;bottom:12px;transform:translateX(-50%);image-rendering:pixelated;opacity:.9;z-index:2;}
+.mini-td-fall {position:absolute;transform:translate(-50%,-50%);image-rendering:pixelated;opacity:.9;z-index:2;}
 /* 拦截特效：交付的三帧火花（mini-td-fx），击杀的那一下在原地闪一次。 */
-.mini-td-fx {position:absolute;bottom:16px;transform:translateX(-50%);width:64px;height:64px;image-rendering:pixelated;z-index:4;pointer-events:none;}
+.mini-td-fx {position:absolute;transform:translate(-50%,-50%);width:64px;height:64px;image-rendering:pixelated;z-index:5;pointer-events:none;}
 .mini-td-units {display:flex;flex-wrap:wrap;gap:8px;}
 .mini-td-unit {display:flex;align-items:flex-start;gap:7px;padding:5px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
 .mini-td-unit .mini-td-icon.on {flex:0 0 auto;margin-top:1px;}
@@ -1136,6 +1145,23 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-unit span {color:#e8c270;}
 .mini-td-unit small {display:block;color:#8aa894;}
 .mini-td-unit.picked {border-color:#e8c270;background:#2a4433;}
+/* 敌人三层：身体（走路动画 + 按类型调色）、名牌、血条。 */
+.mini-td-body {position:absolute;inset:0;image-rendering:pixelated;}
+.mini-td-enemy.sprite[data-kind="contacts"] .mini-td-body {filter:hue-rotate(150deg) saturate(1.3);}
+.mini-td-enemy.sprite[data-kind="location"] .mini-td-body {filter:hue-rotate(75deg) saturate(1.2);}
+.mini-td-enemy.sprite[data-kind="upload"] .mini-td-body {filter:hue-rotate(-40deg) saturate(1.5);}
+.mini-td-hp {position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:32px;height:5px;background:#180c08;border:1px solid #0b0906;}
+.mini-td-hp b {display:block;height:100%;width:100%;background:#7ee081;}
+.mini-td-hp b.low {background:#e8c270;}
+.mini-td-hp b.crit {background:#e86a5a;}
+/* 措施放上之后就活着：待机时轻轻呼吸，开火的那一下亮边。 */
+.mini-td-slot.placed .mini-td-icon.on {animation:td-idle 1.8s ease-in-out infinite;}
+@keyframes td-idle {0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
+.mini-td-slot.firing {border-color:#ffe8b0;box-shadow:0 0 14px rgba(232,194,112,.5);}
+.mini-td-slot.firing .mini-td-icon.on {animation:none;transform:scale(1.2);}
+/* 措施「管得住谁」写在卡片上，选之前就能看到；面板上一句怎么玩。 */
+.mini-td-unit-text em {display:block;font-style:normal;color:#9fd8b0;}
+.mini-td-tip {margin:0 0 6px;font:11px/1.6 var(--font-body);color:#8aa894;}
 /* 节奏（音游那一路）：谱面、判定线、判定分级与连击。 */
 .mini-rh-lane {position:relative;height:104px;background:#151d18;border:2px solid #2c4a36;overflow:hidden;cursor:pointer;}
 .mini-rh-line {position:absolute;left:15%;top:0;bottom:0;width:4px;background:#ffe8b0;box-shadow:0 0 10px #ffe8b0;}
