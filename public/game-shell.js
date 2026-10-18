@@ -422,7 +422,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     const el = h("span", {
       class: "game-sprite npc", "aria-hidden": "true",
-      style: `background-image:url(/art/pixel/sprite-${npc.id}.png);background-size:calc(96px * var(--px)) calc(160px * var(--px));background-position:0 0;`,
+      style: `background-image:url(/art/pixel/sprite-${npc.id}.png);background-size:calc(var(--person-w) * 6 * var(--px)) calc(var(--person-h) * 5 * var(--px));background-position:0 0;`,
     });
     npcSprites.push({ el, npc });
     return el;
@@ -436,7 +436,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         style: `left:calc(${npc.x}px * var(--px));top:calc(${npc.y}px * var(--px));position:absolute;z-index:6;pointer-events:none;text-align:center;`,
       },
         npcSpriteEl(npc),
-        h("b", { style: `position:absolute;left:50%;bottom:calc(34px * var(--px));transform:translateX(-50%);display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
+        h("b", { style: `position:absolute;left:50%;bottom:calc((var(--person-h) + 2px) * var(--px));transform:translateX(-50%);display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
       ),
     );
   }
@@ -447,7 +447,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       const talking = one.npc.id === nearNpcId;
       const row = talking ? 4 : 0; // 第 4 行是说话
       const col = Math.floor(now / (talking ? 260 : 1900)) % 2;
-      one.el.style.backgroundPosition = `calc(${-col * 16}px * var(--px)) calc(${-row * 32}px * var(--px))`;
+      one.el.style.backgroundPosition = `calc(${-col} * var(--person-w) * var(--px)) calc(${-row} * var(--person-h) * var(--px))`;
     }
   }
   /** 走进范围就搭一句话；委托人当场开口托付，闲聊的给传闻。 */

@@ -10,7 +10,7 @@ html[data-game="on"] .game-shell[hidden] {display:none;}
 #toast {z-index:70;}
 
 /* The stage is the whole window; scenes inside it are scaled to cover it. */
-.game-stage {--px:4;position:absolute;inset:0;overflow:hidden;image-rendering:pixelated;background:#1b1410;}
+.game-stage {--px:4;--person-w:16px;--person-h:32px;position:absolute;inset:0;overflow:hidden;image-rendering:pixelated;background:#1b1410;}
 .game-room {position:absolute;left:50%;top:50%;width:calc(320px * var(--px));height:calc(180px * var(--px));transform:translate(-50%,-50%);}
 .game-bg {position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;}
 
@@ -71,13 +71,13 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
   box-shadow:inset 0 -3px 0 #d79a52;color:#3b2312;font:18px var(--font-display,"Fusion Pixel");z-index:2;}
 
 /* ----- characters (sprite-<name>.png, or a drawn stand-in), sized in map pixels ----- */
-.game-sprite {position:absolute;left:calc(var(--sx) * var(--px) * 1px);bottom:calc(30px * var(--px));height:calc(32px * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
+.game-sprite {position:absolute;left:calc(var(--sx) * var(--px) * 1px);bottom:calc(30px * var(--px));height:calc(var(--person-h) * var(--px));width:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:1;}
 .game-sprite.town {bottom:auto;top:calc(104px * var(--px));}
 /* Rooms are drawn closer than the town (a desk is ~40px tall), so people stand taller inside. */
 /* Indoors the player is drawn --k times the town size (set by the game from where it stands). */
-.game-sprite.indoor {height:calc(32px * var(--px) * var(--k, 2.35));}
-.game-sprite.player.sheet.indoor {width:calc(16px * var(--px) * var(--k, 2.35));height:calc(32px * var(--px) * var(--k, 2.35));}
-.game-sprite.drawn {width:calc(16px * var(--px));display:block;}
+.game-sprite.indoor {height:calc(var(--person-h) * var(--px) * var(--k, 2.35));}
+.game-sprite.player.sheet.indoor {width:calc(var(--person-w) * var(--px) * var(--k, 2.35));height:calc(var(--person-h) * var(--px) * var(--k, 2.35));}
+.game-sprite.drawn {width:calc(var(--person-w) * var(--px));display:block;}
 .game-sprite.drawn i,.game-sprite.drawn b,.game-sprite.drawn u {position:absolute;display:block;}
 .game-sprite.drawn i {left:calc(3px * var(--px));top:0;width:calc(10px * var(--px));height:calc(12px * var(--px));background:linear-gradient(180deg,#7ad3c0 0 45%,#f0c8a0 45%);box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}
 .game-sprite.drawn b {left:calc(2px * var(--px));top:calc(12px * var(--px));width:calc(12px * var(--px));height:calc(12px * var(--px));background:#f3efe3;box-shadow:0 0 0 calc(1px * var(--px)) #2a1a10;}
@@ -85,7 +85,7 @@ html[data-camp-theme="dark"] .game-stage::after {content:"";position:absolute;in
 @keyframes game-bob {50% {translate:0 calc(-1px * var(--px));}}
 .game-sprite {animation:game-bob 1.2s steps(2) infinite;}
 /* 镇上的 NPC 小人：图是 6 列 × 5 行的交付表，一帧 16×32 逻辑像素，脚底落在坐标点上，名字在头顶。 */
-.game-sprite.npc {left:50%;width:calc(16px * var(--px));height:calc(32px * var(--px));bottom:calc(-16px * var(--px));transform:translateX(-50%);image-rendering:pixelated;}
+.game-sprite.npc {left:50%;width:calc(var(--person-w) * var(--px));height:calc(var(--person-h) * var(--px));bottom:calc(var(--person-h) * var(--px) / -2);transform:translateX(-50%);image-rendering:pixelated;}
 
 /* ----- interface on top: menu bar, dialogue, choices, window ----- */
 .game-hud {position:fixed;top:12px;left:12px;z-index:45;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100vw - 24px);}
@@ -241,7 +241,7 @@ html[data-game="on"] .panel > .scene-wrap {display:none!important;}
 @media(prefers-reduced-motion:reduce) {.game-interact,.game-map-you {animation:none;}}
 
 /* The player drawn from a sprite sheet: one 16x32 frame shown, the sheet moved by the animation. */
-.game-sprite.player.sheet {display:block;width:calc(16px * var(--px));height:calc(32px * var(--px));background-repeat:no-repeat;
+.game-sprite.player.sheet {display:block;width:calc(var(--person-w) * var(--px));height:calc(var(--person-h) * var(--px));background-repeat:no-repeat;
   background-size:calc(64px * var(--px)) calc(64px * var(--px));image-rendering:pixelated;animation:none;}
 /* High-resolution sheets (the art AI's originals) are scaled smoothly instead of as hard pixels. */
 .game-sprite.player.sheet.smooth {image-rendering:auto;}
@@ -709,8 +709,8 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .case-prop.router .led {animation:case-led 1.4s steps(2) infinite;}
 .case-prop.cat .tail {animation:case-led 2s steps(2) infinite;}
 @keyframes case-led {50% {opacity:.25;}}
-.case-npc {position:absolute;display:block;width:calc(16px * var(--px) * 1.3);height:calc(32px * var(--px) * 1.3);transform:translate(-50%,-100%);padding:0;border:0;background:transparent;cursor:pointer;}
-.case-npc .game-sprite {position:absolute;left:0;bottom:0;width:calc(16px * var(--px));height:calc(32px * var(--px));transform:scale(1.3);transform-origin:left bottom;animation:game-bob 1.6s steps(2) infinite;}
+.case-npc {position:absolute;display:block;width:calc(var(--person-w) * var(--px) * 1.3);height:calc(var(--person-h) * var(--px) * 1.3);transform:translate(-50%,-100%);padding:0;border:0;background:transparent;cursor:pointer;}
+.case-npc .game-sprite {position:absolute;left:0;bottom:0;width:calc(var(--person-w) * var(--px));height:calc(var(--person-h) * var(--px));transform:scale(1.3);transform-origin:left bottom;animation:game-bob 1.6s steps(2) infinite;}
 .case-npc.kobayashi .game-sprite i {background:linear-gradient(180deg,#2a2a35 0 45%,#f0c8a0 45%);}
 .case-npc.kobayashi .game-sprite b {background:#6f9bd1;}
 .case-npc small {position:absolute;left:50%;top:calc(-10px * var(--px));transform:translateX(-50%);padding:0 calc(3px * var(--px));font:600 calc(6px * var(--px)) var(--font-mono);color:#fbf6e6;background:rgba(13,17,25,.7);white-space:nowrap;}
@@ -934,7 +934,7 @@ html .case-layer .term-line input.term-input {min-height:0;background:transparen
 .case-npc:not(:has(.case-client-sheet)) {width:calc(26.4px * var(--px));height:calc(52.8px * var(--px));}
 .case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.65);}
 /* In a calibrated room the client stands on the same 60-unit body as the player, not a squat draft. */
-.calibrated-room .case-npc:not(:has(.case-client-sheet)) {width:calc(30px * var(--px));height:calc(60px * var(--px));}
+.calibrated-room .case-npc:not(:has(.case-client-sheet)) {width:calc(var(--person-w) * var(--px) * 1.875);height:calc(var(--person-h) * var(--px) * 1.875);}
 .calibrated-room .case-npc:not(:has(.case-client-sheet)) .game-sprite {transform:scale(1.875);}
 @media(max-width:700px),(max-height:500px) {.case-goal {top:calc(var(--game-toolbar-height, 40px) + 6px);}}
 
