@@ -208,14 +208,39 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   const SHEET = "anim-mini-td-collector";
   let sheet = null;
   sheetWhenReady(SHEET, (data) => { sheet = data; });
-  const spriteCss = (el, row, col) => {
+  const spriteCss = (el, row, col, scale = 2) => {
     const [fw, fh] = sheet.frame;
+    // 交付的表是 2x 图：按 frame 的原始像素直接显示只有 12px 高，放大两倍才是画面上的正确尺寸。
     el.style.backgroundImage = `url(/art/pixel/minigames/${SHEET}.png)`;
-    el.style.backgroundSize = `${sheet.sheet[0] * fw}px ${sheet.sheet[1] * fh}px`;
-    el.style.backgroundPosition = `-${col * fw}px -${row * fh}px`;
+    el.style.backgroundSize = `${sheet.sheet[0] * fw * scale}px ${sheet.sheet[1] * fh * scale}px`;
+    el.style.backgroundPosition = `-${col * fw * scale}px -${row * fh * scale}px`;
   };
-  const drawEnemies = (now = performance.now()) => {
-    for (const enemy of enemies) {
+  // 拦截火花（mini-td-fx，三帧）：击杀的那一下在原地闪一次就散。
+  const FX = "mini-td-fx";
+  let fxSheet = null;
+  sheetWhenReady(FX, (data) => { fxSheet = data; });
+  const playFx = (x) => {
+    if (!fxSheet) return;
+    const anim = fxSheet.animations.intercept;
+    const [fw, fh] = fxSheet.frame;
+    const el = h("div", { class: "mini-td-fx", style: `left:${x}%` });
+    let frame = 0;
+    const paint = () => {
+      el.style.backgroundImage = `url(/art/pixel/minigames/${FX}.png)`;
+      el.style.backgroundSize = `${fxSheet.sheet[0] * fw * 2}px ${fxSheet.sheet[1] * fh * 2}px`;
+      el.style.backgroundPosition = `-${frame * fw * 2}px 0`;
+    };
+    paint();
+    path.append(el);
+    const ms = Array.isArray(anim.ms) ? anim.ms[0] : anim.ms;
+    const timer = setInterval(() => {
+      frame += 1;
+      if (frame >= anim.frames) { clearInterval(timer); el.remove(); return; }
+      paint();
+    }, ms);
+  };
+
+  const drawEnemies = (now = performance.now()) => {    for (const enemy of enemies) {
       if (!enemy.el) {
         enemy.el = h("div", { class: cls(["mini-td-enemy", sheet && "sprite", enemy.elite && "elite"]), "data-kind": enemy.kind },
           h("i", { class: "mini-td-tag" }, kindLabel(enemy.kind), enemy.elite ? " · 厚" : ""));
@@ -225,8 +250,8 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       if (sheet) {
         const walk = sheet.animations.walk;
         const ms = Array.isArray(walk.ms) ? walk.ms[0] : walk.ms;
-        enemy.el.style.width = `${sheet.frame[0]}px`;
-        enemy.el.style.height = `${sheet.frame[1]}px`;
+        enemy.el.style.width = `${sheet.frame[0] * 2}px`;
+        enemy.el.style.height = `${sheet.frame[1] * 2}px`;
         spriteCss(enemy.el, walk.row, Math.floor(now / ms) % walk.frames);
       }
     }
@@ -266,11 +291,12 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
         enemy.dead = true;
         const exact = unit.strong?.includes(enemy.kind);
         say.textContent = `${unit.label}${exact ? "拦下了" : "勉强拖住了"}一个${kindLabel(enemy.kind)}。`;
+        playFx(enemy.x);
         // Leave the "blocked" frame lying where it fell for a moment, so a kill reads as a kill.
         const fall = sheet?.animations["blocked-fall"];
         if (fall) {
           // Not .mini-td-enemy: drawEnemies() sweeps those every frame, and this one has to stay.
-          const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0]}px;height:${sheet.frame[1]}px` });
+          const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0] * 2}px;height:${sheet.frame[1] * 2}px` });
           spriteCss(ghost, fall.row, fall.start || 0);
           path.append(ghost);
           setTimeout(() => ghost.remove(), (Array.isArray(fall.ms) ? fall.ms[0] : fall.ms) + 60);

@@ -1090,23 +1090,35 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 /* 塔防（保卫萝卜 / 明日方舟那一路）：一条路、几个部署位、部署预算、可升级。 */
 .mini-td-bar {display:flex;gap:14px;font:12px/1.4 var(--font-body);color:#e8d8bc;}
 .mini-td-stat {padding:2px 8px;background:#1b2a1f;border:1px solid #2c4a36;}
-.mini-td-path {position:relative;height:96px;background:repeating-linear-gradient(90deg,#203028 0 12px,#1b2a20 12px 24px);border:2px solid #2c4a36;}
-.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) center/100% 100% no-repeat;background-color:#1b2a20;}
-.mini-td-home {position:absolute;left:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#1b120c;background:#8fd08a;border:2px solid #2f6b34;}
-.mini-td-spawn {position:absolute;right:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#fff6dc;background:#7a2418;border:2px solid #7a2418;}
-.mini-td-home,.mini-td-spawn {display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;}
-/* The unit and place icons: 24px on the board so a delivered 2x picture stays crisp. */
-.mini-td-icon {display:none;width:22px;height:22px;image-rendering:pixelated;}
-.mini-td-icon.on {display:block;}
-.mini-td-home .mini-td-icon,.mini-td-spawn .mini-td-icon {width:34px;height:34px;}
-.mini-td-slot {position:absolute;top:62%;transform:translate(-50%,-50%);width:74px;padding:4px 6px;font:11px/1.3 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px dashed #4d7a5c;cursor:pointer;}
-.mini-td-slot.placed {border-style:solid;background:#2a4433;color:#e8d8bc;}
-.mini-td-slot b {display:block;}
+/* 舞台：交付的机房条带是 1440×192 的 2 倍图，按高度等比铺、平铺拉长机架，160px 高才立得住。 */
+.mini-td-path {position:relative;height:160px;overflow:hidden;background:repeating-linear-gradient(90deg,#203028 0 12px,#1b2a20 12px 24px);border:2px solid #2c4a36;border-radius:4px;}
+.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) left center/auto 100% repeat-x;background-color:#1b2a20;image-rendering:pixelated;}
+/* 前后两层景深：顶上压暗一点、脚下是传送带的影子——图里那条亮带就是收集者走的路。 */
+.mini-td-path::before {content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:linear-gradient(180deg,rgba(8,14,10,.42) 0%,rgba(8,14,10,0) 26%,rgba(8,14,10,0) 62%,rgba(6,10,8,.5) 100%);}
+/* 被保护的一端：保险柜立在左端地上，不再用一整块颜色糊住图的边缘。 */
+.mini-td-home {position:absolute;left:6px;bottom:8px;z-index:3;transform:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
+.mini-td-spawn {position:absolute;right:6px;bottom:8px;z-index:3;transform:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
+.mini-td-home small,.mini-td-spawn small {padding:1px 6px;font:10px/1.4 var(--font-body);border-radius:2px;background:rgba(10,16,12,.82);}
+.mini-td-home small {color:#a9e8a4;border:1px solid #2f6b34;}
+.mini-td-spawn small {color:#f5c9b8;border:1px solid #7a3a26;}
+/* 措施是立在机架前的检修站：窄底座、上面是措施的图，名字收进小铭牌。 */
+.mini-td-slot {position:absolute;top:34%;transform:translate(-50%,-50%);z-index:3;width:58px;padding:5px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  font:9px/1.3 var(--font-body);color:#cfe8d4;background:rgba(18,30,23,.88);border:1px dashed #4d7a5c;border-radius:6px;cursor:pointer;box-shadow:0 3px 0 rgba(6,10,8,.55);}
+.mini-td-slot:hover,.mini-td-slot:focus-visible {border-color:#e8c270;outline:none;}
+.mini-td-slot.placed {border-style:solid;border-color:#79a888;background:rgba(28,48,36,.94);color:#e8d8bc;}
+.mini-td-slot b {display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mini-td-slot i {display:block;font-style:normal;color:#e8c270;}
-.mini-td-enemy {position:absolute;top:26%;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;}
+/* 图标统一 2 倍显示：交付的都是 2x 图，直接按逻辑尺寸放大会糊。 */
+.mini-td-icon {display:none;width:24px;height:24px;image-rendering:pixelated;}
+.mini-td-icon.on {display:block;}
+.mini-td-slot .mini-td-icon.on {width:28px;height:28px;}
+.mini-td-home .mini-td-icon,.mini-td-spawn .mini-td-icon {width:40px;height:40px;filter:drop-shadow(0 2px 0 rgba(6,10,8,.6));}
+/* 收集者走在图底部那条传送带上，不再悬在半空。 */
+.mini-td-enemy {position:absolute;bottom:12px;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;z-index:3;}
 .mini-td-enemy.sprite {padding:0;background:none;image-rendering:pixelated;}
 /* What kind of collector it is has to be readable at a glance — that is the whole decision. */
-.mini-td-tag {position:absolute;left:50%;top:-14px;transform:translateX(-50%);padding:1px 4px;font:9px/1.3 var(--font-body);
+.mini-td-tag {position:absolute;left:50%;top:-15px;transform:translateX(-50%);padding:1px 4px;font:9px/1.3 var(--font-body);
   font-style:normal;color:#fff6dc;background:#2a1f33;border:1px solid #56406b;white-space:nowrap;}
 .mini-td-enemy[data-kind="contacts"] .mini-td-tag {background:#1c2c44;border-color:#3f6390;color:#cfe0f5;}
 .mini-td-enemy[data-kind="location"] .mini-td-tag {background:#16321f;border-color:#2f6b34;color:#cfe8d4;}
@@ -1114,7 +1126,9 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-enemy.elite .mini-td-tag {border-width:2px;}
 .mini-td-stat.next {background:#231d2c;border-color:#56406b;color:#d8cbe8;}
 /* Where a collector was stopped: the sheet's "blocked" frame, left behind for a beat. */
-.mini-td-fall {position:absolute;top:26%;transform:translateX(-50%);image-rendering:pixelated;opacity:.9;}
+.mini-td-fall {position:absolute;bottom:12px;transform:translateX(-50%);image-rendering:pixelated;opacity:.9;z-index:2;}
+/* 拦截特效：交付的三帧火花（mini-td-fx），击杀的那一下在原地闪一次。 */
+.mini-td-fx {position:absolute;bottom:16px;transform:translateX(-50%);width:64px;height:64px;image-rendering:pixelated;z-index:4;pointer-events:none;}
 .mini-td-units {display:flex;flex-wrap:wrap;gap:8px;}
 .mini-td-unit {display:flex;align-items:flex-start;gap:7px;padding:5px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
 .mini-td-unit .mini-td-icon.on {flex:0 0 auto;margin-top:1px;}
@@ -1194,3 +1208,29 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-cd-card:hover {border-color:#e8c270;}
 .mini-cd-card b {display:block;color:#ffe8b0;}
 .mini-cd-card small {display:block;color:#8aa894;}
+
+/* Independent transfer work uses the existing parchment panel. */
+.transfer-overlay {overflow:auto;}
+.transfer-practice {padding:16px;max-width:1100px;margin:auto;color:#302315;background:#fbf1d6;}
+.transfer-practice p {max-width:74ch;line-height:1.7;}
+.transfer-note,.transfer-hint {font-size:13px;color:#66503b;}
+.transfer-columns {display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:18px 0;}
+.transfer-source {max-height:420px;overflow:auto;border:1px solid #805631;background:#fff9e9;}
+.transfer-source button {display:flex;width:100%;padding:4px 8px;border:0;background:transparent;text-align:left;color:#302315;font:12px/1.5 var(--font-mono);cursor:pointer;}
+.transfer-source small {min-width:28px;color:#765b40;}
+.transfer-source code {white-space:pre-wrap;overflow-wrap:anywhere;}
+.transfer-source button[aria-pressed="true"] {background:#e9c385;}
+.transfer-practice textarea {box-sizing:border-box;display:block;width:100%;min-height:420px;resize:vertical;font:13px/1.6 var(--font-mono);padding:12px;border:1px solid #805631;background:#fff9e9;color:#302315;}
+.transfer-practice pre {white-space:pre-wrap;overflow-wrap:anywhere;}
+.transfer-feedback {margin-top:16px;}
+.transfer-feedback li {margin:5px 0;line-height:1.6;}
+@media(max-width:760px){.transfer-columns{grid-template-columns:1fr;}.transfer-source{max-height:220px;}.transfer-practice textarea{min-height:280px;}}
+
+.transfer-source code {background:transparent;color:inherit;padding:0;border:0;border-radius:0;font:inherit;}
+.transfer-source button {min-height:30px;}
+.transfer-practice .btn.ghost {color:#5a3c23;border:1px solid #805631;background:transparent;}
+.transfer-practice .btn:disabled {color:#66503b;opacity:.65;}
+.transfer-practice .btn:focus-visible,.transfer-source button:focus-visible {outline:3px solid #825223;outline-offset:2px;}
+
+/* Isolate parchment actions from the dark sandbox theme inherited by the debug host. */
+.transfer-practice .btn.ghost {color:#5a3c23!important;border-color:#805631!important;}
