@@ -239,6 +239,7 @@
         "units": [
           {
             "id": "least-privilege",
+            "art": "lock",
             "label": "最小权限",
             "cost": 8,
             "dps": 2.2,

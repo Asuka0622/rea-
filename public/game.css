@@ -1035,15 +1035,26 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-td-bar {display:flex;gap:14px;font:12px/1.4 var(--font-body);color:#e8d8bc;}
 .mini-td-stat {padding:2px 8px;background:#1b2a1f;border:1px solid #2c4a36;}
 .mini-td-path {position:relative;height:96px;background:repeating-linear-gradient(90deg,#203028 0 12px,#1b2a20 12px 24px);border:2px solid #2c4a36;}
+.mini-td-path.art {background:url(/art/pixel/minigames/mini-td-path.png) center/100% 100% no-repeat;background-color:#1b2a20;}
 .mini-td-home {position:absolute;left:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#1b120c;background:#8fd08a;border:2px solid #2f6b34;}
 .mini-td-spawn {position:absolute;right:2px;top:50%;transform:translateY(-50%);padding:6px 8px;font:12px/1 var(--font-body);color:#fff6dc;background:#7a2418;border:2px solid #7a2418;}
+.mini-td-home,.mini-td-spawn {display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;}
+/* The unit and place icons: 24px on the board so a delivered 2x picture stays crisp. */
+.mini-td-icon {display:none;width:22px;height:22px;image-rendering:pixelated;}
+.mini-td-icon.on {display:block;}
+.mini-td-home .mini-td-icon,.mini-td-spawn .mini-td-icon {width:34px;height:34px;}
 .mini-td-slot {position:absolute;top:62%;transform:translate(-50%,-50%);width:74px;padding:4px 6px;font:11px/1.3 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px dashed #4d7a5c;cursor:pointer;}
 .mini-td-slot.placed {border-style:solid;background:#2a4433;color:#e8d8bc;}
+.mini-td-slot b {display:block;}
 .mini-td-slot i {display:block;font-style:normal;color:#e8c270;}
 .mini-td-enemy {position:absolute;top:26%;transform:translateX(-50%);padding:2px 5px;font:10px/1.2 var(--font-body);color:#1b120c;background:#e8c270;white-space:nowrap;}
+.mini-td-enemy.sprite {padding:0;background:none;image-rendering:pixelated;}
+/* Where a collector was stopped: the sheet's "blocked" frame, left behind for a beat. */
+.mini-td-fall {position:absolute;top:26%;transform:translateX(-50%);image-rendering:pixelated;opacity:.9;}
 .mini-td-units {display:flex;flex-wrap:wrap;gap:8px;}
-.mini-td-unit {padding:5px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
-.mini-td-unit b {display:block;color:#ffe8b0;}
+.mini-td-unit {display:flex;align-items:flex-start;gap:7px;padding:5px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
+.mini-td-unit .mini-td-icon.on {flex:0 0 auto;margin-top:1px;}
+.mini-td-unit-text b {display:block;color:#ffe8b0;}
 .mini-td-unit span {color:#e8c270;}
 .mini-td-unit small {display:block;color:#8aa894;}
 .mini-td-unit.picked {border-color:#e8c270;background:#2a4433;}
@@ -1058,6 +1069,16 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-rh-hit.miss {background:#c9573e;color:#fff6dc;}
 .mini-rh-score {display:flex;gap:12px;font:12px/1.4 var(--font-mono);color:#e8c270;}
 /* 经营（Game Dev Story / Papers, Please 那一路）：一间公司、一本日账、每项权限一个开关。 */
+/* The office: the studio's 1280x720 picture cropped to a strip, the ledger laid over its foot. Its
+   mood follows the books — dark when the lamp's own permission is off, hot when risk is halfway up. */
+.mini-mg-office {position:relative;overflow:hidden;aspect-ratio:16/7;background:#1a1420;border:1px solid #3a2f4d;}
+.mini-mg-bg {display:block;width:100%;height:100%;object-fit:cover;object-position:center 45%;image-rendering:pixelated;transition:filter .35s ease;}
+.mini-mg-office.dark .mini-mg-bg {filter:brightness(.4) saturate(.35);}
+.mini-mg-office.hot .mini-mg-bg {filter:contrast(1.06) saturate(1.5) hue-rotate(-16deg);}
+.mini-mg-office .mini-mg-bar {position:absolute;left:0;right:0;bottom:0;padding:4px 8px;background:rgba(18,14,24,.9);border-top:1px solid #4a3a58;}
+.mini-mg-office.drawn .window {position:absolute;left:6%;top:12%;width:16%;height:44%;background:#2b3a5a;border:2px solid #4a5f86;}
+.mini-mg-office.drawn .desk {position:absolute;left:10%;right:10%;bottom:14%;height:14%;background:#4a3a28;border-top:2px solid #6b543c;}
+.mini-mg-office.drawn .plant {position:absolute;right:8%;bottom:20%;width:7%;height:28%;background:#2f4a38;border:2px solid #4d7a5c;}
 .mini-mg-bar {display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
 .mini-mg-meter {display:inline-block;width:96px;height:10px;background:#1f3326;border:1px solid #4d7a5c;vertical-align:middle;}
 .mini-mg-meter i {display:block;height:100%;width:0;background:#c9573e;transition:width .25s;}
@@ -1071,11 +1092,36 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .mini-mg-perm small {display:block;color:#8aa894;}
 .mini-mg-log {margin:0;padding:4px 8px;font:11px/1.6 var(--font-body);color:#8aa894;max-height:96px;overflow:auto;background:#0d1410;border:1px dashed #2f4a38;}
 /* 卡牌（逆转裁判那一路）：一句主张，一张对应的证据牌。 */
+/* With the studio's frame the card is a 3:2 evidence card: the picture sits in the frame's window
+   (rows 31..108 of 160) and the name on the plate below it (rows 109..147) — both as percentages,
+   so the card is free to be any size. */
+.mini-cd-card.art {position:relative;aspect-ratio:3/2;padding:0;border:0;background:url(/art/pixel/minigames/mini-cd-card-frame.png) center/100% 100% no-repeat;image-rendering:pixelated;}
+.mini-cd-card.art:hover,.mini-cd-card.art:focus-visible {background-image:url(/art/pixel/minigames/mini-cd-card-frame-on.png);}
+.mini-cd-card.art small {display:none;}
+.mini-cd-card.art b {position:absolute;left:7%;right:7%;top:69%;height:23%;display:flex;align-items:center;justify-content:center;text-align:center;font:11px/1.2 var(--font-body);overflow:hidden;}
+.mini-cd-card-art {display:none;}
+.mini-cd-card.art .mini-cd-card-art {position:absolute;left:13%;right:13%;top:20%;height:46%;display:flex;align-items:center;justify-content:center;}
+.mini-cd-card-art img {max-width:100%;max-height:100%;image-rendering:pixelated;}
+/* What a card proves is one line under the hand, so the cards themselves stay clean. */
+.mini-cd-peek {margin:0;padding:5px 8px;font:11px/1.5 var(--font-body);color:#9db0a4;background:#101a14;border-left:3px solid #2f4a38;min-height:28px;}
+/* The room is the studio's picture; until it arrives the stand is drawn here in CSS. */
+.mini-cd-stage {position:relative;overflow:hidden;aspect-ratio:16/9;max-height:360px;background:#171226;border:1px solid #3a2f4d;}
+.mini-cd-bg {display:block;width:100%;height:100%;object-fit:cover;object-position:center 45%;image-rendering:pixelated;}
+.mini-cd-stage .mini-cd-claim {position:absolute;left:0;right:0;bottom:0;border-left-width:0;border-top:2px solid #8a5fb0;background:rgba(30,22,40,.94);}
+.mini-cd-stage.drawn .window {position:absolute;left:7%;top:12%;width:20%;height:32%;background:#2b3a5a;border:2px solid #4a5f86;}
+.mini-cd-stage.drawn .bench {position:absolute;left:12%;right:12%;bottom:8%;height:14%;background:#3b2f22;border-top:2px solid #57452f;}
+.mini-cd-stage.drawn .desk {position:absolute;left:24%;right:24%;bottom:20%;height:7%;background:#4a3a28;border-top:2px solid #6b543c;}
+.mini-cd-stage.drawn .stand {position:absolute;left:52%;bottom:24%;width:11%;height:32%;background:#4a3550;border:2px solid #6d4f78;}
+/* 击中与落空：驳倒时白光一闪，出错时画面一震——反馈跟着主张走，不靠读字。 */
+.mini-cd-stage.hit {animation:cd-hit .5s steps(4) 1;}
+.mini-cd-stage.miss {animation:cd-miss .4s ease-out 1;}
+@keyframes cd-hit {0%{filter:brightness(2.2) saturate(.4);transform:translate(-4px,0);}40%{filter:brightness(1.4);transform:translate(4px,0);}70%{transform:translate(-2px,0);}100%{filter:none;transform:translate(0,0);}}
+@keyframes cd-miss {0%{transform:translate(0,0);}25%{transform:translate(-5px,0);}50%{transform:translate(5px,0);}75%{transform:translate(-2px,0);}100%{transform:translate(0,0);}}
 .mini-cd-claim {padding:10px 12px;font:13px/1.6 var(--font-body);color:#fff6dc;background:#231a2e;border-left:3px solid #8a5fb0;min-height:44px;}
 .mini-cd-claim b {color:#d8b4e8;}
 .mini-cd-verdict {margin:0;padding:6px 8px;font:12px/1.6 var(--font-body);color:#cfe8d4;background:#101a14;border-left:3px solid #3f6a4c;min-height:32px;}
 .mini-cd-verdict.refute {border-left-color:#e8c270;color:#ffe8b0;}
-.mini-cd-cards {display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;}
+.mini-cd-cards {display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:8px;}
 .mini-cd-card {padding:7px 9px;text-align:left;font:12px/1.4 var(--font-body);color:#cfe8d4;background:#1f3326;border:1px solid #4d7a5c;cursor:pointer;}
 .mini-cd-card:hover {border-color:#e8c270;}
 .mini-cd-card b {display:block;color:#ffe8b0;}

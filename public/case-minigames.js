@@ -21,6 +21,63 @@
 
 const cls = (parts) => parts.filter(Boolean).join(" ");
 
+// A mini-game's picture is optional: public/art/pixel/minigames/<id>.png replaces the room drawn in
+// code. The list of what the studio has delivered arrives from /api/art after boot — later than the
+// game mounts — so a game asks hasMiniArt() and re-paints itself when the answer lands.
+let miniArt = null;
+const miniArtWaiting = new Set();
+if (typeof location !== "undefined") {
+  const token = document.querySelector('meta[name="workbench-token"]')?.content;
+  fetch("/api/art", { cache: "no-cache", headers: token ? { "X-Workbench-Token": token } : {} })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)
+    .then((data) => {
+      miniArt = new Set(data?.pixel || []);
+      for (const paint of miniArtWaiting) paint();
+      miniArtWaiting.clear();
+    });
+}
+const hasMiniArt = (id) => Boolean(miniArt?.has(`minigames/${id}`));
+const whenMiniArt = (paint) => (miniArt === null ? miniArtWaiting.add(paint) : paint());
+
+/** A picture that appears the moment the studio delivers it; an empty <img> until then. */
+function artImg(h, id, className) {
+  const img = h("img", { class: className, alt: "", "aria-hidden": "true" });
+  const sync = () => {
+    const has = hasMiniArt(id);
+    if (has) img.src = `/art/pixel/minigames/${id}.png`;
+    else img.removeAttribute("src");
+    img.classList.toggle("on", has);
+  };
+  sync();
+  whenMiniArt(sync);
+  return img;
+}
+
+/** The same for a background picture: the class turns the CSS background on. */
+function artBg(el, id, className = "art") {
+  const sync = () => el.classList.toggle(className, hasMiniArt(id));
+  sync();
+  whenMiniArt(sync);
+  return el;
+}
+
+// A sprite sheet arrives with a JSON saying the frame size and which row is which animation.
+// Loaded once, and only by a game that already has the sheet.
+const sheets = new Map();
+function loadSheet(id) {
+  if (!sheets.has(id)) {
+    sheets.set(id, fetch(`/art/pixel/minigames/${id}.json`, { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null));
+  }
+  return sheets.get(id);
+}
+const sheetWhenReady = (id, then) => {
+  const get = () => { if (hasMiniArt(id)) loadSheet(id).then(then); };
+  get();
+  whenMiniArt(get);
+};
+
 function head(h, icon, title, onHint) {
   return h("div", { class: "mini-head" }, h("b", {}, title),
     h("button", { class: "btn small", type: "button", onclick: () => onHint?.() }, icon("learn", { size: 14 }), "给个提示"));
@@ -44,13 +101,34 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   let last = 0;
 
   const bar = h("div", { class: "mini-td-bar" });
-  const path = h("div", { class: "mini-td-path" }, h("div", { class: "mini-td-home" }, "隐私"));
+  // What is being guarded, and what is coming for it: the studio's icons when they exist, the words
+  // always — the words are what tells a beginner which end of the path is which.
+  const home = h("div", { class: "mini-td-home" }, artImg(h, "mini-td-home", "mini-td-icon"), h("small", {}, "隐私"));
+  const spawn = h("div", { class: "mini-td-spawn" }, artImg(h, "mini-td-spawn", "mini-td-icon"), h("small", {}, "收集者"));
+  const path = h("div", { class: "mini-td-path" }, home);
+  artBg(path, "mini-td-path");
   const say = h("p", { class: "mini-say", role: "status" }, "先选一个措施，点路径上的位置放下去。收集者从右边来，走到最左边就泄出去了。");
   const palette = h("div", { class: "mini-td-units" });
   const start = h("button", { class: "btn primary", type: "button", onclick: () => nextWave() }, icon("scan", { size: 14 }), "放下一波");
   const root = h("div", { class: "mini mini-td" }, head(h, icon, lab.sampleTitle || "权限塔防", onHint), bar, path, palette, h("div", { class: "mini-controls" }, start), say);
 
-  const slotEls = slots.map((slot) => h("button", {
+  // The slots are rebuilt on every animation frame, so the icon is created once and only its src is
+  // swapped — a picture re-created 60 times a second flickers.
+  // A unit's picture is named after its `art` when the studio drew it under a different name than
+  // the id the case uses (`least-privilege` is drawn as a padlock).
+  const artOf = (unit) => (unit ? unit.art || unit.id : "");
+  const setIcon = (img, id) => {
+    const want = id && hasMiniArt(`mini-td-unit-${id}`) ? `/art/pixel/minigames/mini-td-unit-${id}.png` : "";
+    if ((img.getAttribute("src") || "") !== want) {
+      if (want) img.src = want;
+      else img.removeAttribute("src");
+    }
+    img.classList.toggle("on", Boolean(want));
+  };
+  const slotIcons = slots.map(() => h("img", { class: "mini-td-icon", alt: "", "aria-hidden": "true" }));
+  const slotNames = slots.map(() => h("b", {}, "空位"));
+  const slotLevels = slots.map(() => h("i", {}, ""));
+  const slotEls = slots.map((slot, i) => h("button", {
     class: "mini-td-slot", type: "button", style: `left:${slot.at}%`,
     onclick: () => {
       if (slot.unit) return upgrade(slot);
@@ -62,9 +140,9 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       say.textContent = `${unit.label}：${unit.note || "放在这里"}。`;
       paint();
     },
-  }, h("small", {}, "空位")));
+  }, slotIcons[i], slotNames[i], slotLevels[i]));
   slotEls.forEach((el) => path.append(el));
-  path.append(h("div", { class: "mini-td-spawn" }, "收集者"));
+  path.append(spawn);
 
   const upgrade = (slot) => {
     const unit = slot.unit;
@@ -78,7 +156,9 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
 
   const paletteEls = units.map((unit) => h("button", {
     class: cls(["mini-td-unit", picked === unit.id && "picked"]), type: "button", onclick: () => { picked = unit.id; paint(); },
-  }, h("b", {}, unit.label), h("span", {}, `${unit.cost} 点`), ...(unit.note ? [h("small", {}, unit.note)] : [])));
+  }, artImg(h, `mini-td-unit-${artOf(unit)}`, "mini-td-icon"),
+    h("div", { class: "mini-td-unit-text" }, h("b", {}, unit.label), h("span", {}, `${unit.cost} 点`),
+      ...(unit.note ? [h("small", {}, unit.note)] : []))));
   palette.append(...paletteEls);
 
   const paint = () => {
@@ -90,14 +170,43 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     slotEls.forEach((el, i) => {
       const slot = slots[i];
       el.className = cls(["mini-td-slot", slot.unit && "placed"]);
-      el.replaceChildren(...(slot.unit ? [h("b", {}, slot.unit.label), h("i", {}, `Lv${slot.unit.level}`)] : [h("small", {}, "空位")]));
+      setIcon(slotIcons[i], artOf(slot.unit));
+      slotNames[i].textContent = slot.unit ? slot.unit.label : "空位";
+      slotLevels[i].textContent = slot.unit ? `Lv${slot.unit.level}` : "";
     });
     paletteEls.forEach((el, i) => el.classList.toggle("picked", units[i].id === picked));
   };
 
-  const drawEnemies = () => {
-    path.querySelectorAll(".mini-td-enemy").forEach((el) => el.remove());
-    for (const enemy of enemies) path.append(h("div", { class: "mini-td-enemy", style: `left:${enemy.x}%` }, "数据包"));
+  // 收集者: the studio's sprite walks the four frames of row 0, and the "blocked" frame is left
+  // behind where one of them is stopped. Without the sheet they stay the words 数据包.
+  const SHEET = "anim-mini-td-collector";
+  let sheet = null;
+  sheetWhenReady(SHEET, (data) => { sheet = data; });
+  const spriteCss = (el, row, col) => {
+    const [fw, fh] = sheet.frame;
+    el.style.backgroundImage = `url(/art/pixel/minigames/${SHEET}.png)`;
+    el.style.backgroundSize = `${sheet.sheet[0] * fw}px ${sheet.sheet[1] * fh}px`;
+    el.style.backgroundPosition = `-${col * fw}px -${row * fh}px`;
+  };
+  const drawEnemies = (now = performance.now()) => {
+    for (const enemy of enemies) {
+      if (!enemy.el) {
+        enemy.el = h("div", { class: cls(["mini-td-enemy", sheet && "sprite"]) });
+        if (!sheet) enemy.el.textContent = "数据包";
+        path.append(enemy.el);
+      }
+      enemy.el.style.left = `${enemy.x}%`;
+      if (sheet) {
+        const walk = sheet.animations.walk;
+        const ms = Array.isArray(walk.ms) ? walk.ms[0] : walk.ms;
+        enemy.el.style.width = `${sheet.frame[0]}px`;
+        enemy.el.style.height = `${sheet.frame[1]}px`;
+        spriteCss(enemy.el, walk.row, Math.floor(now / ms) % walk.frames);
+      }
+    }
+    for (const el of [...path.querySelectorAll(".mini-td-enemy")]) {
+      if (!enemies.some((enemy) => enemy.el === el)) el.remove();
+    }
   };
 
   const tick = (now) => {
@@ -121,12 +230,24 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       if (Math.abs(enemy.x - slot.at) <= (unit.range ?? 22)) {
         enemy.hp -= unit.dps * dt;
         if (unit.slow) enemy.slow = 1.2;
-        if (enemy.hp <= 0) { enemy.dead = true; say.textContent = `${unit.label}拦下了一个。`; }
+        if (enemy.hp <= 0) {
+          enemy.dead = true;
+          say.textContent = `${unit.label}拦下了一个。`;
+          // Leave the "blocked" frame lying where it fell for a moment, so a kill reads as a kill.
+          const fall = sheet?.animations["blocked-fall"];
+          if (fall) {
+            // Not .mini-td-enemy: drawEnemies() sweeps those every frame, and this one has to stay.
+            const ghost = h("div", { class: "mini-td-fall", style: `left:${enemy.x}%;width:${sheet.frame[0]}px;height:${sheet.frame[1]}px` });
+            spriteCss(ghost, fall.row, fall.start || 0);
+            path.append(ghost);
+            setTimeout(() => ghost.remove(), (Array.isArray(fall.ms) ? fall.ms[0] : fall.ms) + 60);
+          }
+        }
       }
     }
     enemies = enemies.filter((enemy) => !enemy.dead);
     paint();
-    drawEnemies();
+    drawEnemies(now);
     if (hp <= 0) return finish(false);
     if (!enemies.length && wave < waves.length - 1) return nextWave();
     if (!enemies.length && wave >= waves.length - 1) return finish(true);
@@ -134,6 +255,7 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
   };
 
   const nextWave = () => {
+    if (running && enemies.length) return; // mashing the button must not stack two waves on the path
     if (wave >= waves.length - 1) return finish(true);
     wave += 1;
     const spec2 = waves[wave];
@@ -142,6 +264,7 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     running = true;
     last = performance.now();
     paint();
+    drawEnemies(last);
     requestAnimationFrame(tick);
   };
 
@@ -365,9 +488,25 @@ export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () =>
   let over = false;
 
   const say = h("p", { class: "mini-say", role: "status" }, "董事会把权限全开了，广告收入到账、用户在流失、查处风险在涨。该关哪几项，你来定——每过一天结一次账。");
+  // The office: the studio's picture once it lands, a desk and a window drawn in CSS until then.
+  // It answers to the ledger the way a shop answers to the owner in 日式经营 games — the lights go
+  // out when the lamp's own permission is off, and the room runs hot when 查处 risk piles up.
+  const bar = h("div", { class: "mini-mg-bar" });
+  const officeId = lab.manageRoom || "mini-mg-office";
+  const officeDrawn = [h("span", { class: "window" }), h("span", { class: "desk" }), h("span", { class: "plant" })];
+  const office = h("div", { class: "mini-mg-office drawn" }, ...officeDrawn, bar);
+  const paintOffice = () => {
+    const has = hasMiniArt(officeId);
+    if (has === Boolean(office.querySelector("img"))) return;
+    office.className = cls(["mini-mg-office", !has && "drawn"]);
+    office.replaceChildren(...(has
+      ? [h("img", { class: "mini-mg-bg", src: `/art/pixel/minigames/${officeId}.png`, alt: "" })]
+      : officeDrawn), bar);
+  };
+  paintOffice();
+  whenMiniArt(paintOffice);
   const log = h("div", { class: "mini-mg-log" });
   const meter = h("span", { class: "mini-mg-meter" }, h("i", {}));
-  const bar = h("div", { class: "mini-mg-bar" });
   const next = h("button", { class: "btn primary", type: "button", onclick: () => endDay() }, icon("scan", { size: 14 }), "过一天");
   const restart = h("button", { class: "btn", type: "button", hidden: true, onclick: () => reset() }, "重新开张");
   const permEls = perms.map((perm) => h("button", {
@@ -387,7 +526,7 @@ export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () =>
     ...(perm.need ? [h("span", { class: "gain" }, "开灯必须")] : []),
     ...(perm.note ? [h("small", {}, perm.note)] : [])));
   const root = h("div", { class: "mini mini-manage" }, head(h, icon, lab.manageTitle || "权限的代价", onHint),
-    bar, h("div", { class: "mini-mg-perms" }, ...permEls), h("div", { class: "mini-controls" }, next, restart), say, log);
+    office, h("div", { class: "mini-mg-perms" }, ...permEls), h("div", { class: "mini-controls" }, next, restart), say, log);
 
   const paint = () => {
     const maxRisk = spec.riskMax ?? 120;
@@ -399,6 +538,10 @@ export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () =>
     bar.append(meter);
     meter.firstChild.style.width = `${Math.min(100, (risk / maxRisk) * 100)}%`;
     permEls.forEach((el, i) => { el.className = cls(["mini-mg-perm", perms[i].on ? "on" : "off"]); });
+    // The room answers to the ledger: no lamp permission means a dark shop, heavy risk means a hot one.
+    const lamp = perms.find((perm) => perm.need);
+    office.classList.toggle("dark", Boolean(lamp) && !lamp.on);
+    office.classList.toggle("hot", risk >= maxRisk * 0.5);
   };
 
   const endDay = () => {
@@ -503,19 +646,53 @@ export function mountCards({ h, icon, lab, onMistake = () => {}, onHint = () => 
   let idx = 0;
   let wrong = 0;
 
+  // The room: the studio's picture (public/art/pixel/minigames/<id>.png) once it is delivered, a
+  // bench and a desk drawn in CSS until then. The claim hangs over it the way a witness stand does
+  // in 逆转裁判 — one speaker, one line at a time, nothing else competing for the eye.
+  const roomId = lab.cardsRoom || "mini-cd-room";
+  const drawn = [h("span", { class: "window" }), h("span", { class: "bench" }), h("span", { class: "desk" }), h("span", { class: "stand" })];
   const bubble = h("div", { class: "mini-cd-claim" });
+  const stage = h("div", { class: "mini-cd-stage drawn" }, ...drawn, bubble);
+  const paintRoom = () => {
+    const has = hasMiniArt(roomId);
+    if (has === Boolean(stage.querySelector("img"))) return;
+    stage.className = cls(["mini-cd-stage", !has && "drawn"]);
+    stage.replaceChildren(...(has ? [h("img", { class: "mini-cd-bg", src: `/art/pixel/minigames/${roomId}.png`, alt: "" })] : drawn), bubble);
+  };
+  paintRoom();
+  whenMiniArt(paintRoom);
+
   const verdict = h("p", { class: "mini-cd-verdict" }, "");
   const count = h("span", { class: "mini-count" });
-  const say = h("p", { class: "mini-say", role: "status" }, `${spec.opponent || "对方"}一句句说，你出对应的那张证据牌。对质不是吵架：让每一句话都对上一件证据。`);
+  const intro = `${spec.opponent || "对方"}一句句说，你出对应的那张证据牌。对质不是吵架：让每一句话都对上一件证据。`;
+  const say = h("p", { class: "mini-say", role: "status" }, intro);
+  const restart = h("button", { class: "btn", type: "button", onclick: () => reset() }, "重新对质");
+  let flashTimer = 0;
+  const flashStage = (kind) => {
+    stage.classList.remove("hit", "miss");
+    void stage.offsetWidth; // restart the animation even when the last one is still running
+    stage.classList.add(kind);
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => stage.classList.remove("hit", "miss"), 560);
+  };
   const paint = () => {
     bubble.replaceChildren(h("b", {}, `${spec.opponent || "对方"}：`), ` ${claims[idx]?.text || "……（他不说话了）"}`);
     count.textContent = `已驳回 ${idx}/${claims.length} · 打错 ${wrong}`;
+  };
+  const reset = () => {
+    idx = 0;
+    wrong = 0;
+    verdict.className = "mini-cd-verdict";
+    verdict.textContent = "";
+    say.textContent = intro;
+    paint();
   };
   const play = (card) => {
     const claim = claims[idx];
     if (!claim || !card) return;
     if (card.id === claim.answer) {
       idx += 1;
+      flashStage("hit");
       verdict.className = "mini-cd-verdict refute";
       verdict.textContent = `【等一下！】${claim.why || "这句话被证据驳倒了。"}`;
       if (idx >= claims.length) {
@@ -528,6 +705,7 @@ export function mountCards({ h, icon, lab, onMistake = () => {}, onHint = () => 
       }
     } else {
       wrong += 1;
+      flashStage("miss");
       onMistake();
       verdict.className = "mini-cd-verdict";
       verdict.textContent = `${card.label}——这张牌说明不了这句：它${card.note || "讲的是另一件事"}。`;
@@ -535,9 +713,37 @@ export function mountCards({ h, icon, lab, onMistake = () => {}, onHint = () => 
     }
     paint();
   };
-  const cardEls = cards.map((card) => h("button", { class: "mini-cd-card", type: "button", onclick: () => play(card) },
+  // Hovering a card says what it proves, so the player can study the evidence before committing.
+  // In 逆转裁判 you read the file first and decide later; the same beat, kept out of the card itself
+  // so the card stays a picture and a name.
+  const peekIdle = "把光标停在一张牌上看它说明什么；出牌前先听清对面在主张什么。";
+  const peek = h("p", { class: "mini-cd-peek" }, peekIdle);
+  const showNote = (card) => (peek.textContent = card.note ? `${card.label}——${card.note}` : card.label);
+  const cardEls = cards.map((card) => h("button", {
+    class: "mini-cd-card", type: "button", onclick: () => play(card),
+    onmouseenter: () => showNote(card), onfocus: () => showNote(card),
+    onmouseleave: () => (peek.textContent = peekIdle), onblur: () => (peek.textContent = peekIdle),
+  }, h("span", { class: "mini-cd-card-art", "aria-hidden": "true" }),
     h("b", {}, card.label), ...(card.note ? [h("small", {}, card.note)] : [])));
+  // The studio's frame turns each card into a 3:2 evidence card: the picture in the window, the name
+  // on the plate below it. Without it the cards stay plain text buttons.
+  const paintCards = () => {
+    const framed = hasMiniArt("mini-cd-card-frame");
+    for (const [i, card] of cards.entries()) {
+      const box = cardEls[i].querySelector(".mini-cd-card-art");
+      const pic = hasMiniArt(`mini-cd-art-${card.id}`);
+      cardEls[i].classList.toggle("art", framed);
+      if (pic && !box.firstChild) {
+        box.append(h("img", { src: `/art/pixel/minigames/mini-cd-art-${card.id}.png`, alt: "" }));
+      } else if (!pic && box.firstChild) {
+        box.replaceChildren();
+      }
+    }
+  };
+  paintCards();
+  whenMiniArt(paintCards);
   paint();
   return h("div", { class: "mini mini-cards" }, head(h, icon, lab.cardsTitle || "当面对质", onHint),
-    bubble, verdict, h("div", { class: "mini-cd-cards" }, ...cardEls), h("div", { class: "mini-controls" }, count), say);
+    stage, verdict, h("div", { class: "mini-cd-cards" }, ...cardEls), peek,
+    h("div", { class: "mini-controls" }, count, restart), say);
 }

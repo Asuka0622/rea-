@@ -1,4 +1,4 @@
-asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
+﻿asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
 kobayashi-thinking,小林,docs/art/public/art/kobayashi-thinking.png,public/art/faces/kobayashi-thinking.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 lumi-point,路米,docs/art/public/art/lumi-point.png,public/art/faces/lumi-point.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
 azhe-normal,阿哲,docs/art/public/art/azhe-normal.png,public/art/faces/azhe-normal.webp,,,,320,320,是,,,已验收,由具名半身源图生成320×320 WebP；已核对真实透明通道；待游戏头像预览确认
@@ -121,3 +121,63 @@ xiaoke-unsure,小克,docs/art/review/sources/xiaoke-clawd-expressions-source.png
 anim-xiaoke,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/art/pixel/anim-xiaoke.png,,,,256,480,是,64×96,悬浮待机4 / 移动4 / 说话2 / 故障闪烁4 / 缩小进怀表4,待验收,4列×5行；统一帧宽高和基线；按Clawd橙色像素蟹制作
 anim-xiaoke-metadata,小克,docs/art/review/animations/anim-xiaoke.json,public/art/pixel/anim-xiaoke.json,,,,,,,64×96,悬浮待机4 / 移动4 / 说话2 / 故障闪烁4 / 缩小进怀表4,待验收,动作行帧数朝向与逐帧时长元数据
 xiaoke-pocket-watch,小克,docs/art/review/sources/anim-xiaoke-clawd-source.png,public/art/pixel/ui/pocket-watch-xiaoke.png,,,,32,32,是,,,待验收,小克进入怀表的像素图标；待UI缩放验收
+cd-room,卡牌小游戏,docs/art/review/sources/mini-cd-room-source.png,public/art/pixel/minigames/mini-cd-room.png,,,,1280,720,否,,,待验收,卡牌对质会议室背景；源图按 1280×720 缩放；待游戏内位置验收
+cd-card-frame,卡牌小游戏,docs/art/review/sources/minigame-frame-source.png,public/art/pixel/minigames/mini-cd-card-frame.png,,,,240,160,是,,,待验收,空白通用证据卡框；中心插图区透明、底部标题条留空；待界面验收
+cd-card-frame-on,卡牌小游戏,docs/art/review/sources/mini-cd-card-frame-on-derived.png,public/art/pixel/minigames/mini-cd-card-frame-on.png,,,,240,160,是,,,待验收,由基础卡框派生的选中态琥珀外沿；待界面验收
+cd-art-capture,卡牌小游戏,docs/art/review/sources/mini-cd-art-capture-source.png,public/art/pixel/minigames/mini-cd-art-capture.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+cd-art-timer,卡牌小游戏,docs/art/review/sources/mini-cd-art-timer-source.png,public/art/pixel/minigames/mini-cd-art-timer.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+cd-art-sdk,卡牌小游戏,docs/art/review/sources/mini-cd-art-sdk-source.png,public/art/pixel/minigames/mini-cd-art-sdk.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+cd-art-terms,卡牌小游戏,docs/art/review/sources/mini-cd-art-terms-source.png,public/art/pixel/minigames/mini-cd-art-terms.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+cd-art-changelog,卡牌小游戏,docs/art/review/sources/mini-cd-art-changelog-source.png,public/art/pixel/minigames/mini-cd-art-changelog.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+cd-art-lamp,卡牌小游戏,docs/art/review/sources/mini-cd-art-lamp-source.png,public/art/pixel/minigames/mini-cd-art-lamp.png,,,,96,64,是,,,待验收,证据卡面物件插图；由统一六格透明像素图集裁切；无可读文字；待界面验收
+mg-office,经营小游戏,docs/art/review/sources/minigame-office-source.png,public/art/pixel/minigames/mini-mg-office.png,,,,1280,720,否,,,待验收,45°等距手电筒公司经营场景；空广告位；待游戏内验收
+td-path,塔防,docs/art/review/sources/td-path-source.png,public/art/pixel/minigames/mini-td-path.png,,,,1440,192,否,,,待验收,机房通道连续带，左右门位与中段细节待游戏位置验收
+td-home,塔防,docs/art/review/sources/mini-td-home-source.png,public/art/pixel/minigames/mini-td-home.png,,,,64,64,是,,,待验收,暖色隐私保险柜像素道具
+td-spawn,塔防,docs/art/review/sources/mini-td-spawn-source.png,public/art/pixel/minigames/mini-td-spawn.png,,,,64,64,是,,,待验收,冷色SDK大门像素道具
+td-unit-lock,塔防,docs/art/review/sources/mini-td-unit-lock-source.png,public/art/pixel/minigames/mini-td-unit-lock.png,,,,32,32,是,,,待验收,最小权限挂锁
+td-unit-throttle,塔防,docs/art/review/sources/mini-td-unit-throttle-source.png,public/art/pixel/minigames/mini-td-unit-throttle.png,,,,32,32,是,,,待验收,限速节流阀
+td-unit-sandbox,塔防,docs/art/review/sources/mini-td-unit-sandbox-source.png,public/art/pixel/minigames/mini-td-unit-sandbox.png,,,,32,32,是,,,待验收,沙盒隔离玻璃罩
+anim-td-collector,塔防,docs/art/review/sources/td-collector-atlas-source.png,public/art/pixel/minigames/anim-mini-td-collector.png,,,,96,96,是,24x24,"walk4 + blocked-fall1, JSON随PNG交付",待验收,精灵表只填前5格，其余透明；仍需核对游戏锚点与播放
+anim-mg-customer,经营,docs/art/review/sources/mg-customer-atlas-source.png,public/art/pixel/minigames/anim-mini-mg-customer.png,,,,80,168,是,20x28,"男女各walk4 + 满意2 + 皱眉2, JSON随PNG交付",待验收,六行动作映射，未使用帧格透明
+mg-coin,经营,docs/art/review/sources/mini-mg-coin-source.png,public/art/pixel/minigames/mini-mg-coin.png,,,,16,16,是,,,待验收,金币粒子
+rh-frame,节奏,docs/art/review/sources/rh-frame-source.png,public/art/pixel/minigames/mini-rh-frame.png,,,,1520,440,是,,,待验收,CRT边框，屏幕开口透明
+rh-lane,节奏,docs/art/review/sources/rh-lane-source.png,public/art/pixel/minigames/mini-rh-lane.png,,,,1440,160,是,,,待验收,光纤轨道带
+rh-line,节奏,docs/art/review/sources/rh-line-source.png,public/art/pixel/minigames/mini-rh-line.png,,,,24,160,是,,,待验收,青色闸刀判定线
+anim-rh-upload,节奏,docs/art/review/sources/rh-upload-atlas-source.png,public/art/pixel/minigames/anim-mini-rh-upload.png,,,,144,108,是,48x36,"breathe2 + hit1 + miss1, JSON随PNG交付",待验收,3x3格表前4帧有效，其余透明
+anim-rh-sync,节奏,docs/art/review/sources/rh-sync-atlas-source.png,public/art/pixel/minigames/anim-mini-rh-sync.png,,,,144,108,是,48x36,"breathe2 + hit1 + miss1, JSON随PNG交付",待验收,3x3格表前4帧有效，其余透明
+pipe-straight,管道,docs/art/review/sources/mini-pipe-straight-source.png,public/art/pixel/minigames/mini-pipe-straight.png,,,,64,64,是,,,待验收,带法兰直管，单朝向
+pipe-elbow,管道,docs/art/review/sources/mini-pipe-elbow-source.png,public/art/pixel/minigames/mini-pipe-elbow.png,,,,64,64,是,,,待验收,带法兰弯管，单朝向
+pipe-key,管道,docs/art/review/sources/mini-pipe-key-source.png,public/art/pixel/minigames/mini-pipe-key.png,,,,32,32,是,,,待验收,钥匙形数据块
+pipe-exit-server,管道,docs/art/review/sources/mini-pipe-exit-server-source.png,public/art/pixel/minigames/mini-pipe-exit-server.png,,,,48,48,是,,,待验收,绿色机柜出口
+pipe-exit-package,管道,docs/art/review/sources/mini-pipe-exit-package-source.png,public/art/pixel/minigames/mini-pipe-exit-package.png,,,,48,48,是,,,待验收,红色发布包装箱，空白标签
+mg-ad-lamp,经营,docs/art/review/sources/mini-mg-ad-lamp-source.png,public/art/pixel/minigames/mini-mg-ad-lamp.png,,,,96,64,是,,,待验收,灯泡广告贴画，无文字
+mg-ad-contacts,经营,docs/art/review/sources/mini-mg-ad-contacts-source.png,public/art/pixel/minigames/mini-mg-ad-contacts.png,,,,96,64,是,,,待验收,通讯录好友广告贴画，无文字
+mg-ad-nearby,经营,docs/art/review/sources/mini-mg-ad-nearby-source.png,public/art/pixel/minigames/mini-mg-ad-nearby.png,,,,96,64,是,,,待验收,定位附近广告贴画，无文字
+mg-alert,经营,docs/art/review/sources/mini-mg-alert-source.png,public/art/pixel/minigames/mini-mg-alert.png,,,,32,32,是,,,待验收,风险警铃；摇摆由代码完成
+mg-notice,经营,docs/art/review/sources/mini-mg-notice-source.png,public/art/pixel/minigames/mini-mg-notice.png,,,,48,64,是,,,待验收,空白通报文件与图形红章，无文字
+dev-normal,开发者,docs/art/review/sources/dev-character-direction-source.png,public/art/faces/dev-normal.webp,,,,320,320,是,,,待验收,方向稿首表情，半身裁切，WebP保留alpha
+dev-happy,开发者,docs/art/review/sources/dev-happy-source.png,public/art/faces/dev-happy.webp,,,,320,320,是,,,待验收,开心/释然表情
+dev-thinking,开发者,docs/art/review/sources/dev-thinking-source.png,public/art/faces/dev-thinking.webp,,,,320,320,是,,,待验收,思考表情
+dev-surprised,开发者,docs/art/review/sources/dev-surprised-source.png,public/art/faces/dev-surprised.webp,,,,320,320,是,,,待验收,惊讶表情
+dev-flustered,开发者,docs/art/review/sources/dev-flustered-source.png,public/art/faces/dev-flustered.webp,,,,320,320,是,,,待验收,被驳倒心虚表情
+dev-direction,开发者,docs/art/review/sources/dev-character-direction-source.png,docs/art/review/dev-character-direction.png,,,,1254,1254,是,,,候选,开发者人设方向稿；供五表情一致性参考，待接入方确认
+td-fx,塔防,docs/art/review/sources/td-fx-atlas-source.png,public/art/pixel/minigames/mini-td-fx.png,,,,96,32,是,32x32,"intercept 3 frames, 90ms",待验收,可选拦截特效；帧JSON随PNG交付
+pipe-flow,管道,docs/art/review/sources/pipe-flow-atlas-source.png,public/art/pixel/minigames/mini-pipe-flow.png,,,,128,32,是,32x32,"flow 4 frames, 110ms",待验收,可选接通光流；帧JSON随PNG交付
+fv-arena-concept,格斗概念,docs/art/review/sources/mini-fv-arena-concept-source.png,docs/art/review/sources/mini-fv-arena-concept.png,秋,晴,傍晚,1280,720,否,,,候选,单张概念图，玩法与角色姿势待定稿
+tl-board-concept,时间线概念,docs/art/review/sources/mini-tl-board-concept-source.png,docs/art/review/sources/mini-tl-board-concept.png,,,,1440,160,否,,,候选,单张概念横轨，事件图标待点名
+ui-stamp-ok,侦探界面,docs/art/review/sources/stamp-ok-source.png,public/art/pixel/ui/stamp-ok.png,,,,96,48,是,,,待验收,成立印章底图，图形对勾，代码负责文字
+ui-stamp-closed,侦探界面,docs/art/review/sources/stamp-closed-source.png,public/art/pixel/ui/stamp-closed.png,,,,96,48,是,,,待验收,结案印章底图，关门图标，代码负责文字
+ui-claim-card,侦探界面,docs/art/review/sources/claim-card-source.png,public/art/pixel/ui/claim-card.png,,,,240,60,是,,,待验收,空白说法卡，文字由代码绘制
+ui-objection,侦探界面,docs/art/review/sources/objection-banner-source.png,public/art/pixel/ui/objection.png,,,,120,40,是,,,待验收,异议强调底条，不含文字
+ui-timemachine-dial,时光机界面,docs/art/review/sources/timemachine-dial-source.png,public/art/pixel/ui/timemachine-dial.png,,,,480,270,是,,,待验收,7个留空时代窗，当前格微光；年份由代码绘制
+ui-era-1843,时光机界面,docs/art/review/sources/era-1843-source.png,public/art/pixel/ui/era-1843.png,,,,96,64,是,,,待验收,维多利亚伦敦缩略图，无年份文字
+ui-era-now,时光机界面,docs/art/review/sources/era-now-source.png,public/art/pixel/ui/era-now.png,,,,96,64,是,,,待验收,比特镇现在缩略图，无年份文字
+ui-era-locked,时光机界面,docs/art/review/sources/era-locked-source.png,public/art/pixel/ui/era-locked.png,,,,96,64,是,,,待验收,锁定时代缩略图，无文字
+ui-pocket-watch,侦探界面,docs/art/review/sources/pocket-watch-source.png,public/art/pixel/ui/pocket-watch.png,,,,32,32,是,,,待验收,普通黄铜怀表图标
+badge-detective,侦探徽章,docs/art/review/sources/badge-detective-source.png,public/art/pixel/badge-detective.png,,,,48,48,是,,,待验收,见习侦探放大镜徽章
+ui-drill-tier-compare,复勘界面,docs/art/review/sources/drill-tier-compare-source.png,public/art/pixel/ui/drill-tier-compare.png,,,,32,32,是,,,待验收,对照徽章；星数由代码绘制
+ui-drill-tier-trace,复勘界面,docs/art/review/sources/drill-tier-trace-source.png,public/art/pixel/ui/drill-tier-trace.png,,,,32,32,是,,,待验收,溯源徽章；星数由代码绘制
+ui-drill-tier-verdict,复勘界面,docs/art/review/sources/drill-tier-verdict-source.png,public/art/pixel/ui/drill-tier-verdict.png,,,,32,32,是,,,待验收,定案徽章；星数由代码绘制
+case-props-gear-1843,钟楼,docs/art/review/sources/gear-1843-source.png,public/art/pixel/case-props/gear-1843.png,,,,64,64,是,,,待验收,黄铜齿轮；铭文由代码叠加
+ui-user-agreement,用户协议界面,docs/art/review/sources/user-agreement-source.png,public/art/pixel/ui/user-agreement.png,,,,240,320,是,,,待验收,翻开的协议页面，放大镜与抽象排版纹理，无伪文字
+fx-time-warp,穿越特效,docs/art/review/sources/time-warp-atlas-source.png,public/art/pixel/fx/time-warp.png,,,,576,96,是,96x96,,待验收,6帧齿轮与光；90–120ms，JSON随图交付

@@ -43,6 +43,8 @@
 
 权限开关面板、日结账本、风险条、用户数字：代码画，不用出图。
 
+2026-10-18 检查 `public/game.css` 的 `.mini-mg-office.dark` 与 `.mini-mg-office.hot` 已分别提供明暗和高风险调色，因此不另画 `mini-mg-office-evening.png`；对应清单状态标为「已验收（代码滤镜覆盖）」，无独立目标文件。
+
 ## 四、卡牌 · 当面对质（试玩 `?debug&mini=privacy-ledger&kind=cards`；**美术要求最高的一批**）
 
 参考逆转裁判式举证的**构图**，场景是比特镇自己的会议室，不照搬法庭。
