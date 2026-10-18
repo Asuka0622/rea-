@@ -297,13 +297,13 @@ export const DEMO_QUEST = {
       id: "d-case-2",
       title: "委托二 · 朵朵的存档",
       steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵的农场也在住宅区，红色谷仓那里。", face: "thinking" }] }],
-      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
+      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人；影响别人的数据，要服务器说了算。", face: "happy" }],
     },
     {
       id: "d-case-3",
       title: "委托三 · 小雨的计算器",
       steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "去小雨家，找找计算器里的秘密", say: [{ text: "最后一份委托来自小雨：她说计算器里藏着秘密。她家是住宅区里粉色屋顶的那栋。", face: "happy" }] }],
-      done: [{ text: "彩蛋可以留，后门不能留。重要的检查要放在服务器上，这条要记住。", face: "normal" }],
+      done: [{ text: "彩蛋可以留，后门不能留：藏起来的入口，要看门后面是什么。", face: "normal" }],
     },
     {
       id: "d-finale",
@@ -312,6 +312,12 @@ export const DEMO_QUEST = {
       steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所向路米报告", say: [{ text: "三份委托都办完了！回事务所来吧，我有东西要给你。", face: "happy" }] }],
       done: [
         { text: "这枚「见习侦探」徽章是你的了！拆开软件、收集证据、拿证据说话，你都学会了。", face: "happy" },
+        // 中场（docs/story-prologue.md 第 3、4 节）：三个案子各留下一条主线线索，在这里第一次摆到一起。
+        { text: "不过，手账里有三条线索，哪个委托都没问，我却放不下。", face: "thinking" },
+        { text: "小林的小账本，偷偷把数据发给「悄悄统计」。朵朵的存档，每晚 23:58 在「同步」。小雨的计算器，每晚 23:58 往「钟楼」上传。", face: "thinking" },
+        { text: "悄悄统计、23:58、钟楼……这三件事，有关系吗？", face: "thinking" },
+        { who: "xiaoke", text: "我可以帮你查悄悄统计！……嗯，我只查到它的广告：「让数据为你服务」。它具体在做什么，我不确定。", face: "unsure" },
+        { text: "能说「不确定」，比瞎猜强多了。", face: "happy" },
         { focus: "story balanced", text: "……对了，你有没有发现？今天中午，北边钟楼的钟一声都没响。", face: "thinking" },
         { text: "钟楼那边好像有动静。我们去看看！", face: "surprised" },
       ],
