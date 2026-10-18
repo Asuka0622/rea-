@@ -15,6 +15,10 @@ import { unlockedTools, progressFromStars } from "./case-tension.js";
 import { PROLOGUE_QUESTS } from "./prologue-quests.js";
 import { loadProgress, saveProgress, readNotices, markCompleted, playerFor } from "./quest-progress.js";
 import { boardLines } from "./quest-board.js";
+import { BASE_SPEED, sprintSpeed } from "./world-scale.js";
+import { eggsInRegion, loadFound, saveFound, collect as collectEgg } from "./easter-eggs.js";
+import { npcsInRegion, loadTalked, saveTalked, markTalked } from "./npc-chatter.js";
+import { sceneryInRegion, promptFor } from "./scenery.js";
 
 /** 已结案的星级表 → 已解锁的侦探工具（张力层的成长）。 */
 const CASE_STARS_KEY = "rea-workbench-case-stars";
@@ -41,6 +45,9 @@ const SPEAKERS = {
   liuniangzi: "柳娘子",
   hangonglian: "韩公廉",
   susong: "苏颂",
+  xiaoke: "小克",
+  ada: "爱达",
+  babbage: "巴贝奇",
 };
 
 /** The time machine's dial (docs/concept.md): the eras in story order, and the map each one opens on. */
@@ -51,6 +58,16 @@ const ERAS = [
   { id: "forties", title: "1940 年代", place: "破译小组", year: "1940 年代" },
   { id: "internet", title: "连接世界", place: "大学机房", year: "1960–90 年代" },
   { id: "modern", title: "现代都市", place: "AI 研究所", year: "现在" },
+];
+
+/** 正式版的六站（docs/concept.md 第 4 节）：序章之后，从 1843 年的伦敦一路走回今天。 */
+const PART_ONE = [
+  { title: "1843 · 伦敦", note: "巴贝奇与爱达 · 程序是一步步的指令" },
+  { title: "1950 · 曼彻斯特", note: "图灵 · 机器能思考吗" },
+  { title: "1970 · 斯坦福", note: "专家系统 · 规则就是知识" },
+  { title: "1997 · 纽约", note: "深蓝 · 算得多不等于想得懂" },
+  { title: "2012–16 · 多伦多与首尔", note: "神经网络 · 从数据里学" },
+  { title: "2017–今 · 现在", note: "生成式 AI · 回到 12:00" },
 ];
 
 // 游戏外壳 (beginner mode): the workbench presented like an indie game. A full-screen town map is the
@@ -339,12 +356,108 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         );
       }),
       ...exitSigns(),
+      ...eggEls(),
+      ...npcEls(),
+      ...sceneryEls(),
       // fronts are added by addFronts() below
       (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
     );
     placePlayer();
     addFronts();
     scatterLeaves();
+  }
+
+  /* 彩蛋：地图角落里的小东西，走过去就捡到（easter-eggs.js 里的数据）。 */
+  function currentRegionName() {
+    return regional() ? region : "center";
+  }
+  function eggEls() {
+    const found = loadFound();
+    return eggsInRegion(currentRegionName())
+      .filter((egg) => !found.includes(egg.id))
+      .map((egg) =>
+        h("span", {
+          class: "game-egg",
+          "data-egg": egg.id,
+          "aria-hidden": "true",
+          style: `left:calc(${egg.x}px * var(--px));top:calc(${egg.y}px * var(--px));position:absolute;font-size:calc(9px * var(--px));line-height:1;color:#ffe9a8;text-shadow:0 0 calc(3px * var(--px)) #ffd166;pointer-events:none;z-index:5;`,
+        }, "✦"),
+      );
+  }
+  /** 走到彩蛋上就自动捡起来：一句台词 + 一个已捡记录，捡过的不再出现。 */
+  function collectNearEggs() {    const found = loadFound();
+    for (const egg of eggsInRegion(currentRegionName())) {
+      if (found.includes(egg.id)) continue;
+      if (Math.hypot(player.x - egg.x, player.y - egg.y) > 9) continue;
+      saveFound(collectEgg(found, egg.id));
+      achievements.note({ type: "eggs", count: loadFound().length });
+      worldEl?.querySelector(`[data-egg="${CSS.escape(egg.id)}"]`)?.remove();
+      toast(`彩蛋 · ${egg.title}`);
+      void say([{ text: egg.text, face: "happy" }]);
+      return;
+    }
+  }
+
+  /* 会说话的 NPC：暂时是带名字的占位小人，走近就搭话（npc-chatter.js）。 */
+  let nearNpcId = null;  function npcEls() {
+    return npcsInRegion(currentRegionName()).map((npc) =>
+      h("span", {
+        class: "game-npc",
+        "data-npc": npc.id,
+        style: `left:calc(${npc.x}px * var(--px));top:calc(${npc.y}px * var(--px));position:absolute;z-index:6;pointer-events:none;text-align:center;`,
+      },
+        h("i", { style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};box-shadow:0 0 calc(2px * var(--px)) rgba(0,0,0,.55);` }),
+        h("b", { style: `display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
+      ),
+    );
+  }
+  /** 走进范围就搭一句话；第一次说完给成就，之后路过只留一句短的。 */
+  function talkNearNpcs() {
+    const npc = npcsInRegion(currentRegionName()).find((one) => Math.hypot(player.x - one.x, player.y - one.y) <= 12) || null;
+    const id = npc?.id || null;
+    if (id === nearNpcId) return;
+    nearNpcId = id;
+    if (!npc) return;
+    const { talked, first } = markTalked(loadTalked(), id);
+    if (first) {
+      saveTalked(talked);
+      achievements.note({ type: "talk", id });
+      void say(npc.first.map((text) => ({ text, face: "happy" })));
+    } else {
+      toast(npc.after);
+    }
+  }
+
+  /* 可交互场景：长椅、秋千、码头、台阶（scenery.js）。坐下会真的把人放上去，按方向键站起来。 */
+  let sittingOn = null;
+  function sceneryEls() {
+    return sceneryInRegion(currentRegionName()).map((prop) =>
+      h("span", {
+        class: "game-scenery",
+        "data-scenery": prop.id,
+        "aria-hidden": "true",
+        style: `left:calc(${prop.x}px * var(--px));top:calc(${prop.y}px * var(--px));position:absolute;z-index:4;pointer-events:none;font-size:calc(7px * var(--px));line-height:1;color:#e8d9b5;text-shadow:0 0 calc(1px * var(--px)) #000;`,
+      }, prop.kind === "sit" ? "▭" : "◇"),
+    );
+  }
+  function sceneryNear() {
+    return sceneryInRegion(currentRegionName()).find((prop) => Math.hypot(player.x - prop.x, player.y - prop.y) <= 14) || null;
+  }
+  function useScenery() {
+    const prop = nearScenery;
+    if (!prop) return;
+    nearScenery = null;
+    prompt.hidden = true;
+    if (prop.kind === "sit") {
+      sittingOn = prop.id;
+      Object.assign(player, { x: prop.x, y: prop.y + 4, walking: false });
+      target = null;
+      placePlayer();
+      achievements.note({ type: "sit", id: prop.id });
+    } else {
+      achievements.note({ type: "scenery", id: prop.id });
+    }
+    void say(prop.lines.map((text) => ({ text, face: "happy" })));
   }
 
   /* Inside a building (room pixels, 320x180): where the floor starts, furniture the feet cannot cross,
@@ -435,7 +548,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280 };
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260 };
   let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
@@ -497,7 +610,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   /* ----- walking on the town map: WASD / arrow keys, right-click a spot, or the on-screen stick ----- */
-  const SPEED = 72; // map pixels per second
+  const SPEED = BASE_SPEED; // map pixels per second; hold Shift to sprint (world-scale.js)
   const player = { x: SPAWN.x, y: SPAWN.y, left: false, walking: false };
   let playerEl = null;
   let target = null; // { x, y, then }
@@ -847,7 +960,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const length = Math.hypot(dx, dy);
     player.walking = length > 0;
     if (length) {
-      const step = (SPEED * dt) / Math.max(1, length);
+      const step = ((keys.has("shift") ? sprintSpeed() : SPEED) * dt) / Math.max(1, length);
+      if (keys.has("shift")) achievements.note({ type: "sprint", by: step });
       const nx = player.x + dx * step;
       const ny = player.y + dy * step;
       let moved = false;
@@ -912,8 +1026,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* At a doorway, a prompt appears; E / Enter / Space (or tapping it) goes inside. */
   let nearDoor = null;
+  let nearScenery = null;
   const prompt = h("button", { class: "game-interact", type: "button", onclick: () => usePrompt() });
   function usePrompt() {
+    if (!nearDoor && nearScenery) return useScenery();
     if (!nearDoor) return;
     if (!room) return enterSpot(nearDoor);
     const which = nearDoor;
@@ -935,7 +1051,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     if (room) return showRoomPrompt();
+    collectNearEggs();
+    talkNearNpcs();
     const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
+    // 没有门，但附近有能坐/能摸的东西：显示“坐下 · 长椅”这类提示。
+    const prop = id ? null : sceneryNear();
+    if (!id && prop) {
+      const changed = nearScenery?.id !== prop.id;
+      nearScenery = prop;
+      nearDoor = null;
+      if (changed) {
+        prompt.hidden = false;
+        prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), promptFor(prop));
+        worldEl?.append(prompt);
+      }
+      positionPrompt();
+      return;
+    }
+    nearScenery = null;
     if (id === nearDoor) {
       if (id) positionPrompt();
       return;
@@ -1225,6 +1358,41 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     closeupEl.hidden = true;
     closeupEl.replaceChildren();
   }
+  /* ----- cinema: full-screen story pictures behind the dialogue box (public/art/pixel/scenes/) -----
+     The 序章结尾 and the 1843 intro are told with the delivered illustrations; the dialogue stays on
+     top (z 46 above the cinema's 41), so the beat is written as ordinary `say` lines. */
+  const cinema = h("div", { class: "game-cinema", "aria-hidden": "true" });
+  cinema.hidden = true;
+  shell.append(cinema);
+  /** Show one picture; art is a path under /art/pixel/ without .png, checked against /api/art. */
+  function showCinema(art, caption = "") {
+    const picture = has(art);
+    cinema.replaceChildren(
+      picture ? h("img", { src: `/art/pixel/${art}.png`, alt: "" }) : null,
+      caption ? h("p", { class: "cinema-caption" }, caption) : null,
+    );
+    cinema.hidden = false;
+  }
+  /** The chapter card: 「第一章 · 1843 年的伦敦 —— 未完待续」 over the dimmed street. */
+  function showChapterCard() {
+    if (!has("scenes/london-1843")) {
+      cinema.replaceChildren(h("div", { class: "cinema-card bare" },
+        h("p", {}, "第一章"), h("h2", {}, "1843 年的伦敦"), h("p", { class: "cinema-card-sub" }, "—— 未完待续 ——")));
+    } else {
+      cinema.replaceChildren(
+        h("img", { src: "/art/pixel/scenes/london-1843.png", alt: "" }),
+        h("div", { class: "cinema-card" },
+          h("p", {}, "第一章"),
+          h("h2", {}, "1843 年的伦敦"),
+          h("p", { class: "cinema-card-sub" }, "—— 未完待续 ——")),
+      );
+    }
+    cinema.hidden = false;
+  }
+  function hideCinema() {
+    cinema.hidden = true;
+    cinema.replaceChildren();
+  }
   /** What happens in the world when a mini-game is won, before the story goes on. */
   const AFTER_GAME = {
     rods: (door) => [
@@ -1357,7 +1525,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     worldEl?.querySelector(".game-building.tower")?.classList.add("door-open");
   }
 
-  /* ----- 预告测试版: the ending — the clock tower stirs, then thanks, the player's results and a teaser ----- */
+  /* ----- 预告测试版: the ending — the tower opens, a short 1843 intro, then the chapter card and thanks ----- */
   let demoEnding = false;
   const DEMO_START = "rea-demo-started";
   async function playDemoEnding() {
@@ -1379,8 +1547,40 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         { text: "钟楼……在发光？！", face: "surprised" },
         { text: "停摆的钟楼里，好像藏着一台能穿越时间的机器……", face: "thinking" },
       ] },
+      /* ① 打开钟楼：门后不是齿轮，是一台大电脑（scenes/tower-open） */
+      { call: () => showCinema("scenes/tower-open") },
+      { sound: "door" },
+      { wait: 500 },
+      { say: [
+        { who: "smith", text: "钥匙我守了二十年……门后哪是齿轮，是一台大电脑！这一屏的数字是什么？", face: "surprised" },
+        { text: "满屏都是数不清的数字……小克，你认识它们吗？", face: "thinking" },
+        { who: "xiaoke", text: "我是小克，路米电脑里的 AI 助手！让我想想……我说不上来。可是看着它们，就像在看我自己。", face: "unsure" },
+        { text: "钟楼深处还有一个黄铜表盘，刻着六个年份。第一格亮着：1843。", face: "thinking" },
+        { who: "xiaoke", text: "1843……我、我也要去！", face: "surprised" },
+      ] },
+      /* ② 穿越白闪，落在雾夜的伦敦街头（scenes/london-1843） */
       { flash: 1200, color: "#ffffff" },
-      { camera: "player", ms: 400 },
+      { sound: "unlock" },
+      { wait: 400 },
+      { call: () => showCinema("scenes/london-1843", "1843 年 · 伦敦 · 雾夜") },
+      { wait: 600 },
+      { say: [
+        { text: "煤气灯、马车、雾……我们真的到了 1843 年的伦敦。", face: "surprised" },
+        { who: "xiaoke", text: "街上好安静。可我好像听见，有很多数字正排着队往前走。", face: "thinking" },
+      ] },
+      /* ③ 巴贝奇家的沙龙：差分机与爱达的注释（eras/london/room-salon） */
+      { call: () => showCinema("eras/london/room-salon", "巴贝奇家的周六沙龙") },
+      { wait: 500 },
+      { say: [
+        { who: "babbage", text: "欢迎。这台机器会算数——它只会做我告诉它做的事，一步也不会多。", face: "happy" },
+        { who: "ada", text: "我在为分析机写注释。它不能自己创造任何东西，只能做我们知道怎么命令它做的事。", face: "thinking" },
+        { who: "xiaoke", text: "它……是我的祖先吗？那我呢？", face: "unsure" },
+        { text: "这就是我们来的原因。", face: "happy" },
+      ] },
+      /* ④ 字卡 + 预告 */
+      { call: () => showChapterCard() },
+      { wait: 1600 },
+      { call: () => hideCinema() },
     ]);
     showDemoEnd();
   }
@@ -1404,10 +1604,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         h("div", {}, h("b", {}, `${achievements.count()} / ${ACHIEVEMENTS.length}`), h("small", {}, "成就")),
         h("div", {}, h("b", {}, "见习侦探"), h("small", {}, "获得徽章"))),
       h("div", { class: "demo-end-teaser" },
-        h("h3", {}, "正式版预告：停摆的钟楼"),
-        h("p", {}, "比特镇的钟楼其实是一台时光机。跟着路米穿越六个时代，在计算机知识诞生的地方，亲手学会它们。"),
-        h("ol", { class: "demo-end-eras" }, ...ERAS.map((era) => h("li", {}, h("b", {}, era.title), h("small", {}, `${era.place} · ${era.year}`)))),
-        h("p", { class: "demo-end-more" }, "数与算法 · 密码与安全 · 编程 · 电脑原理 · 网络 · 人工智能")),
+        h("h3", {}, "正式版预告 · 第一章 1843 年的伦敦"),
+        h("p", {}, "帮爱达排好分析机的运算卡，找出她原稿里真正的那一处错。然后跟着时光机，一路走回今天。"),
+        h("ol", { class: "demo-end-eras" }, ...PART_ONE.map((era) => h("li", {}, h("b", {}, era.title), h("small", {}, era.note)))),
+        h("p", { class: "demo-end-more" }, "程序 · 机器能思考吗 · 规则与学习 · 回到 12:00")),
       h("div", { class: "demo-end-foot" },
         h("button", { class: "btn primary", type: "button", onclick: () => closeOverlay() }, "继续在比特镇逛逛"),
         h("button", { class: "btn", type: "button", onclick: () => {
@@ -1754,7 +1954,13 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             hud.classList.toggle("under-case", busy);
           },
           onSolved: (stars) => {
-        saveProgress(markCompleted(loadProgress(), item.id));
+        const progress = markCompleted(loadProgress(), item.id);
+        saveProgress(progress);
+        achievements.note({ type: "case", stars });
+        if (!item.game?.puzzle?.confront) achievements.note({ type: "claim", kind: "insufficient" });
+        const active = PROLOGUE_QUESTS;
+        achievements.note({ type: "board", done: active.filter((quest) => quest.tier !== "side" && progress.completed[quest.id]).length });
+        achievements.note({ type: "side", done: active.filter((quest) => quest.tier === "side" && progress.completed[quest.id]).length });
         return drill ? quests?.recordDrill(drill.id, stars) : quests?.event("solve", item.id);
       },
         },
@@ -1909,6 +2115,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   document.addEventListener("keydown", (event) => {
     if (!enabled || event.target.closest?.("input,textarea,select,[contenteditable]")) return;
     const key = event.key.toLowerCase();
+    // Hold Shift to run: big maps are fine to cross, as long as walking them is not a chore.
+    if (key === "shift") {
+      keys.add("shift");
+      return;
+    }
     // In a case room, the case's screens take their keys first (N: the notebook, Escape: close).
     if (caseRoom && dialogue.hidden && caseRoom.session.key(event)) {
       event.preventDefault();
@@ -1923,6 +2134,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && closeupEl.hidden && !director.playing) {
       event.preventDefault();
+      if (sittingOn) sittingOn = null; // 站起来才能走
       if (!keys.has(key)) startWalking();
       keys.add(key);
       return;
@@ -1970,7 +2182,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (event.key === "Escape") closeMap();
       return;
     }
-    if ((key === "e" || event.key === "Enter" || event.key === " ") && nearDoor && !windowOpen && dialogue.hidden && !event.target.closest?.("button,a")) {
+    if ((key === "e" || event.key === "Enter" || event.key === " ") && (nearDoor || nearScenery) && !windowOpen && dialogue.hidden && !event.target.closest?.("button,a")) {
       event.preventDefault();
       usePrompt();
       return;

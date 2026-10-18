@@ -6,8 +6,8 @@
   "tagline": "工具给不出答案时，正确的结论可能是「证据不足」。",
   "skills": ["认识加壳与混淆", "反编译只是近似", "证据不足也是结论"],
   "knowledge": [
-    { "id": "packing", "depth": "L3" },
-    { "id": "epistemics", "depth": "L3" },
+    { "id": "packing", "depth": "L2" },
+    { "id": "epistemics", "depth": "L2" },
     { "id": "runtime-evidence", "depth": "L1" },
     { "id": "static-read", "depth": "L2" }
   ],

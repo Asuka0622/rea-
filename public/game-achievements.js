@@ -6,6 +6,10 @@
 //   { regions }   that many regions visited      { region }    a region visited
 //   { walked }    map pixels walked in total     { skills }    that many skills lit
 //   { hard }      a chapter finished on 硬核      { sound: false } sound switched off
+//   { eggs }      easter eggs found              { case }      a case closed at that many stars
+//   { claim }     a case ended with that claim (insufficient = 「证据不足」)
+//   { board }     that many commissions closed   { side }      that many side quests closed
+//   { sprint }    map pixels sprinted in total   { talk }      first conversation with an NPC
 // `secret` ones show as ？？？ until unlocked. Saved in this browser's localStorage.
 
 const KEY = "rea-game-achievements";
@@ -42,13 +46,42 @@ export const ACHIEVEMENTS = [
   { id: "skills-10", title: "技能达人", note: "点亮了 10 个技能", when: { skills: 10 } },
   { id: "hardcore", title: "硬核到底", note: "用硬核难度完成了一章", when: { hard: true } },
   { id: "shh", title: "嘘——", note: "把音效关掉了。安静也挺好。", when: { sound: false }, secret: true },
+  // —— 探索与彩蛋 ——
+  { id: "egg-first", title: "路边有光", note: "捡到第一个彩蛋", when: { eggs: 1 } },
+  { id: "egg-five", title: "捡破烂的侦探", note: "捡到 5 个彩蛋", when: { eggs: 5 } },
+  { id: "egg-half", title: "半个小镇都在口袋里", note: "捡到 12 个彩蛋", when: { eggs: 12 } },
+  { id: "egg-all", title: "掘地三尺", note: "把镇上的彩蛋全捡齐了", when: { eggs: 23 }, secret: true },
+  { id: "craft-regular", title: "手艺街的常客", note: "第一次走进手艺街", when: { region: "craft" } },
+  { id: "walked-30k", title: "把小镇走成针眼", note: "走了 30000 个地图像素", when: { walked: 30000 } },
+  // —— 冲刺 ——
+  { id: "sprint-1k", title: "跑起来", note: "按住 Shift 跑完 1000 个地图像素", when: { sprint: 1000 } },
+  { id: "sprint-5k", title: "风一样的侦探", note: "累计冲刺 5000 个地图像素", when: { sprint: 5000 }, secret: true },
+  // —— 委托与判断 ——
+  { id: "case-three-stars", title: "完美结案", note: "三星结案一次", when: { case: 3 } },
+  { id: "claim-insufficient", title: "证据不足也是结论", note: "在一份委托里写下「证据不足」", when: { claim: "insufficient" } },
+  { id: "board-clear", title: "委托板清空", note: "把六份基础委托都结案了", when: { board: 6 } },
+  { id: "side-first", title: "顺手接了个小活", note: "完成第一条支线", when: { side: 1 } },
+  { id: "side-three", title: "支线比主线好玩", note: "完成三条支线", when: { side: 3 } },
+  { id: "skills-20", title: "半本大纲", note: "点亮了 20 个技能", when: { skills: 20 } },
+  // —— 和镇上的 NPC 说上话 ——
+  { id: "npc-pigeon-uncle", title: "听老周讲古", note: "和喂鸽子的老周聊过天", when: { talk: "pigeon-uncle" } },
+  { id: "npc-oncall", title: "已读四百次", note: "遇到了边遛狗边看告警的阿康", when: { talk: "oncall" } },
+  { id: "npc-paperboy", title: "号外，还是昨天的", note: "从小石头手里接过一份头版没换的报纸", when: { talk: "paperboy" } },
+  { id: "npc-lighthouse", title: "灯是给晚上准备的", note: "听老陈讲他为什么白天也擦灯", when: { talk: "lighthouse-keeper" } },
+  { id: "npc-apprentice", title: "0.5 秒不算准", note: "和修表学徒小铃争论了一次误差", when: { talk: "apprentice" } },
+  { id: "npc-cobbler", title: "鞋底比人诚实", note: "让老宋看了一眼你的鞋底", when: { talk: "cobbler" } },
+  { id: "npc-all", title: "把镇上的人聊了一半", note: "和三位镇民说过话", when: { talked: 3 } },
+  // —— 能坐的地方 ——
+  { id: "sit-once", title: "坐一会儿", note: "在小镇上第一次坐下来", when: { sit: 1 } },
+  { id: "sit-three", title: "镇上的椅子都有你的形状", note: "坐过三个不同的地方", when: { sit: 3 } },
+  { id: "fountain-coin-touch", title: "扔过硬币吗", note: "在喷泉里看见过一枚正面朝上的硬币", when: { scenery: "fountain" } },
 ];
 
 function load() {
   try {
-    return { got: {}, regions: [], walked: 0, ...JSON.parse(localStorage.getItem(KEY) || "{}") };
+    return { got: {}, regions: [], talked: [], sat: [], walked: 0, sprinted: 0, ...JSON.parse(localStorage.getItem(KEY) || "{}") };
   } catch {
-    return { got: {}, regions: [], walked: 0 };
+    return { got: {}, regions: [], talked: [], sat: [], walked: 0, sprinted: 0 };
   }
 }
 
@@ -75,6 +108,24 @@ export function createAchievements({ onUnlock = () => {} } = {}) {
         return when.skills && event.count >= when.skills;
       case "sound":
         return when.sound === event.on;
+      case "eggs":
+        return Boolean(when.eggs) && event.count >= when.eggs;
+      case "case":
+        return Boolean(when.case) && event.stars >= when.case;
+      case "claim":
+        return Boolean(when.claim) && when.claim === event.kind;
+      case "board":
+        return Boolean(when.board) && event.done >= when.board;
+      case "side":
+        return Boolean(when.side) && event.done >= when.side;
+      case "sprint":
+        return Boolean(when.sprint) && state.sprinted >= when.sprint;
+      case "talk":
+        return when.talk === event.id || (Boolean(when.talked) && state.talked.length >= when.talked);
+      case "sit":
+        return Boolean(when.sit) && state.sat.length >= when.sit;
+      case "scenery":
+        return Boolean(when.scenery) && when.scenery === event.id;
       default:
         return false;
     }
@@ -82,15 +133,19 @@ export function createAchievements({ onUnlock = () => {} } = {}) {
   /** Report something that happened; `quiet` grants without announcing (catching up on old saves). */
   function note(event, { quiet = false } = {}) {
     if (event.type === "region" && !state.regions.includes(event.id)) state.regions.push(event.id);
+    if (event.type === "talk" && event.id && !state.talked.includes(event.id)) state.talked.push(event.id);
+    if (event.type === "sit" && event.id && !state.sat.includes(event.id)) state.sat.push(event.id);
     if (event.type === "walked") state.walked += event.by;
+    if (event.type === "sprint") state.sprinted += event.by;
     const fresh = ACHIEVEMENTS.filter((a) => !state.got[a.id] && matches(a.when, event));
     for (const a of fresh) state.got[a.id] = Date.now();
-    if (fresh.length || event.type === "region") save();
+    if (fresh.length || event.type === "region" || event.type === "talk" || event.type === "sit") save();
     if (!quiet) fresh.forEach((a) => onUnlock(a));
     return fresh;
   }
   // Walking is reported often; save it now and then.
-  setInterval(save, 15000);
+  const timer = setInterval(save, 15000);
+  timer?.unref?.();
   return {
     note,
     got: (id) => state.got[id] || null,

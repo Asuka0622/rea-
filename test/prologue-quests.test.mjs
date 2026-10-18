@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   PROLOGUE_QUESTS,
   KNOWLEDGE_POINTS,
+  questsOfTier,
   knowledgeFromCompletion,
   coverageGaps,
   freshPlayer,
@@ -90,19 +91,33 @@ test("every commission can be reached in some order", () => {
 
 test("finishing a quest grants the knowledge it declares", () => {
   const level = knowledgeFromCompletion(PROLOGUE_QUESTS, { "privacy-ledger": true });
-  assert.equal(level["data-flow"], "L3");
+  assert.equal(level["data-flow"], "L2");
   assert.equal(level["permission-manifest"], "L1");
   const both = knowledgeFromCompletion(PROLOGUE_QUESTS, { "privacy-ledger": true, "flashlight-apk": true });
-  assert.equal(both["permission-manifest"], "L3", "the higher level wins");
+  assert.equal(both["permission-manifest"], "L2", "the higher level wins");
 });
 
-test("the coverage report names the knowledge points that only appear once", () => {
+test("the six core commissions only go as deep as L2; depth lives in side quests", () => {
+  const core = questsOfTier("core");
+  assert.equal(core.length, 6, "six basic commissions");
+  for (const quest of core) {
+    assert.equal(quest.tier, "core");
+    for (const entry of quest.knowledge) {
+      assert.ok(["L1", "L2"].includes(entry.depth), `${quest.id} should not claim ${entry.depth} on a core commission`);
+    }
+  }
+  const side = questsOfTier("side");
+  assert.ok(side.length >= 1, "at least one side quest is registered");
+  assert.ok(side.every((quest) => quest.tier === "side"));
+});
+
+test("the coverage report names the knowledge points that no side quest takes to L3", () => {
   const gaps = coverageGaps();
   assert.ok(Array.isArray(gaps));
   for (const gap of gaps) {
     assert.ok(KNOWLEDGE_POINTS[gap.id]);
     assert.ok(gap.quests.length < 2, `${gap.id} should be a gap`);
   }
-  // 目前每个知识点都只在一份委托里到过 L3——这份报告就是「要复现」的清单。
-  assert.ok(gaps.length > 0);
+  // 现在还没有任何支线把知识点推到 L3，所以整张表都是待补清单。
+  assert.equal(gaps.length, Object.keys(KNOWLEDGE_POINTS).length);
 });

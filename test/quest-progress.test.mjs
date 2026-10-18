@@ -71,7 +71,7 @@ test("marking a discovery or a completion returns a new progress object", () => 
 
 test("the player state handed to the board carries the derived knowledge levels", () => {
   const player = playerFor({ completed: { "privacy-ledger": true } });
-  assert.equal(player.knowledge["data-flow"], "L3");
+  assert.equal(player.knowledge["data-flow"], "L2");
   assert.equal(player.knowledge["permission-manifest"], "L1");
   assert.deepEqual(playerFor(emptyProgress()).knowledge, {});
 });
