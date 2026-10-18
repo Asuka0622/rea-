@@ -180,7 +180,11 @@
 
 2026-10-18：春、夏、冬三套五区地图均从已登记收件图复用，按中心、住宅、手艺、北区、南岸映射并缩放至960×540；预览见 `docs/art/review/seasonal-maps-contact.png`。布局与道路目测对齐，仍需逐区验收出口、碰撞和遮挡。
 
-2026-10-18：老秦四表情头像与四位维多利亚沙龙宾客两帧待机精灵候选已出；预览见 `docs/art/review/archivist-portraits-contact.png`、`docs/art/review/anim-guests-contact.png`。六种小动物已按收件箱 #167–#172 动作行整理，需比例与游戏锚点验收。
+2026-10-18：老秦四表情头像与四位维多利亚沙龙宾客两帧待机精灵候选已出；预览见 `docs/art/review/archivist-portraits-contact.png`、`docs/art/review/anim-guests-contact.png`。六种小动物已按收件箱 #167–#172 整理为透明动作行，预览见 `docs/art/review/animal-animations-contact.png`，需比例与游戏锚点验收。
+
+2026-10-18：当前世界地图动画（喷泉、烟囱、水车、旗、鱼、涟漪、晾衣、风向标、稻草人、霓虹、木屑、钟摆、小船）均已交横排透明帧表与 JSON；预览见 `docs/art/review/map-animations-contact.png`。全部待地图位置和尺寸验收。
+
+2026-10-18：图书馆、工具铺、驿站、诊所的春夏冬室内候选共12张已缩放至320×180；预览见 `docs/art/review/seasonal-rooms-contact.png`。家具与功能布局保持一致，待光照、人物站位和季节切换验收。
 
 ## 6. P2 与暂停范围
 

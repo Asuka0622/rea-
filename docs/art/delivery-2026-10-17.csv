@@ -264,3 +264,53 @@ archivist-happy,老秦,docs/art/review/sources/archivist-happy-source.png,public
 archivist-surprised,老秦,docs/art/review/sources/archivist-surprised-source.png,public/art/faces/archivist-surprised.webp,,,,320,320,是,,,待验收,档案馆老秦惊讶表情；透明头像候选
 anim-guests,维多利亚沙龙宾客,docs/art/review/sources/anim-guests-source.png,public/art/pixel/anim/anim-guests.png,,,,128,384,是,64×96,四人各一行；每人待机2帧；见同名JSON,待验收,四位宾客统一脚底线与角色比例；待沙龙位置和动作验收
 anim-guests-metadata,维多利亚沙龙宾客,docs/art/review/sources/anim-guests-source.png,public/art/pixel/anim/anim-guests.json,,,,,,,64×96,四行；guest-*-idle 2帧；520ms,待验收,四种宾客服饰和逐行映射见JSON
+animal-cat,橘猫,docs/art/review/sources/animal-atlases/animal-cat-inbox-167-source.png,public/art/pixel/anim/anim-cat.png,,,,192,144,是,48×48,sit2 / walk4 / sleep2,待验收,复用收件箱#167透明精灵表并裁成动作行；待小镇站位与比例验收
+animal-cat-metadata,橘猫,docs/art/review/sources/anim-cat-source.png,public/art/pixel/anim/anim-cat.json,,,,,,,48×48,sit2 / walk4 / sleep2,待验收,帧行与时长元数据
+animal-dog,柴犬,docs/art/review/sources/animal-atlases/animal-dog-inbox-168-source.png,public/art/pixel/anim/anim-dog.png,,,,192,144,是,48×48,sit2 / run4 / wag2,待验收,复用收件箱#168透明精灵表并裁成动作行；待比例与地图锚点验收
+animal-dog-metadata,柴犬,docs/art/review/sources/anim-dog-source.png,public/art/pixel/anim/anim-dog.json,,,,,,,48×48,sit2 / run4 / wag2,待验收,帧行与时长元数据
+animal-chicken,小鸡,docs/art/review/sources/animal-atlases/animal-chicken-inbox-169-source.png,public/art/pixel/anim/anim-chicken.png,,,,128,96,是,32×32,stand2 / peck2 / walk4,待验收,复用收件箱#169透明精灵表并裁成动作行；待农场比例与站位验收
+animal-chicken-metadata,小鸡,docs/art/review/sources/anim-chicken-source.png,public/art/pixel/anim/anim-chicken.json,,,,,,,32×32,stand2 / peck2 / walk4,待验收,帧行与时长元数据
+animal-duck,鸭子,docs/art/review/sources/animal-atlases/animal-duck-inbox-170-source.png,public/art/pixel/anim/anim-duck.png,,,,128,64,是,32×32,swim2 / walk4,待验收,复用收件箱#170透明精灵表；游泳行加轻薄水线，待河岸锚点验收
+animal-duck-metadata,鸭子,docs/art/review/sources/anim-duck-source.png,public/art/pixel/anim/anim-duck.json,,,,,,,32×32,swim2 / walk4,待验收,帧行与时长元数据
+animal-pigeon,白鸽,docs/art/review/sources/animal-atlases/animal-pigeon-inbox-171-source.png,public/art/pixel/anim/anim-pigeon.png,,,,128,64,是,32×32,stand2 / fly4,待验收,复用收件箱#171透明精灵表并裁成动作行；待屋顶与广场锚点验收
+animal-pigeon-metadata,白鸽,docs/art/review/sources/anim-pigeon-source.png,public/art/pixel/anim/anim-pigeon.json,,,,,,,32×32,stand2 / fly4,待验收,帧行与时长元数据
+animal-butterfly,蝴蝶,docs/art/review/sources/animal-atlases/animal-butterfly-inbox-172-source.png,public/art/pixel/anim/anim-butterfly.png,,,,128,64,是,32×32,blue-flap4 / violet-flap4,待验收,复用收件箱#172并生成蓝黄与紫粉两色透明动画行；待花丛比例验收
+animal-butterfly-metadata,蝴蝶,docs/art/review/sources/anim-butterfly-source.png,public/art/pixel/anim/anim-butterfly.json,,,,,,,32×32,两种颜色各扇翅4帧,待验收,帧行、颜色变体与时长元数据
+map-anim-center-fountain,中心广场喷泉,docs/art/review/sources/center-fountain-source.png,public/art/pixel/anim/center-fountain.png,,,,192,48,是,48×48,4帧循环；220ms,待验收,仅水柱与水花；待地图锚点验收
+map-anim-center-fountain-metadata,中心广场喷泉,docs/art/review/sources/center-fountain-source.png,public/art/pixel/anim/center-fountain.json,,,,,,,48×48,loop4；220ms,待验收,帧规格与循环时长见JSON
+map-anim-center-waterwheel,手艺街水车,docs/art/review/sources/center-waterwheel-source.png,public/art/pixel/anim/center-waterwheel.png,,,,256,64,是,64×64,4帧循环；250ms,待验收,四个角度与滴水；待地图锚点验收
+map-anim-center-waterwheel-metadata,手艺街水车,docs/art/review/sources/center-waterwheel-source.png,public/art/pixel/anim/center-waterwheel.json,,,,,,,64×64,loop4；250ms,待验收,帧规格与循环时长见JSON
+map-anim-center-smoke,比特镇烟囱,docs/art/review/sources/center-smoke-source.png,public/art/pixel/anim/center-smoke.png,,,,192,64,是,32×64,6帧循环；440ms,待验收,透明淡灰烟雾可复用于四处烟囱；待锚点验收
+map-anim-center-smoke-metadata,比特镇烟囱,docs/art/review/sources/center-smoke-source.png,public/art/pixel/anim/center-smoke.json,,,,,,,32×64,loop6；440ms,待验收,帧规格与循环时长见JSON
+map-anim-center-flag,比特镇屋顶旗帜,docs/art/review/sources/center-flag-source.png,public/art/pixel/anim/center-flag.png,,,,192,32,是,48×32,4帧循环；240ms,待验收,旗杆与旗面风动候选；待屋顶锚点验收
+map-anim-center-flag-metadata,比特镇屋顶旗帜,docs/art/review/sources/center-flag-source.png,public/art/pixel/anim/center-flag.json,,,,,,,48×32,loop4；240ms,待验收,帧规格与循环时长见JSON
+map-anim-river-fish,比特镇河道,docs/art/review/sources/river-fish-source.png,public/art/pixel/anim/river-fish.png,,,,288,32,是,48×32,6帧跃出回落与水花,待验收,透明像素鱼跃动画；待河道位置验收
+map-anim-river-fish-metadata,比特镇河道,docs/art/review/sources/river-fish-source.png,public/art/pixel/anim/river-fish.json,,,,,,,48×32,loop6；250ms,待验收,帧规格与循环时长见JSON
+map-anim-river-ripple,比特镇河道,docs/art/review/sources/river-ripple-source.png,public/art/pixel/anim/river-ripple.png,,,,192,24,是,48×24,4帧扩散消失；360ms,待验收,透明涟漪候选；待河岸位置验收
+map-anim-river-ripple-metadata,比特镇河道,docs/art/review/sources/river-ripple-source.png,public/art/pixel/anim/river-ripple.json,,,,,,,48×24,loop4；360ms,待验收,帧规格与循环时长见JSON
+map-anim-homes-laundry,住宅区晾衣绳,docs/art/review/sources/homes-laundry-source.png,public/art/pixel/anim/homes-laundry.png,,,,320,48,是,80×48,4帧循环；280ms,待验收,仅衣物与绳线；待阳台锚点验收
+map-anim-homes-laundry-metadata,住宅区晾衣绳,docs/art/review/sources/homes-laundry-source.png,public/art/pixel/anim/homes-laundry.json,,,,,,,80×48,loop4；280ms,待验收,帧规格与循环时长见JSON
+map-anim-homes-windvane,住宅区风向标,docs/art/review/sources/homes-windvane-source.png,public/art/pixel/anim/homes-windvane.png,,,,128,32,是,32×32,4帧转动；250ms,待验收,透明风向标候选；待粮仓屋顶锚点验收
+map-anim-homes-windvane-metadata,住宅区风向标,docs/art/review/sources/homes-windvane-source.png,public/art/pixel/anim/homes-windvane.json,,,,,,,32×32,loop4；250ms,待验收,帧规格与循环时长见JSON
+map-anim-homes-scarecrow,住宅区稻草人,docs/art/review/sources/homes-scarecrow-source.png,public/art/pixel/anim/homes-scarecrow.png,,,,96,80,是,48×80,2帧循环；420ms,待验收,布条与帽檐轻摆；待农场锚点验收
+map-anim-homes-scarecrow-metadata,住宅区稻草人,docs/art/review/sources/homes-scarecrow-source.png,public/art/pixel/anim/homes-scarecrow.json,,,,,,,48×80,loop2；420ms,待验收,帧规格与循环时长见JSON
+map-anim-craft-neon,手艺街游戏厅,docs/art/review/sources/craft-neon-source.png,public/art/pixel/anim/craft-neon.png,,,,384,40,是,96×40,4帧闪烁；240ms,待验收,像素PLAY霓虹灯牌；待游戏厅招牌锚点验收
+map-anim-craft-neon-metadata,手艺街游戏厅,docs/art/review/sources/craft-neon-source.png,public/art/pixel/anim/craft-neon.json,,,,,,,96×40,loop4；240ms,待验收,帧规格与循环时长见JSON
+map-anim-craft-sawdust,手艺街木工坊,docs/art/review/sources/craft-sawdust-source.png,public/art/pixel/anim/craft-sawdust.png,,,,192,32,是,48×32,4帧循环；190ms,待验收,透明木屑飞散；待锯木台锚点验收
+map-anim-craft-sawdust-metadata,手艺街木工坊,docs/art/review/sources/craft-sawdust-source.png,public/art/pixel/anim/craft-sawdust.json,,,,,,,48×32,loop4；190ms,待验收,帧规格与循环时长见JSON
+map-anim-north-clock-pendulum,北区正常钟楼,docs/art/review/sources/north-clock-pendulum-source.png,public/art/pixel/anim/north-clock-pendulum.png,,,,192,64,是,48×64,4帧摆动；320ms,待验收,透明黄铜钟摆；待正常钟楼位置验收
+map-anim-north-clock-pendulum-metadata,北区正常钟楼,docs/art/review/sources/north-clock-pendulum-source.png,public/art/pixel/anim/north-clock-pendulum.json,,,,,,,48×64,loop4；320ms,待验收,帧规格与循环时长见JSON
+map-anim-south-pier-boat,南岸码头小船,docs/art/review/sources/south-pier-boat-source.png,public/art/pixel/anim/south-pier-boat.png,,,,320,40,是,80×40,4帧摇晃；420ms,待验收,透明小木船候选；待码头锚点验收
+map-anim-south-pier-boat-metadata,南岸码头小船,docs/art/review/sources/south-pier-boat-source.png,public/art/pixel/anim/south-pier-boat.json,,,,,,,80×40,loop4；420ms,待验收,帧规格与循环时长见JSON
+room-learn-summer,夏季图书馆,docs/art/review/sources/room-learn-summer-source.png,public/art/pixel/room-learn-summer.png,夏季,晴天,中午,320,180,否,,,待验收,复用收件箱#82；明亮窗光和绿叶窗景，待室内照明与站位验收
+room-engines-summer,夏季工具铺,docs/art/review/sources/room-engines-summer-source.png,public/art/pixel/room-engines-summer.png,夏季,晴天,中午,320,180,否,,,待验收,复用收件箱#83；绿叶窗景和检修台，待室内照明与站位验收
+room-clients-summer,夏季驿站,docs/art/review/sources/room-clients-summer-source.png,public/art/pixel/room-clients-summer.png,夏季,晴天,中午,320,180,否,,,待验收,复用收件箱#84；绿叶窗景和邮务柜台，待室内照明与站位验收
+room-doctor-summer,夏季诊所,docs/art/review/sources/room-doctor-summer-source.png,public/art/pixel/room-doctor-summer.png,夏季,晴天,中午,320,180,否,,,待验收,复用收件箱#85；绿叶窗景和诊疗区，待室内照明与站位验收
+room-learn-spring,春季图书馆,docs/art/review/sources/room-learn-spring-source.png,public/art/pixel/room-learn-spring.png,春季,晴天,中午,320,180,否,,,待验收,复用收件箱#92；春花窗景与明亮窗光，待室内照明与站位验收
+room-engines-spring,春季工具铺,docs/art/review/sources/room-engines-spring-source.png,public/art/pixel/room-engines-spring.png,春季,晴天,中午,320,180,否,,,待验收,复用收件箱#93；春花窗景与明亮窗光，待室内照明与站位验收
+room-clients-spring,春季驿站,docs/art/review/sources/room-clients-spring-source.png,public/art/pixel/room-clients-spring.png,春季,晴天,中午,320,180,否,,,待验收,复用收件箱#94；春花窗景与明亮窗光，待室内照明与站位验收
+room-doctor-spring,春季诊所,docs/art/review/sources/room-doctor-spring-source.png,public/art/pixel/room-doctor-spring.png,春季,晴天,中午,320,180,否,,,待验收,复用收件箱#95；春花窗景与明亮窗光，待室内照明与站位验收
+room-learn-winter,冬季图书馆,docs/art/review/sources/room-learn-winter-source.png,public/art/pixel/room-learn-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#102；积雪窗景与室内暖光，待室内照明与站位验收
+room-engines-winter,冬季工具铺,docs/art/review/sources/room-engines-winter-source.png,public/art/pixel/room-engines-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#103；积雪窗景与室内暖光，待室内照明与站位验收
+room-clients-winter,冬季驿站,docs/art/review/sources/room-clients-winter-source.png,public/art/pixel/room-clients-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#104；积雪窗景与室内暖光，待室内照明与站位验收
+room-doctor-winter,冬季诊所,docs/art/review/sources/room-doctor-winter-source.png,public/art/pixel/room-doctor-winter.png,冬季,晴天,中午,320,180,否,,,待验收,复用收件箱#105；积雪窗景与室内暖光，待室内照明与站位验收

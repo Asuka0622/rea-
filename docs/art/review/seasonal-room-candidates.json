@@ -1,0 +1,33 @@
+{
+  "size": [
+    320,
+    180
+  ],
+  "rooms": [
+    "learn",
+    "engines",
+    "clients",
+    "doctor"
+  ],
+  "sourceNumbers": {
+    "summer": [
+      82,
+      83,
+      84,
+      85
+    ],
+    "spring": [
+      92,
+      93,
+      94,
+      95
+    ],
+    "winter": [
+      102,
+      103,
+      104,
+      105
+    ]
+  },
+  "stateNote": "Seasonal interior candidates. Confirm lighting, furniture and doorway/player anchors before activation."
+}
