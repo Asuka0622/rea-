@@ -14,7 +14,7 @@
 
 ## 0. 先看这里
 
-**场景风格更新**：地图、建筑、室内、道具与小动物统一采用用户提供的像素场景参考方向：繁茂的自然环境、层叠树冠与岩石、清楚的方块像素簇、浓郁明暗、蓝绿色水面、赭黄色土路、红金色季节植被。采用高位 3/4 俯视，画面细节丰富但留出可走空间。不要照搬任何现成游戏、角色或场景。**只有对话头像用二次元立绘**，放在像素风木框对话框里。
+**场景风格更新**：地图、建筑、室内、道具与小动物统一采用用户提供的像素场景参考方向：繁茂的自然环境、层叠树冠与岩石、清楚的方块像素簇、自然明暗、蓝绿色水面、红金色季节植被。维持画面亮度、适度降低饱和度并减少细碎噪点。路面材质按分区人流变化：中心广场与店铺密集街区可用低细节石板铺装，住宅小巷和自然步道用赭黄色夯土路；不能全镇只用一种路面。采用高位 3/4 俯视，保留可走空间。不要照搬任何现成游戏、角色或场景。**只有对话头像用二次元立绘**，放在像素风木框对话框里。
 
 **全局季节、天气与时段**：当前暂定四季为春、夏、秋、冬；天气为晴天、雨天、雪天；时段为早晨、中午、傍晚夕阳、夜晚。地图与对应室内必须共享同一个状态：植物/落叶/积雪、地面湿痕、窗外景色、阳光方向、室内窗光与灯具亮度都要吻合。文件名或交付清单标明 `season-weather-time`。季节通过季节版底图表达；时段与天气可用可叠加的光照/天气效果复用，但会改变室内物件或地面细节的地方需要单独变体。**当前首批基准状态只有 `autumn-clear-noon`；不要把它描述成已覆盖全部 48 种组合。**
 
@@ -104,10 +104,10 @@ English：
 ## 场景类统一风格词（B、C、D、F 通用）
 
 中文：
-> 繁茂的日式独立游戏像素场景，像素簇清晰、层次丰富，高位 3/4 俯视，浓郁但自然的明暗，蓝绿色水面、赭黄色土路、深浅交叠的草木与岩石，季节色彩鲜明，保留可读的空地和行走空间，画面中没有人物
+> 繁茂的原创像素场景，像素簇清晰、层次丰富，高位 3/4 俯视，自然明暗，蓝绿色水面、中心广场与高人流店铺街的简洁石板铺装、住宅巷道和自然步道的赭黄色夯土路，深浅交叠的草木与岩石，颜色保持明亮但饱和度适中，使用较大的像素色簇并减少细碎噪点，保留可读的空地和行走空间，画面中没有人物
 
 English：
-> lush Japanese indie game pixel-art environment, crisp readable pixel clusters, layered high 3/4 top-down view, rich natural light and shadow, teal-blue water, ochre paths, layered foliage and rocks, vivid seasonal colors, open readable walking areas, no people
+> lush original pixel-art environment, crisp readable pixel clusters, layered high 3/4 top-down view, natural lighting, teal-blue water, simple stone paving in the central plaza and busy shop streets, ochre compacted-earth paths in residential lanes and natural trails, layered foliage and rocks, bright values with moderate saturation, larger color clusters and fewer tiny noisy details, open readable walking areas, no people
 
 **横幅注意**：B 和 C 是又宽又矮的横幅（6:1）。页面中间上方会挂一块写着地名的木牌，左右两边会被裁掉一点，所以**主要内容放在中间偏下的一条带里，画面正中上方留空**。
 
@@ -219,7 +219,7 @@ English：
 要求：
 - 每栋房子的**门清楚可见、朝下**，门前留出小块空地（人物走到门口进屋）。
 - 每栋房子下方约 16 像素处留空（界面会在那里挂写着地名的木牌）。
-- 房子之间都用土路连起来，不要有走不到的地方。
+- 房屋与地点之间按街区密度使用石板路或夯土路衔接，主路与入口必须连续可走；中心广场/店铺密集处以石板为主，住宅巷道和自然边缘以土路为主，不能全区统一铺一种材质。
 - 交付后由小克测量每栋房子的范围和门口位置，接到界面上（你不用写坐标）。
 
 ## I. 五个地点的室内（320 × 180，全屏）
