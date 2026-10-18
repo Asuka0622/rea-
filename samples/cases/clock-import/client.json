@@ -1,0 +1,22 @@
+{
+  "app": "准点铃",
+  "permissions": [
+    "clock",
+    "files",
+    "background.location"
+  ],
+  "flows": [
+    {
+      "from": "clock",
+      "to": "local.display"
+    },
+    {
+      "from": "files",
+      "to": "local.preview"
+    },
+    {
+      "from": "background.location",
+      "to": "remote.tracker"
+    }
+  ]
+}

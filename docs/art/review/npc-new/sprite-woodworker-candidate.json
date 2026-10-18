@@ -1,0 +1,35 @@
+{
+  "frameHeight": 192,
+  "columns": 6,
+  "logicalFrameWidth": 16,
+  "logicalFrameHeight": 32,
+  "assetId": "npc-sprite-woodworker",
+  "rows": 5,
+  "frameDurationMs": 100,
+  "frameWidth": 96,
+  "note": "AI image candidate; review cell alignment, identity, alpha and in-game scale before runtime integration.",
+  "status": "candidate",
+  "animation": {
+    "talk": {
+      "row": 4,
+      "frames": 2
+    },
+    "walkUp": {
+      "row": 2,
+      "frames": 6
+    },
+    "walkDown": {
+      "row": 1,
+      "frames": 6
+    },
+    "walkRight": {
+      "row": 3,
+      "frames": 6
+    },
+    "idle": {
+      "row": 0,
+      "frames": 2
+    }
+  },
+  "footAnchor": "bottom-center"
+}

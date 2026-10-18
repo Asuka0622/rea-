@@ -1,0 +1,91 @@
+﻿asset_id,character_or_place,source_file,target_file,season,weather,time,width,height,alpha,frame_size,animation,status,notes
+npc-sprite-baker,baker,docs/art/review/sources/sprite-baker-source.png,public/art/pixel/sprite-baker.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-baker-metadata,baker,docs/art/review/sources/sprite-baker-source.png,public/art/pixel/sprite-baker.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-watchmaker,watchmaker,docs/art/review/sources/sprite-watchmaker-source.png,public/art/pixel/sprite-watchmaker.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-watchmaker-metadata,watchmaker,docs/art/review/sources/sprite-watchmaker-source.png,public/art/pixel/sprite-watchmaker.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-student,student,docs/art/review/sources/sprite-student-source.png,public/art/pixel/sprite-student.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-student-metadata,student,docs/art/review/sources/sprite-student-source.png,public/art/pixel/sprite-student.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-disk-vendor,disk-vendor,docs/art/review/sources/sprite-disk-vendor-source.png,public/art/pixel/sprite-disk-vendor.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-disk-vendor-metadata,disk-vendor,docs/art/review/sources/sprite-disk-vendor-source.png,public/art/pixel/sprite-disk-vendor.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-barista,barista,docs/art/review/sources/sprite-barista-source.png,public/art/pixel/sprite-barista.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-barista-metadata,barista,docs/art/review/sources/sprite-barista-source.png,public/art/pixel/sprite-barista.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-parcel,parcel,docs/art/review/sources/sprite-parcel-source.png,public/art/pixel/sprite-parcel.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-parcel-metadata,parcel,docs/art/review/sources/sprite-parcel-source.png,public/art/pixel/sprite-parcel.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-pigeon-uncle,pigeon-uncle,docs/art/review/sources/sprite-pigeon-uncle-source.png,public/art/pixel/sprite-pigeon-uncle.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-pigeon-uncle-metadata,pigeon-uncle,docs/art/review/sources/sprite-pigeon-uncle-source.png,public/art/pixel/sprite-pigeon-uncle.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-oncall,oncall,docs/art/review/sources/sprite-oncall-source.png,public/art/pixel/sprite-oncall.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-oncall-metadata,oncall,docs/art/review/sources/sprite-oncall-source.png,public/art/pixel/sprite-oncall.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-paperboy,paperboy,docs/art/review/sources/sprite-paperboy-source.png,public/art/pixel/sprite-paperboy.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-paperboy-metadata,paperboy,docs/art/review/sources/sprite-paperboy-source.png,public/art/pixel/sprite-paperboy.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-lighthouse-keeper,lighthouse-keeper,docs/art/review/sources/sprite-lighthouse-keeper-source.png,public/art/pixel/sprite-lighthouse-keeper.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-lighthouse-keeper-metadata,lighthouse-keeper,docs/art/review/sources/sprite-lighthouse-keeper-source.png,public/art/pixel/sprite-lighthouse-keeper.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-apprentice,apprentice,docs/art/review/sources/sprite-apprentice-source.png,public/art/pixel/sprite-apprentice.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-apprentice-metadata,apprentice,docs/art/review/sources/sprite-apprentice-source.png,public/art/pixel/sprite-apprentice.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-sprite-cobbler,cobbler,docs/art/review/sources/sprite-cobbler-source.png,public/art/pixel/sprite-cobbler.png,,,,576,960,是,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,6×5透明精灵表；统一16×32逻辑角色规格，待地图内比例、脚底与动作映射验收
+npc-sprite-cobbler-metadata,cobbler,docs/art/review/sources/sprite-cobbler-source.png,public/art/pixel/sprite-cobbler.json,,,,,,,96×192,"idle 2; walk-down 6, walk-up 6, walk-side 6 (100ms/frame); talk 2",待验收,逐行动画帧数与时长元数据
+npc-portrait-baker-normal,baker,docs/art/review/sources/portrait-npc-baker-expressions-source.png,public/art/portraits/baker-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-baker-normal,baker,public/art/portraits/baker-normal.png,public/art/faces/baker-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-baker-happy,baker,docs/art/review/sources/portrait-npc-baker-expressions-source.png,public/art/portraits/baker-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-baker-happy,baker,public/art/portraits/baker-happy.png,public/art/faces/baker-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-baker-surprised,baker,docs/art/review/sources/portrait-npc-baker-expressions-source.png,public/art/portraits/baker-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-baker-surprised,baker,public/art/portraits/baker-surprised.png,public/art/faces/baker-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-baker-thinking,baker,docs/art/review/sources/portrait-npc-baker-expressions-source.png,public/art/portraits/baker-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-baker-thinking,baker,public/art/portraits/baker-thinking.png,public/art/faces/baker-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-watchmaker-normal,watchmaker,docs/art/review/sources/portrait-npc-watchmaker-expressions-source.png,public/art/portraits/watchmaker-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-watchmaker-normal,watchmaker,public/art/portraits/watchmaker-normal.png,public/art/faces/watchmaker-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-watchmaker-happy,watchmaker,docs/art/review/sources/portrait-npc-watchmaker-expressions-source.png,public/art/portraits/watchmaker-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-watchmaker-happy,watchmaker,public/art/portraits/watchmaker-happy.png,public/art/faces/watchmaker-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-watchmaker-surprised,watchmaker,docs/art/review/sources/portrait-npc-watchmaker-expressions-source.png,public/art/portraits/watchmaker-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-watchmaker-surprised,watchmaker,public/art/portraits/watchmaker-surprised.png,public/art/faces/watchmaker-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-watchmaker-thinking,watchmaker,docs/art/review/sources/portrait-npc-watchmaker-expressions-source.png,public/art/portraits/watchmaker-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-watchmaker-thinking,watchmaker,public/art/portraits/watchmaker-thinking.png,public/art/faces/watchmaker-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-student-normal,student,docs/art/review/sources/portrait-npc-student-expressions-source.png,public/art/portraits/student-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-student-normal,student,public/art/portraits/student-normal.png,public/art/faces/student-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-student-happy,student,docs/art/review/sources/portrait-npc-student-expressions-source.png,public/art/portraits/student-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-student-happy,student,public/art/portraits/student-happy.png,public/art/faces/student-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-student-surprised,student,docs/art/review/sources/portrait-npc-student-expressions-source.png,public/art/portraits/student-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-student-surprised,student,public/art/portraits/student-surprised.png,public/art/faces/student-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-student-thinking,student,docs/art/review/sources/portrait-npc-student-expressions-source.png,public/art/portraits/student-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-student-thinking,student,public/art/portraits/student-thinking.png,public/art/faces/student-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-disk-vendor-normal,disk-vendor,docs/art/review/sources/portrait-npc-disk-vendor-expressions-source.png,public/art/portraits/disk-vendor-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-disk-vendor-normal,disk-vendor,public/art/portraits/disk-vendor-normal.png,public/art/faces/disk-vendor-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-disk-vendor-happy,disk-vendor,docs/art/review/sources/portrait-npc-disk-vendor-expressions-source.png,public/art/portraits/disk-vendor-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-disk-vendor-happy,disk-vendor,public/art/portraits/disk-vendor-happy.png,public/art/faces/disk-vendor-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-disk-vendor-surprised,disk-vendor,docs/art/review/sources/portrait-npc-disk-vendor-expressions-source.png,public/art/portraits/disk-vendor-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-disk-vendor-surprised,disk-vendor,public/art/portraits/disk-vendor-surprised.png,public/art/faces/disk-vendor-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-disk-vendor-thinking,disk-vendor,docs/art/review/sources/portrait-npc-disk-vendor-expressions-source.png,public/art/portraits/disk-vendor-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-disk-vendor-thinking,disk-vendor,public/art/portraits/disk-vendor-thinking.png,public/art/faces/disk-vendor-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-barista-normal,barista,docs/art/review/sources/portrait-npc-barista-expressions-source.png,public/art/portraits/barista-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-barista-normal,barista,public/art/portraits/barista-normal.png,public/art/faces/barista-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-barista-happy,barista,docs/art/review/sources/portrait-npc-barista-expressions-source.png,public/art/portraits/barista-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-barista-happy,barista,public/art/portraits/barista-happy.png,public/art/faces/barista-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-barista-surprised,barista,docs/art/review/sources/portrait-npc-barista-expressions-source.png,public/art/portraits/barista-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-barista-surprised,barista,public/art/portraits/barista-surprised.png,public/art/faces/barista-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-barista-thinking,barista,docs/art/review/sources/portrait-npc-barista-expressions-source.png,public/art/portraits/barista-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-barista-thinking,barista,public/art/portraits/barista-thinking.png,public/art/faces/barista-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-parcel-normal,parcel,docs/art/review/sources/portrait-npc-parcel-expressions-source.png,public/art/portraits/parcel-normal.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-parcel-normal,parcel,public/art/portraits/parcel-normal.png,public/art/faces/parcel-normal.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-parcel-happy,parcel,docs/art/review/sources/portrait-npc-parcel-expressions-source.png,public/art/portraits/parcel-happy.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-parcel-happy,parcel,public/art/portraits/parcel-happy.png,public/art/faces/parcel-happy.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-parcel-surprised,parcel,docs/art/review/sources/portrait-npc-parcel-expressions-source.png,public/art/portraits/parcel-surprised.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-parcel-surprised,parcel,public/art/portraits/parcel-surprised.png,public/art/faces/parcel-surprised.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-portrait-parcel-thinking,parcel,docs/art/review/sources/portrait-npc-parcel-expressions-source.png,public/art/portraits/parcel-thinking.png,,,,1086,1448,是,,,待验收,同角色四表情2×2原图裁分；清晰线稿、柔和赛璐璐上色，待对话框裁切验收
+npc-face-parcel-thinking,parcel,public/art/portraits/parcel-thinking.png,public/art/faces/parcel-thinking.webp,,,,80,80,是,,,待验收,从对应表情立绘裁切的透明头肩小头像
+npc-face-pigeon-uncle-normal,pigeon-uncle,docs/art/review/sources/p1-face-pigeon-uncle-expressions-source.png,public/art/faces/pigeon-uncle-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-pigeon-uncle-happy,pigeon-uncle,docs/art/review/sources/p1-face-pigeon-uncle-expressions-source.png,public/art/faces/pigeon-uncle-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-pigeon-uncle-thinking,pigeon-uncle,docs/art/review/sources/p1-face-pigeon-uncle-expressions-source.png,public/art/faces/pigeon-uncle-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-oncall-normal,oncall,docs/art/review/sources/p1-face-oncall-expressions-source.png,public/art/faces/oncall-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-oncall-happy,oncall,docs/art/review/sources/p1-face-oncall-expressions-source.png,public/art/faces/oncall-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-oncall-thinking,oncall,docs/art/review/sources/p1-face-oncall-expressions-source.png,public/art/faces/oncall-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-paperboy-normal,paperboy,docs/art/review/sources/p1-face-paperboy-expressions-source.png,public/art/faces/paperboy-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-paperboy-happy,paperboy,docs/art/review/sources/p1-face-paperboy-expressions-source.png,public/art/faces/paperboy-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-paperboy-thinking,paperboy,docs/art/review/sources/p1-face-paperboy-expressions-source.png,public/art/faces/paperboy-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-lighthouse-keeper-normal,lighthouse-keeper,docs/art/review/sources/p1-face-lighthouse-keeper-expressions-source.png,public/art/faces/lighthouse-keeper-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-lighthouse-keeper-happy,lighthouse-keeper,docs/art/review/sources/p1-face-lighthouse-keeper-expressions-source.png,public/art/faces/lighthouse-keeper-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-lighthouse-keeper-thinking,lighthouse-keeper,docs/art/review/sources/p1-face-lighthouse-keeper-expressions-source.png,public/art/faces/lighthouse-keeper-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-apprentice-normal,apprentice,docs/art/review/sources/p1-face-apprentice-expressions-source.png,public/art/faces/apprentice-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-apprentice-happy,apprentice,docs/art/review/sources/p1-face-apprentice-expressions-source.png,public/art/faces/apprentice-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-apprentice-thinking,apprentice,docs/art/review/sources/p1-face-apprentice-expressions-source.png,public/art/faces/apprentice-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-cobbler-normal,cobbler,docs/art/review/sources/p1-face-cobbler-expressions-source.png,public/art/faces/cobbler-normal.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-cobbler-happy,cobbler,docs/art/review/sources/p1-face-cobbler-expressions-source.png,public/art/faces/cobbler-happy.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切
+npc-face-cobbler-thinking,cobbler,docs/art/review/sources/p1-face-cobbler-expressions-source.png,public/art/faces/cobbler-thinking.webp,,,,80,80,是,,,待验收,统一二次元头像风格；按3表情源图裁切

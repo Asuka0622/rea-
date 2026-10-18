@@ -174,6 +174,130 @@ export const PROLOGUE_QUESTS = [
       { id: "static-read", depth: "L1" },
     ],
   },
+{
+  "id": "forge-release",
+  "caseId": "forge-release",
+  "tier": "side",
+  "transfer": true,
+  "title": "铁叔的发布检查",
+  "giver": "铁叔",
+  "discover": "npc:铁叔",
+  "take": "talk",
+  "client": "smith-release",
+  "at": {
+    "region": "center"
+  },
+  "ask": [
+    {
+      "who": "smith-release",
+      "name": "铁叔",
+      "text": "铁叔要把量尺程序发给街坊。请从发布副本找一行泄露凭据的证据，移走客户端私钥，同时保留毫米显示与测量请求。服务端代办接口已经准备好，见功能合同。"
+    }
+  ],
+  "after": [],
+  "needs": [
+    "hardcoded-secret:L2"
+  ],
+  "knowledge": [
+    {
+      "id": "hardcoded-secret",
+      "depth": "L3"
+    }
+  ]
+},
+{
+  "id": "beacon-release",
+  "caseId": "beacon-release",
+  "tier": "side",
+  "transfer": true,
+  "title": "灯塔的上传签名",
+  "giver": "老陈",
+  "discover": "npc:老陈",
+  "take": "talk",
+  "client": "lighthouse-keeper",
+  "at": {
+    "region": "south"
+  },
+  "ask": [
+    {
+      "who": "lighthouse-keeper",
+      "name": "老陈",
+      "text": "老陈想公开灯塔的巡检程序，日志上传却依赖包里的一把签名钥匙。请给出泄露位置，修好发布副本；设备公开编号和每30分钟巡检一次的功能必须保留。"
+    }
+  ],
+  "after": [],
+  "needs": [
+    "hardcoded-secret:L2"
+  ],
+  "knowledge": [
+    {
+      "id": "hardcoded-secret",
+      "depth": "L3"
+    }
+  ]
+},
+{
+  "id": "cobbler-booking",
+  "caseId": "cobbler-booking",
+  "tier": "side",
+  "transfer": true,
+  "title": "修鞋铺的预约小程序",
+  "giver": "老宋",
+  "discover": "npc:老宋",
+  "take": "talk",
+  "client": "cobbler",
+  "at": {
+    "region": "craft"
+  },
+  "ask": [
+    {
+      "who": "cobbler",
+      "name": "老宋",
+      "text": "老宋只想扫描取鞋码，预约小程序却顺手申请通讯录并上传。请指出支持判断的源码行，修改能力声明和数据路径：取鞋码还能扫，通讯录不能再出去。"
+    }
+  ],
+  "after": [],
+  "needs": [
+    "permission-manifest:L2"
+  ],
+  "knowledge": [
+    {
+      "id": "permission-manifest",
+      "depth": "L3"
+    }
+  ]
+},
+{
+  "id": "clock-import",
+  "caseId": "clock-import",
+  "tier": "side",
+  "transfer": true,
+  "title": "小铃的报时工具",
+  "giver": "小铃",
+  "discover": "npc:小铃",
+  "take": "talk",
+  "client": "apprentice",
+  "at": {
+    "region": "north"
+  },
+  "ask": [
+    {
+      "who": "apprentice",
+      "name": "小铃",
+      "text": "小铃做的报时工具需要读取时间、导入用户选择的铃声，却额外持续上传位置。请找到证据，修复配置；不能为了少要权限而把报时和铃声导入一起关掉。"
+    }
+  ],
+  "after": [],
+  "needs": [
+    "permission-manifest:L2"
+  ],
+  "knowledge": [
+    {
+      "id": "permission-manifest",
+      "depth": "L3"
+    }
+  ]
+}
 ];
 
 /** 接取渠道：不是所有委托都从板上来（界面、镇上 NPC、世界遭遇都读这里）。 */
@@ -212,6 +336,14 @@ export function knowledgeFromCompletion(quests = PROLOGUE_QUESTS, completed = {}
       const current = best[entry.id] ?? "";
       if ((level[entry.depth] ?? 0) > (level[current] ?? 0)) best[entry.id] = entry.depth;
     }
+  }
+  for (const id of Object.keys(KNOWLEDGE_POINTS)) {
+    const transfers=quests.filter(q=>q.transfer && q.knowledge.some(e=>e.id===id && e.depth==='L3'));
+    if (!transfers.length) continue;
+    const records=transfers.filter(q=>completed[q.id]);
+    const independent=records.filter(q=>completed[q.id]?.independent===true);
+    if (records.length && independent.length<2) best[id]='L2';
+    if (independent.length>=2) best[id]='L3';
   }
   return best;
 }

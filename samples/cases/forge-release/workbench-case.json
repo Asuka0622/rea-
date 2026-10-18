@@ -1,0 +1,35 @@
+{
+  "format": "rea-workbench-case-v1",
+  "id": "forge-release",
+  "order": 20,
+  "title": "铁叔的发布检查",
+  "tagline": "换一份样本，自己做一次",
+  "story": "铁叔要把量尺程序发给街坊。请从发布副本找一行泄露凭据的证据，移走客户端私密凭据，同时保留毫米显示与测量请求。服务端代办接口已经准备好，见功能合同。",
+  "skills": [
+    "发布副本凭据检查"
+  ],
+  "questions": [],
+  "knowledge": [
+    {
+      "id": "hardcoded-secret",
+      "depth": "L3"
+    }
+  ],
+  "scene": {
+    "place": "铁叔的发布检查"
+  },
+  "game": {
+    "practice": true,
+    "client": {
+      "name": "铁叔",
+      "portrait": "lumi"
+    },
+    "lab": {
+      "kind": "transfer",
+      "files": [
+        "client.json",
+        "contract.json"
+      ]
+    }
+  }
+}

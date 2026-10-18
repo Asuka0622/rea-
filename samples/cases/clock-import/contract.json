@@ -1,0 +1,23 @@
+{
+  "kind": "permission",
+  "evidenceNeedle": "\"background.location\"",
+  "required": {
+    "app": "准点铃"
+  },
+  "permissions": [
+    "clock",
+    "files"
+  ],
+  "flows": [
+    {
+      "from": "clock",
+      "to": "local.display"
+    },
+    {
+      "from": "files",
+      "to": "local.preview"
+    }
+  ],
+  "hint": "报时与用户选铃声都有合同要求；把后台位置声明和对应外发路径去掉，别把核心功能一起删了。",
+  "recap": "同一个权限判断，换成报时与文件导入也要重新追踪。这里的能力名是教学模型的抽象，不是某个操作系统的真实权限字符串。"
+}

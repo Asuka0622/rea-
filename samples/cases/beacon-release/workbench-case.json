@@ -1,0 +1,35 @@
+{
+  "format": "rea-workbench-case-v1",
+  "id": "beacon-release",
+  "order": 21,
+  "title": "灯塔的上传签名",
+  "tagline": "换一份样本，自己做一次",
+  "story": "老陈想公开灯塔的巡检程序，日志上传却依赖包里的一把签名钥匙。请给出泄露位置，修好发布副本；设备公开编号和每30分钟巡检一次的功能必须保留。",
+  "skills": [
+    "发布副本凭据检查"
+  ],
+  "questions": [],
+  "knowledge": [
+    {
+      "id": "hardcoded-secret",
+      "depth": "L3"
+    }
+  ],
+  "scene": {
+    "place": "灯塔的上传签名"
+  },
+  "game": {
+    "practice": true,
+    "client": {
+      "name": "老陈",
+      "portrait": "lumi"
+    },
+    "lab": {
+      "kind": "transfer",
+      "files": [
+        "client.json",
+        "contract.json"
+      ]
+    }
+  }
+}

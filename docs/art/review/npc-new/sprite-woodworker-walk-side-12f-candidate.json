@@ -1,0 +1,22 @@
+{
+  "assetId": "npc-sprite-woodworker-walk-side-12f",
+  "frameWidth": 96,
+  "frameHeight": 192,
+  "logicalFrameWidth": 16,
+  "logicalFrameHeight": 32,
+  "columns": 12,
+  "rows": 1,
+  "status": "superseded",
+  "footAnchor": "bottom-center",
+  "frameDurationMs": 50,
+  "animation": {
+    "walkRight": {
+      "row": 0,
+      "frames": 12,
+      "frameDurationMs": 50,
+      "cycleDurationMs": 600
+    }
+  },
+  "source": "docs/art/review/sources/woodworker-side-walk-12f-source-atlas-v2.png",
+  "note": "Historical side-walk-only candidate under the previous 12-frame request. Superseded by the current four-direction 8-frame requirement; do not integrate."
+}

@@ -1,0 +1,35 @@
+{
+  "format": "rea-workbench-case-v1",
+  "id": "clock-import",
+  "order": 23,
+  "title": "小铃的报时工具",
+  "tagline": "换一份样本，自己做一次",
+  "story": "小铃做的报时工具需要读取时间、导入用户选择的铃声，却额外持续上传位置。请找到证据，修复配置；不能为了少要权限而把报时和铃声导入一起关掉。",
+  "skills": [
+    "能力与数据路径检查"
+  ],
+  "questions": [],
+  "knowledge": [
+    {
+      "id": "permission-manifest",
+      "depth": "L3"
+    }
+  ],
+  "scene": {
+    "place": "小铃的报时工具"
+  },
+  "game": {
+    "practice": true,
+    "client": {
+      "name": "小铃",
+      "portrait": "lumi"
+    },
+    "lab": {
+      "kind": "transfer",
+      "files": [
+        "client.json",
+        "contract.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "frame": [
+    96,
+    192
+  ],
+  "logicalFrame": [
+    16,
+    32
+  ],
+  "sheet": [
+    6,
+    5
+  ],
+  "smooth": true,
+  "side": "right",
+  "resample": "nearest",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "walk-down": {
+      "row": 1,
+      "frames": 6,
+      "ms": 100
+    },
+    "walk-up": {
+      "row": 2,
+      "frames": 6,
+      "ms": 100
+    },
+    "walk-side": {
+      "row": 3,
+      "frames": 6,
+      "ms": 100
+    },
+    "talk": {
+      "row": 4,
+      "frames": 2,
+      "ms": 250
+    }
+  },
+  "character": "oncall",
+  "source": "docs/art/review/sources/sprite-oncall-source.png",
+  "sourceCanvas": [
+    972,
+    1619
+  ]
+}

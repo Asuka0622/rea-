@@ -123,7 +123,8 @@ test("the coverage report names the knowledge points that no side quest takes to
     assert.ok(gap.quests.length < 2, `${gap.id} should be a gap`);
   }
   // 现在还没有任何支线把知识点推到 L3，所以整张表都是待补清单。
-  assert.equal(gaps.length, Object.keys(KNOWLEDGE_POINTS).length);
+  assert.equal(gaps.length, Object.keys(KNOWLEDGE_POINTS).length - 2);
+  assert.ok(!gaps.some(g=>["hardcoded-secret","permission-manifest"].includes(g.id)));
 });
 
 test("not every commission is taken from the board: some are handed over in person, some just happen", () => {
@@ -133,7 +134,7 @@ test("not every commission is taken from the board: some are handed over in pers
   // 板子上只留一部分——全在板上接，就没有「镇上撞见一件事」了。
   assert.ok(board.length >= 2, "委托板上总得有几份");
   assert.ok(board.length < PROLOGUE_QUESTS.length, "不能所有委托都从板上接");
-  assert.equal(talk.length, 3);
+  assert.equal(talk.length, 7);
   assert.equal(encounter.length, 1);
 
   for (const quest of talk) {

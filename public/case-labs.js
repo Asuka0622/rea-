@@ -1,3 +1,5 @@
+import { createPermissionLab } from "./permission-lab.js";
+import { cls } from "./mini-art.js";
 import { mountRhythm, mountTower, mountPipes, mountManage, mountCards } from "./case-minigames.js";
 import { fromBase64, toBase64, checksum, openSave } from "./save-lab.js";
 
@@ -936,42 +938,82 @@ function mountSecrets({ h, icon, lab, onMistake = () => {}, onDone = () => {} })
  * the light on. Each permission gets sorted into 「开灯用得上」 or 「和开灯没关系」; the internet permission
  * is the interesting one, because it is needed by the ads rather than the lamp.
  */
-function mountPermissions({ h, icon, lab, onMistake = () => {}, onDone = () => {} }) {
-  const rows = lab.permissions || [];
-  const answered = new Map();
-  const say = h("p", { class: "lab-say", role: "status" }, "一条一条判：这个权限，开灯用得上吗？");
-  const count = h("b", { class: "lab-count" }, `0/${rows.length}`);
-  const list = h("div", { class: "lab-perms" });
+/**
+ * 开灯用得上吗（王奶奶）：在沙盒里拿掉几项权限，按一下开灯，看灯亮不亮、监视器记下了什么。
+ * 每条判断都要有实验撑腰；一次拿掉好几项省实验，灯不亮就得拆开排查（规则在 permission-lab.js）。
+ */
+function mountPermissions({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+  const exp = createPermissionLab(lab.permissions || []);
+  const total = exp.perms.length;
+  const hints = [
+    "先别判：勾「拿掉」几项，按一下开灯，看灯亮不亮。",
+    "拿掉它灯还亮，就说明开灯用不上它。可以一次拿掉好几项，一次实验就能排除一串。",
+    "灯不亮了？说明拿掉的里面有开灯要用的。把它们分开，一项一项再试——这叫控制变量。",
+    "「开机自启」按开灯是看不出来的：重启一次手机试试。",
+  ];
+  let hintAt = 0;
+  const say = h("p", { class: "lab-say", role: "status" }, "王奶奶想知道：「拒绝它，灯还亮不亮？」别猜，在沙盒里试：勾掉几项权限，按一下开灯。");
+  const count = h("b", { class: "lab-count" });
+  const lamp = h("span", { class: "lab-pl-lamp", "aria-hidden": "true" });
+  const monitor = h("div", { class: "lab-pl-log" });
+  const list = h("div", { class: "lab-perms lab-pl" });
 
-  const answer = (row, need, rowEl) => {
-    if (answered.has(row.id)) return;
-    if (Boolean(row.need) !== need) {
-      onMistake();
-      rowEl.classList.add("wrong");
-      say.textContent = `${row.label}：${row.why || (need ? "这个其实用不上。" : "这个其实是要用的。")}`;
-      setTimeout(() => rowEl.classList.remove("wrong"), 900);
-      return;
-    }
-    answered.set(row.id, need);
-    rowEl.classList.add("done");
-    rowEl.querySelectorAll("button").forEach((b) => { b.disabled = true; });
-    rowEl.querySelector(`button[data-need="${need}"]`)?.classList.add("picked");
-    count.textContent = `${answered.size}/${rows.length}`;
-    say.textContent = `${row.label}：${row.why || "判对了。"}`;
-    if (answered.size === rows.length) onDone();
-  };
-
-  for (const row of rows) {
-    const rowEl = h("div", { class: "lab-perm", "data-perm": row.id },
-      h("span", { class: "lab-perm-name" }, row.label),
-      h("button", { class: "lab-perm-pick", type: "button", "data-need": "yes", onclick: (e) => answer(row, true, e.currentTarget.parentElement) }, "开灯用得上"),
-      h("button", { class: "lab-perm-pick", type: "button", "data-need": "no", onclick: (e) => answer(row, false, e.currentTarget.parentElement) }, "和开灯没关系"));
-    list.append(rowEl);
+  function paint() {
+    count.textContent = `判好 ${exp.state.verdicts.size}/${total} · 实验 ${exp.state.runs.length} 次`;
+    list.replaceChildren(...exp.perms.map((p) => {
+      const verdict = exp.state.verdicts.get(p.id);
+      const judged = verdict !== undefined;
+      const denied = exp.state.denied.has(p.id);
+      return h("div", { class: cls(["lab-perm", judged && "done", denied && "denied"]), "data-perm": p.id },
+        h("label", { class: "lab-pl-toggle" }, h("input", { type: "checkbox", checked: denied, onchange: () => { exp.toggle(p.id); paint(); } }), "拿掉"),
+        h("span", { class: "lab-perm-name" }, p.label, exp.state.seenUse.has(p.id) && p.use ? h("small", {}, `它拿去：${p.use}`) : null),
+        judged
+          ? h("span", { class: cls(["lab-pl-verdict", verdict ? "need" : "free"]) }, verdict ? "开灯要用" : "开灯用不上")
+          : h("span", { class: "lab-pl-picks" },
+            h("button", { class: "lab-perm-pick", type: "button", onclick: () => judge(p, true) }, "开灯要用"),
+            h("button", { class: "lab-perm-pick", type: "button", onclick: () => judge(p, false) }, "开灯用不上")));
+    }));
   }
+
+  function run(kind) {
+    const r = exp.run(kind);
+    if (kind === "tap") lamp.className = cls(["lab-pl-lamp", r.lit ? "on" : "off"]);
+    const what = r.denied.length ? `拿掉 ${r.denied.map((id) => exp.find(id).label).join("、")}` : "什么都没拿掉";
+    monitor.prepend(h("div", { class: cls(["lab-pl-run", r.lit === false && "fail"]) },
+      h("b", {}, `#${r.n} ${kind === "tap" ? "按一下开灯" : "重启手机"} · ${what}`), ...r.lines.map((line) => h("p", {}, line))));
+    say.textContent = kind === "reboot" ? "重启完了：看监视器，开机时谁自己醒了。"
+      : r.lit ? (r.denied.length ? `灯亮了：拿掉的这 ${r.denied.length} 项，开灯一个都用不上。` : "灯亮了。这是对照：什么都不拿掉时的样子。")
+        : "灯不亮了：拿掉的里面有开灯要用的。把它们分开再试。";
+    paint();
+  }
+
+  function judge(p, need) {
+    const res = exp.judge(p.id, need);
+    if (!res) return;
+    if (res.ok) {
+      say.textContent = `${p.label}：${res.why || "判对了。"}（证据：实验 #${res.proof.n}）`;
+      if (exp.state.done) {
+        const needed = exp.perms.filter((x) => x.need).length;
+        say.textContent = `七个里头，只有 ${needed} 个是真的在开灯。用了 ${exp.tapRuns()} 次开灯实验${exp.tapRuns() <= 4 ? "，控制变量用得漂亮" : ""}。王奶奶：「那剩下的，我点拒绝就好了。」`;
+        onDone();
+      }
+    } else {
+      if (!res.noProof) onMistake();
+      say.textContent = res.why;
+    }
+    paint();
+  }
+
+  paint();
   return h("div", { class: "lab lab-permissions" },
-    h("div", { class: "lab-head" }, h("b", {}, lab.permTitle || lab.sampleTitle || "权限判定"), h("span", {}, "判好 "), count, h("span", {}, " 条")),
+    h("div", { class: "lab-head" }, h("b", {}, lab.permTitle || lab.sampleTitle || "开灯用得上吗"), count,
+      h("button", { class: "btn small ghost", type: "button", onclick: () => { onHint(); say.textContent = `提示 ${hintAt + 1}/${hints.length}：${hints[hintAt]}`; hintAt = (hintAt + 1) % hints.length; } }, icon("bulb", { size: 13 }), "给个提示")),
     h("p", { class: "lab-lamp" }, icon("scan", { size: 14 }), lab.lampLabel || "这个 App 只有一件事：按一下，灯亮。"),
-    list, say);
+    h("div", { class: "lab-pl-phone" }, lamp,
+      h("button", { class: "btn primary", type: "button", onclick: () => run("tap") }, "按一下开灯"),
+      h("button", { class: "btn", type: "button", onclick: () => run("reboot") }, "重启手机"),
+      h("small", {}, "沙盒里的「王奶奶的手机」：拿掉的权限，App 这次就拿不到。")),
+    list, say, h("b", { class: "lab-pl-title" }, "行为监视器"), monitor);
 }
 
 /** 一关故意失败的实验：程序在沙盒里跑不起来，什么都没抓到。失败本身是证据。 */

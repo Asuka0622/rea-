@@ -1,0 +1,17 @@
+{
+  "kind": "secret",
+  "evidenceNeedle": "DEMO_SECRET_BEACON_93",
+  "required": {
+    "app": "灯塔巡检",
+    "device.publicId": "LIGHT-07",
+    "device.interval": 30,
+    "upload.mode": "server",
+    "upload.endpoint": "/api/beacon"
+  },
+  "remove": [
+    "signing.secret"
+  ],
+  "routePath": "upload.endpoint",
+  "hint": "公开设备编号不是私钥。签名交给服务端，发布包里的signing.secret要真正移除。",
+  "recap": "公开标识与签名私钥不能混为一谈。保留设备身份，移走签名能力，再用上传模型验证功能。此检查不能证明真实服务端已配置安全。"
+}

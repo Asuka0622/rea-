@@ -23,7 +23,7 @@ function assertAnswerable(item, reports, sections) {
 }
 
 test("the case library lists every case in order", () => {
-  assert.deepEqual(caseCatalog().map((c) => c.id), ["privacy-ledger", "weather-keys", "calculator-eggs", "farm-save", "notes-versions", "flashlight-apk", "packed-echo", "real-stories"]);
+  assert.deepEqual(caseCatalog().map((c) => c.id), ["privacy-ledger", "weather-keys", "calculator-eggs", "farm-save", "notes-versions", "flashlight-apk", "packed-echo", "real-stories", "forge-release", "beacon-release", "cobbler-booking", "clock-import"]);
   assert.match(byId["flashlight-apk"].path, /xiaoguang-flashlight\.apk$/);
   assert.deepEqual(byId["flashlight-apk"].requires, ["jadx", "java"]);
   assert.equal(byId["real-stories"].path, null);

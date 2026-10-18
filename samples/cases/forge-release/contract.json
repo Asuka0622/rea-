@@ -1,0 +1,16 @@
+{
+  "kind": "secret",
+  "evidenceNeedle": "DEMO_SECRET_FORGE_62",
+  "required": {
+    "app": "尺匠",
+    "display.unit": "mm",
+    "service.mode": "server",
+    "service.endpoint": "/api/forge"
+  },
+  "remove": [
+    "service.apiKey"
+  ],
+  "routePath": "service.endpoint",
+  "hint": "发布副本不该带service.apiKey；请求应交给功能合同中的本地代办接口。",
+  "recap": "下次先从发布包找凭据，再验证正常功能仍能通过服务端代办。若旧密钥已发布，还需撤销并轮换，删掉客户端字符串不会收回旧包。"
+}

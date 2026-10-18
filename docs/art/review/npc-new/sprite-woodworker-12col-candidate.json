@@ -1,0 +1,40 @@
+{
+  "assetId": "npc-sprite-woodworker",
+  "frameWidth": 96,
+  "frameHeight": 192,
+  "logicalFrameWidth": 16,
+  "logicalFrameHeight": 32,
+  "columns": 12,
+  "rows": 5,
+  "frameDurationMs": 100,
+  "status": "superseded",
+  "footAnchor": "bottom-center",
+  "note": "Historical partial candidate under the previous 12-frame three-direction request. Superseded by the current requirement: four independent directions at 8 frames each and 75ms/frame. Do not integrate.",
+  "animation": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "frameDurationMs": 500
+    },
+    "walkDown": {
+      "row": 1,
+      "frames": 6,
+      "frameDurationMs": 100
+    },
+    "walkUp": {
+      "row": 2,
+      "frames": 6,
+      "frameDurationMs": 100
+    },
+    "walkRight": {
+      "row": 3,
+      "frames": 12,
+      "frameDurationMs": 50
+    },
+    "talk": {
+      "row": 4,
+      "frames": 2,
+      "frameDurationMs": 250
+    }
+  }
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>人物行走帧数对照</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: #f4ead7; color: #35291f; }
+    body { margin: 0; padding: 28px; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0 0 20px; color: #665849; }
+    .controls { display: flex; gap: 10px; margin: 0 0 22px; }
+    button { border: 1px solid #98724b; background: #fff8ec; color: #35291f; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+    .comparison { display: grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap: 18px; max-width: 820px; }
+    article { border: 1px solid #c5a77c; border-radius: 8px; padding: 16px; background: #fffaf0; }
+    h2 { margin: 0; font-size: 18px; }
+    .note { margin: 4px 0 12px; font-size: 13px; }
+    .stage { height: 188px; display: grid; place-items: center; overflow: hidden; border-radius: 6px; background-color: #dfc79e; background-image: linear-gradient(45deg, #ead9b9 25%, transparent 25%), linear-gradient(-45deg, #ead9b9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ead9b9 75%), linear-gradient(-45deg, transparent 75%, #ead9b9 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0; }
+    .sprite { width: 64px; height: 128px; background-repeat: no-repeat; image-rendering: pixelated; }
+    .readout { margin-top: 10px; font: 12px ui-monospace, Consolas, monospace; color: #665849; }
+    @media (max-width: 620px) { body { padding: 16px; } .comparison { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>人物行走帧数对照：路米向下走</h1>
+  <p>左侧是现有 4 帧 × 140 ms；右侧是新增 6 帧 × 100 ms。两边步态循环约 0.56 s / 0.60 s，显示尺寸相同。</p>
+  <div class="controls">
+    <button id="toggle" type="button">暂停</button>
+    <button id="step" type="button">单步前进</button>
+  </div>
+  <main class="comparison">
+    <article>
+      <h2>现有版本 · 4 帧</h2>
+      <div class="note">每帧 140 ms · 4 × 5 精灵表</div>
+      <div class="stage"><div id="old" class="sprite" aria-label="路米四帧向下走"></div></div>
+      <div id="old-readout" class="readout"></div>
+    </article>
+    <article>
+      <h2>候选版本 · 6 帧</h2>
+      <div class="note">每帧 100 ms · 6 × 5 精灵表</div>
+      <div class="stage"><div id="new" class="sprite" aria-label="路米六帧向下走"></div></div>
+      <div id="new-readout" class="readout"></div>
+    </article>
+  </main>
+  <script>
+    const clips = [
+      { el: document.querySelector("#old"), readout: document.querySelector("#old-readout"), url: "../../../public/art/pixel/anim-lumi.png", cols: 4, ms: 140 },
+      { el: document.querySelector("#new"), readout: document.querySelector("#new-readout"), url: "animations/anim-lumi-6f-candidate.png", cols: 6, ms: 100 },
+    ];
+    for (const clip of clips) {
+      clip.el.style.backgroundImage = `url("${clip.url}")`;
+      clip.el.style.backgroundSize = `${clip.cols * 64}px 640px`;
+    }
+    let playing = true;
+    let start = performance.now();
+    let frozenAt = 0;
+    let manualOffset = 0;
+    function paint(now) {
+      for (const clip of clips) {
+        const elapsed = playing ? now - start + manualOffset : frozenAt + manualOffset;
+        const index = Math.floor(elapsed / clip.ms) % clip.cols;
+        clip.el.style.backgroundPosition = `${-index * 64}px -128px`;
+        clip.readout.textContent = `第 ${index + 1} / ${clip.cols} 帧 · ${clip.ms} ms / 帧`;
+      }
+      requestAnimationFrame(paint);
+    }
+    requestAnimationFrame(paint);
+    document.querySelector("#toggle").addEventListener("click", (event) => {
+      if (playing) { frozenAt = performance.now() - start; playing = false; event.currentTarget.textContent = "继续"; }
+      else { start = performance.now() - frozenAt; playing = true; event.currentTarget.textContent = "暂停"; }
+    });
+    document.querySelector("#step").addEventListener("click", () => {
+      if (playing) { frozenAt = performance.now() - start; playing = false; document.querySelector("#toggle").textContent = "继续"; }
+      manualOffset += 140;
+    });
+  </script>
+</body>
+</html>

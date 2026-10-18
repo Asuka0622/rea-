@@ -1,0 +1,14 @@
+{
+  "app": "灯塔巡检",
+  "device": {
+    "publicId": "LIGHT-07",
+    "interval": 30
+  },
+  "signing": {
+    "secret": "DEMO_SECRET_BEACON_93"
+  },
+  "upload": {
+    "mode": "direct",
+    "endpoint": "https://beacon.example/upload"
+  }
+}

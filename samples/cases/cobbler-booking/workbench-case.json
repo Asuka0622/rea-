@@ -1,0 +1,35 @@
+{
+  "format": "rea-workbench-case-v1",
+  "id": "cobbler-booking",
+  "order": 22,
+  "title": "修鞋铺的预约小程序",
+  "tagline": "换一份样本，自己做一次",
+  "story": "老宋只想扫描取鞋码，预约小程序却顺手申请通讯录并上传。请指出支持判断的源码行，修改能力声明和数据路径：取鞋码还能扫，通讯录不能再出去。",
+  "skills": [
+    "能力与数据路径检查"
+  ],
+  "questions": [],
+  "knowledge": [
+    {
+      "id": "permission-manifest",
+      "depth": "L3"
+    }
+  ],
+  "scene": {
+    "place": "修鞋铺的预约小程序"
+  },
+  "game": {
+    "practice": true,
+    "client": {
+      "name": "老宋",
+      "portrait": "lumi"
+    },
+    "lab": {
+      "kind": "transfer",
+      "files": [
+        "client.json",
+        "contract.json"
+      ]
+    }
+  }
+}

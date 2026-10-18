@@ -1,0 +1,66 @@
+{
+  "frame": [
+    96,
+    192
+  ],
+  "logicalFrame": [
+    16,
+    32
+  ],
+  "sheet": [
+    8,
+    6
+  ],
+  "smooth": true,
+  "side": "right",
+  "resample": "nearest",
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        1800,
+        160
+      ]
+    },
+    "walk-down": {
+      "row": 1,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-up": {
+      "row": 2,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-left": {
+      "row": 3,
+      "frames": 8,
+      "ms": 75
+    },
+    "walk-right": {
+      "row": 4,
+      "frames": 8,
+      "ms": 75
+    },
+    "talk": {
+      "row": 5,
+      "frames": 2,
+      "ms": 250
+    }
+  },
+  "character": "baker",
+  "source": "docs/art/review/sources/sprite-baker-source.png",
+  "sourceCanvas": [
+    972,
+    1619
+  ],
+  "status": "candidate",
+  "walkAtlasSource": {
+    "down": "docs/art/review/sources/baker-walk-down-8f.png",
+    "up": "docs/art/review/sources/baker-walk-up-8f.png",
+    "left": "docs/art/review/sources/baker-walk-left-8f.png",
+    "right": "docs/art/review/sources/baker-walk-right-8f.png"
+  },
+  "note": "Animation-only candidate. Original idle, talk and other non-walk rows were copied pixel-for-pixel. Four independent walk directions: 8 frames x 75ms; verify alternating feet, natural counter-swinging arms, map camera angle and in-game scale before integration."
+}

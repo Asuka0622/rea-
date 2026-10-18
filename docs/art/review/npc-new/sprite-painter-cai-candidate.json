@@ -1,0 +1,36 @@
+{
+  "frameHeight": 192,
+  "logicalFrameWidth": 16,
+  "note": "Candidate; verify frame alignment, alpha, walk cycle, and palette variants before runtime integration.",
+  "frameWidth": 96,
+  "status": "candidate",
+  "footAnchor": "bottom-center",
+  "frameDurationMs": 100,
+  "columns": 6,
+  "assetId": "npc-sprite-painter-cai",
+  "animation": {
+    "walkUp": {
+      "row": 2,
+      "frames": 6
+    },
+    "talk": {
+      "row": 4,
+      "frames": 2
+    },
+    "idle": {
+      "row": 0,
+      "frames": 2
+    },
+    "walkRight": {
+      "row": 3,
+      "frames": 6
+    },
+    "walkDown": {
+      "row": 1,
+      "frames": 6
+    }
+  },
+  "rows": 5,
+  "visibleHeight": 32,
+  "logicalFrameHeight": 32
+}

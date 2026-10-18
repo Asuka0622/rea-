@@ -1,0 +1,11 @@
+{
+  "app": "尺匠",
+  "display": {
+    "unit": "mm"
+  },
+  "service": {
+    "mode": "direct",
+    "endpoint": "https://forge.example/v1/measure",
+    "apiKey": "DEMO_SECRET_FORGE_62"
+  }
+}

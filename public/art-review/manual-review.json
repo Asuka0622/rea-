@@ -1,0 +1,90 @@
+{
+  "public/art/pixel/anim-kobayashi-case.png": {
+    "severity": "P0",
+    "note": "不通过：挠头行第3、4帧透明。game.css 的 kobayashi-think 仍按4帧播放，game-shell.js 优先选此案例图，会造成角色消失。补齐两帧或同步将该播放路径改为2帧，再验证悬停与键盘焦点。"
+  },
+  "docs/art/review/animations/anim-lumi-6f-candidate.png": {
+    "severity": "P1",
+    "note": "保留候选：六帧版本尚未接入，当前人物使用 unified 图及4帧 walk-side。侧向步态需动态核对接触、经过、摆动姿势和脚底稳定，不能以六张不同图片代替自然步态验收；整体身形也需与当前人物统一。"
+  },
+  "docs/art/review/animations/lumi-walk-down-6f-strip.png": {
+    "severity": "P1",
+    "note": "局部候选：仅向下行走条带，不包含左右行走。接入前需补元数据或合入完整表，并核对人物大小、朝向与循环衔接。"
+  },
+  "public/art/pixel/anim-lumi-unified.png": {
+    "severity": "P1",
+    "note": "当前运行人物；现有映射 walk-side 为4帧。新六帧候选的存在不能算左右移动已更新。需在游戏中复核速度和脚步同步。"
+  },
+  "public/art/faces/kobayashi-thinking.webp": {
+    "severity": "P2",
+    "note": "构图复核：思考头像为较远的半身构图，与同角色其他表情的头部占比有差异。在同尺寸对话框中并排比较，避免切表情时人物突然缩小。不是空帧或文件损坏。"
+  },
+  "public/art/faces/lumi-point.webp": {
+    "severity": "P2",
+    "note": "指向姿势包含手臂和更多身体，头部占比与近景头像不同。作为演出立绘合理；作为同尺寸头像直接切换需验证头部位置，必要时单设立绘用途。"
+  },
+  "public/art/pixel/eras/china/bianjing.png": {
+    "severity": "P1",
+    "note": "旧路线归档：汴京当前仍是几何布局占位稿；正式需求已暂停该路线，保留归档，不进入本轮返工或补图任务。"
+  },
+  "public/art/pixel/case-props/xiaoke-ad.png": {
+    "severity": "待确认",
+    "note": "形象归属待确认：广告上仍是机器人，小克最新设定为橙色 Clawd 蟹。如果是小克广告需返工；若是另一款产品的旧广告，应在文案/命名中明确。当前不直接判定必须删图。"
+  },
+  "public/art/pixel/case-props/weather-keys-monitor.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/case-props/weather-keys-poster.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/case-props/weather-keys-printout.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/case-props/weather-keys-rack.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/case-props/weather-keys-router.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/case-props/weather-keys-todo.png": {
+    "severity": "P1",
+    "note": "尺寸不符合本项目2倍密度的偶数边规范。按实际像素网格补透明边或重裁，保持物件锚点；不要非整数缩放拉糊。机检记录了具体尺寸。"
+  },
+  "public/art/pixel/anim/anim-guests.png": {
+    "severity": "复核",
+    "note": "脚底检测仅为提示。飞翔、游动、烟雾、涟漪允许竖向位移，不能据此直接返工；宾客待机需单独确认是否合理重心变化。"
+  },
+  "public/art/pixel/anim/anim-pigeon.png": {
+    "severity": "复核",
+    "note": "脚底检测仅为提示。飞翔、游动、烟雾、涟漪允许竖向位移，不能据此直接返工；宾客待机需单独确认是否合理重心变化。"
+  },
+  "public/art/pixel/anim/center-smoke.png": {
+    "severity": "复核",
+    "note": "脚底检测仅为提示。飞翔、游动、烟雾、涟漪允许竖向位移，不能据此直接返工；宾客待机需单独确认是否合理重心变化。"
+  },
+  "public/art/pixel/anim/river-fish.png": {
+    "severity": "复核",
+    "note": "脚底检测仅为提示。飞翔、游动、烟雾、涟漪允许竖向位移，不能据此直接返工；宾客待机需单独确认是否合理重心变化。"
+  },
+  "public/art/pixel/anim/river-ripple.png": {
+    "severity": "复核",
+    "note": "脚底检测仅为提示。飞翔、游动、烟雾、涟漪允许竖向位移，不能据此直接返工；宾客待机需单独确认是否合理重心变化。"
+  },
+  "public/art/pixel/anim-xiaoyu.png": {
+    "severity": "复核",
+    "note": "hop 是跳跃，脚底高度变化本身合理。验收重点是起跳、落地、循环衔接，不把17px位移自动判为漂浮缺陷。"
+  },
+  "public/art/pixel/anim/anim-cat.png": {
+    "severity": "P1",
+    "note": "配套 JSON 的 sheet 使用整图像素尺寸；主角读取器使用行列数。各自文件可能正确，但接入同一个读取器前必须转换/统一契约。此验收页已按真实尺寸归一化预览，不能据此推断游戏已兼容。"
+  },
+  "public/art/pixel/anim/center-flag.png": {
+    "severity": "P1",
+    "note": "配套 JSON 的 sheet 使用整图像素尺寸；主角读取器使用行列数。各自文件可能正确，但接入同一个读取器前必须转换/统一契约。此验收页已按真实尺寸归一化预览，不能据此推断游戏已兼容。"
+  }
+}

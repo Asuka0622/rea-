@@ -1,0 +1,18 @@
+{
+  "kind": "permission",
+  "evidenceNeedle": "\"contacts\"",
+  "required": {
+    "app": "取鞋预约"
+  },
+  "permissions": [
+    "camera"
+  ],
+  "flows": [
+    {
+      "from": "camera",
+      "to": "local.scan"
+    }
+  ],
+  "hint": "只删通讯录声明还不够，数据路径也要收窄；相机是扫描取鞋码的必要能力。",
+  "recap": "从用户操作追到能力和数据去向：声明多不代表已经偷传，删声明也不等于改了业务路径。用隔离模型核对扫描仍可用、额外路径已关闭。"
+}

@@ -1288,3 +1288,25 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .term-lab .lab-calc-hits p.rumor em {color:#ffb0a0;}
 .term-lab .lab-save-file {background:#0f1a14;color:#d6f5da;border-color:#2f4a38;}
 .term-lab .lab-save-sum {background:#0f1a14;color:#ffd36b;}
+/* 开灯用得上吗：沙盒实验（代码画的占位，美术交图后替换） */
+.lab-pl-phone {display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px;background:#101a14;border:1px solid #2f4a38;}
+.lab-pl-phone small {flex-basis:100%;color:#8aa894;font-size:11px;}
+.lab-pl-lamp {width:28px;height:28px;border-radius:50%;background:#2a2f2b;border:2px solid #4d5a50;transition:background .2s, box-shadow .2s;}
+.lab-pl-lamp.on {background:#fff3b0;border-color:#e8c270;box-shadow:0 0 18px 6px rgba(255,236,150,.55);}
+.lab-pl-lamp.off {background:#3a1c18;border-color:#c9573e;}
+.lab-pl .lab-perm {display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;}
+.lab-pl .lab-perm.denied {background:#3a1f1a;border-color:#c9573e;}
+.lab-pl-toggle {display:flex;align-items:center;gap:3px;font-size:11px;color:#d97a63;cursor:pointer;}
+.lab-pl .lab-perm-name small {display:block;font-size:11px;color:#8aa894;}
+.lab-pl-picks {display:flex;gap:4px;}
+.lab-pl-verdict {font-size:12px;font-weight:bold;}
+.lab-pl-verdict.need {color:#e8c270;}
+.lab-pl-verdict.free {color:#6fbf73;}
+.lab-pl-title {display:block;margin-top:6px;font-size:12px;}
+.lab-pl-log {max-height:180px;overflow:auto;padding:4px 8px;font:11px/1.5 var(--font-mono, monospace);color:#9db0a4;background:#0d1410;border:1px dashed #2f4a38;}
+.lab-pl-run {padding:3px 0;border-bottom:1px solid #1d2b22;}
+.lab-pl-run b {color:#cfe8d4;}
+.lab-pl-run.fail b {color:#ffb39e;}
+.lab-pl-run p {margin:0;}
+.lab-permissions .lab-head {display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.lab-permissions .lab-head .btn {margin-left:auto;}

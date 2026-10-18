@@ -1,0 +1,17 @@
+{
+  "app": "取鞋预约",
+  "permissions": [
+    "camera",
+    "contacts"
+  ],
+  "flows": [
+    {
+      "from": "camera",
+      "to": "local.scan"
+    },
+    {
+      "from": "contacts",
+      "to": "remote.marketing"
+    }
+  ]
+}

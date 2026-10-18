@@ -74,7 +74,7 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
   function renderList() {
     const stars = savedStars();
     list.replaceChildren(
-      ...[...catalog].sort((a, b) => (demo ? Number(!inDemo(a)) - Number(!inDemo(b)) || caseNo(a) - caseNo(b) : 0)).map((item) =>
+      ...catalog.filter(item=>!item.game?.practice).sort((a, b) => (demo ? Number(!inDemo(a)) - Number(!inDemo(b)) || caseNo(a) - caseNo(b) : 0)).map((item) =>
         h(
           "article",
           { class: "case-card", role: "listitem" },
