@@ -1,0 +1,23 @@
+/* 卡牌 · 当面对质（隐私说明）。代码画的占位，美术交图后替换。 */
+.cd2-doc {padding:8px 10px;background:#f2ecdc;color:#2b2320;border:1px solid #b7a98a;font:12px/1.6 var(--font-body);}
+.cd2-doc > b {display:block;margin-bottom:4px;}
+.cd2-testimony {margin:0;padding-left:20px;}
+.cd2-line {display:flex;justify-content:space-between;gap:8px;padding:3px 6px;cursor:pointer;border-left:3px solid transparent;}
+.cd2-line.focus {background:#fff6dc;border-left-color:#8a5fb0;}
+.cd2-line.refuted span {text-decoration:line-through;text-decoration-color:#a3402c;color:#6b5d50;}
+.cd2-line.withdrawn {opacity:.5;cursor:default;}
+.cd2-line.true {color:#2f6a3c;}
+.cd2-line:not(.open) {cursor:default;}
+.cd2-tag {flex:none;color:#6b5d50;}
+.cd2-line.refuted .cd2-tag {color:#a3402c;font-weight:bold;}
+.cd2-line.true .cd2-tag {color:#2f6a3c;font-weight:bold;}
+.cd2-or {font:11px var(--font-body);color:#8aa894;}
+.cd2-trust {margin-left:auto;font:12px var(--font-body);color:#ffb39e;letter-spacing:1px;}
+.cd2-card small {font-family:var(--font-mono, monospace);font-size:10px;white-space:pre-wrap;word-break:break-all;}
+.cd2-card:disabled {opacity:.6;cursor:default;}
+.cd2-report {padding:8px;background:#1f3326;border:1px solid #e8c270;color:#cfe8d4;font:12px/1.5 var(--font-body);}
+.cd2-report b {display:block;color:#ffe8b0;margin-bottom:4px;}
+.cd2-report table {width:100%;border-collapse:collapse;}
+.cd2-report td {padding:3px 6px;border-top:1px solid #2f4a38;vertical-align:top;}
+.cd2-report tr.bad td:nth-child(2) {color:#ffb39e;font-weight:bold;}
+.cd2-report tr.ok td:nth-child(2) {color:#6fbf73;font-weight:bold;}
