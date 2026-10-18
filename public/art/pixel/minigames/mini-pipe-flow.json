@@ -1,0 +1,20 @@
+{
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    4,
+    1
+  ],
+  "smooth": false,
+  "activeFrames": 4,
+  "animations": {
+    "flow": {
+      "row": 0,
+      "frames": 4,
+      "ms": 110
+    }
+  },
+  "notes": "Optional pipe-connected flow, cyan and amber pixels advance through a short metal pipe."
+}

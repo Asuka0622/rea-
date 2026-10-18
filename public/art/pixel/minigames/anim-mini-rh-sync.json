@@ -1,0 +1,37 @@
+{
+  "frame": [
+    48,
+    36
+  ],
+  "sheet": [
+    3,
+    3
+  ],
+  "smooth": false,
+  "side": "right",
+  "activeFrames": 4,
+  "animations": {
+    "breathe": {
+      "row": 0,
+      "frames": 2,
+      "ms": [
+        220,
+        180
+      ]
+    },
+    "hit": {
+      "row": 0,
+      "start": 2,
+      "frames": 1,
+      "ms": 220
+    },
+    "miss": {
+      "row": 1,
+      "start": 0,
+      "frames": 1,
+      "ms": 260,
+      "hold": true
+    }
+  },
+  "notes": "Reading order cells 0-1 breathe, cell 2 hit, row 1 column 0 miss; other cells transparent."
+}

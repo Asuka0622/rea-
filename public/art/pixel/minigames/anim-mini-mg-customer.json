@@ -1,0 +1,46 @@
+{
+  "frame": [
+    20,
+    28
+  ],
+  "sheet": [
+    4,
+    6
+  ],
+  "smooth": false,
+  "side": "right",
+  "activeFrames": 16,
+  "animations": {
+    "male-walk": {
+      "row": 0,
+      "frames": 4,
+      "ms": 150
+    },
+    "male-satisfied-exit": {
+      "row": 1,
+      "frames": 2,
+      "ms": 220
+    },
+    "male-frown-exit": {
+      "row": 2,
+      "frames": 2,
+      "ms": 220
+    },
+    "female-walk": {
+      "row": 3,
+      "frames": 4,
+      "ms": 150
+    },
+    "female-satisfied-exit": {
+      "row": 4,
+      "frames": 2,
+      "ms": 220
+    },
+    "female-frown-exit": {
+      "row": 5,
+      "frames": 2,
+      "ms": 220
+    }
+  },
+  "notes": "Each row is 4 frames wide; exit rows use columns 0-1 and leave columns 2-3 transparent."
+}

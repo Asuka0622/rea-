@@ -1,0 +1,28 @@
+{
+  "frame": [
+    24,
+    24
+  ],
+  "sheet": [
+    4,
+    4
+  ],
+  "smooth": false,
+  "side": "right",
+  "activeFrames": 5,
+  "animations": {
+    "walk": {
+      "row": 0,
+      "frames": 4,
+      "ms": 140
+    },
+    "blocked-fall": {
+      "row": 1,
+      "start": 0,
+      "frames": 1,
+      "ms": 320,
+      "hold": true
+    }
+  },
+  "notes": "Only row 0 columns 0-3 and row 1 column 0 contain frames; other cells remain transparent."
+}

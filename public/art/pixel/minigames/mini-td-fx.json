@@ -1,0 +1,20 @@
+{
+  "frame": [
+    32,
+    32
+  ],
+  "sheet": [
+    3,
+    1
+  ],
+  "smooth": false,
+  "activeFrames": 3,
+  "animations": {
+    "intercept": {
+      "row": 0,
+      "frames": 3,
+      "ms": 90
+    }
+  },
+  "notes": "Optional interception spark; 3 sequential impact/fade frames."
+}
