@@ -8,11 +8,11 @@ export function caseRevision(item) {
   const revision=(hash>>>0).toString(16);revisions.set(item,revision);return revision;
 }
 export function emptyCaseState(item) {
-  return {phase:'look',told:false,seen:new Set(),clues:[],dict:[],words:new Set(),evidence:[],chosen:item.game.puzzle.board.map(group=>blanksOf(group.text).map(()=>'')),solved:new Set(),broken:new Set(),statement:0,mistakes:0,hints:0,history:[],termLog:[],page:'clues'};
+  return {phase:'look',told:false,seen:new Set(),clues:[],dict:[],words:new Set(),evidence:[],chosen:item.game.puzzle.board.map(group=>blanksOf(group.text).map(()=>'')),solved:new Set(),broken:new Set(),statement:0,mistakes:0,hints:0,spent:0,hearts:3,fails:0,history:[],termLog:[],page:'clues'};
 }
 const count=value=>Number.isInteger(value)?Math.max(0,Math.min(10000,value)):0;
 export function caseSnapshot(item,state) {
-  return {version:1,revision:caseRevision(item),told:state.told,phase:state.phase,seen:[...state.seen],words:[...state.words],evidence:state.evidence.map(e=>e.id),chosen:state.chosen,solved:[...state.solved],broken:[...state.broken],statement:state.statement,mistakes:count(state.mistakes),hints:count(state.hints),history:state.history.slice(-60).map(x=>String(x).slice(0,300)),page:state.page};
+  return {version:1,revision:caseRevision(item),told:state.told,phase:state.phase,seen:[...state.seen],words:[...state.words],evidence:state.evidence.map(e=>e.id),chosen:state.chosen,solved:[...state.solved],broken:[...state.broken],statement:state.statement,mistakes:count(state.mistakes),hints:count(state.hints),spent:count(state.spent),hearts:Number.isInteger(state.hearts)?Math.max(0,Math.min(3,state.hearts)):3,fails:count(state.fails),history:state.history.slice(-60).map(x=>String(x).slice(0,300)),page:state.page};
 }
 export function restoreCaseState(item,saved) {
   const state=emptyCaseState(item),puzzle=item.game.puzzle;
@@ -34,12 +34,15 @@ export function restoreCaseState(item,saved) {
   if(inferredLab)for(const evidence of puzzle.labEvidence||[])allowed.set(evidence.id,{...evidence,where:puzzle.labSource||'沙盒抓包'});
   for(const id of new Set(list(saved.evidence)))if(allowed.has(id))state.evidence.push(allowed.get(id));
   const verified=inferredLab&&(puzzle.labEvidence||[]).every(e=>state.evidence.some(actual=>actual.id===e.id));
-  if(state.solved.size===puzzle.board.length)state.phase=verified?'confront':'verify';
-  if(verified)for(const [i,statement] of puzzle.confront.statements.entries())if(statement.accept&&list(saved.broken).includes(i)&&state.evidence.some(e=>breaks(statement,e)))state.broken.add(i);
-  const falseCount=puzzle.confront.statements.filter(s=>s.accept).length;
+  if(state.solved.size===puzzle.board.length)state.phase=verified?(puzzle.confront?'confront':'done'):'verify';
+  if(verified)for(const [i,statement] of (puzzle.confront?.statements||[]).entries())if(statement.accept&&list(saved.broken).includes(i)&&state.evidence.some(e=>breaks(statement,e)))state.broken.add(i);
+  const falseCount=(puzzle.confront?.statements||[]).filter(s=>s.accept).length;
   if(state.phase==='confront'&&saved.phase==='done'&&falseCount>0&&state.broken.size===falseCount)state.phase='done';
-  state.statement=Number.isInteger(saved.statement)?Math.max(0,Math.min(puzzle.confront.statements.length-1,saved.statement)):0;
+  state.statement=Number.isInteger(saved.statement)?Math.max(0,Math.min((puzzle.confront?.statements?.length||1)-1,saved.statement)):0;
   state.mistakes=count(saved.mistakes);state.hints=count(saved.hints);
+  state.spent=count(saved.spent);
+  state.hearts=Number.isInteger(saved.hearts)?Math.max(0,Math.min(3,saved.hearts)):3;
+  state.fails=count(saved.fails);
   state.history=list(saved.history,60).filter(x=>typeof x==='string').map(x=>x.slice(0,300));
   if(['clues','dict','evidence','board'].includes(saved.page))state.page=saved.page;
   return state;

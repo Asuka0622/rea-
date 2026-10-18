@@ -86,6 +86,8 @@ test("every word in the little dictionary finds something in the code", () => {
 test("every false claim can be broken by a line of shipped code or the lab's evidence, and true ones by nothing", () => {
   for (const item of puzzles) {
     const { confront, labEvidence = [] } = item.game.puzzle;
+    // Cases may end without a confrontation (the "not enough evidence" station): nothing to break.
+    if (!confront) continue;
     const evidence = [...shippedLines(item.game.lab.sources).map((l) => ({ text: l.text.trim() })), ...labEvidence];
     const falseOnes = confront.statements.filter((s) => s.accept);
     assert.ok(falseOnes.length >= 2 && falseOnes.length < confront.statements.length, `${item.id}: some claims are true`);

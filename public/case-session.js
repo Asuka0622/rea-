@@ -1,6 +1,7 @@
 import { mountLab } from "./case-labs.js";
-import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks, starsForPuzzle } from "./case-puzzle.js";
+import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks } from "./case-puzzle.js";
 import {caseSnapshot,restoreCaseState,caseObjective} from './case-progress.js';
+import {createTension,spend,hintCost,loseHeart,retryConfront,tensionStars,left as pointsLeft,overBudget,expandAlias,HEARTS,TOOLS,unlockedTools,progressFromStars,canStamp} from './case-tension.js';
 
 // A puzzle case played inside the game world (game-shell.js draws the client's room and walks the
 // player; this file is everything the player does there). Nothing is a web page: clues come from
@@ -58,6 +59,19 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   let saved=null;
   try {const raw=localStorage.getItem(saveKey);if(raw&&raw.length<100000)saved=JSON.parse(raw);}catch{}
   const state=restoreCaseState(item,saved);
+  // 张力：行动点预算与心证。难度和已解锁的侦探工具由 game-shell 传进来。
+  const tension=createTension({difficulty:ui.difficulty||'normal',tools:ui.tools||[],spent:state.spent,hearts:state.hearts,fails:state.fails});
+  function meterText(){
+    return `行动点 ${pointsLeft(tension)}/${tension.budget} · 心证 ${'♥'.repeat(tension.hearts)}${'♡'.repeat(HEARTS-tension.hearts)}`;
+  }
+  /** 花行动点：永不阻止玩家，超出预算的部分直接计入星级。 */
+  function charge(cost=1,label='行动'){
+    const result=spend(tension,cost);
+    state.spent=tension.spent;
+    if(result.wentOver) ui.toast(`行动点超支（${label}）：这一步会拉低评价`);
+    checkpoint();
+    return result;
+  }
   let saveFailed=false;
   function checkpoint(){
     try{localStorage.setItem(saveKey,JSON.stringify(caseSnapshot(item,state)));saveFailed=false;}catch{saveFailed=true;}
@@ -133,14 +147,14 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   const guide=h('details',{class:'case-goal','aria-label':'当前委托目标',open:true},guideTitle,guideText,h('div',{class:'case-goal-controls'},guideAction,h('button',{type:'button',class:'case-goal-action',onclick:()=>openNotebook('board')},'查看推理')),saveText);
   let lastGuide='';
   function refreshGuide(){
-    const next=caseObjective(item,state),signature=JSON.stringify([next,state.words.size,state.evidence.length,saveFailed]);
+    const next=caseObjective(item,state),signature=JSON.stringify([next,state.words.size,state.evidence.length,saveFailed,tension.spent,tension.hearts,tension.fails]);
     if(signature===lastGuide)return;lastGuide=signature;
     // The bar states the request, not a to-do list: what to look at is the player's call. Asking 路米
     // (the hint) is what turns the "take me to the next clue" shortcut on.
     guideTitle.textContent=`${client.name}的委托`;
     guideText.textContent=puzzle.ask||next.text;
     guideAction.textContent=next.action;guideAction.hidden=!(state.hints>0&&next.target);guideAction.disabled=!next.target;
-    saveText.textContent=saveFailed?'浏览器无法保存进度，请保持当前页面打开。':`线索 ${next.found}/${next.total} · 名字 ${state.words.size} · 证据 ${state.evidence.length} · 进度自动保存在本浏览器`;
+    saveText.textContent=saveFailed?'浏览器无法保存进度，请保持当前页面打开。':`线索 ${next.found}/${next.total} · 名字 ${state.words.size} · 证据 ${state.evidence.length} · ${meterText()} · 进度自动保存在本浏览器`;
   }
   refreshGuide();
   window.addEventListener('pagehide',checkpoint);
@@ -295,6 +309,17 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       void box.offsetWidth;
       box.classList.add("shake");
       sayEl.textContent = wrong <= 2 ? "路米：差一点……有一两处不对。" : "路米：好像还不对，有好几处要再想想。";
+      checkpoint();
+      return;
+    }
+    const gate = canStamp(group, state.evidence.length);
+    if (!gate.ok) {
+      state.mistakes += 1;
+      sound.wrong();
+      box.classList.remove("shake");
+      void box.offsetWidth;
+      box.classList.add("shake");
+      sayEl.textContent = `路米：这句话本身没错，可手账里只有 ${gate.have} 件证据，要 ${gate.need} 件才能盖章。先去把证据补够——连「证据不足」也要有证据。`;
       checkpoint();
       return;
     }
@@ -454,8 +479,12 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         print("err", `不认识「${verb}」这个命令。输入 help 看看。`);
     }
   }
-  function find(query) {
-    if (!query) return print("err", "要找什么？比如：find fetch");
+  function find(rawQuery) {
+    if (!rawQuery) return print("err", "要找什么？比如：find fetch");
+    const alias = expandAlias(rawQuery, state.dict, tension.tools);
+    if (alias.expanded) print("sys", `（别名：${alias.from} → ${alias.to}）`);
+    const query = alias.query;
+    charge(1, "搜索");
     const { hits, more } = searchCode(code, query);
     if (!hits.length) {
       if (/[一-鿿]/.test(query)) print("err", "没找到。发布版里没有中文注释，名字都是英文的。翻翻手账里的小词典。");
@@ -470,15 +499,21 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   let labEl = null;
   function openSandbox() {
     if (!labEl) {
-      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, onMistake: () => {state.mistakes += 1;checkpoint();}, onHint: () => {state.hints += 1;checkpoint();}, finishLabel: `合上电脑，去找${client.name}`, onDone: () => {
+      labEl = mountLab({ h, icon, lab: { ...lab, tasks: puzzle.labTasks || lab.tasks }, onMistake: () => {state.mistakes += 1;checkpoint();}, onHint: () => {state.hints += 1;checkpoint();}, finishLabel: puzzle.confront ? `合上电脑，去找${client.name}` : "合上电脑，整理结论", onDone: () => {
         for (const e of puzzle.labEvidence || []) if (!state.evidence.some((x) => x.id === e.id)) state.evidence.push({ ...e, where: labSource });
         sound.beep();
         flash(`${labSource}记录记为证据`);
-        state.phase = "confront";
+        if (puzzle.confront) state.phase = "confront";
+        else state.phase = "done";
         checkpoint();
         say(lab.done || []);
       }, onFinish: async () => {
         close();
+        if (!puzzle.confront) {
+          // 没有对质的委托：实验做完就结案，结论写在结案卡里。
+          await say([{ text: "实验记录收好了。这份委托能下的结论，写进结案里了。", face: "thinking" }]);
+          return finish();
+        }
         await say([{ text: `证据齐了。去和${client.name}当面说清楚吧：走到他旁边按 E。`, face: "happy" }]);
       } });
     }
@@ -545,10 +580,19 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         return;
       }
       state.mistakes += 1;
+      const heartsLeft = loseHeart(tension);
+      state.hearts = heartsLeft;
       sound.wrong();
       view.classList.remove("shake");
       void view.offsetWidth;
       view.classList.add("shake");
+      if (heartsLeft === 0) {
+        checkpoint();
+        await say([{ who: "client", text: c.objection, face: "surprised" }, { text: "最后一条心证也丢了。这次对质只能先停下来。", face: "surprised" }]);
+        open("confront", failView());
+        return;
+      }
+      checkpoint();
       await say([{ who: "client", text: c.objection, face: "surprised" }, { text: s.accept ? "这件证据和这句话对不上。这句话到底哪里不对？" : "这一句……说不定是真的。破绽在别的地方，可以先「追问」看看。", face: "thinking" }]);
     }
     async function objection() {
@@ -577,10 +621,33 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     paint();
     return view;
   }
+  /** 心证扣光：当庭失败。可以重来，但这一轮会记进评价。 */
+  function failView() {
+    const retry = (closeFirst) => () => {
+      retryConfront(tension);
+      state.hearts = tension.hearts;
+      state.fails = tension.fails;
+      state.mistakes += 2;
+      checkpoint();
+      if (closeFirst) close();
+      else startConfront();
+    };
+    return h("div", { class: "case-screen dim" },
+      h("div", { class: "cs-card" },
+        h("span", { class: "cs-stamp" }, "当庭失败"),
+        h("h3", {}, "心证用完了"),
+        h("p", {}, `${client.name}把每一件证据都驳了回去，这次对质没能进行下去。翻一翻手账，换一件更贴切的证据再来——这一轮会计入这次委托的评价。`),
+        h("div", { class: "cf-actions" },
+          h("button", { type: "button", class: "cf-act primary", onclick: retry(false) }, "重新对质"),
+          h("button", { type: "button", class: "cf-act ghost", onclick: retry(true) }, "先去补线索"))));
+  }
   async function finish() {
     state.phase = "done";
-    const stars = starsForPuzzle(state);
+    const stars = tensionStars(tension, { mistakes: state.mistakes, hints: state.hints });
+    const readStars = () => { try { return JSON.parse(localStorage.getItem(STARS_KEY) || "{}") || {}; } catch { return {}; } };
+    const before = unlockedTools(progressFromStars(readStars()));
     saveStars(item.id, stars);
+    const fresh = unlockedTools(progressFromStars(readStars())).filter((id) => !before.includes(id));
     checkpoint();
     ui.onSolved(stars);
     await sleep(300);
@@ -591,7 +658,11 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         h("p", { class: "cs-kicker" }, "侦探事务所 · 委托完成"),
         h("h3", {}, item.title),
         h("p", { class: "cs-stars", "aria-label": `评价 ${stars} 星` }, "★".repeat(stars) + "☆".repeat(3 - stars)),
-        h("p", { class: "cs-score" }, `犯错 ${state.mistakes} 次 · 问路米 ${state.hints} 次`),
+        h("p", { class: "cs-score" }, `犯错 ${state.mistakes} 次 · 问路米 ${state.hints} 次 · 行动点 ${tension.spent}/${tension.budget}${overBudget(tension) ? `（超支 ${overBudget(tension)}）` : ""} · 心证 ${tension.hearts}/${HEARTS}`),
+        fresh.length && h("p", { class: "cs-tools" }, "新工具：", fresh.map((id) => {
+          const tool = TOOLS.find((t) => t.id === id);
+          return tool ? `${tool.name}（${tool.desc}）` : id;
+        }).join(" · ")),
         puzzle.debrief?.length && h("div", {class:"case-debrief"},h("h4",{},"这次查明了什么"),h("ul",{},puzzle.debrief.map(text=>h("li",{},text)))),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
           close();
@@ -608,6 +679,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       return;
     }
     state.hints += 1;
+    charge(hintCost(tension), "问路米");
     checkpoint();
     let text;
     if (state.phase === "confront") text = puzzle.confront.statements[state.statement].hint || "先「追问」，听听这句话背后还有什么。";
@@ -637,10 +709,10 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     },
     /** Walking in: the request the first time, a reminder of what is next later. */
     async arrive() {
-      if(state.phase==='done'){ui.onSolved(starsForPuzzle(state));await say([{text:'上次的结案结果已经恢复，可以继续探索小镇。',face:'happy'}]);return;}
+      if(state.phase==='done'){ui.onSolved(tensionStars(tension,{mistakes:state.mistakes,hints:state.hints}));await say([{text:'上次的结案结果已经恢复，可以继续探索小镇。',face:'happy'}]);return;}
       if (!state.told) {
         state.told = true;
-        await say([...client.lines.map((l, i) => ({ who: "client", text: l.text ?? l, face: l.face || (i ? "thinking" : "normal") })), ...(puzzle.brief || [])]);
+        await say([...client.lines.map((l, i) => ({ who: "client", text: l.text ?? l, face: l.face || (i ? "thinking" : "normal") })), ...(puzzle.brief || []), { text: puzzle.meterBrief || `这次委托有 ${tension.budget} 个行动点：调查、搜代码、问路米都要花，超支会拉低评价。对质时有 ${HEARTS} 条心证，出示错一件证据就少一条。`, face: "thinking" }]);
         checkpoint();
         return;
       }
@@ -657,6 +729,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       if (!thing) return;
       const first = !state.seen.has(id);
       state.seen.add(id);
+      if (first) charge(1, "调查");
       markSeen(id);
       const discovered=addClue(thing.clue);
       checkpoint();

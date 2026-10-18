@@ -22,6 +22,8 @@ export const REGIONS = {
       engines: { x: 678, y: 70, w: 178, h: 110, door: { x: 740, y: 196 } },
       clients: { x: 140, y: 240, w: 122, h: 118, door: { x: 203, y: 370 } },
       doctor: { x: 718, y: 255, w: 138, h: 120, door: { x: 772, y: 386 } },
+      // 公告板: the town's notice board. Tasks are found here, not handed out in story order.
+      noticeboard: { x: 566, y: 248, w: 58, h: 42, door: { x: 595, y: 302 }, label: { place: "公告板", purpose: "镇上的告示与委托" } },
     },
     obstacles: [{ x: 445, y: 252, w: 76, h: 52 }],
     exits: [

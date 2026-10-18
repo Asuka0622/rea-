@@ -1,0 +1,291 @@
+{
+  "format": "rea-workbench-case-v1",
+  "id": "packed-echo",
+  "order": 7,
+  "title": "读不动的程序：加密猫的壳",
+  "tagline": "工具给不出答案时，正确的结论可能是「证据不足」。",
+  "skills": ["认识加壳与混淆", "反编译只是近似", "证据不足也是结论"],
+  "knowledge": [
+    { "id": "packing", "depth": "L3" },
+    { "id": "epistemics", "depth": "L3" },
+    { "id": "runtime-evidence", "depth": "L1" },
+    { "id": "static-read", "depth": "L2" }
+  ],
+  "story": "朋友转来一个叫「加密猫」的小程序，说它一开就在后台连网。小林把包丢给路米：这次没有熟悉的按钮，也没有看得懂的代码——真正的逻辑被一层壳裹住了。",
+  "questions": [
+    {
+      "id": "what-visible",
+      "type": "count",
+      "section": "字符串（能看见的名字）",
+      "prompt": "不看代码逻辑，只看里面的字符串，能认出哪些东西？",
+      "hint": "找 quickads、stats-shadow 这类名字。",
+      "explain": "只有一个统计组件的名字。没有通讯录、没有定位、没有任何能直接说明它越界的字样。",
+      "gamePrompt": "先把它能吐出来的字符串都看一遍，再决定能得出什么结论。"
+    },
+    {
+      "id": "why-stuck",
+      "type": "count",
+      "section": "静态分析的边界",
+      "prompt": "为什么这次读不出数据流向？",
+      "hint": "留意 eval 与 packer。",
+      "explain": "真正的逻辑是运行时拼出来的字符串，静态看到的只是外壳。这就是加壳。",
+      "gamePrompt": "想清楚：是它干净，还是我们根本看不见。"
+    }
+  ],
+  "conclusion": {
+    "title": "真相：这一单没法下结论",
+    "summary": "「加密猫」加了一层壳，核心逻辑要运行时才拼出来。能确定的只有：它带了 quickads 统计组件。它有没有读通讯录、把什么发出去——静态看不到。这份委托的正确结论是「证据不足」，下一步必须靠 hook 或 tcpdump 看运行时。",
+    "realWorld": [
+      "真实逆向里，加壳和混淆很常见；工具给不出的东西，不能靠猜。",
+      "「证据不足」是专业结论，不是失败；写出下一步该做什么，才算把活干完。",
+      "越权威的语气配上越薄的证据，越容易骗到自己。"
+    ],
+    "protect": [
+      "拿不准的软件先别装，或者装进沙盒、断网运行。",
+      "需要结论时，优先补运行时证据，而不是相信直觉。"
+    ]
+  },
+  "game": {
+    "client": {
+      "name": "小林",
+      "role": "你的室友",
+      "portrait": "kobayashi",
+      "lines": [
+        { "text": "又是我……这回是朋友转来的一个小程序，叫「加密猫」。", "face": "sorry" },
+        { "text": "它一打开就在后台连网，可代码我完全看不懂。你能查清它到底干了什么吗？", "face": "thinking" }
+      ]
+    },
+    "verdict": {
+      "intro": "这次没有对质。小林只是问了一句：「所以……它到底干没干坏事？」",
+      "claims": [],
+      "objection": "小林：「那到底算不算有问题啊？」",
+      "closing": "小林：「原来查不出结论也是一种结论。那我先别装它了。」"
+    },
+    "lab": {
+      "kind": "packed",
+      "files": ["bundle.js", "index.html"],
+      "intro": [
+        { "who": "client", "text": "小林：能不能让它跑起来，看看它到底连了哪？", "face": "thinking" },
+        { "text": "试试。不过先说好：跑不起来本身也是结果。", "face": "normal" }
+      ],
+      "done": [
+        { "text": "看到了吧：它连一圈都没跑完就退了。我们没拿到任何运行时证据。", "face": "thinking" }
+      ]
+    },
+    "puzzle": {
+      "title": "读不动的程序",
+      "sampleName": "加密猫",
+      "mechanic": "default",
+      "ask": "它一开就连网，可我完全看不懂它写了什么。你能查出它到底干了什么吗？",
+      "terminal": "laptop",
+      "labSource": "沙盒运行",
+      "brief": [
+        { "text": "这次的软件被人处理过：文件名没有意义，代码里的名字都是短名。先看看能看见什么，再决定能得出什么结论。", "face": "normal" }
+      ],
+      "room": {
+        "top": 118,
+        "spawn": { "x": 160, "y": 168 },
+        "exit": { "x": 160, "y": 176 },
+        "client": { "x": 190, "y": 150 },
+        "blocks": [{ "x": 242, "y": 104, "w": 78, "h": 52 }],
+        "characterScale": 1.875,
+        "clientTalk": {
+          "look": [
+            { "who": "client", "text": "小林：电脑开着，那个包我也放桌面了，你随便查。", "face": "normal" }
+          ],
+          "verify": [
+            { "who": "client", "text": "小林：推理拼好了？那它到底有没有偷看我的东西？", "face": "thinking" }
+          ]
+        }
+      },
+      "scene": {
+        "art": "case-room-privacy-ledger",
+        "place": "小林的宿舍",
+        "lead": "在小林的宿舍里走走，靠近东西按 E 调查。这次能看见的东西很少。",
+        "items": [
+          {
+            "id": "laptop",
+            "label": "打包过的程序",
+            "look": "laptop",
+            "at": [136, 76],
+            "stand": [138, 130],
+            "art": "laptop-room",
+            "lines": [
+              { "who": "client", "text": "小林：就是它。双击能打开，可里面的文件我一个字都看不懂。", "face": "thinking" }
+            ],
+            "clue": {
+              "id": "packed-files",
+              "title": "两个文件，一个 loader",
+              "text": "主程序只负责启动，真正的逻辑在同目录的 bundle 里；bundle 里的名字都是 _0x 开头的短名。",
+              "dict": [
+                { "zh": "加壳 / 打包", "code": "packer" },
+                { "zh": "运行时才拼出来的代码", "code": "eval" }
+              ]
+            }
+          },
+          {
+            "id": "chat",
+            "label": "聊天记录",
+            "look": "chat",
+            "at": [96, 76],
+            "stand": [96, 130],
+            "art": "chat-room",
+            "lines": [
+              { "who": "client", "text": "小林：朋友说这软件「很干净，查不出东西」。", "face": "normal" }
+            ],
+            "clue": {
+              "id": "friend-said",
+              "title": "「查不出东西」",
+              "text": "朋友的原话是「查不出东西」。查不出有两种：真的干净，或者根本读不动。",
+              "dict": [
+                { "zh": "字符串（能看见的名字）", "code": "strings" }
+              ]
+            }
+          },
+          {
+            "id": "router",
+            "label": "路由器",
+            "look": "router",
+            "at": [38, 62],
+            "stand": [40, 128],
+            "art": "router-room",
+            "lines": [
+              { "who": "client", "text": "小林：它开着的时候，路由器的灯会闪一下。", "face": "normal" }
+            ],
+            "clue": {
+              "id": "router-blink",
+              "title": "启动时会闪一下",
+              "text": "网络确实动过，但抓不到内容——想看清就得抓包。",
+              "dict": [
+                { "zh": "抓包", "code": "tcpdump" }
+              ]
+            }
+          },
+          {
+            "id": "policy",
+            "label": "使用说明",
+            "look": "paper",
+            "at": [172, 76],
+            "stand": [168, 132],
+            "art": "policy-room",
+            "lines": [
+              { "who": "client", "text": "小林：说明写着「只收集必要的统计信息」。", "face": "normal" }
+            ],
+            "clue": {
+              "id": "policy-claim",
+              "title": "一句没法验证的说明",
+              "text": "「必要的统计信息」是它自己说的。要验证，只能看它运行时到底发了什么。",
+              "dict": [
+                { "zh": "统计组件", "code": "quickads" }
+              ]
+            }
+          },
+          {
+            "id": "phone",
+            "label": "小林的手机",
+            "look": "phone",
+            "at": [274, 96],
+            "stand": [226, 150],
+            "art": "phone-room",
+            "lines": [
+              { "who": "client", "text": "小林：手机上没装这个，只在电脑上试过。", "face": "normal" }
+            ],
+            "clue": {
+              "id": "phone-clean",
+              "title": "手机上没装",
+              "text": "这条线索没帮上忙——不是每个东西都有用。",
+              "dict": []
+            }
+          },
+          {
+            "id": "clock",
+            "label": "挂钟",
+            "look": "clock",
+            "at": [276, 36],
+            "stand": [226, 120],
+            "art": "clock-room",
+            "lines": [
+              { "who": "client", "text": "小林：你查了快一上午了。", "face": "normal" }
+            ],
+            "clue": {
+              "id": "clock-time",
+              "title": "时间花在哪",
+              "text": "时间全花在「想看懂读不动的代码」上——这正是加壳要的效果。",
+              "dict": [
+                { "zh": "拦截调用（看它到底调了什么）", "code": "hook" }
+              ]
+            }
+          },
+          {
+            "id": "cat",
+            "label": "窗台上的猫",
+            "look": "cat",
+            "at": [210, 56],
+            "stand": [196, 126],
+            "art": "cat-room",
+            "lines": [
+              { "who": "client", "text": "小林：那是猫，和案子没关系。", "face": "happy" }
+            ],
+            "clue": {
+              "id": "cat-none",
+              "title": "一只猫",
+              "text": "真的只是一只猫。",
+              "dict": []
+            }
+          }
+        ]
+      },
+      "terms": ["eval", "packer", "quickads", "hook", "tcpdump", "strings"],
+      "board": [
+        {
+          "title": "能确定的",
+          "text": "真正的逻辑不是写死的：它被 {packer} 包过，运行时用 {eval} 拼出来，所以静态读不到数据流向。",
+          "explain": "推理成立：这是加壳的典型做法，也是这次读不动的原因。",
+          "hint": "搜 packer，再看看它怎么把字符串变成代码。",
+          "need": 0,
+          "done": [{ "text": "对，这就是读不动的原因。", "face": "normal" }]
+        },
+        {
+          "title": "能看见的",
+          "text": "字符串里只留下 {quickads} 这类统计组件的名字，没有任何跟通讯录、定位有关的字样。",
+          "explain": "推理成立：能看见的只有统计组件，看不见不等于没有。",
+          "hint": "搜 strings，把里面的名字列出来。",
+          "need": 1,
+          "done": [{ "text": "只有统计组件。但这说明不了它没干别的。", "face": "thinking" }]
+        },
+        {
+          "title": "要验证只能运行时",
+          "text": "要确认它有没有读通讯录，只能在运行时 {hook} 它的接口，或者用 {tcpdump} 抓它发出去的包。",
+          "explain": "推理成立：静态到此为止，接下来必须拿运行时证据。",
+          "hint": "搜 hook 和 tcpdump，看看包里留下了什么。",
+          "need": 2,
+          "done": [{ "text": "对，只有运行时能回答这个问题。", "face": "normal" }]
+        },
+        {
+          "title": "这次能下的结论",
+          "text": "{strings} 出来的名字和 {quickads} 只说明它带了统计组件；是否越界，要等 {hook} 的结果。现在只能写「证据不足」。",
+          "explain": "推理成立：证据不足也是结论，而且必须写清楚下一步。",
+          "hint": "把前三条压成一句能写进结案的话。",
+          "need": 3,
+          "done": [{ "text": "结案就写这一句。别写你不确定的事。", "face": "happy" }]
+        }
+      ],
+      "toLab": [
+        { "text": "推理成立。现在去跑一遍，看能不能拿到运行时证据。", "face": "normal" }
+      ],
+      "labTasks": [],
+      "labEvidence": [
+        { "id": "lab:crash", "text": "沙盒启动失败：检测到调试器（0x80070005）" },
+        { "id": "lab:nonet", "text": "没有记录到任何网络请求" }
+      ],
+      "debrief": [
+        "加壳之后，静态分析只能看到外壳；读不动不等于干净。",
+        "证据不足是合格的结论，但要写清楚下一步用什么手段。",
+        "运行时证据（hook、抓包）是破解这类样本的唯一路径。"
+      ],
+      "ending": [
+        { "text": "这份委托的结论是「证据不足」：能确定的只有统计组件，其余要等运行时证据。", "face": "thinking" }
+      ]
+    }
+  }
+}

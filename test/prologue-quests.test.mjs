@@ -1,0 +1,108 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  PROLOGUE_QUESTS,
+  KNOWLEDGE_POINTS,
+  knowledgeFromCompletion,
+  coverageGaps,
+  freshPlayer,
+} from "../public/prologue-quests.js";
+import { availableQuests, questState } from "../public/quest-board.js";
+
+const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const caseFile = (id) => path.join(project, "samples", "cases", id, "workbench-case.json");
+const LEVELS = ["L1", "L2", "L3", "L4"];
+
+test("every quest points at a real case file and has a unique id", () => {
+  const ids = new Set();
+  for (const quest of PROLOGUE_QUESTS) {
+    assert.ok(!ids.has(quest.id), `duplicate quest id ${quest.id}`);
+    ids.add(quest.id);
+    assert.ok(fs.existsSync(caseFile(quest.caseId)), `${quest.id} → samples/cases/${quest.caseId}`);
+  }
+});
+
+test("quest references hang together: known knowledge ids, valid levels, no dangling prerequisites", () => {
+  const ids = new Set(PROLOGUE_QUESTS.map((quest) => quest.id));
+  for (const quest of PROLOGUE_QUESTS) {
+    for (const id of quest.after) assert.ok(ids.has(id), `${quest.id} waits for unknown ${id}`);
+    for (const need of quest.needs) {
+      const [id, level = "L1"] = String(need).split(":");
+      assert.ok(KNOWLEDGE_POINTS[id], `${quest.id} needs unknown knowledge ${id}`);
+      assert.ok(LEVELS.includes(level), `${quest.id} needs a bad level ${level}`);
+    }
+    for (const entry of quest.knowledge) {
+      assert.ok(KNOWLEDGE_POINTS[entry.id], `${quest.id} grants unknown knowledge ${entry.id}`);
+      assert.ok(LEVELS.includes(entry.depth), `${quest.id} grants a bad depth ${entry.depth}`);
+    }
+  }
+});
+
+test("the prerequisites form no cycle", () => {
+  const byId = new Map(PROLOGUE_QUESTS.map((quest) => [quest.id, quest]));
+  const state = new Map();
+  const visit = (id, trail = []) => {
+    if (state.get(id) === "done") return;
+    assert.ok(state.get(id) !== "open", `cycle: ${[...trail, id].join(" → ")}`);
+    state.set(id, "open");
+    for (const next of byId.get(id)?.after || []) visit(next, [...trail, id]);
+    state.set(id, "done");
+  };
+  for (const quest of PROLOGUE_QUESTS) visit(quest.id);
+});
+
+test("a fresh player sees two commissions on the board, and neither is a prerequisite trap", () => {
+  const open = availableQuests(PROLOGUE_QUESTS, freshPlayer());
+  assert.deepEqual(open.map((item) => item.id).sort(), ["privacy-ledger", "weather-keys"]);
+  for (const item of open) assert.ok(item.gain.score > 0, `${item.id} should teach something`);
+});
+
+test("quests unlock by finding their source, not by story order", () => {
+  const player = { discovered: ["npc:老秦"], completed: {}, knowledge: { "static-read": "L2" } };
+  const packed = questState(PROLOGUE_QUESTS.find((q) => q.id === "packed-echo"), player);
+  assert.equal(packed.status, "available");
+
+  const noSource = { discovered: [], completed: {}, knowledge: { "static-read": "L3" } };
+  assert.equal(questState(PROLOGUE_QUESTS.find((q) => q.id === "packed-echo"), noSource).status, "undiscovered");
+
+  const noKnowledge = { discovered: ["npc:老秦"], completed: {}, knowledge: {} };
+  const locked = questState(PROLOGUE_QUESTS.find((q) => q.id === "packed-echo"), noKnowledge);
+  assert.equal(locked.status, "locked");
+  assert.deepEqual(locked.missing, ["static-read 要到 L2"]);
+});
+
+test("every commission can be reached in some order", () => {
+  const player = { discovered: PROLOGUE_QUESTS.map((quest) => quest.discover), completed: {}, knowledge: {} };
+  let guard = 0;
+  while (Object.keys(player.completed).length < PROLOGUE_QUESTS.length && guard < 50) {
+    guard += 1;
+    const open = availableQuests(PROLOGUE_QUESTS, player);
+    assert.ok(open.length > 0, "the board never dead-ends");
+    const pick = open[0];
+    player.completed[pick.id] = true;
+    player.knowledge = { ...player.knowledge, ...knowledgeFromCompletion(PROLOGUE_QUESTS, player.completed) };
+  }
+  assert.equal(Object.keys(player.completed).length, PROLOGUE_QUESTS.length);
+});
+
+test("finishing a quest grants the knowledge it declares", () => {
+  const level = knowledgeFromCompletion(PROLOGUE_QUESTS, { "privacy-ledger": true });
+  assert.equal(level["data-flow"], "L3");
+  assert.equal(level["permission-manifest"], "L1");
+  const both = knowledgeFromCompletion(PROLOGUE_QUESTS, { "privacy-ledger": true, "flashlight-apk": true });
+  assert.equal(both["permission-manifest"], "L3", "the higher level wins");
+});
+
+test("the coverage report names the knowledge points that only appear once", () => {
+  const gaps = coverageGaps();
+  assert.ok(Array.isArray(gaps));
+  for (const gap of gaps) {
+    assert.ok(KNOWLEDGE_POINTS[gap.id]);
+    assert.ok(gap.quests.length < 2, `${gap.id} should be a gap`);
+  }
+  // 目前每个知识点都只在一份委托里到过 L3——这份报告就是「要复现」的清单。
+  assert.ok(gaps.length > 0);
+});

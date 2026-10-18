@@ -11,6 +11,20 @@ import { mountLab } from "./case-labs.js";
 import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
 import { createCaseSession } from "./case-session.js";
+import { unlockedTools, progressFromStars } from "./case-tension.js";
+import { PROLOGUE_QUESTS } from "./prologue-quests.js";
+import { loadProgress, saveProgress, readNotices, markCompleted, playerFor } from "./quest-progress.js";
+import { boardLines } from "./quest-board.js";
+
+/** 已结案的星级表 → 已解锁的侦探工具（张力层的成长）。 */
+const CASE_STARS_KEY = "rea-workbench-case-stars";
+function detectiveTools() {
+  try {
+    return unlockedTools(progressFromStars(JSON.parse(localStorage.getItem(CASE_STARS_KEY) || "{}") || {}));
+  } catch {
+    return [];
+  }
+}
 
 /** Who can speak in the dialogue box: a line's `who` (default 路米) picks the name and portrait set. */
 const SPEAKERS = {
@@ -1651,6 +1665,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let shownControls = false;
 
   function enterSpot(id) {
+    if (id === "noticeboard") return readNoticeBoard();
     const play = quests?.playAt(id);
     if (play) return openMinigame(play);
     if (ACTIONS[id]) return enter(id);
@@ -1719,6 +1734,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       caseSessions.set(key, createCaseSession({
         h, icon, item, layer: caseLayer, drill,
         ui: {
+          difficulty: quests?.difficulty || "normal",
+          tools: detectiveTools(),
           say: (texts) => {
             dialogue.classList.add("over-window");
             return sayAndWait(texts).then(() => dialogue.classList.remove("over-window"));
@@ -1736,7 +1753,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
             nearDoor = null;
             hud.classList.toggle("under-case", busy);
           },
-          onSolved: (stars) => (drill ? quests?.recordDrill(drill.id, stars) : quests?.event("solve", item.id)),
+          onSolved: (stars) => {
+        saveProgress(markCompleted(loadProgress(), item.id));
+        return drill ? quests?.recordDrill(drill.id, stars) : quests?.event("solve", item.id);
+      },
         },
       }));
     }
@@ -1799,8 +1819,44 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
   }
+  /* ----- 委托板与公告板：任务不是按章节发的，是自己接的（docs/quest-board.md） ----- */
+  /** 广场的公告板：做完的委托越多，贴出来的条子越多（quest-progress.js 的 noticesFor）。 */
+  function readNoticeBoard() {
+    const { progress, notices, fresh } = readNotices(loadProgress());
+    if (fresh.length) saveProgress(progress);
+    return say([
+      { text: fresh.length ? "公告板上又贴了新条子：" : "公告板上的条子：", face: "normal" },
+      ...(notices.length ? notices.map((notice) => ({ text: notice.text, face: "normal" })) : [{ text: "现在还没有新告示。去镇上和人聊聊吧。", face: "thinking" }]),
+    ]);
+  }
+
+  /** 事务所的委托板：列出所有委托、状态和原因，能接的直接进现场。 */
+  function openQuestBoard() {
+    const player = playerFor(loadProgress(), PROLOGUE_QUESTS);
+    const lines = boardLines(PROLOGUE_QUESTS, player);
+    const prefix = { available: "接 · ", locked: "还不行 · ", undiscovered: "还没听说 · ", done: "已完成 · " };
+    showMenu([
+      ...lines.map((line) => ({
+        label: `${prefix[line.status] || ""}${line.label}`,
+        run: () => {
+          menu.hidden = true;
+          if (line.status === "available") return enterSpot(line.id);
+          const why =
+            line.status === "done"
+              ? "这份委托已经结案了。"
+              : line.status === "locked"
+                ? `还接不了：${line.reason}`
+                : "还没听说这件事。去广场的公告板看看，或者问问镇上的人。";
+          return say([{ text: why, face: "thinking" }]);
+        },
+      })),
+      { label: "先把板子关上", run: () => (menu.hidden = true) },
+    ]);
+  }
+
   function roomMenu(id) {
     showMenu([
+      ...(id === "home" ? [{ label: "委托板：看看现在能接什么", run: openQuestBoard }] : []),
       ...ACTIONS[id].filter((action) => !action.when || action.when()).map((action) => ({ label: action.label, run: () => openWindow(id, action) })),
       { label: "随便走走", run: () => (menu.hidden = true) },
       { label: "回小镇地图", run: goTown },

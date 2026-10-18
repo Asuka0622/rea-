@@ -1,4 +1,5 @@
 import { mountLab } from "./case-labs.js";
+import { canStamp } from "./case-tension.js";
 
 // 解谜委托 (a case with `game.puzzle`): no list of questions. The player looks around the client's
 // room for clues, searches the unpacked code with their own words (the shipped code has no developer
@@ -264,9 +265,13 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
       onMistake();
       return say(boardSays[g], wrong <= 2 ? "差一点：有一两处不对。" : "还不对，有好几处要再想想。", "wrong");
     }
+    const gate = canStamp(group, state.evidence.length);
+    if (!gate.ok) {
+      onMistake();
+      return say(boardSays[g], `这句话本身没错，可笔记里只有 ${gate.have} 件证据，要 ${gate.need} 件才能盖章。先把证据补够——连「证据不足」也要有证据。`, "wrong");
+    }
     state.solved.add(g);
-    say(boardSays[g], group.explain, "right");
-    render();
+    say(boardSays[g], group.explain, "right");    render();
     await speak(group.done || []);
     if (state.solved.size === puzzle.board.length) {
       await speak(puzzle.toLab || []);
@@ -284,6 +289,13 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
         for (const e of puzzle.labEvidence || []) if (!state.evidence.some((x) => x.id === e.id)) state.evidence.push({ ...e, where: "动手实验" });
         speak(lab.done || []);
       }, onFinish: async () => {
+        if (!puzzle.confront) {
+          // 没有对质的委托（例如「证据不足」的失败站）：实验做完就结案。
+          state.phase = "done";
+          render();
+          onDone();
+          return;
+        }
         state.phase = "confront";
         state.tab = "notes";
         render();

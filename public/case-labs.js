@@ -699,8 +699,33 @@ function mountPermissions({ h, icon, lab, onMistake = () => {}, onDone = () => {
     list, say);
 }
 
+/** 一关故意失败的实验：程序在沙盒里跑不起来，什么都没抓到。失败本身是证据。 */
+function mountPacked({ h, icon, lab, onDone = () => {} }) {
+  let recorded = false;
+  const log = [
+    "rea:~$ sandbox run bundle.js",
+    "> 加载 48 KB 的 bundle …",
+    "> [!] 检测到调试器（ptrace 探测成功）",
+    "> 进程退出，退出码 0x80070005",
+    "> 网络记录：0 条",
+  ].join("\n");
+  const button = h("button", { class: "btn primary", type: "button", onclick: () => {
+    if (recorded) return;
+    recorded = true;
+    button.disabled = true;
+    button.textContent = "已记下";
+    onDone();
+  } }, "记下这次失败");
+  return h("div", { class: "mini mini-packed" },
+    h("h4", {}, lab.packedTitle || lab.sampleTitle || "沙盒实验"),
+    h("p", { class: "lab-lamp" }, icon("scan", { size: 14 }), "把样本放进沙盒跑一遍，看它到底做了什么。"),
+    h("pre", { class: "pz-code" }, log),
+    h("p", { class: "lab-note" }, lab.failNote || "它没给我们任何结果。不是因为它干净，而是因为它跑不起来。"),
+    h("div", { class: "case-actions" }, button));
+}
+
 const MOUNTS = { network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
-  rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards };
+  rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, packed: mountPacked };
 
 /**
  * The lab for a case's `game.lab` ({ kind, files, sources }): an element that calls onMistake / onHint
