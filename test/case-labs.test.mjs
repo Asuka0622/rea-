@@ -97,7 +97,7 @@ test("farm save editor: the game reads saves the way save.js does, and each deve
 });
 
 test("chained labs: every stage of every case is a known lab, and its story lines are dialogue lines", () => {
-  const speakers = new Set([undefined, "client", "xiaoke"]);
+  const speakers = new Set([undefined, "client", "xiaoke", "xingbo"]);
   const lines = (list, where) => {
     for (const l of list || []) {
       assert.equal(typeof l.text, "string", where);
@@ -106,6 +106,8 @@ test("chained labs: every stage of every case is a known lab, and its story line
   };
   for (const item of caseCatalog()) {
     for (const talk of Object.values(item.game?.lab?.talk || {})) lines(talk, `${item.id} talk`);
+    for (const key of ["pipes", "tower"]) for (const talk of Object.values(item.game?.lab?.[key]?.talk || {})) lines(talk, `${item.id} ${key} talk`);
+    for (const talk of Object.values(item.game?.lab?.manageTalk || {})) lines(talk, `${item.id} manage talk`);
     for (const [i, stage] of (item.game?.lab?.stages || []).entries()) {
       const where = `${item.id} stage ${i}`;
       assert.ok(MOUNTABLE_KINDS.includes(stage.kind), `${where}: ${stage.kind}`);
@@ -122,7 +124,7 @@ test("chained labs: every stage of every case is a known lab, and its story line
 
 test("puzzle cases: every confront answer can be found (a shipped code line or a sandbox evidence), and epilogues are well formed", async () => {
   const { shippedLines } = await import("../public/case-puzzle.js");
-  const speakers = new Set([undefined, "client", "xiaoke"]);
+  const speakers = new Set([undefined, "client", "xiaoke", "xingbo"]);
   for (const item of caseCatalog()) {
     const puzzle = item.game?.puzzle;
     if (!puzzle?.scene) continue;

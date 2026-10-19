@@ -204,7 +204,8 @@
           "face": "surprised"
         },
         {
-          "text": "四串都能直接用。去和他把话说完吧。"
+          "text": "证据齐了。阿哲还有几句想替自己辩解——去一句句听完。",
+          "face": "normal"
         }
       ],
       "pipes": {
@@ -300,7 +301,105 @@
             "y": 2,
             "kind": "package"
           }
-        ]
+        ],
+        "talk": {
+          "first-link": [
+            {
+              "text": "（窗外下着雨，阿哲的天气小助手上写着「晴」。）",
+              "face": "thinking"
+            },
+            {
+              "who": "client",
+              "text": "阿哲：……这个 bug 回头再修。原来密钥不用跟着软件走：软件只找我自己的服务器，服务器替它去问天气。",
+              "face": "surprised"
+            },
+            {
+              "text": "对。软件一发出去，就是谁都能拆开看的东西。",
+              "face": "happy"
+            }
+          ],
+          "detour": [
+            {
+              "who": "client",
+              "text": "阿哲：可那个库……只是统计用的小库。",
+              "face": "thinking"
+            },
+            {
+              "text": "「统计用的小库」里，装的也是全校同学的资料。",
+              "face": "thinking"
+            }
+          ],
+          "wrong-exit": [
+            {
+              "who": "client",
+              "text": "阿哲：管理员密码……我连它都写进去了？",
+              "face": "surprised"
+            },
+            {
+              "text": "安装包里，一个字都不该有。",
+              "face": "normal"
+            }
+          ],
+          "valve": [
+            {
+              "who": "client",
+              "text": "阿哲：调试日志也会漏？我上周还开着它看过……",
+              "face": "thinking"
+            },
+            {
+              "text": "日志会顺手记下一切，包括密钥。发布前关掉。",
+              "face": "normal"
+            }
+          ],
+          "filter": [
+            {
+              "who": "client",
+              "text": "阿哲：地图令牌限定了只能在我的域名里用——那它公开也没关系？",
+              "face": "happy"
+            },
+            {
+              "text": "对。分清哪把能公开、哪把不能，比把所有东西都藏起来更重要。",
+              "face": "happy"
+            }
+          ],
+          "release-check": [
+            {
+              "who": "client",
+              "text": "阿哲：六关全过了！",
+              "face": "happy"
+            }
+          ],
+          "all": [
+            {
+              "who": "xingbo",
+              "text": "阿哲，天气小助手准备得怎么样了？",
+              "face": "normal"
+            },
+            {
+              "who": "client",
+              "text": "阿哲：星博士！……正在做发布前的自查。",
+              "face": "surprised"
+            },
+            {
+              "who": "xingbo",
+              "text": "认真是好事。对了，你们用过小克吗？它最近越来越聪明了。",
+              "face": "happy"
+            },
+            {
+              "text": "小克是用什么学的？",
+              "face": "thinking"
+            },
+            {
+              "who": "xingbo",
+              "text": "很多很多公开的资料……具体的，数据部门在管。",
+              "face": "thinking"
+            },
+            {
+              "text": "（数据部门。）",
+              "face": "thinking"
+            }
+          ]
+        }
       }
     },
     "puzzle": {
@@ -663,6 +762,35 @@
               }
             ],
             "hint": "出示地图服务令牌。"
+          },
+          {
+            "text": "「那个只是统计用的小库，是我自己的，跟别人没关系。」",
+            "accept": [
+              "db.quiet-stats.example"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "阿哲：统计用户量而已，又不放什么重要的东西。",
+                "face": "normal"
+              },
+              {
+                "text": "那它连的是谁的服务器？",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "阿哲：db.quiet-stats……我用的是一个免费的统计服务，他们说帮我统计用户量……",
+                "face": "surprised"
+              },
+              {
+                "text": "悄悄统计。又是它。我记进手账了。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "搜 STATS_DB_URL，看 @ 后面的主机名。"
           },
           {
             "text": "「我会把密钥挪到服务器上，客户端只留登录。」",

@@ -7,7 +7,7 @@ const config = require("./config.json");
 // TODO: 上线前把密钥挪到服务器上（后来一直没挪）
 const WEATHER_API_KEY = "wxk_live_4f9c2a7e81b34d6c9a05e7f3";
 const MAP_ACCESS_TOKEN = "maptok_93ab17cd52ef46a8b0c1d2e3f4";
-const STATS_DB_URL = "postgres://admin:Xiaobai2024!@db.weather-helper.example:5432/users";
+const STATS_DB_URL = "postgres://admin:Xiaobai2024!@db.quiet-stats.example:5432/users";
 
 const WEATHER_URL = "https://api.weather-helper.example/v3/now";
 const MAP_URL = "https://maps.weather-helper.example/v1/tile";
