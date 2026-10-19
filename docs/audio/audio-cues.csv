@@ -1,0 +1,28 @@
+id,category,priority,trigger,loop,target_seconds,status,target_directory
+bgm-town-day,music,P0,daytime town and character introduction,yes,75-110,planned,public/audio/music/
+bgm-town-night,music,P0,nighttime free exploration,yes,90-120,planned,public/audio/music/
+bgm-office,music,P0,office and non-case interiors,yes,60-90,planned,public/audio/music/
+bgm-investigation,music,P0,case room code notebook and non-rhythm labs,yes,90-120,planned,public/audio/music/
+bgm-vigil,music,P0,vigilScript begins,yes,60-90,planned,public/audio/music/
+bgm-tower-truth,music,P0,towerScript reveal and dialogue,yes,75-110,planned,public/audio/music/
+bgm-london,music,P0,London street and salon introduction,yes,75-110,planned,public/audio/music/
+bgm-graduation,music,P0,graduation report displayed,yes,60-90,planned,public/audio/music/
+sting-case-closed,stinger,P0,new case completion,no,3-5,planned,public/audio/stingers/
+sting-achievement,stinger,P0,new achievement skill or badge,no,1.5-2.5,planned,public/audio/stingers/
+sting-2358,stinger,P0,scripted 2358 data-feed reveal,no,2-4,planned,public/audio/stingers/
+sting-time-jump,stinger,P0,pocket watch and time jump,no,4-8,planned,public/audio/stingers/
+sting-graduation,stinger,P0,first report issuance,no,5-8,planned,public/audio/stingers/
+amb-town-day,ambience,P1,daytime outdoor town,yes,40-80,planned,public/audio/ambience/
+amb-town-night,ambience,P0,night outdoor town and vigil,yes,45-90,planned,public/audio/ambience/
+amb-rain,ambience,P1,actual rain state outside or through window,yes,30-60,planned,public/audio/ambience/
+amb-riverside,ambience,P1,near water or fountain,yes,30-60,planned,public/audio/ambience/
+amb-server,ambience,P0,server room or revealed tower computer,yes,30-60,planned,public/audio/ambience/
+amb-london,ambience,P0,London street introduction,yes,40-70,planned,public/audio/ambience/
+sfx-camera,sfx,P0,camera shutter button,no,0.15-0.4,planned,public/audio/sfx/
+sfx-scroll-open,sfx,P0,report scroll opens,no,0.6-1.2,planned,public/audio/sfx/
+sfx-clue-wall,sfx,P0,pin clue card or connect string,no,0.1-0.4,planned,public/audio/sfx/
+sfx-heavy-lock,sfx,P0,key insert latch and heavy door as separate events,no,event-based,planned,public/audio/sfx/
+sfx-tower-anomaly,sfx,P0,light flicker and clock-hand jam,no,event-based,planned,public/audio/sfx/
+sfx-watch,sfx,P0,watch glow and gear response,no,event-based,planned,public/audio/sfx/
+sfx-npc-life,sfx,P2,confirmed NPC life actions only,no,event-based,planned,public/audio/sfx/
+sfx-step-surfaces,sfx,P2,actual movement on supported surfaces,no,3-plus-variants,planned,public/audio/sfx/

@@ -38,6 +38,19 @@
 - **立绘不进部署**：游戏只用 `faces/*.webp` 小头像；立绘源图在 `docs/art/portraits-archive/`。
 - **跨分支素材**：美术常驻在另一个工作树 `D:/gpt/rea-artwork`。那边是源分辨率，不能直接拷进 `public/art/`，要用 `scripts/convert-artwork-sprites.py` 和 `scripts/crop-artwork-faces.py` 转换，转完跑 `npm run wiring`。
 
+## 音频接线（2026-10-19 建立）
+
+需求与清单：**`docs/audio/audio-requirements-2026-10-19.md`** + **`docs/audio/audio-cues.csv`**（27 项：8 背景音乐 / 5 短音乐 / 6 环境声 / 8 待补音效）。现有 `public/game-sound.js` 的 14 种合成音效保留。
+
+- **`npm run wiring` 现在跑两条**：先美术（`scripts/art-wiring.mjs`），再音频（`scripts/audio-wiring.mjs`）。音频那条以 CSV 为唯一清单源，分五档报：已接线 / 已交付待接 / 待审试样 / 待制作 / 孤儿。**孤儿必须是 0。**
+- **交付路径约定**：
+  - 待审试样 → `docs/audio/review/<id>-review.wav`（**不入库**，已加 `.gitignore`）
+  - 通过后的母版 → `docs/audio/master/<id>.wav`（不进打包产物）
+  - 运行压缩版 → `public/audio/{music,stingers,ambience,sfx}/<id>.ogg|mp3`（这个才进部署）
+  - 每首附同名 sidecar JSON：id / version / use / seconds / bpm / loopStartSample / loopEndSample / hasIntro / hasTail / source / license
+- **播放层还没接线**：`public/` 里没有 BGM 切换、环境声或短音乐调度。需求文档第 8 节的 7 条播放规则全是待办，不能当已完成。
+- **首批试样已体检**：`docs/audio/review/bgm-town-day-review-report.md`。小镇白天曲时长 85.33 秒达标，但**尾部有约 0.65 秒淡出，不能直接无缝循环**；响度 -15.0 LUFS、LRA 1.0 LU 偏响偏平。已给出返修要求，暂不入库。
+
 ## 陷阱与约定（踩过的坑）
 
 - `h()` 会把 `null` 子节点渲染成文字 "null"：用 `...(cond ? [x] : [])` 代替 `cond ? x : null`

@@ -25,3 +25,9 @@ __pycache__/
 public/art/portraits/
 # Preview files the art AI leaves next to deliveries.
 public/art/pixel/_*
+# Audio masters and pending review files stay out of the repo: only compressed
+# runtime copies (ogg/mp3) are committed under public/audio/.
+docs/audio/review/*.wav
+docs/audio/review/*.flac
+docs/audio/master/*.wav
+docs/audio/master/*.flac
