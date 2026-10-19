@@ -4,7 +4,7 @@ param(
   [string]$PythonBase = '',
   [switch]$IncludeArtcraft,
   [switch]$IncludeGameSources,
-  # 预告测试版: the game's detective agency and three cases (about 30 minutes); starts with REA_DEMO=1.
+  # 预告测试版: the game's detective agency and three cases (about 1 to 1.5 hours); starts with REA_DEMO=1.
   [switch]$Demo
 )
 $ErrorActionPreference = 'Stop'
@@ -140,7 +140,7 @@ $reaInstructions = @"
 
 1. 完整解压到一个可写的文件夹。
 2. 双击「开始游戏.bat」，浏览器会自动打开游戏。
-3. 大约 30 到 45 分钟：跟着路米认识比特镇，接下三份委托，把可疑的软件拆开查清楚。
+3. 大约 1 到 1.5 小时：跟着路米认识比特镇，接下三份委托，把可疑的软件拆开查清楚。
 4. 玩完关闭启动窗口即可。进度保存在浏览器里。
 
 键盘：WASD 或方向键走路，E 进门，M 地图，J 任务日志，K 技能和成就。鼠标右键点地面也能走过去。
