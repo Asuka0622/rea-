@@ -25,11 +25,12 @@ test("every piece of scenery sits on a real map with a label and a line", () => 
   }
 });
 
-test("there is somewhere to sit in more than one part of town", () => {
+test("seats exist only where the map draws one (the plaza's four benches on the current maps)", () => {
+  // 现在运行的是旧五区图：只有中心广场画了长椅。另外四处标了 later: "sit"，九区新图同步后改回「坐」。
   const sits = SCENERY.filter((prop) => prop.kind === "sit");
-  assert.ok(sits.length >= 4);
-  const regions = new Set(sits.map((prop) => prop.region));
-  assert.ok(regions.size >= 3, "chairs are spread across the map");
+  assert.ok(sits.length >= 3, "坐过三个不同的地方 is still possible");
+  assert.deepEqual([...new Set(sits.map((prop) => prop.region))], ["center"]);
+  assert.equal(SCENERY.filter((prop) => prop.later === "sit").length, 4);
   assert.equal(sceneryInRegion("nowhere").length, 0);
   assert.ok(sceneryInRegion("south").length >= 2);
   assert.equal(sceneryById(SCENERY[0].id), SCENERY[0]);

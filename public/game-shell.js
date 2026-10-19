@@ -25,7 +25,7 @@ import { boardLines, questState, prerequisiteMessage } from "./quest-board.js";
 import { BASE_SPEED, sprintSpeed } from "./world-scale.js";
 import { eggsInRegion, loadFound, saveFound, collect as collectEgg } from "./easter-eggs.js";
 import { npcsInRegion, loadTalked, saveTalked, markTalked } from "./npc-chatter.js";
-import { sceneryInRegion, promptFor } from "./scenery.js";
+import { SCENERY, sceneryInRegion, promptFor } from "./scenery.js";
 
 /** 已结案的星级表 → 已解锁的侦探工具（张力层的成长）。 */
 const CASE_STARS_KEY = "rea-workbench-case-stars";
@@ -649,6 +649,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       Object.assign(player, { x: prop.x, y: prop.y + 4, walking: false });
       target = null;
       placePlayer();
+      playerEl?.classList.add("seated"); // 腿藏到椅面后面（没有坐下动画，见 npc-motion.js）
       achievements.note({ type: "sit", id: prop.id });
     } else {
       achievements.note({ type: "scenery", id: prop.id });
@@ -2295,7 +2296,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && !director.playing) {
       event.preventDefault();
-      if (sittingOn) sittingOn = null; // 站起来才能走
+      if (sittingOn) { sittingOn = null; playerEl?.classList.remove("seated"); } // 站起来才能走
       if (!keys.has(key)) startWalking();
       keys.add(key);
       return;

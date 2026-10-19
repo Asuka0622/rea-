@@ -1257,3 +1257,7 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .lumi-look-placeholder small {font-size:11px;}
 .lumi-look-card small {opacity:.75;}
 .lumi-look-note {font-size:12px;opacity:.7;}
+/* NPC 的简单动作（npc-motion.js）：往左走时把朝右的侧面翻过来；坐长椅时腿藏到椅面后面，身子往下沉一点。 */
+.game-sprite.npc.face-left {transform:translateX(-50%) scaleX(-1);}
+.game-sprite.seated {clip-path:inset(0 0 30% 0);translate:0 calc(var(--person-h) * var(--px) * .18);}
+.game-npc {transition:none;}
