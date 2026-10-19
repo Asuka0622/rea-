@@ -180,18 +180,28 @@
               {
                 "who": "client",
                 "text": "朵朵：等等，最后那个 lastSync 是什么？「23:58」……我从来没开过同步啊。",
-                "face": "thinking"
+                "face": "thinking",
+                "fx": {
+                  "type": "clock",
+                  "time": "23:58"
+                }
               },
               {
                 "text": "23:58，快半夜了。先记下来——这一条，和金币没关系。",
-                "face": "thinking"
+                "face": "thinking",
+                "fx": {
+                  "type": "clue",
+                  "title": "主线线索",
+                  "text": "朵朵的存档里有个字段：lastSync 23:58"
+                }
               }
             ],
             "caught": [
               {
                 "who": "client",
                 "text": "朵朵：「存档被修改过，已重新开始」！我的番茄、我的胡萝卜……",
-                "face": "surprised"
+                "face": "surprised",
+                "fx": "shake"
               },
               {
                 "text": "别慌，这是副本。它是怎么发现的？sum 那一栏——游戏会重新算一遍，对不上就不认。",
@@ -209,7 +219,11 @@
               {
                 "who": "client",
                 "text": "朵朵：9999！游戏真的认了！",
-                "face": "happy"
+                "face": "happy",
+                "fx": {
+                  "type": "stamp",
+                  "text": "读档成功"
+                }
               },
               {
                 "text": "所以只要看过这个游戏的代码，谁都能做出一份游戏认可的存档。校验码拦得住手滑，拦不住看懂代码的人。",
@@ -704,7 +718,11 @@
           {
             "who": "client",
             "text": "朵朵：《种田日记》下个月出联网版。到时候有人改存档，是不是就欺负到别人头上了？",
-            "face": "thinking"
+            "face": "thinking",
+            "fx": {
+              "type": "stamp",
+              "text": "传说任务"
+            }
           },
           {
             "text": "这就是更深一步的问题了：换你当一回开发者，看看什么该交给服务器。",

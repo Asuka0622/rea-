@@ -22,8 +22,8 @@
 .rh3-xiaoke{align-self:end;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;background:#162a31;border:1px solid #4d6a72;font-size:12px;line-height:1.5;color:#dbe9e5}
 .rh3-xiaoke p{margin:0;min-height:54px;padding:6px 8px;background:#f2ecdc;color:#2b2320;border-radius:6px;position:relative}
 .rh3-xiaoke p:empty{display:none}
-.rh3-xiaoke-face{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#d9f4ff,#7fc6e6 60%,#3d7f9e);box-shadow:0 0 12px #7fc6e688;background-image:url(/art/faces/xiaoke-normal.webp),radial-gradient(circle at 35% 35%,#d9f4ff,#7fc6e6 60%,#3d7f9e);background-size:cover}
-.rh3 .rh2-note .rh3-hint{position:absolute;left:100%;top:50%;transform:translate(6px,-50%);white-space:nowrap;padding:0 5px;font-size:11px;line-height:18px;color:#16303a;background:#9fd3e8;border-radius:3px;font-weight:normal}
+.rh3-xiaoke-face{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd2a8,#e8763a 60%,#a8441c);box-shadow:0 0 12px #e8763a88;background-image:url(/art/faces/xiaoke-normal.webp),radial-gradient(circle at 35% 35%,#ffd2a8,#e8763a 60%,#a8441c);background-size:cover}
+.rh3 .rh2-note .rh3-hint{position:absolute;left:100%;top:50%;transform:translate(6px,-50%);white-space:nowrap;padding:0 5px;font-size:11px;line-height:18px;color:#3a1a08;background:#f4b27a;border-radius:3px;font-weight:normal}
 .rh3-settings{margin-left:auto;font-size:12px;color:#bfcecd}
 .rh3-settings[open]{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .rh3-settings summary{cursor:pointer}

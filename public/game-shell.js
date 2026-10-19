@@ -1,6 +1,7 @@
 import { createNpcDialogue, portraitCandidates } from "./npc-dialogue.js";
 import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
+import { createStoryFx } from "./story-fx.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
@@ -256,6 +257,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const caseLayer = h("div", { class: "case-layer" });
   caseLayer.hidden = true;
   const shell = h("div", { class: "game-shell", hidden: true }, stage, fade, hud, gameWindow, caseLayer, menu, dialogue, rotate);
+  // 对白里的演出（一句台词带 fx：线索卡、钟面、下雨、天黑、小克……），这段对话结束时收场。
+  const storyFx = createStoryFx({ h, host: shell, sound, hasArt: (name) => Boolean(art?.()?.portraits?.has(name)) });
   shell.hidden = true;
   document.body.append(shell);
 
@@ -758,6 +761,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const text = h("p", { "aria-label": line.text });
     const more = !last && h("span", { class: "game-more" }, "点击继续");
     dialogue.replaceChildren(portrait(line.face, line.who, line.name), h("div", { class: "case-say-text" }, h("b", {}, line.name || SPEAKERS[line.who || "lumi"] || line.who), text, more || ""));
+    storyFx.line(line);
+    if (line.face === "surprised") speakerEmote(line.who);
     stopTyping();
     if (reducedMotion) text.textContent = line.text;
     else {
@@ -797,6 +802,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       const done = lineDone;
       lineDone = null;
       dialogue.hidden = true;
+      storyFx.end();
       done();
     }
   }
@@ -1541,6 +1547,15 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     emote: (text, ms) => emote(text, ms),
     sound: (name, pitch) => sound[name]?.(pitch),
   });
+  /** 说话的人吃了一惊：头上冒个「！」（路米冒在玩家头上，委托人冒在房间里自己头上）。 */
+  function speakerEmote(who) {
+    if (!who || who === "lumi") return emote("!", 1100);
+    const npc = roomEl?.querySelector(`.case-npc.${CSS.escape(who)}`);
+    if (!npc) return;
+    const bubble = h("span", { class: "game-emote npc", "aria-hidden": "true" }, "!");
+    npc.append(bubble);
+    setTimeout(() => bubble.remove(), 1100);
+  }
   /** A bubble over the player's head: ! ? ♪ … */
   function emote(text, ms = 1400) {
     const host = roomEl || worldEl;

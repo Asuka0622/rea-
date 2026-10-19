@@ -1142,6 +1142,8 @@ export function mountLab({ h, icon, lab, onMistake = () => {}, onHint = () => {}
     // ?debug: window.__labSkip() finishes the stage on screen, to test what comes after it.
     if (typeof location !== "undefined" && /[?&]debug/.test(location.search)) window.__labSkip = stageDone;
     slot.replaceChildren(MOUNTS[stage.kind]({ h, icon, lab: { ...lab, ...stage }, onMistake, onHint, story, difficulty, onDone: stageDone }));
+    // 换关时一条横幅扫过：「第 2 关 · 防火墙值班」（第一关和单关的实验不放）
+    if (i > 0) slot.prepend(h("div", { class: "lab-stage-banner", "aria-hidden": "true" }, h("small", {}, `第 ${i + 1} 关`), h("b", {}, stage.title || "")));
   }
   const first = Math.max(0, Math.min(stages.length - 1, startAt | 0));
   mountStage(first);

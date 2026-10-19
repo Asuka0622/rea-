@@ -296,7 +296,12 @@
           {
             "who": "client",
             "text": "周姐：23:58……就是那天风扇响的时候！",
-            "face": "surprised"
+            "face": "surprised",
+            "fx": {
+              "type": "clue",
+              "title": "主线线索",
+              "text": "周姐的截图，每晚 23:58 送去「悄悄统计」"
+            }
           },
           {
             "text": "白天攒着，半夜一起送。白天盯着网速，当然什么都看不到。",
@@ -468,7 +473,11 @@
               {
                 "who": "client",
                 "text": "周姐：加班到半夜是常事。上周有一天忙到 23:58，电脑风扇突然呼呼地响了一阵。",
-                "face": "thinking"
+                "face": "thinking",
+                "fx": {
+                  "type": "clock",
+                  "time": "23:58"
+                }
               },
               {
                 "who": "client",
@@ -867,7 +876,11 @@
           {
             "who": "client",
             "text": "周姐：IT 部门那张升级检查表，第三条一直没人写。下次再有软件要升级，能不能教我们怎么审？",
-            "face": "thinking"
+            "face": "thinking",
+            "fx": {
+              "type": "stamp",
+              "text": "传说任务"
+            }
           },
           {
             "text": "能。新版本多出来的每一条，都要说得出为什么——这是更深一步的功夫。",

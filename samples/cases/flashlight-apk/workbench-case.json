@@ -584,7 +584,8 @@
             {
               "who": "client",
               "text": "王奶奶：天都黑了，它们还在动？",
-              "face": "surprised"
+              "face": "surprised",
+              "fx": "night"
             },
             {
               "text": "定位也来了：它想知道你在哪儿。",
@@ -1323,7 +1324,11 @@
               {
                 "who": "client",
                 "text": "王奶奶：这阵子，它一声都不响了。",
-                "face": "thinking"
+                "face": "thinking",
+                "fx": {
+                  "type": "clock",
+                  "time": "11:58"
+                }
               }
             ],
             "clue": {
@@ -1526,7 +1531,15 @@
               {
                 "who": "client",
                 "text": "王奶奶：悄悄统计……钟楼？",
-                "face": "surprised"
+                "face": "surprised",
+                "fx": [
+                  "flash",
+                  {
+                    "type": "clue",
+                    "title": "主线线索",
+                    "text": "手电筒的配置写着：数据报给「钟楼」"
+                  }
+                ]
               },
               {
                 "who": "client",
@@ -1625,7 +1638,11 @@
           {
             "who": "client",
             "text": "王奶奶：孩子，这几天我想了好多……手机里的东西，到底该怎么守？",
-            "face": "thinking"
+            "face": "thinking",
+            "fx": {
+              "type": "stamp",
+              "text": "传说任务"
+            }
           },
           {
             "text": "那就从守住这台手机开始。这是更深一步的功夫，慢慢来。",

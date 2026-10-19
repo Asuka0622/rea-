@@ -169,7 +169,12 @@
             },
             {
               "text": "而且收件的不是同步服务器，是 collect.quiet-stats.example。悄悄统计……广场公告屏上天天滚动的那家？",
-              "face": "thinking"
+              "face": "thinking",
+              "fx": {
+                "type": "clue",
+                "title": "主线线索",
+                "text": "小账本的数据，发给了「悄悄统计」"
+              }
             },
             {
               "who": "client",
@@ -179,7 +184,11 @@
             {
               "who": "xiaoke",
               "text": "那个……我能说句话吗？我是小克，小林手机里的 AI 助手。",
-              "face": "unsure"
+              "face": "unsure",
+              "fx": {
+                "type": "xiaoke",
+                "face": "unsure"
+              }
             },
             {
               "who": "xiaoke",
@@ -304,7 +313,8 @@
             "intro": [
               {
                 "text": "等等——上传的节奏乱了！",
-                "face": "surprised"
+                "face": "surprised",
+                "fx": "shake"
               },
               {
                 "text": "它被拦了两轮，好像学聪明了：每次故意早一点、晚一点，想混进人群里。",
@@ -886,7 +896,11 @@
           {
             "who": "client",
             "text": "小林：我还想接着用小账本记账。能不能不卸载，只拦住它偷偷发的东西？",
-            "face": "thinking"
+            "face": "thinking",
+            "fx": {
+              "type": "stamp",
+              "text": "传说任务"
+            }
           },
           {
             "text": "能。在你电脑上开一道防火墙——不过它得先学会认人。这是更深一步的功夫，想学就来。",

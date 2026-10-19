@@ -306,7 +306,8 @@
           "first-link": [
             {
               "text": "（窗外下着雨，阿哲的天气小助手上写着「晴」。）",
-              "face": "thinking"
+              "face": "thinking",
+              "fx": "rain"
             },
             {
               "who": "client",
@@ -783,7 +784,12 @@
               {
                 "who": "client",
                 "text": "阿哲：db.quiet-stats……我用的是一个免费的统计服务，他们说帮我统计用户量……",
-                "face": "surprised"
+                "face": "surprised",
+                "fx": {
+                  "type": "clue",
+                  "title": "主线线索",
+                  "text": "阿哲的「统计小库」，开在「悄悄统计」"
+                }
               },
               {
                 "text": "悄悄统计。又是它。我记进手账了。",
