@@ -142,7 +142,7 @@ export const PROLOGUE_QUESTS = [
     take: "talk",
     client: "wang-nainai",
     ask: [
-      { who: "wang-nainai", text: "闺女，你帮我看看这个手电筒。", face: "unsure" },
+      { who: "wang-nainai", text: "孩子，你帮我看看这个手电筒。", face: "unsure" },
       { who: "wang-nainai", text: "装它的时候，它跟我要通讯录。", face: "thinking" },
       { who: "wang-nainai", text: "一个照明的，要我的通讯录做什么？", face: "unsure" },
     ],

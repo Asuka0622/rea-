@@ -3470,7 +3470,7 @@
       "status": "design-not-runtime",
       "zone": "homes-west",
       "home": "flashlight-apk",
-      "voice": "亲切，称玩家“闺女”；有自己的判断，不只充当受骗老人。",
+      "voice": "亲切，称路米“孩子”（路米可男可女，称呼不分性别）；有自己的判断，不只充当受骗老人。",
       "motive": "整理花盆、晾晒、和邻居聊家常。",
       "priority": "P1",
       "anchorsStatus": "symbolic-pending-layout-navigation",
@@ -3525,7 +3525,7 @@
           "when": {
             "timeBand": "dawn"
           },
-          "text": "闺女，起得早呀。我把窗台擦一擦。",
+          "text": "孩子，起得早呀。我把窗台擦一擦。",
           "weight": 30,
           "spoiler": "none",
           "oneShot": false
@@ -3573,7 +3573,7 @@
           "when": {
             "timeBand": "night"
           },
-          "text": "闺女，我已经歇下了，没急事明天说。",
+          "text": "孩子，我已经歇下了，没急事明天说。",
           "weight": 30,
           "spoiler": "none",
           "oneShot": false
@@ -3589,7 +3589,7 @@
             ],
             "shelter": "exposed"
           },
-          "text": "闺女，先帮自己找个干地方站，别急着说话。",
+          "text": "孩子，先帮自己找个干地方站，别急着说话。",
           "weight": 50,
           "spoiler": "none",
           "oneShot": false
@@ -3699,7 +3699,7 @@
           "when": {
             "season": "winter"
           },
-          "text": "冬天出门把领口拢好，闺女。",
+          "text": "冬天出门把领口拢好，孩子。",
           "weight": 15,
           "spoiler": "none",
           "oneShot": false

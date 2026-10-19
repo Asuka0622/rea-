@@ -111,7 +111,7 @@ export const SKILL_TREE = [
     title: "AI",
     emblem: "智",
     color: "#a77ad6",
-    motto: "小 AI 比比学歪了：AI 是怎么学的，又会在哪里出错？",
+    motto: "小克也会说错：AI 是怎么学的，又会在哪里出错？",
     skills: [
       { id: "learn", label: "机器学习", glyph: "学", at: [2, 0], note: "AI 是怎么学会的" },
       { id: "data", label: "训练数据", glyph: "料", at: [1, 1], needs: ["learn"], note: "喂什么学什么" },
