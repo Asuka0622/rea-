@@ -2,6 +2,7 @@ import { createNpcDialogue, portraitCandidates } from "./npc-dialogue.js";
 import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
 import { createStoryFx } from "./story-fx.js";
+import { daypart, skipTo, clockLabel } from "./prologue-clock.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
@@ -493,7 +494,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     // No weather/season system exists in this branch yet. Unknown fields must not invent weather.
     const env = regionData()?.environment || {};
     const stopped = quests?.clockState() === "stopped";
-    return { minutes: stopped ? 718 : clock.minutes, weather: env.weather ?? null,
+    return { minutes: clock.minutes, stopped, weather: env.weather ?? null,
       season: env.season ?? null, shelter: npc.environment?.shelter ?? null, wind: env.wind ?? null };
   }
   function chatWithNpc(npc) {
@@ -1052,7 +1053,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
   // ?case=<id> goes straight into that case room, which is how backgrounds and prop anchors get checked.
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session };
+    window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session, skipTime: (m, o) => skipTime(m, o) };
     const jump = new URLSearchParams(location.search).get("case");
     if (jump) {
       // A fresh browser shows the welcome questions first; a review link answers them with the
@@ -1460,8 +1461,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   function renderClock() {
     const state = quests?.clockState() || "running";
     clockEl.dataset.state = state;
-    // Stopped, every clock in town shows the minute the tower stopped.
-    let shown = state === "stopped" ? 11 * 60 + 58 : clock.minutes;
+    // 两个钟（prologue-clock.js）：导航栏是小镇的时间，一直在走；停在 11:58 的只有钟楼的钟面。
+    let shown = clock.minutes;
+    stage.dataset.daypart = daypart(clock.minutes);
     // Drifting: the hands jump around the true time, as if someone keeps changing it.
     if (state === "drifting") shown = (clock.minutes + Math.round(Math.sin(clock.minutes / 7) * 23) + 1440) % 1440;
     if (shown === clockShown && clockEl.dataset.shown === state) return;
@@ -1471,14 +1473,24 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     const mm = shown % 60;
     clockFace.style.setProperty("--h", `${(hh % 12) * 30 + mm / 2}deg`);
     clockFace.style.setProperty("--m", `${mm * 6}deg`);
-    const status = state === "stopped" ? "停摆" : state === "drifting" ? "不准" : "";
+    const status = state === "drifting" ? "不准" : "";
     // Narrow screens hide the day and the status (CSS); the title and label always have everything.
     clockText.replaceChildren(h("span", { class: "game-clock-day" }, `第 ${clock.day} 天 `), `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`, status && h("span", { class: "game-clock-status" }, ` · ${status}`));
-    clockEl.title = `第 ${clock.day} 天 · ${state === "stopped" ? "钟楼停摆了，镇上的钟都停在 11:58" : state === "drifting" ? "钟楼的时间被人改乱了" : "比特镇的时间"}`;
+    clockEl.title = `第 ${clock.day} 天 · ${state === "stopped" ? "比特镇的时间（钟楼的钟还停在 11:58）" : state === "drifting" ? "钟楼的时间被人改乱了" : "比特镇的时间"}`;
     clockEl.setAttribute("aria-label", `${clockText.textContent}（${clockEl.title}）`);
   }
+  /** 剧情要特定时刻（守夜在深夜）：直接跳过去，画面由调用的演出淡出淡入。 */
+  function skipTime(minutes, opts) {
+    Object.assign(clock, skipTo(clock, minutes, opts));
+    try {
+      localStorage.setItem(CLOCK_KEY, JSON.stringify(clock));
+    } catch {}
+    clockShown = -1;
+    renderClock();
+    return clockLabel(clock.minutes);
+  }
   setInterval(() => {
-    if (!enabled || !quests || quests.clockState() === "stopped") return renderClock();
+    if (!enabled || !quests || director?.playing) return renderClock();
     clock.minutes += 1;
     if (clock.minutes >= 1440) [clock.minutes, clock.day] = [0, clock.day + 1];
     try {

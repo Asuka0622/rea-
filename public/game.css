@@ -1399,3 +1399,11 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .case-room .case-prop.near::after {opacity:0;animation:none;}
 .case-room .case-prop.near::before {content:attr(title);position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);padding:4px 8px;background:#302315;color:#fff3d8;font:12px/1.4 var(--font-body);white-space:nowrap;pointer-events:none;border:1px solid #80603d;z-index:1;}
 @media (prefers-reduced-motion:reduce) {.case-room .case-prop:not(.seen)::after {animation:none;opacity:.8;transform:translateX(-50%) scale(1);}}
+/* 小镇的时间：清晨、傍晚、夜里给画面压一层光（prologue-clock.js 的 daypart；白天不压）。2026-10-19，小克
+   光只压在地图和房间上（它们自成一层），对话框、面板、按钮不受影响。 */
+.game-stage .game-world, .game-stage .game-room {isolation:isolate;}
+.game-stage .game-world::after, .game-stage .game-room::after {content:"";position:absolute;inset:0;z-index:99999;pointer-events:none;opacity:0;transition:opacity 2s ease,background-color 2s ease;mix-blend-mode:multiply;}
+.game-stage[data-daypart="dawn"] :is(.game-world, .game-room)::after {opacity:1;background-color:rgba(255,214,196,.55);}
+.game-stage[data-daypart="dusk"] :is(.game-world, .game-room)::after {opacity:1;background-color:rgba(255,170,110,.5);}
+.game-stage[data-daypart="night"] :is(.game-world, .game-room)::after {opacity:1;background-color:rgba(60,80,150,.62);}
+@media (prefers-reduced-motion:reduce) {.game-stage :is(.game-world, .game-room)::after {transition:none;}}
