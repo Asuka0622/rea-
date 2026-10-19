@@ -7,9 +7,8 @@ import { daypart, skipTo, clockLabel } from "./prologue-clock.js";
 import { vigilScript, towerScript } from "./prologue-scenes.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
-import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
+import { DIFFICULTIES, FOCUSES, DEMO_CASES } from "./game-quests.js";
 import { REGIONS, REGION_SIZE, regionOf } from "./game-regions.js";
-import { createMinigame } from "./game-minigames.js";
 import { createWaterLayer } from "./game-water.js";
 import { SKILL_TREE, skillsFrom } from "./game-skills.js";
 import { ACHIEVEMENTS, createAchievements } from "./game-achievements.js";
@@ -49,10 +48,6 @@ const SPEAKERS = {
   archivist: "老秦",
   bibi: "比比",
   xingbo: "星博士",
-  ayan: "阿砚",
-  liuniangzi: "柳娘子",
-  hangonglian: "韩公廉",
-  susong: "苏颂",
   xiaoke: "小克",
   ada: "爱达",
   babbage: "巴贝奇",
@@ -67,16 +62,6 @@ const SPEAKERS = {
   student: "小满",
   watchmaker: "老魏",
 };
-
-/** The time machine's dial (docs/concept.md): the eras in story order, and the map each one opens on. */
-const ERAS = [
-  { id: "china", title: "古代中国", place: "汴京", year: "约 1088 年", region: "era-china" },
-  { id: "medieval", title: "中世纪欧洲", place: "城堡与修道院", year: "约 13 世纪" },
-  { id: "industrial", title: "工业革命", place: "英国的工厂", year: "19 世纪" },
-  { id: "forties", title: "1940 年代", place: "破译小组", year: "1940 年代" },
-  { id: "internet", title: "连接世界", place: "大学机房", year: "1960–90 年代" },
-  { id: "modern", title: "现代都市", place: "AI 研究所", year: "现在" },
-];
 
 /** 正式版的六站（docs/concept.md 第 4 节）：序章之后，从 1843 年的伦敦一路走回今天。 */
 const PART_ONE = [
@@ -154,7 +139,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // 预告版（整个序章）: only demo.cases can be taken; the other clients' homes say they open in the full game.
   // The demo opens its cases act by act (game-quests.js caseReachable): a later act's door waits.
   const inDemo = (id) => !demo || demo.cases.includes(id);
-  const demoLater = (id) => Boolean(demo && demo.cases.includes(id) && quests?.caseReachable?.(id) === false);
+  const demoLater = (id) => quests?.caseReachable?.(id) === false; // 序章的委托按幕开放（预告版和正式模式一样）
+  const PROLOGUE_CASE_IDS = demo?.cases || DEMO_CASES;
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -235,9 +221,6 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   if (quests) hud.append(h("button", { class: "btn small", type: "button", onclick: () => openSkills("drills") }, icon("scan", { size: 14 }), "复勘（R）"));
   hud.append(soundButton);
   if (demo) hud.append(h("span", { class: "game-demo-tag", title: "预告测试版：侦探事务所和三份委托，约 30 分钟" }, "预告测试版"));
-  const watchButton = h("button", { class: "btn small game-watch", type: "button", onclick: () => travelHome(), title: "按一下怀表，回比特镇的钟楼" }, "⌚ 回比特镇");
-  watchButton.hidden = true;
-  hud.append(watchButton);
   // The town clock (docs/story.md 第 8 节): stopped, drifting or running with the main story.
   const clockFace = h("span", { class: "game-clock-face", "aria-hidden": "true" }, h("i", { class: "hour" }), h("i", { class: "minute" }));
   const clockText = h("span", { class: "game-clock-text" });
@@ -364,7 +347,6 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     worldEl = h("div", { class: "game-world", style: `--px:${townPx};width:calc(${world.w}px * var(--px));height:calc(${world.h}px * var(--px))` });
     stage.replaceChildren(worldEl);
     if (regional()) stage.append(h("div", { class: "game-place-sign" }, icon("compass", { size: 16 }), regionData().name));
-    watchButton.hidden = !(regional() && regionData().era);
     fit();
     worldEl.append(
       background || h("div", { class: "game-bg drawn town", "aria-hidden": "true" }, h("span", { class: "path h" }), h("span", { class: "path v" }), h("span", { class: "pond" }), h("span", { class: "river" })),
@@ -374,11 +356,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         const objective = quests?.current()?.spot === id;
         return h(
           "button",
-          { class: `game-building ${picture && !spot.placeholder ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""} ${spot.kind === "tower" && quests?.stepDone("open-door") ? "door-open" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}${spot.placeholder ? `;z-index:${spot.y + spot.h}` : ""}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
+          { class: `game-building ${picture && !spot.placeholder ? "over-art" : spot.kind || "office"} ${ACTIONS[id] ? "" : "case-home"} ${objective ? "objective" : ""}`, type: "button", style: `--bx:${spot.x};--by:${spot.y};--bw:${spot.w};--bh:${spot.h}${spot.placeholder ? `;z-index:${spot.y + spot.h}` : ""}`, onclick: () => walkTo(doorOf(id)), "aria-label": `走到${scene.place}（${scene.purpose}）${objective ? "，当前任务目标" : ""}` },
           (!picture || spot.placeholder) && h("span", { class: "roof", "aria-hidden": "true" }),
           (!picture || spot.placeholder) && h("span", { class: "wall", "aria-hidden": "true" },
             spot.kind === "tower" && h("span", { class: "clockface", "data-state": quests?.clockState() || "running" }),
-            spot.kind === "tower" && h("span", { class: "tower-lamps" }, ...Array.from({ length: 8 }, () => h("i", { class: quests?.stepDone("open-door") ? "lit" : "" }))),
             h("span", { class: "door" })),
           h("span", { class: "game-label" }, objective && h("span", { class: "game-objective", "aria-hidden": "true" }, "!"), scene.place, h("small", {}, scene.purpose)),
         );
@@ -763,7 +744,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   // Lines appear a character at a time with a soft blip (a click shows the whole line at once).
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ayan: 700, liuniangzi: 560, hangonglian: 340, susong: 280, ada: 740, babbage: 260, duoduo: 860, "wang-nainai": 380, "lao-qin": 300, xiaoyu: 900, baker: 600, barista: 660, "disk-vendor": 480, parcel: 340, student: 780, watchmaker: 300 };
+  const VOICE = { lumi: 620, smith: 300, librarian: 480, postman: 560, bibi: 900, xiaoke: 880, xingbo: 520, ada: 740, babbage: 260, duoduo: 860, "wang-nainai": 380, "lao-qin": 300, xiaoyu: 900, baker: 600, barista: 660, "disk-vendor": 480, parcel: 340, student: 780, watchmaker: 300 };
   let typing = null;
   function renderLine(after) {
     const last = lineIndex >= lines.length - 1;
@@ -1064,7 +1045,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   // Development aid: open the page with ?debug to drive and inspect the player from the console.
   // ?case=<id> goes straight into that case room, which is how backgrounds and prop anchors get checked.
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), timeMachine: () => openTimeMachine(), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session, skipTime: (m, o) => skipTime(m, o) };
+    window.__game = { walkTo: (x, y) => walkTo({ x, y }), findPath: (a, b) => findPath(a, b), blocked: (x, y) => blocked(x, y), player, region: () => region, go: (name) => switchRegion(name), play: (script) => director.play(script), enter: (id) => enterSpot(id), caseSession: () => caseRoom?.session, skipTime: (m, o) => skipTime(m, o) };
     const jump = new URLSearchParams(location.search).get("case");
     if (jump) {
       // A fresh browser shows the welcome questions first; a review link answers them with the
@@ -1154,7 +1135,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (!enabled || windowOpen || caseBusy() || (stage.dataset.view !== "town" && !room)) return;
     let dx = 0;
     let dy = 0;
-    if (!director.playing && closeupEl.hidden) {
+    if (!director.playing) {
       for (const key of keys) {
         const dir = KEY_DIRS[key];
         if (dir) [dx, dy] = [dx + dir[0], dy + dir[1]];
@@ -1270,7 +1251,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   prompt.hidden = true;
   function showDoorPrompt() {
-    if (director.playing || !closeupEl.hidden) {
+    if (director.playing) {
       prompt.hidden = true;
       nearDoor = null;
       return;
@@ -1302,7 +1283,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     nearDoor = id;
     prompt.hidden = !id;
     if (!id) return;
-    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), quests?.playAt(id) ? `调查 · ${info(id).place}` : ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon || spotData(id)?.placeholder ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
+    prompt.replaceChildren(h("kbd", {}, touch ? "点这里" : "E"), ACTIONS[id] ? `进入 · ${info(id).place}` : spotData(id)?.soon || spotData(id)?.placeholder ? `看看 · ${info(id).place}` : `接委托 · ${info(id).place}`);
     worldEl?.append(prompt);
     positionPrompt();
   }
@@ -1588,22 +1569,6 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     setTimeout(() => bubble.remove(), ms);
   }
 
-  /* Close-ups: a mini-game played on the thing itself (the tower door, its gears, the drawers), with the
-     camera on that spot, instead of a parchment panel. Each game names its spot and look here. */
-  const CLOSEUPS = {
-    binary: { spot: "clocktower", look: "door", title: "钟楼的门" },
-    parts: { spot: "clocktower", look: "gears", title: "钟楼里的机关" },
-    drawers: { spot: "clocktower", look: "drawers", title: "记事板下的抽屉" },
-    rods: { spot: "teahouse", look: "table", title: "柳娘子的账桌" },
-    escapement: { spot: "tower-site", look: "wheel", title: "枢轮与天衡" },
-  };
-  const closeupEl = h("section", { class: "game-closeup", role: "dialog", "aria-modal": "true" });
-  closeupEl.hidden = true;
-  shell.append(closeupEl);
-  function closeCloseup() {
-    closeupEl.hidden = true;
-    closeupEl.replaceChildren();
-  }
   /* ----- cinema: full-screen story pictures behind the dialogue box (public/art/pixel/scenes/) -----
      The 序章结尾 and the 1843 intro are told with the delivered illustrations; the dialogue stays on
      top (z 46 above the cinema's 41), so the beat is written as ordinary `say` lines. */
@@ -1641,138 +1606,6 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     cinema.hidden = true;
     cinema.replaceChildren();
   }
-  /** What happens in the world when a mini-game is won, before the story goes on. */
-  const AFTER_GAME = {
-    rods: (door) => [
-      { camera: { x: door.x, y: door.y - 40 }, ms: 400 },
-      { sound: "right" },
-      { emote: "♪" },
-      { wait: 700 },
-      { camera: "player", ms: 400 },
-    ],
-    // The jacks strike for the first time: three bells, the tower shakes, warm light.
-    escapement: (door) => [
-      { camera: { x: door.x, y: door.y - 110 }, ms: 600 },
-      { wait: 300 },
-      { sound: "blip", pitch: 880 }, { wait: 380 },
-      { sound: "blip", pitch: 880 }, { wait: 380 },
-      { sound: "blip", pitch: 660 }, { wait: 300 },
-      { shake: 500 },
-      { flash: 900, color: "#ffe9b0" },
-      { sound: "unlock" },
-      { wait: 900 },
-      { camera: "player", ms: 600 },
-      { emote: "!" },
-      { wait: 400 },
-    ],
-    binary: (door) => [
-      { camera: { x: door.x, y: door.y - 46 }, ms: 500 },
-      ...Array.from({ length: 8 }, (_, i) => [{ call: () => towerLamp(i) }, { sound: "blip", pitch: 520 + i * 70 }, { wait: 170 }]).flat(),
-      { wait: 250 },
-      { shake: 450 },
-      { flash: 500 },
-      { sound: "door" },
-      { call: () => openTowerDoor() },
-      { wait: 700 },
-      { camera: "player", ms: 500 },
-      { emote: "!" },
-      { wait: 500 },
-    ],
-    parts: (door) => [
-      { camera: { x: door.x, y: door.y - 70 }, ms: 500 },
-      { call: () => worldEl?.querySelector(".game-building.tower")?.classList.add("whirring") },
-      { sound: "step" }, { wait: 160 }, { sound: "step" }, { wait: 160 }, { sound: "step" },
-      { shake: 250 },
-      { wait: 700 },
-      { camera: "player", ms: 500 },
-      { emote: "♪" },
-      { wait: 400 },
-    ],
-    drawers: (door) => [
-      { camera: { x: door.x, y: door.y - 90 }, ms: 600 },
-      { call: () => worldEl?.querySelector(".game-building.tower .clockface")?.classList.add("spin") },
-      { wait: 900 },
-      { sound: "right" },
-      { wait: 300 },
-      { flash: 700, color: "#fff2c8" },
-      { sound: "unlock" },
-      { wait: 900 },
-      { camera: "player", ms: 600 },
-      { emote: "♥" },
-      { wait: 400 },
-    ],
-  };
-  /** 时光机: the brass dial in the clock tower. Open eras can be chosen; the rest are silhouettes. */
-  function openTimeMachine() {
-    const open = quests?.erasOpen() || [];
-    overlay.classList.add("timemachine");
-    overlay.replaceChildren(
-      h("div", { class: "game-panel-head" }, h("h2", {}, "钟楼时光机"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关上")),
-      h("p", { class: "game-panel-note" }, "转动表盘，选一个时代。亮着的格子可以去；其余的还在等待时机。"),
-      h("div", { class: "tm-dial" },
-        ...ERAS.map((era, i) => {
-          const ready = open.includes(era.id) && REGIONS[era.region];
-          return h("button", { class: `tm-era ${ready ? "open" : "closed"}`, type: "button", disabled: !ready, onclick: () => travelToEra(era) },
-            h("span", { class: "tm-era-no" }, String(i + 1)),
-            h("b", {}, ready ? era.title : "？？？"),
-            h("small", {}, ready ? `${era.place} · ${era.year}` : open.includes(era.id) ? "制作中" : "还没到时候"));
-        })),
-    );
-    overlay.hidden = false;
-    overlay.querySelector(".tm-era.open")?.focus({ preventScroll: true });
-  }
-  async function travelToEra(era) {
-    closeOverlay();
-    const door = spotData("clocktower")?.door;
-    await director.play([
-      ...(door ? [{ camera: { x: door.x, y: door.y - 60 }, ms: 500 }] : []),
-      { sound: "unlock" },
-      { shake: 700 },
-      { flash: 300, color: "#ffffff" },
-      { wait: 350 },
-      { flash: 300, color: "#d8f4ff" },
-      { wait: 350 },
-      { flash: 900, color: "#ffffff" },
-      { call: () => {
-        cameraFocus = null;
-        lastPlace = null;
-        switchRegion(era.region);
-      } },
-      { wait: 600 },
-      { emote: "?" },
-      { wait: 500 },
-    ]);
-    quests?.event("travel", era.id);
-  }
-  /** The pocket watch: from any era, straight back to the clock tower in Bit Town. */
-  async function travelHome() {
-    if (!regionData()?.era || windowOpen || director.playing) return;
-    closeOverlay();
-    closeCloseup();
-    await director.play([
-      { sound: "unlock" },
-      { flash: 300, color: "#ffffff" },
-      { wait: 300 },
-      { flash: 800, color: "#ffffff" },
-      { call: () => {
-        cameraFocus = null;
-        lastPlace = null;
-        const door = REGIONS.north.spots.clocktower.door;
-        switchRegion("north", { x: door.x, y: door.y + 6 });
-      } },
-      { wait: 500 },
-      { emote: "♥" },
-      { wait: 400 },
-    ]);
-    quests?.event("travel", "home");
-  }
-  function towerLamp(i) {
-    worldEl?.querySelectorAll(".game-building.tower .tower-lamps i")[i]?.classList.add("lit");
-  }
-  function openTowerDoor() {
-    worldEl?.querySelector(".game-building.tower")?.classList.add("door-open");
-  }
-
   /* ----- 预告测试版: the ending — the tower opens, a short 1843 intro, then the chapter card and thanks ----- */
   // 预告版（整个序章）里，有两章结束后要接一场大戏：守夜、打开钟楼（剧情在 prologue-scenes.js）。
   // 那一章的结束台词说完，就播这一场（进门时或在小镇里都行）。
@@ -1833,13 +1666,13 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     try {
       stars = JSON.parse(localStorage.getItem("rea-workbench-case-stars") || "{}") || {};
     } catch {}
-    const starCount = demo.cases.reduce((sum, id) => sum + (stars[id] || 0), 0);
+    const starCount = PROLOGUE_CASE_IDS.reduce((sum, id) => sum + (stars[id] || 0), 0);
     overlay.classList.add("demo-end");
     overlay.replaceChildren(
       h("div", { class: "demo-end-head" }, h("p", {}, "预告测试版 · 完"), h("h2", {}, "感谢试玩！")),
       h("div", { class: "demo-end-stats" },
         h("div", {}, h("b", {}, minutes ? `${minutes} 分钟` : "—"), h("small", {}, "用时")),
-        h("div", {}, h("b", {}, `${starCount} / ${demo.cases.length * 3}`), h("small", {}, "破案星级")),
+        h("div", {}, h("b", {}, `${starCount} / ${PROLOGUE_CASE_IDS.length * 3}`), h("small", {}, "破案星级")),
         h("div", {}, h("b", {}, `${achievements.count()} / ${ACHIEVEMENTS.length}`), h("small", {}, "成就")),
         h("div", {}, h("b", {}, "见习侦探"), h("small", {}, "获得徽章"))),
       h("div", { class: "demo-end-teaser" },
@@ -1875,7 +1708,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   quests?.onChange(({ step, finishedChapter, story }) => {
     questLines.push(...story);
-    if (demo && DEMO_SCENES[finishedChapter?.id]) demoEnding = DEMO_SCENES[finishedChapter.id];
+    if (DEMO_SCENES[finishedChapter?.id]) demoEnding = DEMO_SCENES[finishedChapter.id];
     achievements.note({ type: "step", id: step.id });
     if (finishedChapter) achievements.note({ type: "chapter", id: finishedChapter.id, difficulty: quests.difficulty });
     achievements.note({ type: "skills", count: skillCount() });
@@ -2000,51 +1833,6 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       } }, "从头开始全部剧情")),
     );
   }
-  /** A story step's mini-game in the panel; winning it completes the step (and the story goes on). */
-  async function openMinigame(step) {
-    target = null;
-    keys.clear();
-    dialogue.hidden = true;
-    const closeup = CLOSEUPS[step.game];
-    const door = closeup && spotData(closeup.spot)?.door;
-    const game = createMinigame(step.game, {
-      h,
-      sound,
-      difficulty: quests.difficulty || "normal",
-      onWin: async ({ mistakes = 0 } = {}) => {
-        closeOverlay();
-        closeCloseup();
-        cameraFocus = null;
-        if (AFTER_GAME[step.game] && door && !room) await director.play(AFTER_GAME[step.game](door));
-        quests.event("play", step.game);
-        if (!mistakes) achievements.note({ type: "perfect", id: step.game });
-      },
-    });
-    if (closeup && door && !room) {
-      // Look at the spot, then show the game on the thing itself.
-      // The close-up covers the lower half of the screen: keep the spot itself in the upper part.
-      await director.play([{ camera: { x: door.x, y: door.y + 70 }, ms: 450 }]);
-      cameraFocus = { x: door.x, y: door.y + 70 };
-      followCamera();
-      closeupEl.className = `game-closeup ${closeup.look}`;
-      closeupEl.replaceChildren(
-        h("div", { class: "game-closeup-head" }, h("b", {}, closeup.title), h("button", { class: "btn small", type: "button", onclick: () => {
-          closeCloseup();
-          director.play([{ camera: "player", ms: 400 }]);
-        } }, "先不玩了")),
-        game.el,
-      );
-      closeupEl.hidden = false;
-      closeupEl.querySelector(".mg-input, button.mg-lamp:not([disabled]), button")?.focus({ preventScroll: true });
-      return;
-    }
-    overlay.replaceChildren(
-      h("div", { class: "game-panel-head" }, h("h2", {}, game.title), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "先不玩了")),
-      game.el,
-    );
-    overlay.hidden = false;
-    overlay.querySelector("button:not([disabled])")?.focus({ preventScroll: true });
-  }
   /** A short notice in the top middle (a skill learned, …); several stack up. */
   const toasts = h("div", { class: "game-toasts", role: "status", "aria-live": "polite" });
   shell.append(toasts);
@@ -2126,10 +1914,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   function enterSpot(id) {
     if (id === "noticeboard") return readNoticeBoard();
-    const play = quests?.playAt(id);
-    if (play) return openMinigame(play);
     if (ACTIONS[id]) return enter(id);
-    if (id === "clocktower" && quests?.erasOpen().length) return openTimeMachine();
     // A story step may be waiting here; otherwise the place says what it is.
     if (spotData(id)?.soon || spotData(id)?.placeholder || spotData(id)?.label) {
       if (quests?.event("enter", id)) return;
@@ -2508,18 +2293,11 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       }
       return;
     }
-    if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && closeupEl.hidden && !director.playing) {
+    if (KEY_DIRS[key] && !windowOpen && (stage.dataset.view === "town" || room) && overlay.hidden && mapPanel.hidden && !director.playing) {
       event.preventDefault();
       if (sittingOn) sittingOn = null; // 站起来才能走
       if (!keys.has(key)) startWalking();
       keys.add(key);
-      return;
-    }
-    if (!closeupEl.hidden) {
-      if (event.key === "Escape") {
-        closeCloseup();
-        director.play([{ camera: "player", ms: 400 }]);
-      }
       return;
     }
     if (director.playing) {

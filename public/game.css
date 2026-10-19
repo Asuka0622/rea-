@@ -345,41 +345,6 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-portrait-stand-in {display:grid;place-items:center;background:#e9c58c;box-shadow:inset 0 0 0 4px #6b4a2b;}
 .game-portrait-stand-in span {font:48px var(--font-display,"Fusion Pixel");color:#5e3415;}
 
-/* ----- mini-games (game-minigames.js), shown in the game panel ----- */
-.mg {padding:4px 16px 16px;color:#3b2312;}
-.mg-progress {margin:8px 0 0;font-size:12px;color:#8a5a2b;}
-.mg-note {margin:6px 0 10px;padding:8px 10px;font-size:13px;line-height:1.7;background:#fff6dc;border:2px dashed #d9a866;border-radius:6px;}
-.mg-ask {margin:8px 0;font-weight:700;}
-.mg-feedback {min-height:1.6em;margin:8px 0;font-size:14px;}
-.mg-feedback[data-mood="good"] {color:#2f7a3a;}
-.mg-feedback[data-mood="bad"] {color:#b4432a;}
-.mg-buttons {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-.mg-pattern {margin:4px 0;font:22px var(--font-display,"Fusion Pixel");letter-spacing:.35em;text-align:center;color:#5e3415;}
-.mg-total {display:block;margin-top:6px;text-align:center;font-variant-numeric:tabular-nums;}
-.mg-lamps {display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:10px;background:#5b4a3a;border:3px solid #3a2614;border-radius:8px;}
-.mg-lamp {display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;background:none;border:0;cursor:pointer;color:#f4ecd8;}
-.mg-lamp:disabled {cursor:default;}
-.mg-lamp-glass {width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8d8a80,#4a4740);box-shadow:0 0 0 3px #b08a3e;transition:background .15s,box-shadow .15s;}
-.mg-lamp.on .mg-lamp-glass {background:radial-gradient(circle at 35% 35%,#fff6c8,#ffc23d);box-shadow:0 0 0 3px #b08a3e,0 0 14px 4px rgba(255,194,61,.7);}
-.mg-lamp small {font-size:12px;font-variant-numeric:tabular-nums;}
-.mg-lamp:focus-visible {outline:2px solid #ffcf8a;outline-offset:2px;}
-.mg-tray {display:flex;flex-wrap:wrap;gap:6px;min-height:40px;margin-bottom:10px;}
-.mg-chip {display:flex;flex-direction:column;align-items:flex-start;padding:6px 10px;background:#fff0c8;border:2px solid #5e3415;border-radius:6px;cursor:pointer;color:#3b2312;font-weight:700;text-align:left;}
-.mg-chip small {font-weight:400;font-size:12px;color:#6b4626;}
-.mg-chip.picked {background:#ffcf8a;box-shadow:0 0 0 3px #a5512b;}
-.mg-bins {display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.mg-bins.two {grid-template-columns:repeat(2,1fr);}
-.mg-bin {display:flex;flex-direction:column;align-items:center;gap:4px;min-height:96px;padding:8px;background:#f6dfae;border:3px solid #6b4a2b;border-radius:8px;cursor:pointer;color:#3b2312;}
-.mg-bin b {font-size:15px;}
-.mg-bin small {font-size:11px;color:#6b4626;text-align:center;}
-.mg-bin:hover {background:#ffe7b8;}
-.mg-bin.drawer-forget {background:#dfe6e8;}
-.mg-bin.drawer-keep {background:#d9c7a8;}
-.mg-bin-items {display:flex;flex-wrap:wrap;justify-content:center;gap:4px;}
-.mg-bin-items span {padding:2px 6px;font-size:12px;background:#fff;border:1px solid #6b4a2b;border-radius:4px;}
-.mg-card {margin:6px auto 12px;max-width:320px;padding:12px;text-align:center;font-size:17px;font-weight:700;background:#fff;border:3px solid #5e3415;border-radius:8px;box-shadow:0 3px 0 #5e3415;}
-@media (max-width:640px) {.mg-bins {grid-template-columns:repeat(2,1fr);} .mg-lamp-glass {width:22px;height:22px;}}
-
 /* Moving water (game-water.js): drawn right above the map picture, below buildings, trees and people. */
 .game-water {position:absolute;left:0;top:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none;}
 
@@ -501,14 +466,6 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .st-icon {position:relative;width:24px;height:24px;image-rendering:pixelated;}
 .st-card-gem .st-icon {width:36px;height:36px;}
 
-/* Mini-games: lives, typed answers, binary addition. */
-.mg-progress {display:flex;justify-content:space-between;align-items:center;}
-.mg-hearts {font-size:16px;letter-spacing:2px;color:#c9573e;}
-.mg-input {width:110px;padding:6px 8px;font:18px var(--font-display,"Fusion Pixel");color:#3b2312;background:#fff;border:3px solid #5e3415;box-shadow:inset 0 2px 0 #e8c88e;}
-.mg-input:focus-visible {outline:3px solid #ffcf3d;}
-.mg-sum {display:flex;flex-direction:column;align-items:center;margin:4px 0 8px;font:22px var(--font-display,"Fusion Pixel");letter-spacing:.35em;color:#5e3415;}
-.mg-sum-line {width:220px;border-top:3px solid #5e3415;margin-top:2px;}
-
 /* Setup questions: the recommended choice is marked. */
 .game-recommended {margin-left:6px;padding:0 6px;font-style:normal;font-size:11px;color:#fff;background:#3f8f3a;border:2px solid #1b120c;vertical-align:middle;}
 .game-level {font-weight:400;color:#8a5a2b;}
@@ -524,129 +481,6 @@ html[data-game="on"][data-skin][data-presentation] .game-menu {bottom:136px;}
 .game-emote::after {content:"";position:absolute;left:50%;bottom:-8px;margin-left:-4px;border:4px solid transparent;border-top-color:#1b120c;}
 @keyframes game-emote-pop {0% {transform:translate(-50%,-60%) scale(.4);} 30% {transform:translate(-50%,-110%) scale(1.15);} 60%,100% {transform:translate(-50%,-100%) scale(1);}}
 @media(prefers-reduced-motion:reduce) {.game-stage.shake,.game-emote {animation:none;}}
-
-/* The stand-in tower: eight lamps over the door, the door opening, gears whirring, hands spinning. */
-.game-building .tower-lamps {position:absolute;left:50%;bottom:calc(16px * var(--px));transform:translateX(-50%);display:flex;gap:calc(1px * var(--px));}
-.game-building .tower-lamps i {width:calc(2px * var(--px));height:calc(2px * var(--px));background:#4a4740;}
-.game-building .tower-lamps i.lit {background:#ffc23d;box-shadow:0 0 calc(3px * var(--px)) #ffc23d;}
-.game-building.door-open .door {background:#1b120c;box-shadow:inset 0 calc(-3px * var(--px)) 0 #ffcf8a;}
-.game-building.whirring .clockface {animation:tower-whir .3s steps(2) 4;}
-@keyframes tower-whir {50% {translate:calc(1px * var(--px)) 0;}}
-.game-building .clockface.spin::before {animation:tower-hand 1.2s steps(12) 1;}
-.game-building .clockface.spin::after {animation:tower-hand .6s steps(12) 2;}
-@keyframes tower-hand {to {rotate:360deg;}}
-
-/* ----- close-ups: the mini-game drawn on the thing itself ----- */
-.game-closeup {position:fixed;left:50%;bottom:10px;z-index:58;transform:translateX(-50%);width:min(680px,calc(100vw - 20px));max-height:calc(100vh - 80px);overflow:auto;
-  border:4px solid #0d0906;box-shadow:0 6px 0 #0d0906;animation:closeup-in .35s steps(5) both;}
-@keyframes closeup-in {from {transform:translate(-50%,30px);opacity:0;}}
-.game-closeup-head {display:flex;justify-content:space-between;align-items:center;padding:6px 12px;}
-.game-closeup-head b {padding:2px 10px;font:15px var(--font-display,"Fusion Pixel");font-weight:400;color:#f4e4c4;background:#3a2614;border:2px solid #0d0906;}
-.game-closeup .mg-note {background:rgba(255,246,220,.92);}
-/* The tower door: stone blocks, the code carved above the lamps. */
-.game-closeup.door {background:repeating-linear-gradient(0deg,#9d958a 0 22px,#6f685f 22px 24px),#9d958a;
-  background-image:repeating-linear-gradient(0deg,transparent 0 22px,#6f685f 22px 24px),repeating-linear-gradient(90deg,#a8a093 0 46px,#8f877c 46px 48px);}
-.game-closeup.door .mg-lamps {background:#3d3833;border-color:#1b120c;}
-.game-closeup.door .mg-pattern {color:#2a2520;text-shadow:1px 1px 0 #c9c1b4;}
-/* Inside the tower: brass and wood among the gears. */
-.game-closeup.gears {background:radial-gradient(circle at 12% 20%,#c99a4a 0 26px,transparent 27px),radial-gradient(circle at 90% 80%,#b8863a 0 34px,transparent 35px),#7a5a34;}
-.game-closeup.gears .mg-bin {background:#e8cf98;}
-/* The drawers under the notice board: a wooden cabinet. */
-.game-closeup.drawers {background:repeating-linear-gradient(90deg,#8a5a2b 0 60px,#7a4e24 60px 62px),#8a5a2b;}
-.game-closeup .mg {padding-top:0;}
-.game-closeup .mg-progress,.game-closeup .mg-feedback {padding:2px 8px;background:rgba(255,246,220,.9);}
-
-/* ----- the time machine dial ----- */
-.game-panel.timemachine {background:#2a1f18;border:4px solid #0d0906;border-radius:0;box-shadow:inset 0 0 0 3px #b8863a,inset 0 0 0 6px #3a2614,0 6px 0 #0d0906;}
-.game-panel.timemachine .game-panel-head {background:#b8863a;border-bottom:4px solid #0d0906;}
-.game-panel.timemachine .game-panel-note {color:#e8cf98;margin-top:10px;}
-.tm-dial {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px 18px;background:radial-gradient(circle at 50% 50%,#3a2c1e 0 40%,#241a12 41%);}
-.tm-era {display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;font-family:var(--font-display,"Fusion Pixel");cursor:pointer;color:#7a6c5e;background:#2a211b;border:3px solid #0d0906;box-shadow:inset 2px 2px 0 #3a2f27;}
-.tm-era.open {color:#1b120c;background:#e8cf98;box-shadow:inset 3px 3px 0 #fff2c8,inset -3px -3px 0 #b8863a;animation:st-blink 1.2s steps(2) infinite;}
-.tm-era.open:hover,.tm-era.open:focus-visible {background:#ffe7b0;outline:3px solid #ffcf3d;}
-.tm-era b {font-size:16px;font-weight:400;}
-.tm-era small {font-size:11px;}
-.tm-era-no {display:grid;place-items:center;width:26px;height:26px;font-size:13px;color:#e8cf98;background:#1b120c;border:2px solid #b8863a;}
-.game-watch {font-weight:700;}
-@media(prefers-reduced-motion:reduce) {.tm-era.open {animation:none;}}
-
-/* ----- 茶铺算账: the counting board ----- */
-.game-closeup.table {background:repeating-linear-gradient(0deg,#9a6a3a 0 18px,#8a5c30 18px 20px),#9a6a3a;}
-.rod-board {display:flex;justify-content:center;gap:6px;padding:10px;background:#efe2c2;border:3px solid #5e3415;}
-.rod-col {display:flex;flex-direction:column;align-items:center;gap:4px;min-width:74px;}
-.rod-col small {font-size:11px;color:#6b4626;}
-.rod-cell {display:grid;place-items:center;width:70px;height:70px;background:#fff8e6;border:2px dashed #c9a36b;}
-.rod-buttons {display:flex;gap:4px;}
-.rod-buttons .btn {min-width:30px;justify-content:center;}
-.rod-digit {display:flex;align-items:center;justify-content:center;gap:3px;}
-.rod-digit.up {flex-direction:column;}
-.rod-digit.up .rod-ones {display:flex;gap:4px;}
-.rod-digit.up .rod {display:block;width:5px;height:34px;}
-.rod-digit.up .rod.five {width:34px;height:5px;}
-.rod-digit.flat {flex-direction:row;}
-.rod-digit.flat .rod-ones {display:flex;flex-direction:column;gap:4px;}
-.rod-digit.flat .rod {display:block;width:34px;height:5px;}
-.rod-digit.flat .rod.five {width:5px;height:34px;}
-.rod {background:#c9a24a;box-shadow:inset 0 0 0 1px #6b4a1b;}
-.rod-bills {display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
-.rod-bills .rod-board {padding:6px;}
-.rod-bills .rod-cell {width:56px;height:56px;}
-.rod-equals {margin:4px 0;text-align:center;font-size:20px;}
-.rod-patience {height:8px;margin:0 0 8px;background:#3a2614;border:2px solid #0d0906;}
-.rod-patience i {display:block;height:100%;background:#e0a03a;transition:width 1s linear;}
-
-/* ----- 调天衡: wheel, scoop, beat track ----- */
-.game-closeup.wheel {background:repeating-linear-gradient(90deg,#7a5434 0 30px,#6a482a 30px 32px),#7a5434;}
-.esc-machine {display:flex;gap:14px;align-items:center;padding:8px;background:rgba(255,246,220,.92);border:3px solid #3b2312;}
-.esc-left {display:flex;align-items:flex-end;gap:8px;}
-.esc-wheel {position:relative;width:110px;height:110px;border-radius:50%;background:#8a5c30;border:4px solid #3b2312;transition:rotate .25s steps(3);}
-.esc-wheel i {position:absolute;left:50%;top:50%;width:4px;height:52px;margin-left:-2px;background:#3b2312;transform-origin:50% 0;}
-.esc-wheel i::after {content:"";position:absolute;bottom:-8px;left:-6px;width:16px;height:10px;background:#c9a24a;border:2px solid #3b2312;}
-.esc-scoop {position:relative;width:26px;height:60px;background:#fff;border:3px solid #3b2312;display:flex;align-items:flex-end;}
-.esc-scoop i {display:block;width:100%;height:0;background:#4d9fd6;}
-.esc-right {flex:1;}
-.esc-track {position:relative;display:flex;align-items:center;gap:6px;height:56px;padding:0 8px;background:#2a211b;border:3px solid #0d0906;}
-.esc-track::before {content:"";position:absolute;left:0;right:0;top:50%;border-top:2px dashed #7fd06a;}
-.esc-track i {position:relative;width:14px;height:14px;top:calc(var(--off) * 20px);background:#c9573e;border:2px solid #0d0906;}
-.esc-track i.ok {background:#7fd06a;}
-.esc-readout {margin:6px 0 0;font-size:13px;}
-.esc-controls {display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;padding:8px;background:rgba(255,246,220,.92);border:3px solid #3b2312;}
-.esc-slider {display:flex;align-items:center;gap:8px;font-weight:700;}
-.esc-slider input {width:180px;accent-color:#a5512b;}
-.esc-slider b {min-width:1.5em;}
-
-/* ----- 用代码拆数 ----- */
-.code-editor {width:100%;box-sizing:border-box;padding:10px;font:14px/1.6 ui-monospace,Consolas,monospace;color:#e8f0e0;background:#1d2a20;border:3px solid #0d0906;tab-size:2;}
-.code-results {margin:8px 0 0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
-.code-results li.ok {color:#2f7a3a;}
-.code-results li.bad {color:#b4432a;}
-
-/* ----- 卡片编程 (game-cards.js) ----- */
-.cards {display:flex;flex-direction:column;gap:8px;}
-.cards-palette {display:flex;flex-wrap:wrap;gap:6px;}
-.cards-card {padding:5px 10px;font:13px var(--font-display,"Fusion Pixel");color:#1b120c;cursor:pointer;background:#cfe3f7;border:3px solid #1b120c;box-shadow:inset -2px -2px 0 #7fa7cf;}
-.cards-card.while,.cards-card.until {background:#c9ecc0;box-shadow:inset -2px -2px 0 #6faa62;}
-.cards-card.end {background:#e6dccb;box-shadow:inset -2px -2px 0 #a8987c;}
-.cards-card:hover,.cards-card:focus-visible {transform:translateY(-2px);outline:none;}
-.cards-program {min-height:120px;margin:0;padding:8px 8px 8px 30px;background:#1d2a20;border:3px solid #0d0906;color:#e8f0e0;font:13px var(--font-display,"Fusion Pixel");}
-.cards-row {display:flex;align-items:center;justify-content:space-between;margin:3px 0 3px calc(var(--depth) * 22px);padding:4px 8px;background:#2c3e30;border:2px solid #0d0906;}
-.cards-row.while,.cards-row.until {background:#355a33;}
-.cards-row.end {background:#3a3428;}
-.cards-row.active {background:#e8b14a;color:#1b120c;}
-.cards-row .link-btn {color:#c9e0c4;padding:0 4px;}
-.cards-row.active .link-btn {color:#1b120c;}
-.cards-empty {list-style:none;color:#8fa58c;}
-.cards-status {min-height:1.4em;margin:0;font:13px ui-monospace,Consolas,monospace;}
-.cards-results {margin:0;padding:0 0 0 18px;font:13px ui-monospace,Consolas,monospace;}
-.cards-results li.ok {color:#2f7a3a;}
-.cards-results li.bad {color:#b4432a;}
-
-/* ----- choosing a language for real code ----- */
-.code-tabs {display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
-.code-tab {padding:4px 12px;font:13px var(--font-display,"Fusion Pixel");cursor:pointer;color:#c9a36b;background:#3a2c22;border:3px solid #0d0906;}
-.code-tab[aria-selected="true"] {color:#1b120c;background:#e8cf98;}
-.code-tab.cards-tab {margin-left:auto;}
-.code-status {min-height:1.4em;margin:6px 0 0;font-size:12px;color:#6b4626;}
 
 /* ----- 预告测试版 ----- */
 .game-demo-tag {flex:none;padding:3px 8px;font:12px var(--font-display,"Fusion Pixel");color:#1b120c;background:#ffcf3d;border:2px solid #0d0906;}

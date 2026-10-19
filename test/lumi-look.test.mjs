@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { lumiArt, loadLook, saveLook, LOOK_KEY } from "../public/lumi-look.js";
-import { DEMO_QUEST, MAIN_QUEST, REA_QUEST } from "../public/game-quests.js";
+import { DEMO_QUEST, MAIN_QUEST, ARCHIVE_QUEST } from "../public/game-quests.js";
 
 const memory = (init = {}) => {
   const data = { ...init };
@@ -40,10 +40,10 @@ test("玩家就是路米：路米的台词不再把玩家当成另一个助手",
       Object.values(o).forEach(walk);
     }
   };
-  walk([DEMO_QUEST, MAIN_QUEST, REA_QUEST]);
+  walk([DEMO_QUEST, MAIN_QUEST, ARCHIVE_QUEST]);
   assert.ok(lines.length > 40);
   for (const text of lines) assert.doesNotMatch(text, /当我的助手|我有东西要给你|是你的了|你已经会查了|你已经能看懂/, text);
-  for (const chapter of [...DEMO_QUEST.chapters, ...REA_QUEST.chapters]) for (const step of chapter.steps) assert.doesNotMatch(step.goal, /找路米|向路米/, step.goal);
+  for (const chapter of [...MAIN_QUEST.chapters, ...ARCHIVE_QUEST.chapters]) for (const step of chapter.steps) assert.doesNotMatch(step.goal, /找路米|向路米/, step.goal);
 });
 
 test("见习侦探徽章由铁叔捎来，他也先交代了钟楼钥匙（守夜后才能说「天一亮就去找铁叔」）", () => {

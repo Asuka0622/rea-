@@ -1,55 +1,31 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createQuests, QUEST_LINES, REA_QUEST, MAIN_QUEST, DIFFICULTIES, FOCUSES } from "../public/game-quests.js";
+import { createQuests, QUEST_LINES, ARCHIVE_QUEST, MAIN_QUEST, DIFFICULTIES, FOCUSES } from "../public/game-quests.js";
 import { caseCatalog } from "../lib/cases.mjs";
-import { MINIGAME_IDS } from "../public/game-minigames.js";
 
-test("the prologue opens the detective line, which ends with a badge", () => {
+test("the main line is the prologue (same flow as the preview); the archive side line opens after it", () => {
   const quests = createQuests();
-  const finished = [];
-  const said = [];
-  quests.onChange(({ finishedChapter, story }) => {
-    if (finishedChapter) finished.push(finishedChapter.id);
-    said.push(...story);
-  });
   assert.equal(quests.current().id, "visit-office");
   assert.equal(quests.clockState(), "stopped");
-  assert.equal(quests.unlocked(REA_QUEST), false, "the detective line waits for the prologue");
-  assert.equal(quests.event("enter", "learn"), false, "the wrong building does not complete the step");
-  assert.equal(quests.event("enter", "home"), true);
-  quests.event("enter", "learn");
-  // A case solved before its line opens still counts later.
-  quests.event("solve", "farm-save");
-  assert.equal(quests.current().id, "visit-tower");
-  quests.event("enter", "clocktower");
-  assert.deepEqual(finished, ["prologue"]);
-  assert.ok(quests.unlocked(REA_QUEST));
-  assert.equal(quests.current().id, "meet-smith", "the prologue leads straight into chapter 1: the main story goes first");
-  assert.equal(quests.lineCurrent(REA_QUEST).id, "solve-privacy", "the detective side line is open alongside");
-  assert.ok(said.some((line) => line.text.includes("铁叔")), "the next step's lines are said");
-  quests.event("solve", "privacy-ledger");
-  // Chapter 1: meet 铁叔, then three mini-games at the clock tower.
-  quests.event("enter", "engines");
-  assert.equal(quests.playAt("clocktower").game, "binary");
-  for (const game of ["binary", "parts", "drawers"]) assert.equal(quests.event("play", game), true, game);
-  assert.equal(quests.clockState(), "drifting", "after chapter 1 the clock runs, but wrong");
-  // The time machine opens ancient China; the chapter ends back in Bit Town (the coding task only on 硬核).
-  assert.deepEqual(quests.erasOpen(), ["china"]);
-  assert.equal(quests.current().id, "to-china");
-  for (const [kind, id] of [["travel", "china"], ["play", "rods"], ["play", "escapement"], ["travel", "home"], ["enter", "engines"]]) assert.equal(quests.event(kind, id), true, `${kind} ${id}`);
-  assert.equal(quests.waitingAt(MAIN_QUEST).id, "medieval", "on 标准 the chapter is done without the coding task");
-  quests.track("rea");
-  for (const id of ["weather-keys", "calculator-eggs"]) quests.event("solve", id);
-  assert.equal(quests.current().id, "solve-versions", "farm-save was already done, so case 5 is next");
-  quests.event("solve", "notes-versions");
-  quests.event("enter", "engines");
-  quests.event("solve", "flashlight-apk");
-  quests.event("solve", "real-stories");
-  quests.event("enter", "home");
+  assert.equal(quests.unlocked(ARCHIVE_QUEST), false, "the archive waits for the prologue");
+  assert.deepEqual(MAIN_QUEST.chapters.slice(0, -1).map((c) => c.id), PROLOGUE.chapters.map((c) => c.id));
+  const home = ["enter", "home"];
+  const [a, b, c, d, e, f] = PROLOGUE_CASES.map((id) => ["solve", id]);
+  for (const [kind, id] of [home, a, b, c, home, d, e, home, f, home, ["enter", "clocktower"]]) assert.equal(quests.event(kind, id), true, `${kind} ${id}`);
+  assert.equal(quests.clockState(), "stopped", "the tower face stays at 11:58 through the prologue");
+  assert.equal(quests.waitingAt(MAIN_QUEST).id, "london-1843", "chapter 1 belongs to the formal version");
+  assert.ok(quests.unlocked(ARCHIVE_QUEST));
+  assert.equal(quests.event("solve", "real-stories"), true);
   assert.equal(quests.current(), null);
-  assert.deepEqual(quests.badges().map((b) => b.id), ["rea-detective"]);
+  assert.deepEqual(quests.badges().map((badge) => badge.id), ["rea-detective"]);
   quests.reset();
   assert.equal(quests.current().id, "visit-office");
+});
+
+test("the old main line (chapter 1 and Bianjing) is gone from the web build", () => {
+  const steps = QUEST_LINES.flatMap((line) => line.chapters.flatMap((chapter) => chapter.steps));
+  assert.ok(steps.every((step) => step.type === "enter" || step.type === "solve"), "no mini-game or time-travel steps left");
+  for (const id of ["open-door", "to-china", "teahouse-bill", "tower-beat", "meet-smith"]) assert.ok(!steps.some((step) => step.id === id), id);
 });
 
 test("every case step points at a real case, and playable chapters have story lines", () => {
@@ -59,9 +35,9 @@ test("every case step points at a real case, and playable chapters have story li
       if (chapter.ready === false) continue;
       assert.ok(chapter.done?.length, `${line.id}/${chapter.id}`);
       for (const step of chapter.steps) {
-        assert.ok(step.goal && step.say?.length, step.id);
+        // open-tower 故意不说话：守夜那场戏紧接着就播，先说会抢戏（game-quests.js d-finale）。
+        assert.ok(step.goal && (step.say?.length || step.id === "open-tower"), step.id);
         if (step.type === "solve") assert.ok(ids.has(step.case), step.case);
-        if (step.type === "play") assert.ok(MINIGAME_IDS.includes(step.game), step.game);
       }
     }
   }
@@ -104,7 +80,6 @@ test("achievements point at real steps, chapters, games and regions", async () =
   for (const { id, when } of ACHIEVEMENTS) {
     if (when.step) assert.ok(steps.has(when.step), `${id}: ${when.step}`);
     if (when.chapter) assert.ok(chapters.has(when.chapter), `${id}: ${when.chapter}`);
-    if (when.perfect) assert.ok(MINIGAME_IDS.includes(when.perfect), `${id}: ${when.perfect}`);
     if (when.region) assert.ok(REGIONS[when.region], `${id}: ${when.region}`);
     if (when.regions) assert.ok(when.regions <= Object.keys(REGIONS).length, id);
   }
