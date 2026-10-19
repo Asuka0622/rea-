@@ -1,6 +1,6 @@
 {
   "name": "rea-workbench",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "零基础也能用的 REA 逆向分析工作台：拖入文件、看中文报告、一键接入各家 AI 工具和分析引擎。",
   "type": "module",
