@@ -1,9 +1,1 @@
-{
-  "zones": 9,
-  "links": 12,
-  "plots": 58,
-  "townBuildings": 35,
-  "reservedLots": 21,
-  "npcProfiles": 12,
-  "dialogueLines": 60
-}
+{"zones": 9, "links": 12, "plots": 59, "townBuildings": 36, "reservedLots": 21, "npcProfiles": 12, "dialogueLines": 60}

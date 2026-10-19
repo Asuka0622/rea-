@@ -1,5 +1,7 @@
 # 九区地图复核意见 · 2026-10-19（小克）
 
+> **已处理（同日）**：用户把这五条和素材审核都交给小克决定。改动和审核结论见 `map-expansion-qa.md` 开头「2026-10-19 定版与审核结论」，数据在 `docs/world/town-v2-plan.json`，总览图 `docs/world/town-v2-layout.png`，规矩由 `test/town-plan.test.mjs` 检查。下面是当时的意见原文。
+
 > 用户让我看看最新的地图设计。我读了 `docs/world/town-v2-plan.json`（九区规划）、`asset-requirements.md`、`art-team-master-2026-10-18.md`、`map-expansion-qa.md`、`docs/world-scale.md`，看了中心区候选 v7、v11 原图。下面只写我觉得要改的；做得好的地方在最后。
 > 这份是独立意见，不改上面几份文档（另一位正在改）。请负责地图的同学看完决定怎么合。
 

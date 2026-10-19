@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "status": "design-proposal-not-runtime",
-  "date": "2026-10-18",
+  "date": "2026-10-19",
   "coordinateSystem": {
     "world": [
       2560,
@@ -42,14 +42,14 @@
           "role": "future-service",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 230,
-            "w": 380,
-            "h": 240
+            "x": 1700,
+            "y": 260,
+            "w": 300,
+            "h": 160
           },
           "door": {
-            "x": 540,
-            "y": 518
+            "x": 1850,
+            "y": 468
           },
           "interaction": "inspect-exterior",
           "phase": "reserved"
@@ -94,9 +94,24 @@
       "reservedLots": [],
       "spawn": [
         1280,
-        820
+        720
       ],
-      "paths": [],
+      "paths": [
+        {
+          "building": "ranger-hut",
+          "width": 96,
+          "points": [
+            [
+              1850,
+              468
+            ],
+            [
+              1850,
+              720
+            ]
+          ]
+        }
+      ],
       "interactionExamples": [
         {
           "id": "trail-post",
@@ -130,6 +145,81 @@
           "rule": "碰撞真实可绕",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              2512,
+              720
+            ],
+            [
+              1600,
+              720
+            ],
+            [
+              1600,
+              1000
+            ],
+            [
+              1280,
+              1000
+            ],
+            [
+              1280,
+              1392
+            ]
+          ],
+          "width": 112
+        },
+        {
+          "points": [
+            [
+              1600,
+              720
+            ],
+            [
+              1600,
+              460
+            ],
+            [
+              700,
+              460
+            ]
+          ],
+          "width": 64
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "lookout",
+          "name": "坡顶观景台",
+          "circle": [
+            560,
+            460,
+            130
+          ],
+          "walkable": true
+        },
+        {
+          "id": "old-mine",
+          "name": "废矿口",
+          "rect": [
+            300,
+            980,
+            260,
+            170
+          ]
+        },
+        {
+          "id": "spring-pond",
+          "name": "林间小潭",
+          "circle": [
+            2050,
+            1150,
+            140
+          ]
+        }
       ]
     },
     {
@@ -149,14 +239,14 @@
           "role": "story",
           "questBinding": null,
           "footprint": {
-            "x": 1760,
-            "y": 120,
+            "x": 1090,
+            "y": 180,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1950,
-            "y": 408
+            "x": 1280,
+            "y": 468
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -167,17 +257,36 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 170,
+            "x": 300,
+            "y": 280,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 540,
-            "y": 458
+            "x": 490,
+            "y": 568
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
+        },
+        {
+          "id": "ai-lab",
+          "name": "星博士的 AI 研究所",
+          "role": "story",
+          "questBinding": null,
+          "interaction": "enter-or-talk",
+          "phase": "layout-proposal",
+          "note": "小克的出处；阿哲在这里实习；序章结尾星博士承认训练数据的来源。窄高、玻璃窗，门口小牌子不写真实公司。",
+          "footprint": {
+            "x": 1880,
+            "y": 260,
+            "w": 380,
+            "h": 240
+          },
+          "door": {
+            "x": 2070,
+            "y": 548
+          }
         },
         {
           "id": "engines",
@@ -185,14 +294,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 950,
+            "x": 420,
+            "y": 900,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 540,
-            "y": 1238
+            "x": 610,
+            "y": 1188
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -203,34 +312,16 @@
           "role": "daily",
           "questBinding": null,
           "footprint": {
-            "x": 1770,
-            "y": 1000,
+            "x": 1540,
+            "y": 470,
             "w": 240,
             "h": 128
           },
           "door": {
-            "x": 1890,
-            "y": 1176
+            "x": 1660,
+            "y": 646
           },
           "interaction": "enter-or-talk",
-          "phase": "layout-proposal"
-        },
-        {
-          "id": "north-home",
-          "name": "工匠住宅",
-          "role": "private",
-          "questBinding": null,
-          "footprint": {
-            "x": 1850,
-            "y": 516,
-            "w": 300,
-            "h": 96
-          },
-          "door": {
-            "x": 2000,
-            "y": 660
-          },
-          "interaction": "knock",
           "phase": "layout-proposal"
         }
       ],
@@ -286,22 +377,22 @@
       "reservedLots": [
         {
           "id": "north-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 2200,
+          "y": 1060,
           "w": 260,
           "h": 180
         },
         {
           "id": "north-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 1400,
+          "y": 1140,
           "w": 300,
           "h": 210
         },
         {
           "id": "north-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 900,
+          "y": 1140,
           "w": 260,
           "h": 210
         }
@@ -312,33 +403,29 @@
       ],
       "paths": [
         {
-          "building": "clocktower",
+          "building": "office",
           "width": 96,
           "points": [
             [
-              1950,
-              408
+              490,
+              568
             ],
             [
-              1754,
-              408
-            ],
-            [
-              1754,
+              490,
               720
             ]
           ]
         },
         {
-          "building": "office",
+          "building": "ai-lab",
           "width": 96,
           "points": [
             [
-              540,
-              458
+              2070,
+              548
             ],
             [
-              540,
+              2070,
               720
             ]
           ]
@@ -348,15 +435,15 @@
           "width": 96,
           "points": [
             [
-              540,
-              1238
+              610,
+              1188
             ],
             [
-              254,
-              1238
+              340,
+              1188
             ],
             [
-              254,
+              340,
               720
             ]
           ]
@@ -366,29 +453,11 @@
           "width": 96,
           "points": [
             [
-              1890,
-              1176
+              1660,
+              646
             ],
             [
-              2106,
-              1176
-            ],
-            [
-              2106,
-              720
-            ]
-          ]
-        },
-        {
-          "building": "north-home",
-          "width": 96,
-          "points": [
-            [
-              2000,
-              660
-            ],
-            [
-              2000,
+              1660,
               720
             ]
           ]
@@ -427,6 +496,60 @@
           "rule": "不自动泄露案件答案",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              2512,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              1392
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              1280,
+              520
+            ]
+          ],
+          "width": 112
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "clock-yard",
+          "name": "钟楼前庭",
+          "rect": [
+            1060,
+            470,
+            440,
+            150
+          ],
+          "walkable": true
+        }
       ]
     },
     {
@@ -446,14 +569,14 @@
           "role": "future-service",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 230,
-            "w": 380,
-            "h": 240
+            "x": 700,
+            "y": 300,
+            "w": 300,
+            "h": 200
           },
           "door": {
-            "x": 540,
-            "y": 518
+            "x": 850,
+            "y": 548
           },
           "interaction": "inspect-exterior",
           "phase": "reserved"
@@ -498,9 +621,24 @@
       "reservedLots": [],
       "spawn": [
         1280,
-        820
+        720
       ],
-      "paths": [],
+      "paths": [
+        {
+          "building": "river-shelter",
+          "width": 96,
+          "points": [
+            [
+              850,
+              548
+            ],
+            [
+              850,
+              720
+            ]
+          ]
+        }
+      ],
       "interactionExamples": [
         {
           "id": "reed",
@@ -534,11 +672,105 @@
           "rule": "环境",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              1280,
+              720
+            ],
+            [
+              1280,
+              1392
+            ]
+          ],
+          "width": 112
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              1280,
+              520
+            ],
+            [
+              1700,
+              520
+            ]
+          ],
+          "width": 64
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "old-boat",
+          "name": "搁浅的旧船",
+          "circle": [
+            1780,
+            820,
+            90
+          ]
+        },
+        {
+          "id": "reeds",
+          "name": "芦苇滩",
+          "rect": [
+            1900,
+            900,
+            520,
+            360
+          ]
+        },
+        {
+          "id": "birdwatch",
+          "name": "观鸟台",
+          "rect": [
+            1640,
+            440,
+            140,
+            120
+          ],
+          "walkable": true
+        }
+      ],
+      "water": [
+        {
+          "id": "river",
+          "name": "小河（从地图外流进流出）",
+          "points": [
+            [
+              1900,
+              0
+            ],
+            [
+              1900,
+              260
+            ],
+            [
+              2300,
+              380
+            ],
+            [
+              2560,
+              380
+            ]
+          ],
+          "width": 200,
+          "outer": true
+        }
       ]
     },
     {
       "id": "homes-west",
-      "name": "住宅西区",
+      "name": "老院巷",
       "grid": [
         0,
         1
@@ -553,14 +785,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 340,
-            "y": 160,
+            "x": 1500,
+            "y": 300,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 530,
-            "y": 448
+            "x": 1690,
+            "y": 588
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -571,14 +803,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 1750,
-            "y": 150,
+            "x": 1500,
+            "y": 860,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1940,
-            "y": 438
+            "x": 1690,
+            "y": 1148
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -589,14 +821,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 340,
-            "y": 920,
+            "x": 700,
+            "y": 560,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 530,
-            "y": 1208
+            "x": 890,
+            "y": 848
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -607,14 +839,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 1780,
-            "y": 950,
-            "w": 380,
-            "h": 240
+            "x": 160,
+            "y": 700,
+            "w": 300,
+            "h": 96
           },
           "door": {
-            "x": 1970,
-            "y": 1238
+            "x": 310,
+            "y": 844
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -625,14 +857,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 1850,
-            "y": 516,
+            "x": 2000,
+            "y": 960,
             "w": 300,
             "h": 96
           },
           "door": {
-            "x": 2000,
-            "y": 660
+            "x": 2150,
+            "y": 1104
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -690,29 +922,29 @@
       "reservedLots": [
         {
           "id": "homes-west-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 2200,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "homes-west-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 520,
+          "y": 1140,
           "w": 300,
           "h": 210
         },
         {
           "id": "homes-west-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 400,
+          "y": 80,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -720,11 +952,11 @@
           "width": 96,
           "points": [
             [
-              530,
-              448
+              1690,
+              588
             ],
             [
-              530,
+              1690,
               720
             ]
           ]
@@ -734,16 +966,12 @@
           "width": 96,
           "points": [
             [
-              1940,
-              438
+              1690,
+              1148
             ],
             [
-              1754,
-              438
-            ],
-            [
-              1754,
-              720
+              1280,
+              1148
             ]
           ]
         },
@@ -752,16 +980,12 @@
           "width": 96,
           "points": [
             [
-              530,
-              1208
+              890,
+              848
             ],
             [
-              244,
-              1208
-            ],
-            [
-              244,
-              720
+              890,
+              1060
             ]
           ]
         },
@@ -770,16 +994,12 @@
           "width": 96,
           "points": [
             [
-              1970,
-              1238
+              310,
+              844
             ],
             [
-              2256,
-              1238
-            ],
-            [
-              2256,
-              720
+              560,
+              844
             ]
           ]
         },
@@ -788,11 +1008,15 @@
           "width": 96,
           "points": [
             [
-              2000,
-              660
+              2150,
+              1104
             ],
             [
-              2000,
+              2400,
+              1104
+            ],
+            [
+              2400,
               720
             ]
           ]
@@ -831,6 +1055,78 @@
           "rule": "不强制课程",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              1392
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              2512,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              420
+            ],
+            [
+              560,
+              420
+            ],
+            [
+              560,
+              1060
+            ],
+            [
+              1280,
+              1060
+            ]
+          ],
+          "width": 96
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "clothesline",
+          "name": "晾衣绳",
+          "rect": [
+            980,
+            880,
+            220,
+            60
+          ]
+        },
+        {
+          "id": "bench",
+          "name": "邻里长椅",
+          "rect": [
+            700,
+            900,
+            120,
+            50
+          ],
+          "walkable": true
+        }
       ]
     },
     {
@@ -850,14 +1146,14 @@
           "role": "story",
           "questBinding": null,
           "footprint": {
-            "x": 360,
-            "y": 160,
+            "x": 720,
+            "y": 190,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 550,
-            "y": 448
+            "x": 910,
+            "y": 478
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -868,14 +1164,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1720,
-            "y": 140,
+            "x": 1460,
+            "y": 190,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1910,
-            "y": 428
+            "x": 1650,
+            "y": 478
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -886,14 +1182,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 360,
-            "y": 930,
+            "x": 560,
+            "y": 920,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 550,
-            "y": 1218
+            "x": 750,
+            "y": 1208
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -904,14 +1200,14 @@
           "role": "daily",
           "questBinding": null,
           "footprint": {
-            "x": 1730,
-            "y": 980,
+            "x": 1380,
+            "y": 1000,
             "w": 240,
             "h": 128
           },
           "door": {
-            "x": 1850,
-            "y": 1156
+            "x": 1500,
+            "y": 1176
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -922,17 +1218,36 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 1830,
-            "y": 516,
+            "x": 1950,
+            "y": 900,
             "w": 300,
             "h": 96
           },
           "door": {
-            "x": 1980,
-            "y": 660
+            "x": 2100,
+            "y": 1044
           },
           "interaction": "knock",
           "phase": "layout-proposal"
+        },
+        {
+          "id": "ad-screen",
+          "name": "广场公告屏",
+          "role": "story",
+          "questBinding": null,
+          "interaction": "inspect",
+          "phase": "layout-proposal",
+          "note": "滚动「悄悄统计：让数据为你服务」；序章开场的伏笔，小林案结案时路米会提到它。旁边保留木头公告板。",
+          "footprint": {
+            "x": 600,
+            "y": 540,
+            "w": 200,
+            "h": 80
+          },
+          "door": {
+            "x": 700,
+            "y": 668
+          }
         }
       ],
       "size": [
@@ -1000,29 +1315,29 @@
       "reservedLots": [
         {
           "id": "center-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 2200,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "center-reserve-b",
-          "x": 760,
+          "x": 80,
           "y": 180,
           "w": 300,
           "h": 210
         },
         {
           "id": "center-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 80,
+          "y": 1060,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -1030,11 +1345,11 @@
           "width": 96,
           "points": [
             [
-              550,
-              448
+              910,
+              478
             ],
             [
-              550,
+              910,
               720
             ]
           ]
@@ -1044,15 +1359,11 @@
           "width": 96,
           "points": [
             [
-              1910,
-              428
+              1650,
+              478
             ],
             [
-              1734,
-              428
-            ],
-            [
-              1734,
+              1650,
               720
             ]
           ]
@@ -1062,15 +1373,15 @@
           "width": 96,
           "points": [
             [
-              550,
-              1218
+              750,
+              1208
             ],
             [
-              264,
-              1218
+              480,
+              1208
             ],
             [
-              264,
+              480,
               720
             ]
           ]
@@ -1080,16 +1391,12 @@
           "width": 96,
           "points": [
             [
-              1850,
-              1156
+              1500,
+              1176
             ],
             [
-              2066,
-              1156
-            ],
-            [
-              2066,
-              720
+              1280,
+              1176
             ]
           ]
         },
@@ -1098,11 +1405,15 @@
           "width": 96,
           "points": [
             [
-              1980,
-              660
+              2100,
+              1044
             ],
             [
-              1980,
+              2360,
+              1044
+            ],
+            [
+              2360,
               720
             ]
           ]
@@ -1141,11 +1452,108 @@
           "rule": "不擅自领取居民物品",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              1280,
+              1392
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              2512,
+              720
+            ]
+          ],
+          "width": 160
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "plaza",
+          "name": "喷泉广场",
+          "circle": [
+            1280,
+            720,
+            250
+          ],
+          "walkable": true
+        },
+        {
+          "id": "fountain",
+          "name": "喷泉池",
+          "circle": [
+            1280,
+            720,
+            110
+          ]
+        }
+      ],
+      "water": [
+        {
+          "id": "overflow",
+          "name": "喷泉溢水渠（过南路处是石涵洞）",
+          "points": [
+            [
+              1340,
+              840
+            ],
+            [
+              1690,
+              840
+            ],
+            [
+              1690,
+              1440
+            ]
+          ],
+          "width": 64,
+          "exit": "S"
+        }
       ]
     },
     {
       "id": "craft-west",
-      "name": "手艺西街",
+      "name": "面包街",
       "grid": [
         2,
         1
@@ -1160,14 +1568,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 340,
-            "y": 160,
+            "x": 700,
+            "y": 380,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 530,
-            "y": 448
+            "x": 890,
+            "y": 668
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1178,14 +1586,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1720,
-            "y": 170,
+            "x": 1500,
+            "y": 420,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1910,
-            "y": 458
+            "x": 1690,
+            "y": 708
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1196,14 +1604,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 340,
-            "y": 930,
+            "x": 1500,
+            "y": 860,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 530,
-            "y": 1218
+            "x": 1690,
+            "y": 1148
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1214,14 +1622,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 1770,
-            "y": 950,
-            "w": 380,
-            "h": 240
+            "x": 300,
+            "y": 1000,
+            "w": 300,
+            "h": 96
           },
           "door": {
-            "x": 1960,
-            "y": 1238
+            "x": 450,
+            "y": 1144
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -1232,14 +1640,14 @@
           "role": "daily",
           "questBinding": null,
           "footprint": {
-            "x": 1840,
-            "y": 516,
-            "w": 300,
-            "h": 96
+            "x": 760,
+            "y": 980,
+            "w": 240,
+            "h": 128
           },
           "door": {
-            "x": 1990,
-            "y": 660
+            "x": 880,
+            "y": 1156
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1297,29 +1705,29 @@
       "reservedLots": [
         {
           "id": "craft-west-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 80,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "craft-west-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 860,
+          "y": 80,
           "w": 300,
           "h": 210
         },
         {
           "id": "craft-west-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 1960,
+          "y": 1000,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -1327,11 +1735,11 @@
           "width": 96,
           "points": [
             [
-              530,
-              448
+              890,
+              668
             ],
             [
-              530,
+              890,
               720
             ]
           ]
@@ -1341,16 +1749,12 @@
           "width": 96,
           "points": [
             [
-              1910,
-              458
+              1690,
+              708
             ],
             [
-              1744,
-              458
-            ],
-            [
-              1744,
-              720
+              1280,
+              708
             ]
           ]
         },
@@ -1359,16 +1763,12 @@
           "width": 96,
           "points": [
             [
-              530,
-              1218
+              1690,
+              1148
             ],
             [
-              244,
-              1218
-            ],
-            [
-              244,
-              720
+              1280,
+              1148
             ]
           ]
         },
@@ -1377,15 +1777,15 @@
           "width": 96,
           "points": [
             [
-              1960,
-              1238
+              450,
+              1144
             ],
             [
-              2246,
-              1238
+              680,
+              1144
             ],
             [
-              2246,
+              680,
               720
             ]
           ]
@@ -1395,12 +1795,12 @@
           "width": 96,
           "points": [
             [
-              1990,
-              660
+              880,
+              1156
             ],
             [
-              1990,
-              720
+              1280,
+              1156
             ]
           ]
         }
@@ -1438,11 +1838,72 @@
           "rule": "景物",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              1392
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              300
+            ],
+            [
+              2300,
+              300
+            ],
+            [
+              2300,
+              1300
+            ],
+            [
+              1280,
+              1300
+            ]
+          ],
+          "width": 96
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "oven-yard",
+          "name": "面包炉后院",
+          "rect": [
+            2000,
+            640,
+            200,
+            160
+          ]
+        }
       ]
     },
     {
       "id": "homes-east",
-      "name": "住宅东区",
+      "name": "菜园坊",
       "grid": [
         0,
         2
@@ -1457,14 +1918,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 360,
-            "y": 160,
+            "x": 500,
+            "y": 100,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 550,
-            "y": 448
+            "x": 690,
+            "y": 388
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1475,14 +1936,14 @@
           "role": "case",
           "questBinding": null,
           "footprint": {
-            "x": 1710,
-            "y": 140,
+            "x": 1500,
+            "y": 380,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1900,
-            "y": 428
+            "x": 1690,
+            "y": 668
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1493,14 +1954,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1750,
-            "y": 950,
+            "x": 1500,
+            "y": 860,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1940,
-            "y": 1238
+            "x": 1690,
+            "y": 1148
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1511,14 +1972,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 920,
-            "w": 380,
-            "h": 240
+            "x": 1950,
+            "y": 900,
+            "w": 300,
+            "h": 96
           },
           "door": {
-            "x": 540,
-            "y": 1208
+            "x": 2100,
+            "y": 1044
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -1529,14 +1990,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 516,
+            "x": 100,
+            "y": 1200,
             "w": 300,
             "h": 96
           },
           "door": {
-            "x": 500,
-            "y": 660
+            "x": 250,
+            "y": 1344
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -1581,29 +2042,29 @@
       "reservedLots": [
         {
           "id": "homes-east-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 2200,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "homes-east-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 80,
+          "y": 520,
           "w": 300,
           "h": 210
         },
         {
           "id": "homes-east-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 80,
+          "y": 80,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -1611,16 +2072,12 @@
           "width": 96,
           "points": [
             [
-              550,
-              448
+              690,
+              388
             ],
             [
-              746,
-              448
-            ],
-            [
-              746,
-              720
+              690,
+              420
             ]
           ]
         },
@@ -1629,11 +2086,11 @@
           "width": 96,
           "points": [
             [
-              1900,
-              428
+              1690,
+              668
             ],
             [
-              1900,
+              1690,
               720
             ]
           ]
@@ -1643,16 +2100,12 @@
           "width": 96,
           "points": [
             [
-              1940,
-              1238
+              1690,
+              1148
             ],
             [
-              2226,
-              1238
-            ],
-            [
-              2226,
-              720
+              1280,
+              1148
             ]
           ]
         },
@@ -1661,15 +2114,15 @@
           "width": 96,
           "points": [
             [
-              540,
-              1208
+              2100,
+              1044
             ],
             [
-              254,
-              1208
+              2360,
+              1044
             ],
             [
-              254,
+              2360,
               720
             ]
           ]
@@ -1679,12 +2132,16 @@
           "width": 96,
           "points": [
             [
-              500,
-              660
+              250,
+              1344
             ],
             [
               500,
-              720
+              1344
+            ],
+            [
+              500,
+              1100
             ]
           ]
         }
@@ -1722,6 +2179,82 @@
           "rule": "一次且可稍后",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              2512,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              1280,
+              1100
+            ],
+            [
+              500,
+              1100
+            ],
+            [
+              500,
+              420
+            ],
+            [
+              1280,
+              420
+            ]
+          ],
+          "width": 96
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "garden",
+          "name": "共用菜园",
+          "rect": [
+            620,
+            520,
+            560,
+            480
+          ]
+        },
+        {
+          "id": "playground",
+          "name": "小孩活动空地",
+          "rect": [
+            1700,
+            1180,
+            500,
+            180
+          ],
+          "walkable": true
+        }
       ]
     },
     {
@@ -1741,14 +2274,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 160,
+            "x": 600,
+            "y": 300,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 540,
-            "y": 448
+            "x": 790,
+            "y": 588
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1759,14 +2292,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 950,
+            "x": 1840,
+            "y": 300,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 540,
-            "y": 1238
+            "x": 2030,
+            "y": 588
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1777,14 +2310,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1760,
-            "y": 150,
-            "w": 380,
-            "h": 240
+            "x": 2200,
+            "y": 880,
+            "w": 240,
+            "h": 260
           },
           "door": {
-            "x": 1950,
-            "y": 438
+            "x": 2320,
+            "y": 1188
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1795,14 +2328,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 1760,
-            "y": 950,
-            "w": 380,
-            "h": 240
+            "x": 300,
+            "y": 900,
+            "w": 300,
+            "h": 96
           },
           "door": {
-            "x": 1950,
-            "y": 1238
+            "x": 450,
+            "y": 1044
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -1813,14 +2346,14 @@
           "role": "daily",
           "questBinding": null,
           "footprint": {
-            "x": 1850,
-            "y": 516,
-            "w": 300,
-            "h": 96
+            "x": 1100,
+            "y": 940,
+            "w": 240,
+            "h": 128
           },
           "door": {
-            "x": 2000,
-            "y": 660
+            "x": 1220,
+            "y": 1116
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -1878,29 +2411,29 @@
       "reservedLots": [
         {
           "id": "south-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 80,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "south-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 1760,
+          "y": 840,
           "w": 300,
           "h": 210
         },
         {
           "id": "south-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 700,
+          "y": 920,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -1908,11 +2441,11 @@
           "width": 96,
           "points": [
             [
-              540,
-              448
+              790,
+              588
             ],
             [
-              540,
+              790,
               720
             ]
           ]
@@ -1922,15 +2455,11 @@
           "width": 96,
           "points": [
             [
-              540,
-              1238
+              2030,
+              588
             ],
             [
-              254,
-              1238
-            ],
-            [
-              254,
+              2030,
               720
             ]
           ]
@@ -1940,15 +2469,15 @@
           "width": 96,
           "points": [
             [
-              1950,
-              438
+              2320,
+              1188
             ],
             [
-              1754,
-              438
+              2480,
+              1188
             ],
             [
-              1754,
+              2480,
               720
             ]
           ]
@@ -1958,15 +2487,15 @@
           "width": 96,
           "points": [
             [
-              1950,
-              1238
+              450,
+              1044
             ],
             [
-              2236,
-              1238
+              220,
+              1044
             ],
             [
-              2236,
+              220,
               720
             ]
           ]
@@ -1976,11 +2505,15 @@
           "width": 96,
           "points": [
             [
-              2000,
-              660
+              1220,
+              1116
             ],
             [
-              2000,
+              1400,
+              1116
+            ],
+            [
+              1400,
               720
             ]
           ]
@@ -2019,11 +2552,80 @@
           "rule": "无收费门槛",
           "status": "design-only"
         }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              2512,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "sea",
+          "name": "海",
+          "rect": [
+            0,
+            1180,
+            2560,
+            260
+          ]
+        },
+        {
+          "id": "pier",
+          "name": "码头栈桥",
+          "rect": [
+            1460,
+            1000,
+            140,
+            400
+          ],
+          "walkable": true
+        }
+      ],
+      "water": [
+        {
+          "id": "overflow",
+          "name": "从中心流来的溢水渠（过步道处是短桥）",
+          "points": [
+            [
+              1690,
+              0
+            ],
+            [
+              1690,
+              1180
+            ]
+          ],
+          "width": 64,
+          "exit": "sea"
+        }
       ]
     },
     {
       "id": "craft-east",
-      "name": "手艺东街",
+      "name": "咖啡街",
       "grid": [
         2,
         2
@@ -2038,14 +2640,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 360,
-            "y": 170,
+            "x": 1780,
+            "y": 240,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 550,
-            "y": 458
+            "x": 1970,
+            "y": 528
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -2056,14 +2658,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1730,
-            "y": 150,
+            "x": 500,
+            "y": 300,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1920,
-            "y": 438
+            "x": 690,
+            "y": 588
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -2074,14 +2676,14 @@
           "role": "service",
           "questBinding": null,
           "footprint": {
-            "x": 1730,
-            "y": 950,
+            "x": 1780,
+            "y": 940,
             "w": 380,
             "h": 240
           },
           "door": {
-            "x": 1920,
-            "y": 1238
+            "x": 1970,
+            "y": 1228
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -2092,14 +2694,14 @@
           "role": "daily",
           "questBinding": null,
           "footprint": {
-            "x": 350,
+            "x": 900,
             "y": 920,
-            "w": 380,
-            "h": 240
+            "w": 240,
+            "h": 128
           },
           "door": {
-            "x": 540,
-            "y": 1208
+            "x": 1020,
+            "y": 1096
           },
           "interaction": "enter-or-talk",
           "phase": "layout-proposal"
@@ -2110,14 +2712,14 @@
           "role": "private",
           "questBinding": null,
           "footprint": {
-            "x": 350,
-            "y": 516,
+            "x": 300,
+            "y": 940,
             "w": 300,
             "h": 96
           },
           "door": {
-            "x": 500,
-            "y": 660
+            "x": 450,
+            "y": 1084
           },
           "interaction": "knock",
           "phase": "layout-proposal"
@@ -2162,29 +2764,29 @@
       "reservedLots": [
         {
           "id": "craft-east-reserve-a",
-          "x": 70,
-          "y": 420,
+          "x": 80,
+          "y": 200,
           "w": 260,
           "h": 180
         },
         {
           "id": "craft-east-reserve-b",
-          "x": 760,
-          "y": 180,
+          "x": 1340,
+          "y": 1060,
           "w": 300,
           "h": 210
         },
         {
           "id": "craft-east-reserve-c",
-          "x": 1450,
-          "y": 990,
+          "x": 1400,
+          "y": 80,
           "w": 260,
           "h": 210
         }
       ],
       "spawn": [
         1280,
-        820
+        720
       ],
       "paths": [
         {
@@ -2192,16 +2794,12 @@
           "width": 96,
           "points": [
             [
-              550,
-              458
+              1970,
+              528
             ],
             [
-              746,
-              458
-            ],
-            [
-              746,
-              720
+              1970,
+              600
             ]
           ]
         },
@@ -2210,11 +2808,11 @@
           "width": 96,
           "points": [
             [
-              1920,
-              438
+              690,
+              588
             ],
             [
-              1920,
+              690,
               720
             ]
           ]
@@ -2224,15 +2822,19 @@
           "width": 96,
           "points": [
             [
-              1920,
-              1238
+              1970,
+              1228
             ],
             [
-              2206,
-              1238
+              2250,
+              1228
             ],
             [
-              2206,
+              2250,
+              720
+            ],
+            [
+              2160,
               720
             ]
           ]
@@ -2242,15 +2844,15 @@
           "width": 96,
           "points": [
             [
-              540,
-              1208
+              1020,
+              1096
             ],
             [
-              254,
-              1208
+              1180,
+              1096
             ],
             [
-              254,
+              1180,
               720
             ]
           ]
@@ -2260,11 +2862,15 @@
           "width": 96,
           "points": [
             [
-              500,
-              660
+              450,
+              1084
             ],
             [
-              500,
+              220,
+              1084
+            ],
+            [
+              220,
               720
             ]
           ]
@@ -2302,6 +2908,59 @@
           "response": "看本地画作说明",
           "rule": "日常",
           "status": "design-only"
+        }
+      ],
+      "roads": [
+        {
+          "points": [
+            [
+              1280,
+              48
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              48,
+              720
+            ],
+            [
+              1280,
+              720
+            ]
+          ],
+          "width": 160
+        },
+        {
+          "points": [
+            [
+              1280,
+              720
+            ],
+            [
+              1840,
+              720
+            ]
+          ],
+          "width": 160
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "gallery-square",
+          "name": "画廊小广场",
+          "circle": [
+            2000,
+            720,
+            160
+          ],
+          "walkable": true
         }
       ]
     }
@@ -3034,5 +3693,6 @@
       "otherPlayersData",
       "derivedPerFramePaths"
     ]
-  }
+  },
+  "layoutNote": "2026-10-19 小克重排：每区自己的路网（roads）、地标（landmarks）、水系（water）和建筑落点；预留地按路网自动摆。按这份九宫格排法为准（北坡林·北区·河堤 / 老院巷·中心广场·面包街 / 菜园坊·南岸·咖啡街）。总览图 town-v2-layout.png。旧的 town-v2-overview.* 和 town-v2-center-blockout.* 作废。"
 }
