@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test test/*.test.mjs",
-    "wiring": "node scripts/art-wiring.mjs && node scripts/audio-wiring.mjs"
+    "wiring": "node scripts/art-wiring.mjs && node scripts/audio-wiring.mjs",
+    "audio:review": "node scripts/serve-audio-review.mjs"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0 || >=26.0.0"

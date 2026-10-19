@@ -1,0 +1,16 @@
+{
+  "updated": "2026-10-19",
+  "note": "待审队列。审听台由 scripts/build-audio-review-page.py 读取本文件生成 docs/audio/review/review.html。审核通过后再把文件改名去掉 -review 放进 targetDirectory。",
+  "items": [
+    {
+      "id": "bgm-town-day",
+      "file": "bgm-town-day-review.wav",
+      "category": "music",
+      "priority": "P0",
+      "use": "白天小镇、身份介绍；明亮而好奇",
+      "trigger": "进入白天自由探索；进室内 / 案件 / 演出后淡出",
+      "targetSeconds": "75-110",
+      "targetDirectory": "public/audio/music/"
+    }
+  ]
+}

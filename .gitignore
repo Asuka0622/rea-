@@ -29,5 +29,7 @@ public/art/pixel/_*
 # runtime copies (ogg/mp3) are committed under public/audio/.
 docs/audio/review/*.wav
 docs/audio/review/*.flac
+# Generated review console (rebuild with scripts/build-audio-review-page.py).
+docs/audio/review/review.html
 docs/audio/master/*.wav
 docs/audio/master/*.flac
