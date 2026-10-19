@@ -49,7 +49,8 @@ test('the next target counts evidence props, keeps the optional cat optional, an
   assert.equal(caseObjective(item,state).target,`item:${item.game.puzzle.terminal}`);
   state.phase='verify';assert.match(caseObjective(item,state).action,/验证/);
   state.phase='confront';assert.equal(caseObjective(item,state).target,'client');
-  state.phase='done';assert.equal(caseObjective(item,state).target,'exit');
+  state.phase='done';assert.equal(caseObjective(item,state).target,'client','a closed case with a legend quest points back to the client');
+  state.epilogueDone=true;assert.equal(caseObjective(item,state).target,'exit');
 });
 
 test('case progress: the lab stage and the epilogue are remembered only where they still mean something',()=>{

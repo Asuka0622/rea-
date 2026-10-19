@@ -56,7 +56,9 @@ export function caseObjective(item,state) {
   const found=clueProps.filter(x=>state.seen.has(x.id)).length;
   const summaries={look:'现场与代码',verify:'动手验证',confront:'当面对质',done:'委托完成'};
   let text,action,target;
-  if(state.phase==='done'){text='已经查清这个委托。可以回小镇继续探索。';action='回到门口';target='exit';}
+  const legend=puzzle.legend||puzzle.epilogue;
+  if(state.phase==='done'&&legend&&!state.epilogueDone){text=`委托完成。传说任务「${legend.title||'委托人的传说'}」已解锁：再去找${item.game.client.name}聊聊（不做也不影响主线）。`;action=`找${item.game.client.name}`;target='client';}
+  else if(state.phase==='done'){text='已经查清这个委托。可以回小镇继续探索。';action='回到门口';target='exit';}
   else if(state.phase==='confront'){text=`实验记录已收好，去找${item.game.client.name}，用证据回应说法。`;action=`找${item.game.client.name}`;target='client';}
   else if(state.phase==='verify'){text='推理已经成立，去电脑的沙盒里亲手验证。';action='去电脑验证';target=`item:${puzzle.terminal}`;}
   else if(found<clueProps.length){text=`调查现场：已找到 ${found} / ${clueProps.length} 条线索。点击物品会走过去调查。`;action='找下一条线索';target=`item:${clueProps.find(x=>!state.seen.has(x.id)).id}`;}

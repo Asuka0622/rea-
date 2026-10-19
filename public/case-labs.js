@@ -463,6 +463,9 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone, story = asyn
   let phase = "hunt"; // hunt（找和试）· fix（删哪几个）· done
   const found = new Set();
   const tried = new Set();
+  // 主线只查到「传言是真的」为止（lab.fix === false）；「发布前该删哪几处」是小雨传说任务里的事，
+  // 那时用 lab.mode === "fix" 打开：五条传言已经查过，直接从修复开始。
+  if (lab.mode === "fix") for (const r of CALC_RUMORS) found.add(r.id), tried.add(r.id);
   const removed = new Set();
   let patched = null; // 修过以后的状态：{ removed }
   const lines = [];
@@ -592,6 +595,12 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone, story = asyn
   const fixBox = h("div", { class: "lab-calc-fix", hidden: true });
   function toFix() {
     if (phase !== "hunt") return;
+    if (lab.fix === false) {
+      phase = "done";
+      say.textContent = "五条传言都是真的：有的只是在屏幕上变个花样，有的打开了不该打开的门。";
+      talk("hunted").then(() => onDone());
+      return;
+    }
     phase = "fix";
     say.textContent = "五条传言都是真的。现在你是开发者：哪几处该在发布前删掉？彩蛋可以留着逗人开心。";
     talk("fix");
@@ -661,6 +670,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone, story = asyn
   }
   makeApp();
   boot();
+  if (lab.mode === "fix") toFix();
   render();
   renderConsole();
   return root;

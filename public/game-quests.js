@@ -297,7 +297,7 @@ export const DEMO_QUEST = {
       id: "d-case-2",
       title: "委托二 · 朵朵的存档",
       steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵的农场也在住宅区，红色谷仓那里。", face: "thinking" }] }],
-      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人；影响别人的数据，要服务器说了算。", face: "happy" }],
+      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
     },
     {
       id: "d-case-3",

@@ -118,11 +118,11 @@ test("chained labs: every stage of every case is a known lab, and its story line
     }
   }
   const ledger = caseCatalog().find((c) => c.id === "privacy-ledger").game.lab;
-  assert.deepEqual(ledger.stages.map((s) => s.kind), ["network", "rhythm"]);
+  assert.deepEqual(ledger.stages.map((s) => s.kind), ["network"], "the main line keeps only the basic experiment");
   for (const round of ledger.firewall.rounds) for (const key of ["intro", "pass", "fail"]) lines(round[key], `firewall ${key}`);
 });
 
-test("puzzle cases: every confront answer can be found (a shipped code line or a sandbox evidence), and epilogues are well formed", async () => {
+test("puzzle cases: every confront answer can be found (a shipped code line or a sandbox evidence), and legend quests are well formed", async () => {
   const { shippedLines } = await import("../public/case-puzzle.js");
   const speakers = new Set([undefined, "client", "xiaoke", "xingbo"]);
   for (const item of caseCatalog()) {
@@ -133,12 +133,23 @@ test("puzzle cases: every confront answer can be found (a shipped code line or a
       for (const answer of statement.accept || []) assert.ok(texts.some((t) => t.includes(answer)), `${item.id}: 「${answer}」 cannot be found anywhere`);
     }
     for (const term of puzzle.terms) assert.ok(shippedLines(item.game.lab.sources).some((l) => l.text.includes(term)), `${item.id}: term ${term} is not in the code`);
-    if (puzzle.epilogue) {
-      for (const key of ["offer", "hook", "done"]) for (const l of puzzle.epilogue[key] || []) assert.ok(typeof l.text === "string" && speakers.has(l.who), `${item.id} epilogue ${key}`);
-      for (const stage of puzzle.epilogue.stages) assert.ok(MOUNTABLE_KINDS.includes(stage.kind));
+    const legend = puzzle.legend || puzzle.epilogue;
+    if (legend) {
+      assert.match(legend.title, /传说 · /, `${item.id}: a legend quest is named after its client`);
+      for (const key of ["offer", "hook", "done"]) for (const l of legend[key] || []) assert.ok(typeof l.text === "string" && speakers.has(l.who), `${item.id} legend ${key}`);
+      for (const stage of legend.stages) {
+        assert.ok(MOUNTABLE_KINDS.includes(stage.kind));
+        for (const key of ["intro", "outro"]) for (const l of stage[key] || []) assert.ok(typeof l.text === "string" && speakers.has(l.who), `${item.id} legend stage ${key}`);
+      }
     }
   }
-  const grandma = caseCatalog().find((c) => c.id === "flashlight-apk").game;
-  assert.deepEqual(grandma.lab.stages.map((s) => s.kind), ["permissions", "tower"]);
-  assert.equal(grandma.puzzle.epilogue.stages[0].kind, "manage");
+  // 主线只教到基础，更深的实际操作在委托人的传说任务里（docs/quest-tiers.md）。
+  const game = (id) => caseCatalog().find((c) => c.id === id).game;
+  assert.deepEqual(game("flashlight-apk").lab.stages.map((s) => s.kind), ["permissions"]);
+  assert.deepEqual(game("flashlight-apk").puzzle.legend.stages.map((s) => s.kind), ["tower", "manage"]);
+  assert.deepEqual(game("privacy-ledger").puzzle.legend.stages.map((s) => s.kind), ["rhythm"]);
+  assert.deepEqual(game("farm-save").puzzle.legend.stages.map((s) => s.kind), ["authority"]);
+  assert.deepEqual(game("calculator-eggs").puzzle.legend.stages.map((s) => [s.kind, s.mode]), [["calculator", "fix"]]);
+  assert.equal(game("calculator-eggs").lab.fix, false);
+  assert.deepEqual(game("notes-versions").puzzle.legend.stages.map((s) => s.kind), ["mines"]);
 });

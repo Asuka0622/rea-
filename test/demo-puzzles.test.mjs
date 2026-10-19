@@ -20,7 +20,7 @@ test('each puzzle can restore real discoveries, verified deductions, experiments
     state.evidence=p.labEvidence.map(e=>({...e}));state.phase='confront';
     const code=shippedLines(item.game.lab.sources).map(x=>({id:`${x.file}:${x.n}`,text:x.text.trim()}));
     for(const [i,claim] of p.confront.statements.entries())if(claim.accept){const proof=[...state.evidence,...code].find(e=>breaks(claim,e));assert.ok(proof,item.id+': '+claim.text);if(!state.evidence.some(e=>e.id===proof.id))state.evidence.push(proof);state.broken.add(i);}
-    state.phase='done';saved=restoreCaseState(item,caseSnapshot(item,state));assert.equal(saved.phase,'done',item.id);assert.equal(caseObjective(item,saved).target,'exit');
+    state.phase='done';saved=restoreCaseState(item,caseSnapshot(item,state));assert.equal(saved.phase,'done',item.id);assert.equal(caseObjective(item,saved).target,(p.legend||p.epilogue)?'client':'exit');
   }
 });
 test('the independent case completion events lead to the demo epilogue and detective badge',()=>{

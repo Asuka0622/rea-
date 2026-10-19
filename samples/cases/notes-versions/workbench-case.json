@@ -254,38 +254,17 @@
       ],
       "stages": [
         {
-          "kind": "mines",
-          "title": "审清单",
-          "intro": [
-            {
-              "text": "先从清单开始：1.1 比 1.0 多了几条，混在一堆正常的里面。像扫雷一样，先插旗，再排除。",
-              "face": "normal"
-            },
-            {
-              "who": "client",
-              "text": "周姐：我只会点「同意」……",
-              "face": "thinking"
-            }
-          ],
-          "outro": [
-            {
-              "who": "client",
-              "text": "周姐：清单里写着「定时截屏」……可更新说明一个字都没提。",
-              "face": "surprised"
-            },
-            {
-              "text": "清单说它「能」做。它到底做没做、什么时候做——要跑起来看。",
-              "face": "thinking"
-            }
-          ]
-        },
-        {
           "kind": "timelapse",
           "title": "快进一天",
           "intro": [
             {
-              "text": "在沙盒里装上它，把时钟快进一天。1.0 也装一次，做对照。",
+              "text": "更新说明靠不住，就看它实际做了什么。在沙盒里装上它，把时钟快进一天；1.0 也装一次，做对照。",
               "face": "happy"
+            },
+            {
+              "who": "client",
+              "text": "周姐：快进一天？还能这样？",
+              "face": "surprised"
             }
           ],
           "outro": [
@@ -670,10 +649,6 @@
       ],
       "labEvidence": [
         {
-          "id": "mines-audit",
-          "text": "清单审查：新版清单里混进了定时截屏上传等几条更新说明没提的项"
-        },
-        {
           "id": "timelapse",
           "text": "延时实验：1.1 每 10 分钟截一次屏，攒到 23:58 一起送去 collect.quiet-stats.example；1.1 删掉了导出，找不到这个功能；1.0 跑一整天什么都不发"
         }
@@ -873,6 +848,67 @@
           ]
         },
         "characterScale": 1.875
+      },
+      "legend": {
+        "title": "周姐传说 · 没写完的检查表",
+        "label": "周姐的工位电脑 · 周姐传说",
+        "hook": [
+          {
+            "who": "client",
+            "text": "周姐：对了，还有一件事想麻烦你们。",
+            "face": "thinking"
+          },
+          {
+            "text": "周姐好像还有话想说。走过去再和她聊聊。",
+            "face": "normal"
+          }
+        ],
+        "offer": [
+          {
+            "who": "client",
+            "text": "周姐：IT 部门那张升级检查表，第三条一直没人写。下次再有软件要升级，能不能教我们怎么审？",
+            "face": "thinking"
+          },
+          {
+            "text": "能。新版本多出来的每一条，都要说得出为什么——这是更深一步的功夫。",
+            "face": "happy"
+          }
+        ],
+        "stages": [
+          {
+            "kind": "mines",
+            "title": "审清单",
+            "intro": [
+              {
+                "text": "新版本的清单，一条条审：像扫雷一样，先插旗，再排除。",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "周姐：我以前只会点「同意」……",
+                "face": "thinking"
+              }
+            ],
+            "outro": [
+              {
+                "who": "client",
+                "text": "周姐：原来要这么看。",
+                "face": "surprised"
+              },
+              {
+                "text": "这就是检查表的第三条。",
+                "face": "happy"
+              }
+            ]
+          }
+        ],
+        "done": [
+          {
+            "who": "client",
+            "text": "周姐：检查表第三条：「新版本多出来的每一条，都要说得出为什么。」我这就贴上去。",
+            "face": "happy"
+          }
+        ]
       }
     }
   }

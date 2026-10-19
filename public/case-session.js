@@ -534,12 +534,14 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       h("div", { class: "lt-base", "aria-hidden": "true" })));
   }
 
-  /* ----- the epilogue: after the case, the client asks for one more thing (puzzle.epilogue) ----- */
-  // { offer: [lines], hook: [lines after the closing card], label, stages: [lab stages], done: [lines] }.
-  // It does not change the case's stars; it is the case's 复刻练习, played on the same device.
+  /* ----- 传说任务: after the case, the client's own story goes one step deeper (puzzle.legend) ----- */
+  // 原神式分层（docs/quest-tiers.md）：主线只教到「认得出、说得出」，更深的实际操作放进委托人的传说任务，
+  // 结案后在同一个房间里解锁。{ title, hook: [结案卡之后], offer: [再找委托人时], label, stages, done }。
+  // 不影响这一案的星级。（旧数据里叫 epilogue，照样认。）
+  const legend = puzzle.legend || puzzle.epilogue || null;
   let epilogueEl = null;
   function openEpilogue() {
-    const epi = puzzle.epilogue;
+    const epi = legend;
     if (!epilogueEl) {
       epilogueEl = mountLab({ h, icon, lab: { ...lab, stages: epi.stages }, story: (lines) => say(lines), difficulty: ui.difficulty || "normal",
         finishLabel: "合上，回到客厅", onFinish: close, onMistake: () => {}, onHint: () => {}, onDone: () => {
@@ -553,7 +555,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     open("terminal", h("div", { class: "case-screen laptop" },
       h("div", { class: "lt-lid" },
         h("div", { class: "term sandbox" },
-          h("div", { class: "term-bar" }, h("span", {}, epi.label || `${computerLabel} · 复刻练习`), h("button", { type: "button", class: "term-close", onclick: close }, "先放一放 ✕")),
+          h("div", { class: "term-bar" }, h("span", {}, epi.label || `${computerLabel} · ${epi.title || "传说任务"}`), h("button", { type: "button", class: "term-close", onclick: close }, "先放一放 ✕")),
           h("div", { class: "term-lab" }, epilogueEl))),
       h("div", { class: "lt-base", "aria-hidden": "true" })));
   }
@@ -697,9 +699,10 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
           return tool ? `${tool.name}（${tool.desc}）` : id;
         }).join(" · ")),
         puzzle.debrief?.length && h("div", {class:"case-debrief"},h("h4",{},"这次查明了什么"),h("ul",{},puzzle.debrief.map(text=>h("li",{},text)))),
+        legend && !state.epilogueDone && h("p", { class: "cs-legend" }, `解锁传说任务：${legend.title || "委托人的传说"}——再去找${client.name}聊聊。`),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
           close();
-          await say([{ who: "client", text: item.game.verdict.closing, face: "happy" }, ...(puzzle.epilogue && !state.epilogueDone ? puzzle.epilogue.hook || [] : [])]);
+          await say([{ who: "client", text: item.game.verdict.closing, face: "happy" }, ...(legend && !state.epilogueDone ? legend.hook || [] : [])]);
         } }, "好"))));
   }
 
@@ -776,8 +779,8 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     },
     /** E next to the client. */
     async talk() {
-      if (state.phase === "done" && puzzle.epilogue && !state.epilogueDone) {
-        await say(puzzle.epilogue.offer || []);
+      if (state.phase === "done" && legend && !state.epilogueDone) {
+        await say(legend.offer || []);
         return openEpilogue();
       }
       if (state.phase === "done") return say([{ who: "client", text: "谢谢你！以后装软件之前，我都先找你看看。", face: "happy" }]);

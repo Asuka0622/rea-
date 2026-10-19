@@ -1323,3 +1323,4 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 /* 沙盒是深色终端：全站 code 的浅色底在这里会把浅色字吃掉 */
 .term-lab code {background:#0d1410;color:#d6f5da;border:1px solid #2f4a38;}
 .term-lab .hit.rumor code {border-color:#e8c270;}
+.cs-legend {margin:4px 0 0;padding:6px 10px;font:13px/1.5 var(--font-body);color:#5b3a12;background:#f6e2b0;border:1px dashed #b8893a;}
