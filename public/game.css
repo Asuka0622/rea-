@@ -1386,3 +1386,16 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 @keyframes lab-banner {0%{transform:translateX(-100%);opacity:0}18%{transform:none;opacity:1}78%{transform:none;opacity:1}100%{transform:translateX(100%);opacity:0;visibility:hidden}}
 .cs-legend {animation:cs-legend 1.2s ease-out .6s both;}
 @keyframes cs-legend {0%{transform:scale(.85);opacity:0;box-shadow:0 0 0 0 rgba(232,194,112,.9)}60%{transform:scale(1.04);opacity:1;box-shadow:0 0 0 10px rgba(232,194,112,0)}100%{transform:none}}
+/* 室内交互物不再「贴」在画面上（2026-10-19，小克）：
+   ① 平时不挂常驻标记，只隔一会儿闪一下微光（原神式）；走近才显示名字和暖色描边；看过的不再闪。
+   ② 道具统一调成房间的暖光、加落地阴影，和背景图融在一起。美术侧的要求见 docs/art/briefs/2026-10-19-story-presentation.md 第三部分。 */
+.case-room .case-prop {filter:sepia(.18) saturate(.86) brightness(.96) drop-shadow(0 calc(1.5px * var(--px)) calc(1px * var(--px)) rgba(48,30,14,.38));}
+.case-room .case-prop.wall {filter:sepia(.2) saturate(.82) brightness(.94) drop-shadow(0 calc(1px * var(--px)) 0 rgba(48,30,14,.3));}
+.case-room .case-prop:not(.seen)::after {content:"";top:calc(-4px * var(--px));width:calc(6px * var(--px));height:calc(6px * var(--px));background:radial-gradient(circle,#fff8dc 0 22%,rgba(255,236,170,.65) 40%,transparent 70%);border:0;box-shadow:none;transform:translateX(-50%) scale(0);opacity:0;animation:case-glint 4.2s ease-in-out infinite;animation-delay:var(--glint,0s);}
+.case-room .case-prop:nth-of-type(2n)::after {--glint:1.3s;}
+.case-room .case-prop:nth-of-type(3n)::after {--glint:2.6s;}
+@keyframes case-glint {0%,82%,100%{transform:translateX(-50%) scale(0);opacity:0}88%{transform:translateX(-50%) scale(1.6) rotate(45deg);opacity:1}94%{transform:translateX(-50%) scale(.8) rotate(90deg);opacity:.7}}
+.case-room .case-prop.near {outline:0;transform:translate(-50%,-100%);filter:sepia(.1) saturate(.95) brightness(1.06) drop-shadow(0 0 calc(1px * var(--px)) #fff3c4) drop-shadow(0 0 calc(3px * var(--px)) rgba(232,194,112,.85));}
+.case-room .case-prop.near::after {opacity:0;animation:none;}
+.case-room .case-prop.near::before {content:attr(title);position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);padding:4px 8px;background:#302315;color:#fff3d8;font:12px/1.4 var(--font-body);white-space:nowrap;pointer-events:none;border:1px solid #80603d;z-index:1;}
+@media (prefers-reduced-motion:reduce) {.case-room .case-prop:not(.seen)::after {animation:none;opacity:.8;transform:translateX(-50%) scale(1);}}
