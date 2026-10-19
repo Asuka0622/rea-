@@ -8,54 +8,115 @@
       "file": "public/art/pixel/case-props/weather-keys-monitor.png",
       "size_px": [
         60,
+        50
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        60,
         49
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     },
     {
       "label": "STICKY",
       "file": "public/art/pixel/case-props/weather-keys-todo.png",
       "size_px": [
         40,
+        36
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        40,
         35
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     },
     {
       "label": "REPORT",
       "file": "public/art/pixel/case-props/weather-keys-printout.png",
       "size_px": [
         44,
+        52
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        44,
         51
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     },
     {
       "label": "SERVER",
       "file": "public/art/pixel/case-props/weather-keys-rack.png",
       "size_px": [
         52,
+        102
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        52,
         101
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     },
     {
       "label": "CHECKLIST",
       "file": "public/art/pixel/case-props/weather-keys-poster.png",
       "size_px": [
         40,
+        58
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        40,
         57
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     },
     {
       "label": "ROUTER",
       "file": "public/art/pixel/case-props/weather-keys-router.png",
       "size_px": [
         40,
+        32
+      ],
+      "alpha": "true",
+      "original_size_px": [
+        40,
         31
       ],
-      "alpha": "true"
+      "transparent_padding_px": {
+        "top": 1,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
     }
-  ]
+  ],
+  "anchor_preservation": "Runtime props are bottom-centered with translate(-50%, -100%). A single transparent row was added above each source image, so every original pixel keeps its position relative to the bottom anchor and workbench coordinates do not change."
 }

@@ -7699,18 +7699,13 @@
       "status": "待人工验收"
     },
     {
-      "id": "6e4ed73cc714fc8e-186",
+      "id": "ac85dbcd79a17e5b-186",
       "path": "public/art/pixel/case-props/weather-keys-monitor.png",
-      "sha": "6e4ed73cc714fc8ed0a601391f9ba6c91a9c3164748076f3589f8dc03922af64",
-      "bytes": 6326,
+      "sha": "ac85dbcd79a17e5bba105f59dd291626a2ba1c51a14853cf1588742cfb791bd1",
+      "bytes": 6560,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-monitor",
@@ -7721,36 +7716,31 @@
           "weather": "雨天",
           "time": "白天",
           "width": "60",
-          "height": "49",
+          "height": "50",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 60,
-      "height": 49,
+      "height": 50,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/6e4ed73cc714fc8ed0a60139.webp",
+      "preview": "previews/ac85dbcd79a17e5bba105f59.webp",
       "url": "/art/pixel/case-props/weather-keys-monitor.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
-      "id": "4ddfb9350794f5bf-187",
+      "id": "0b5d34b0636b011b-187",
       "path": "public/art/pixel/case-props/weather-keys-poster.png",
-      "sha": "4ddfb9350794f5bff146d83393be9449d426b2ec11dae29f889aca0daf7d4cb6",
-      "bytes": 4190,
+      "sha": "0b5d34b0636b011b5e4636a18afd9de1cddf1585e470898efb71363396def6bd",
+      "bytes": 4389,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-poster",
@@ -7761,36 +7751,31 @@
           "weather": "雨天",
           "time": "白天",
           "width": "40",
-          "height": "57",
+          "height": "58",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 40,
-      "height": 57,
+      "height": 58,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/4ddfb9350794f5bff146d833.webp",
+      "preview": "previews/0b5d34b0636b011b5e4636a1.webp",
       "url": "/art/pixel/case-props/weather-keys-poster.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
-      "id": "5e1b5657a4104d36-188",
+      "id": "c3d26572b333e204-188",
       "path": "public/art/pixel/case-props/weather-keys-printout.png",
-      "sha": "5e1b5657a4104d36d5635acafd6c7895f5a21d464a3fc9c9f6cff166622e38d0",
-      "bytes": 4574,
+      "sha": "c3d26572b333e204a744376686ec011bc0c9f7ac2b515f2990c0b2376c60d07e",
+      "bytes": 4722,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-printout",
@@ -7801,36 +7786,31 @@
           "weather": "雨天",
           "time": "白天",
           "width": "44",
-          "height": "51",
+          "height": "52",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 44,
-      "height": 51,
+      "height": 52,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/5e1b5657a4104d36d5635aca.webp",
+      "preview": "previews/c3d26572b333e204a7443766.webp",
       "url": "/art/pixel/case-props/weather-keys-printout.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
-      "id": "bdc202c3ce6a243b-189",
+      "id": "bfdcb1b6fbaeb537-189",
       "path": "public/art/pixel/case-props/weather-keys-rack.png",
-      "sha": "bdc202c3ce6a243bc2f81e861bc1af82a4b9cf2fbf2a87e15bb426e94c021057",
-      "bytes": 8618,
+      "sha": "bfdcb1b6fbaeb537c2dd2871ab6ab3dad90dae87120eb8027495a7dca6e8a560",
+      "bytes": 9065,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-rack",
@@ -7841,36 +7821,31 @@
           "weather": "雨天",
           "time": "白天",
           "width": "52",
-          "height": "101",
+          "height": "102",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 52,
-      "height": 101,
+      "height": 102,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/bdc202c3ce6a243bc2f81e86.webp",
+      "preview": "previews/bfdcb1b6fbaeb537c2dd2871.webp",
       "url": "/art/pixel/case-props/weather-keys-rack.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
-      "id": "0f1b64e65de29567-190",
+      "id": "04bc3ac1f769b0eb-190",
       "path": "public/art/pixel/case-props/weather-keys-router.png",
-      "sha": "0f1b64e65de29567d48213e9853d2a49bc0a354319934b3a8e1da48ec2999962",
-      "bytes": 2436,
+      "sha": "04bc3ac1f769b0eb2d505e87048b355021dc0d0afd0daea31e2e0f32a786940e",
+      "bytes": 2542,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-router",
@@ -7881,36 +7856,31 @@
           "weather": "雨天",
           "time": "白天",
           "width": "40",
-          "height": "31",
+          "height": "32",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 40,
-      "height": 31,
+      "height": 32,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/0f1b64e65de29567d48213e9.webp",
+      "preview": "previews/04bc3ac1f769b0eb2d505e87.webp",
       "url": "/art/pixel/case-props/weather-keys-router.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
-      "id": "94b02cb09e040a96-191",
+      "id": "9879ab8907df471c-191",
       "path": "public/art/pixel/case-props/weather-keys-todo.png",
-      "sha": "94b02cb09e040a960d0d8e32943162f968805fb8386c43ada628395615a7c2a3",
-      "bytes": 2713,
+      "sha": "9879ab8907df471ce47a4f58e34425424b123a193404369216b39c3cca14a2ac",
+      "bytes": 2867,
       "scope": "运行目录",
       "group": "调查道具",
-      "checks": [
-        {
-          "severity": "warning",
-          "text": "奇数像素尺寸：按2倍密度放置时可能出现半格错位"
-        }
-      ],
+      "checks": [],
       "delivery": [
         {
           "﻿asset_id": "weather-keys-todo",
@@ -7921,22 +7891,22 @@
           "weather": "雨天",
           "time": "白天",
           "width": "40",
-          "height": "35",
+          "height": "36",
           "alpha": "是",
           "frame_size": "",
           "animation": "",
           "status": "已接入",
-          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png"
+          "notes": "独立透明源图已交付并用于机房背景合成；运行场景由背景显示物件，items[].hidden保留交互；源图裁切对照见docs/art/review/weather-keys/weather-keys-props-contact.png；2026-10-19透明顶边+1px，底边中心锚点及原场景坐标保留"
         }
       ],
       "width": 40,
-      "height": 35,
+      "height": 36,
       "format": "png",
       "alpha": true,
       "reference": "未静态证明引用（可能动态加载）",
-      "preview": "previews/94b02cb09e040a960d0d8e32.webp",
+      "preview": "previews/9879ab8907df471ce47a4f58.webp",
       "url": "/art/pixel/case-props/weather-keys-todo.png",
-      "status": "需复核"
+      "status": "待人工验收"
     },
     {
       "id": "a271617b93f997a7-192",

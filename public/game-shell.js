@@ -1101,7 +1101,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         const question = document.querySelector(".game-difficulty");
         if (question) (document.querySelector(".game-difficulty.recommended") || question).click();
         else if (stage.dataset.view !== "case") {
-          try { enterSpot(jump); } catch {}
+          // Explicit debug review opens the room without granting prerequisite quests.
+          // Normal doors and task tracking still pass through enterSpot's gates.
+          const previewCase = cases().find(item => item.id === jump && item.game?.puzzle);
+          try { previewCase ? enterCaseRoom(previewCase) : enterSpot(jump); } catch {}
         } else return;
         setTimeout(tryEnter, 700);
       };
