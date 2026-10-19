@@ -46,6 +46,9 @@ export const MANIFEST = el(
     el("activity", { "android:name": "com.quickads.sdk.AdActivity" }),
     el("service", { "android:name": "com.quickads.sdk.TrackService" }),
     el("meta-data", { "android:name": "com.quickads.sdk.APP_ID", "android:value": "qa-demo-0001" }),
+    // 序章主线（docs/story-prologue.md 第 4 节⑥）：这个广告组件是悄悄统计做的，数据最后报给钟楼。
+    el("meta-data", { "android:name": "com.quickads.sdk.VENDOR", "android:value": "quiet-stats.example" }),
+    el("meta-data", { "android:name": "com.quickads.sdk.REPORT_TO", "android:value": "https://tower.bit-town.example/collect" }),
   ),
 );
 

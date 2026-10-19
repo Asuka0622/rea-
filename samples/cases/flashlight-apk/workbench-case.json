@@ -214,12 +214,8 @@
       ],
       "done": [
         {
-          "who": "client",
-          "text": "王奶奶：七个里头，只有两个是真的在开灯……",
-          "face": "surprised"
-        },
-        {
-          "text": "都判完了。去和王奶奶把话说清楚吧。"
+          "text": "证据齐了。王奶奶戴上老花镜在等你——去一句句说给她听。",
+          "face": "happy"
         }
       ],
       "tower": {
@@ -576,7 +572,71 @@
               "face": "thinking"
             }
           ]
-        }
+        },
+        "talk": {
+          "2": [
+            {
+              "text": "第一波是读通讯录的。下一波换了路线——是往外搬东西的「后台上传」。",
+              "face": "thinking"
+            }
+          ],
+          "4": [
+            {
+              "who": "client",
+              "text": "王奶奶：天都黑了，它们还在动？",
+              "face": "surprised"
+            },
+            {
+              "text": "定位也来了：它想知道你在哪儿。",
+              "face": "thinking"
+            }
+          ],
+          "5": [
+            {
+              "text": "下一波是「加急上传」，跑得快。减速的措施，留着用在这儿。",
+              "face": "surprised"
+            }
+          ],
+          "6": [
+            {
+              "text": "这一波看起来像正常的广告组件……「伪装 SDK」。不审计一下，你认不出它。",
+              "face": "thinking"
+            },
+            {
+              "who": "client",
+              "text": "王奶奶：披着羊皮的狼呀。",
+              "face": "thinking"
+            }
+          ],
+          "8": [
+            {
+              "who": "client",
+              "text": "王奶奶：孩子，歇会儿吧，喝口水。",
+              "face": "happy"
+            },
+            {
+              "text": "快了，还剩三波。",
+              "face": "happy"
+            }
+          ],
+          "10": [
+            {
+              "text": "最后一波，全来了。守住这一波，王奶奶的手机就清净了。",
+              "face": "surprised"
+            }
+          ]
+        },
+        "lost": [
+          {
+            "who": "client",
+            "text": "王奶奶：哎呀，它们还是把东西拿走了……",
+            "face": "thinking"
+          },
+          {
+            "text": "没关系，沙盒里拿走的都是假的。看清它们走哪条路，从第一波再来。",
+            "face": "normal"
+          }
+        ]
       },
       "terminal": "phone",
       "scene": {
@@ -894,7 +954,735 @@
         "权限要和功能对得上。对不上，就是最明显的危险信号。",
         "「不是代码」的清单也会说话：开机自启、广告组件都写在里面。",
         "给老人的解释要短：这个要用，这个不用，够了。"
-      ]
+      ],
+      "stages": [
+        {
+          "kind": "permissions",
+          "title": "开灯用得上吗",
+          "intro": [
+            {
+              "text": "王奶奶要的只是一句话：「拒绝它，灯还亮不亮？」别猜——在 REA 的沙盒里，把权限拿掉几项，按一下开灯。",
+              "face": "normal"
+            },
+            {
+              "who": "client",
+              "text": "王奶奶：你们年轻人的法子我不懂。我就想晚上起夜，有盏灯照着。",
+              "face": "thinking"
+            }
+          ],
+          "outro": [
+            {
+              "who": "client",
+              "text": "王奶奶：七个里头，只有两个是真的在开灯……",
+              "face": "surprised"
+            },
+            {
+              "text": "剩下的五个，开灯用不上。可它们拿去，到底在干什么？",
+              "face": "thinking"
+            }
+          ]
+        },
+        {
+          "kind": "tower",
+          "title": "守住手机",
+          "intro": [
+            {
+              "text": "在干什么——在后台，一波一波往外搬：通讯录、你在哪儿、这台手机是谁的。",
+              "face": "thinking"
+            },
+            {
+              "text": "不用卸载。在王奶奶手机里守一道关：开灯要的给，别的挡住。灯得一直亮着。",
+              "face": "normal"
+            },
+            {
+              "who": "client",
+              "text": "王奶奶：那就拜托你们了，孩子。",
+              "face": "happy"
+            }
+          ],
+          "outro": [
+            {
+              "who": "client",
+              "text": "王奶奶：灯一直亮着，它们一样东西也没拿走！",
+              "face": "happy"
+            },
+            {
+              "text": "这些收集者背后是 QuickAds。清单里还写着它是谁做的、数据最后报给谁——对质之前，去电脑上把那几行找出来。",
+              "face": "thinking"
+            }
+          ]
+        }
+      ],
+      "talk": {
+        "lit": [
+          {
+            "who": "client",
+            "text": "王奶奶：拿掉了那么多，灯照样亮！",
+            "face": "surprised"
+          },
+          {
+            "text": "拿掉了灯还亮，就说明开灯用不上它们。",
+            "face": "happy"
+          }
+        ],
+        "dark": [
+          {
+            "who": "client",
+            "text": "王奶奶：哎，这回不亮了。",
+            "face": "thinking"
+          },
+          {
+            "text": "拿掉的里面，有开灯真要用的。把它们分开，一项一项再试。",
+            "face": "thinking",
+            "hard": "一次拿掉好几项灯不亮，只能说明「其中至少有一项」是必需的。控制变量：每次只改一项。"
+          }
+        ],
+        "reboot": [
+          {
+            "who": "client",
+            "text": "王奶奶：我什么都没点，手机一开机，它自己就醒了？",
+            "face": "surprised"
+          },
+          {
+            "text": "开机自启。它要的不是开灯，是一直待在后台。",
+            "face": "thinking"
+          }
+        ]
+      },
+      "manageTalk": {
+        "v2": [
+          {
+            "who": "client",
+            "text": "王奶奶：做这个……要花钱吧？上架、服务器什么的。",
+            "face": "thinking"
+          },
+          {
+            "text": "要。所以下面这几家找上门的，得好好挑。",
+            "face": "normal"
+          }
+        ],
+        "v5": [
+          {
+            "who": "client",
+            "text": "王奶奶：这家公司……是不是就是收小光数据的那家？",
+            "face": "surprised"
+          }
+        ],
+        "pass": [
+          {
+            "who": "client",
+            "text": "王奶奶：审核过了？那就好，那就好。",
+            "face": "happy"
+          }
+        ],
+        "warn": [
+          {
+            "text": "挨警告了：清单里还有说不清的权限。下次审核之前得改掉。",
+            "face": "thinking"
+          },
+          {
+            "who": "client",
+            "text": "王奶奶：孩子，可别学小光那样。",
+            "face": "thinking"
+          }
+        ],
+        "exposed": [
+          {
+            "who": "client",
+            "text": "王奶奶：我那电话本上儿女的号码……就这么被卖了？",
+            "face": "surprised"
+          },
+          {
+            "text": "卖出去的，再也收不回来了。",
+            "face": "thinking"
+          }
+        ],
+        "delisted": [
+          {
+            "text": "重来一次吧：每一项权限，都要说得清。",
+            "face": "thinking"
+          }
+        ],
+        "broke": [
+          {
+            "text": "钱烧完了。一个权限都不加，也有办法赚钱：横幅广告，或者 ¥1 买断。",
+            "face": "thinking"
+          }
+        ]
+      }
+    },
+    "puzzle": {
+      "title": "手电筒为什么要通讯录？",
+      "ask": "它一装就问我要通讯录，还要知道我在哪儿……一个手电筒，要这些做什么呀？",
+      "terminal": "phone",
+      "computerLabel": "王奶奶的手机（连着 REA）",
+      "sampleName": "小光手电筒",
+      "labSource": "沙盒实验",
+      "scene": {
+        "place": "王奶奶的客厅",
+        "look": "living",
+        "art": "case-room-flashlight-apk",
+        "lead": "在客厅里走走，靠近东西按 E 调查。",
+        "items": [
+          {
+            "id": "phone",
+            "label": "王奶奶的手机",
+            "look": "phone",
+            "at": [
+              118,
+              102
+            ],
+            "stand": [
+              116,
+              142
+            ],
+            "size": 18,
+            "art": "grandma-phone",
+            "lines": [
+              {
+                "who": "client",
+                "text": "王奶奶：你看，它一装好就跳出来这些，我都不敢点。",
+                "face": "thinking"
+              },
+              {
+                "text": "手机屏幕上是一串权限请求。清单可以拿到电脑上看，一条条对着功能判。"
+              }
+            ],
+            "clue": {
+              "id": "ask",
+              "title": "一装就要权限",
+              "text": "装上一打开，它就弹出一串权限请求，连通讯录都要。",
+              "dict": [
+                {
+                  "zh": "申请的权限",
+                  "code": "permissions"
+                }
+              ]
+            }
+          },
+          {
+            "id": "addressbook",
+            "label": "电话本",
+            "look": "paper",
+            "at": [
+              138,
+              104
+            ],
+            "stand": [
+              140,
+              160
+            ],
+            "size": 16,
+            "art": "addressbook",
+            "lines": [
+              {
+                "text": "纸页已经翻软了，上面是儿女的电话。手机会把这些交给一个手电筒吗？"
+              }
+            ],
+            "clue": {
+              "id": "contacts",
+              "title": "电话本",
+              "text": "本子上记着儿女的电话——这正是「读取通讯录」能拿走的东西。",
+              "dict": [
+                {
+                  "zh": "通讯录",
+                  "code": "READ_CONTACTS"
+                }
+              ]
+            }
+          },
+          {
+            "id": "glasses",
+            "label": "老花镜",
+            "look": "chat",
+            "at": [
+              156,
+              106
+            ],
+            "stand": [
+              164,
+              142
+            ],
+            "size": 16,
+            "art": "glasses",
+            "lines": [
+              {
+                "text": "镜腿用胶带缠过。屏幕上的小字，王奶奶是看不清的。"
+              }
+            ],
+            "clue": {
+              "id": "location",
+              "title": "老花镜",
+              "text": "王奶奶看小字得戴上它。「精确定位」这种字，她根本看不清。",
+              "dict": [
+                {
+                  "zh": "定位",
+                  "code": "ACCESS_FINE_LOCATION"
+                }
+              ]
+            }
+          },
+          {
+            "id": "remote",
+            "label": "电视遥控器",
+            "look": "router",
+            "at": [
+              70,
+              110
+            ],
+            "stand": [
+              66,
+              148
+            ],
+            "size": 18,
+            "art": "remote",
+            "lines": [
+              {
+                "text": "遥控器的按键磨得发亮。电视里正放着广告。"
+              }
+            ],
+            "clue": {
+              "id": "ads",
+              "title": "电视和广告",
+              "text": "遥控器对着电视。手电筒里那些广告，和开灯也没关系。",
+              "dict": [
+                {
+                  "zh": "设备信息",
+                  "code": "READ_PHONE_STATE"
+                },
+                {
+                  "zh": "广告",
+                  "code": "quickads"
+                }
+              ]
+            }
+          },
+          {
+            "id": "photo",
+            "label": "墙上的全家福",
+            "look": "clock",
+            "at": [
+              120,
+              54
+            ],
+            "stand": [
+              92,
+              168
+            ],
+            "size": 18,
+            "art": "photo",
+            "lines": [
+              {
+                "text": "相框擦得很干净。旁边那张便签是王奶奶自己写的：手机一开机，它自己就出来了。"
+              }
+            ],
+            "clue": {
+              "id": "boot",
+              "title": "开机就启动",
+              "text": "全家福旁边贴着一张便签：「手机一开机，它自己就出来了。」",
+              "dict": [
+                {
+                  "zh": "开机启动",
+                  "code": "BOOT_COMPLETED"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "nightlight",
+            "label": "坏掉的小夜灯",
+            "look": "paper",
+            "at": [
+              296,
+              150
+            ],
+            "stand": [
+              290,
+              166
+            ],
+            "size": 14,
+            "art": "nightlight",
+            "lines": [
+              {
+                "who": "client",
+                "text": "王奶奶：床头这盏小夜灯，前天坏了。我晚上起夜怕黑，就想装个手电筒。",
+                "face": "thinking"
+              },
+              {
+                "text": "她要的，就只是一盏灯。",
+                "face": "normal"
+              }
+            ],
+            "clue": {
+              "id": "lamp",
+              "title": "只要一盏灯",
+              "text": "小夜灯坏了，王奶奶要手电筒，就是为了晚上照个亮。开灯要的，是闪光灯——还有这台手机控制闪光灯要经过的相机。",
+              "dict": [
+                {
+                  "zh": "闪光灯",
+                  "code": "FLASHLIGHT"
+                },
+                {
+                  "zh": "相机",
+                  "code": "CAMERA"
+                }
+              ]
+            }
+          },
+          {
+            "id": "clock",
+            "label": "书架上的座钟",
+            "look": "clock",
+            "at": [
+              258,
+              68
+            ],
+            "stand": [
+              262,
+              150
+            ],
+            "size": 18,
+            "art": "mantel-clock",
+            "lines": [
+              {
+                "who": "client",
+                "text": "王奶奶：这座钟，我每天中午跟钟楼对一回。钟楼以前一到十二点就敲十二下，我听了一辈子。",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "王奶奶：这阵子，它一声都不响了。",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "tower",
+              "title": "不响的钟楼",
+              "text": "王奶奶说钟楼最近一声都不响了。清单里要是写着数据最后报给谁、组件是谁做的，记得找出来。",
+              "dict": [
+                {
+                  "zh": "报给谁",
+                  "code": "REPORT_TO"
+                },
+                {
+                  "zh": "谁做的",
+                  "code": "VENDOR"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "slippers",
+            "label": "门口的拖鞋",
+            "look": "cat",
+            "at": [
+              40,
+              155
+            ],
+            "stand": [
+              40,
+              164
+            ],
+            "size": 16,
+            "art": "slippers",
+            "lines": [
+              {
+                "text": "门口摆着一双拖鞋，鞋底磨平了。王奶奶晚上起夜，就是怕黑。"
+              }
+            ],
+            "optional": true
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "奶奶要的不是一份报告，是一句听得懂的话：哪些权限是开灯要的，哪些不是。"
+        },
+        {
+          "text": "清单是工作台从这只 APK 里解出来的，权限名照原样保留。"
+        }
+      ],
+      "terms": [
+        "FLASHLIGHT",
+        "CAMERA",
+        "READ_CONTACTS",
+        "ACCESS_FINE_LOCATION",
+        "READ_PHONE_STATE",
+        "BOOT_COMPLETED",
+        "quickads"
+      ],
+      "board": [
+        {
+          "title": "开灯到底要什么",
+          "text": "手电筒只用到 {FLASHLIGHT} 和 {CAMERA}，可它还要 {READ_CONTACTS}、{ACCESS_FINE_LOCATION}、{READ_PHONE_STATE}。",
+          "hint": "清单的 permissions 一栏，一行一条。",
+          "explain": "三个「还要」的权限，和按一下开灯这件事没有关系。"
+        },
+        {
+          "title": "它还会自己起来",
+          "text": "清单里有一个接收 {BOOT_COMPLETED} 的组件，手机一开机它就能启动。",
+          "hint": "看 receivers 那一段。",
+          "explain": "开机自启让它在后台常驻，不用王奶奶点开也能跑。"
+        },
+        {
+          "title": "背后是谁",
+          "text": "应用里塞了 {quickads} 的广告和统计组件。",
+          "hint": "服务列表里有一个不是这个软件自己的名字。",
+          "explain": "广告和统计才是那些多余权限的去处。"
+        }
+      ],
+      "toLab": [
+        {
+          "text": "推理只是推理。王奶奶要的是一句话：拒绝它，灯还亮不亮？拿到沙盒里，亲手试一次。",
+          "face": "happy"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "lamp-test",
+          "text": "开灯实验：拿掉通讯录、定位、手机状态、联网、开机自启，灯照样亮；只有闪光灯和相机是开灯真要用的"
+        },
+        {
+          "id": "perm-check",
+          "text": "守住手机：读通讯录、取定位、往外上传的收集者全被挡在手机里，灯一直亮着"
+        }
+      ],
+      "confront": {
+        "lead": "一件一件解释给王奶奶听。她说的话里，有真的，也有需要纠正的。",
+        "intro": [
+          {
+            "text": "王奶奶戴上老花镜：「你慢慢说，我听得懂。」拿证据给她看。"
+          }
+        ],
+        "statements": [
+          {
+            "text": "「它要通讯录，是为了帮我快速拨号吧？」",
+            "accept": [
+              "READ_CONTACTS"
+            ],
+            "press": [
+              {
+                "text": "手电筒有拨号这个功能吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：它连个打电话的按钮都没有啊。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示「读取通讯录」这条权限。"
+          },
+          {
+            "text": "「要定位是怕我走丢，想知道我在哪儿。」",
+            "accept": [
+              "ACCESS_FINE_LOCATION"
+            ],
+            "press": [
+              {
+                "text": "开灯需要知道位置吗？"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：我在自己家里开灯，它管我在哪儿做什么。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示「精确定位」这条权限。"
+          },
+          {
+            "text": "「开机自己启动，是手机的正常行为吧？」",
+            "accept": [
+              "BOOT_COMPLETED"
+            ],
+            "press": [
+              {
+                "text": "那是它自己申请的，不是每个软件都有。"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：怪不得我什么都没点，它也在。",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示清单里的开机启动接收器。"
+          },
+          {
+            "text": "「我要是点了拒绝，手电筒就用不了了吧？」",
+            "accept": [
+              "灯照样亮"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "王奶奶：它问我要，我不给，它不就不干活了？",
+                "face": "thinking"
+              },
+              {
+                "text": "我们在沙盒里试过的。",
+                "face": "normal"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：拿掉那么多，灯还是亮的……那我就放心点拒绝了。",
+                "face": "happy"
+              }
+            ],
+            "hint": "出示沙盒里的开灯实验记录。"
+          },
+          {
+            "text": "「它拿了我的东西，也就自己留着看看。」",
+            "accept": [
+              "tower.bit-town",
+              "quiet-stats"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "王奶奶：一个手电筒，拿了能做什么呢？",
+                "face": "thinking"
+              },
+              {
+                "text": "清单里 quickads 那几行，还写着别的东西。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "王奶奶：悄悄统计……钟楼？",
+                "face": "surprised"
+              },
+              {
+                "who": "client",
+                "text": "王奶奶：这钟楼，我年轻的时候每天听它敲钟……现在它在偷听我们？",
+                "face": "thinking"
+              },
+              {
+                "text": "这件事不在委托里，可它不对劲。我记进手账了。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "去电脑上搜 REPORT_TO 或 VENDOR，把那一行记为证据。"
+          },
+          {
+            "text": "「只给开灯要用的权限，手电筒也照样亮。」",
+            "press": [
+              {
+                "text": "对。灯亮不亮，和通讯录、定位没有关系。"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "权限要和功能对得上。对不上，就是最明显的危险信号。",
+        "「不是代码」的清单也会说话：开机自启、广告组件都写在里面。",
+        "给老人的解释要短：这个要用，这个不用，够了。"
+      ],
+      "room": {
+        "top": 134,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 222,
+          "y": 166
+        },
+        "blocks": [
+          {
+            "x": 6,
+            "y": 92,
+            "w": 86,
+            "h": 40
+          },
+          {
+            "x": 96,
+            "y": 100,
+            "w": 68,
+            "h": 32
+          },
+          {
+            "x": 248,
+            "y": 40,
+            "w": 52,
+            "h": 96
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "王奶奶：你随便看，我这些东西都不值钱。",
+              "face": "happy"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "王奶奶：判好了？那……它到底要这么多做什么呀？",
+              "face": "thinking"
+            }
+          ]
+        },
+        "characterScale": 1.875
+      },
+      "epilogue": {
+        "label": "王奶奶的手机 · 奶奶牌手电筒",
+        "hook": [
+          {
+            "who": "client",
+            "text": "王奶奶：孩子，等一下……我还有件事想求你。",
+            "face": "thinking"
+          },
+          {
+            "text": "王奶奶好像还有话想说。走到她旁边，再和她聊聊。",
+            "face": "normal"
+          }
+        ],
+        "offer": [
+          {
+            "who": "client",
+            "text": "王奶奶：孩子，你会写程序……能不能给我做一个干净的手电筒？就开灯，别的什么都不要。",
+            "face": "thinking"
+          },
+          {
+            "text": "好啊。这叫复刻练习：换我们自己来做一个，看看「干净」要付出什么。",
+            "face": "happy"
+          }
+        ],
+        "stages": [
+          {
+            "kind": "manage",
+            "title": "奶奶牌手电筒"
+          }
+        ],
+        "done": [
+          {
+            "who": "client",
+            "text": "王奶奶：街坊们都在用你做的手电筒了！要什么都说得清，这才叫手电筒。",
+            "face": "happy"
+          },
+          {
+            "text": "这就是那道练习的答案：只要开灯要的权限——做得到，也活得下去。",
+            "face": "happy"
+          }
+        ]
+      }
     }
   }
 }

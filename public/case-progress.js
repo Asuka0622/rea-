@@ -8,11 +8,11 @@ export function caseRevision(item) {
   const revision=(hash>>>0).toString(16);revisions.set(item,revision);return revision;
 }
 export function emptyCaseState(item) {
-  return {phase:'look',told:false,seen:new Set(),clues:[],dict:[],words:new Set(),evidence:[],chosen:item.game.puzzle.board.map(group=>blanksOf(group.text).map(()=>'')),solved:new Set(),broken:new Set(),statement:0,mistakes:0,hints:0,spent:0,hearts:3,fails:0,history:[],termLog:[],page:'clues',labStage:0};
+  return {phase:'look',told:false,seen:new Set(),clues:[],dict:[],words:new Set(),evidence:[],chosen:item.game.puzzle.board.map(group=>blanksOf(group.text).map(()=>'')),solved:new Set(),broken:new Set(),statement:0,mistakes:0,hints:0,spent:0,hearts:3,fails:0,history:[],termLog:[],page:'clues',labStage:0,epilogueDone:false};
 }
 const count=value=>Number.isInteger(value)?Math.max(0,Math.min(10000,value)):0;
 export function caseSnapshot(item,state) {
-  return {version:1,revision:caseRevision(item),told:state.told,phase:state.phase,seen:[...state.seen],words:[...state.words],evidence:state.evidence.map(e=>e.id),chosen:state.chosen,solved:[...state.solved],broken:[...state.broken],statement:state.statement,mistakes:count(state.mistakes),hints:count(state.hints),spent:count(state.spent),hearts:Number.isInteger(state.hearts)?Math.max(0,Math.min(3,state.hearts)):3,fails:count(state.fails),history:state.history.slice(-60).map(x=>String(x).slice(0,300)),page:state.page,labStage:count(state.labStage)};
+  return {version:1,revision:caseRevision(item),told:state.told,phase:state.phase,seen:[...state.seen],words:[...state.words],evidence:state.evidence.map(e=>e.id),chosen:state.chosen,solved:[...state.solved],broken:[...state.broken],statement:state.statement,mistakes:count(state.mistakes),hints:count(state.hints),spent:count(state.spent),hearts:Number.isInteger(state.hearts)?Math.max(0,Math.min(3,state.hearts)):3,fails:count(state.fails),history:state.history.slice(-60).map(x=>String(x).slice(0,300)),page:state.page,labStage:count(state.labStage),epilogueDone:state.epilogueDone===true};
 }
 export function restoreCaseState(item,saved) {
   const state=emptyCaseState(item),puzzle=item.game.puzzle;
@@ -45,6 +45,7 @@ export function restoreCaseState(item,saved) {
   state.fails=count(saved.fails);
   state.history=list(saved.history,60).filter(x=>typeof x==='string').map(x=>x.slice(0,300));
   if(['clues','dict','evidence','board'].includes(saved.page))state.page=saved.page;
+  state.epilogueDone=saved.epilogueDone===true&&state.phase==='done';
   // 多关沙盒做到第几关（只在还没做完沙盒时有用）。
   state.labStage=state.phase==='verify'?Math.min(count(saved.labStage),(item.game.lab.stages?.length||1)-1):0;
   return state;

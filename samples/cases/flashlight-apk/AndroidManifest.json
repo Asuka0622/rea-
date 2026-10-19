@@ -31,7 +31,9 @@
       }
     ],
     "meta": {
-      "com.quickads.sdk.APP_ID": "qa-demo-0001"
+      "com.quickads.sdk.APP_ID": "qa-demo-0001",
+      "com.quickads.sdk.VENDOR": "quiet-stats.example",
+      "com.quickads.sdk.REPORT_TO": "https://tower.bit-town.example/collect"
     }
   }
 }

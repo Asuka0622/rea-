@@ -28,7 +28,8 @@ const DEFAULT_HINTS = [
   "预算只在收集者走在路上时才回，拦下一个有赏金，清完一波有奖励。上一波的布防不合适，点它可以拆掉，退一半钱。",
 ];
 
-export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+export function mountTower(props) {
+  const { h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {}, story = async () => {} } = props;
   loadStyle();
   const spec = lab.tower || {};
   const run = createTowerRun(spec);
@@ -413,6 +414,9 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       } else if (ev.type === "clear" && state.status === "ready") {
         const next = run.waves[state.wave + 1];
         say.textContent = `这一波清了（奖励 +${ev.bonus}）。下一波是 ${waveText(spec, next)}——看看布防要不要改，好了再点「放下一波」。`;
+        // 波与波之间的剧情（lab.tower.talk["下一波的序号"]，从 1 数）。
+        const lines = spec.talk?.[String(state.wave + 2)];
+        if (lines?.length) story(lines);
       } else if (ev.type === "won" || ev.type === "lost") finish(ev.type === "won");
     }
     drawBeams(fires);
@@ -464,7 +468,7 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
     speedBtn.textContent = `×${speed}`;
   }
 
-  function finish(ok) {
+  async function finish(ok) {
     if (finished) return;
     finished = true;
     const leaks = state.leaked.length;
@@ -472,7 +476,10 @@ export function mountTower({ h, icon, lab, onMistake = () => {}, onHint = () => 
       ? (leaks ? `守住了，漏了 ${leaks} 个：${state.leaked.map(kindLabel).join("、")}。手电筒只该拿闪光灯，其余的门本可以不开。` : "一个都没漏！该挡的挡住了，灯也一直亮着。")
       : `隐私被掏空了——漏掉的是 ${state.leaked.map(kindLabel).join("、")}。看清每一波是谁、走哪条路，再放对的措施。`;
     paint();
-    onDone();
+    if (ok) return onDone();
+    // 守不住不算过关：说一句，然后换一局新的（同样的设置）从第一波重来。
+    await story(spec.lost || [{ text: "隐私被掏空了。看清每一波是谁、走哪条路，再放对的措施——从第一波重来。", face: "thinking" }]);
+    root.replaceWith(mountTower(props));
   }
 
   paint();

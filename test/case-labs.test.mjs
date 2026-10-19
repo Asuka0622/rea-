@@ -119,3 +119,24 @@ test("chained labs: every stage of every case is a known lab, and its story line
   assert.deepEqual(ledger.stages.map((s) => s.kind), ["network", "rhythm"]);
   for (const round of ledger.firewall.rounds) for (const key of ["intro", "pass", "fail"]) lines(round[key], `firewall ${key}`);
 });
+
+test("puzzle cases: every confront answer can be found (a shipped code line or a sandbox evidence), and epilogues are well formed", async () => {
+  const { shippedLines } = await import("../public/case-puzzle.js");
+  const speakers = new Set([undefined, "client", "xiaoke"]);
+  for (const item of caseCatalog()) {
+    const puzzle = item.game?.puzzle;
+    if (!puzzle?.scene) continue;
+    const texts = [...shippedLines(item.game.lab.sources).map((l) => l.text), ...(puzzle.labEvidence || []).map((e) => e.text)];
+    for (const statement of puzzle.confront?.statements || []) {
+      for (const answer of statement.accept || []) assert.ok(texts.some((t) => t.includes(answer)), `${item.id}: 「${answer}」 cannot be found anywhere`);
+    }
+    for (const term of puzzle.terms) assert.ok(shippedLines(item.game.lab.sources).some((l) => l.text.includes(term)), `${item.id}: term ${term} is not in the code`);
+    if (puzzle.epilogue) {
+      for (const key of ["offer", "hook", "done"]) for (const l of puzzle.epilogue[key] || []) assert.ok(typeof l.text === "string" && speakers.has(l.who), `${item.id} epilogue ${key}`);
+      for (const stage of puzzle.epilogue.stages) assert.ok(MOUNTABLE_KINDS.includes(stage.kind));
+    }
+  }
+  const grandma = caseCatalog().find((c) => c.id === "flashlight-apk").game;
+  assert.deepEqual(grandma.lab.stages.map((s) => s.kind), ["permissions", "tower"]);
+  assert.equal(grandma.puzzle.epilogue.stages[0].kind, "manage");
+});

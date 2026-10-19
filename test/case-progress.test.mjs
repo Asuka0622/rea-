@@ -51,3 +51,13 @@ test('the next target counts evidence props, keeps the optional cat optional, an
   state.phase='confront';assert.equal(caseObjective(item,state).target,'client');
   state.phase='done';assert.equal(caseObjective(item,state).target,'exit');
 });
+
+test('case progress: the lab stage and the epilogue are remembered only where they still mean something',()=>{
+  const item=caseCatalog().find(c=>c.id==='privacy-ledger');
+  const state=emptyCaseState(item);
+  state.phase='verify';state.labStage=1;state.epilogueDone=true;
+  const snap=caseSnapshot(item,state);
+  assert.equal(snap.labStage,1);assert.equal(snap.epilogueDone,true);
+  const restored=restoreCaseState(item,JSON.parse(JSON.stringify({...snap,phase:'verify'})));
+  assert.equal(restored.epilogueDone,false,'an epilogue only counts once the case is closed');
+});

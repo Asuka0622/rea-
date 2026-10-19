@@ -20,7 +20,10 @@ const HINTS = [
   "找附近的店，大概位置就够了。来电闪光要知道电话来了，读手机状态在这里是说得清的。",
 ];
 
-export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {}, story = async () => {} }) {
+  // 剧情（lab.manageTalk）：pass / warn 审核结果、exposed 卖数据被曝光、delisted 下架、broke 钱烧完，
+  // v2…v8 新的一版提案摆上桌之前。
+  const talk = (key) => story(lab.manageTalk?.[key] || []);
   const spec = lab.manage || {};
   let run = createManageRun(spec);
   let hintAt = 0;
@@ -130,7 +133,7 @@ export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () =>
     }, label))));
   }
 
-  function release() {
+  async function release() {
     const res = run.release();
     if (!res) return;
     log.prepend(...res.lines.map((line) => h("div", {}, line)));
@@ -151,6 +154,11 @@ export function mountManage({ h, icon, lab, onMistake = () => {}, onHint = () =>
       say.textContent = res.review?.ok ? "审核通过。接着做下一版。" : res.review ? last : `1.${res.version} 发出去了。下一张提案来了。`;
     }
     paint();
+    if (res.lines.some((line) => line.startsWith("【曝光】"))) await talk("exposed");
+    if (s.status === "delisted") return talk("delisted");
+    if (s.status === "broke") return talk("broke");
+    if (res.review) await talk(res.review.ok ? "pass" : "warn");
+    if (s.status === "playing") await talk(`v${s.version}`);
   }
 
   function paint() {

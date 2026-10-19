@@ -979,8 +979,16 @@ function mountSecrets({ h, icon, lab, onMistake = () => {}, onDone = () => {} })
  * 开灯用得上吗（王奶奶）：在沙盒里拿掉几项权限，按一下开灯，看灯亮不亮、监视器记下了什么。
  * 每条判断都要有实验撑腰；一次拿掉好几项省实验，灯不亮就得拆开排查（规则在 permission-lab.js）。
  */
-function mountPermissions({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {} }) {
+function mountPermissions({ h, icon, lab, onMistake = () => {}, onHint = () => {}, onDone = () => {}, story = async () => {} }) {
   const exp = createPermissionLab(lab.permissions || []);
+  // 委托人看着实验说话（lab.talk）：lit 第一次拿掉了东西灯还亮、dark 第一次灯不亮、reboot 第一次重启。
+  const told = new Set();
+  let speaking = Promise.resolve();
+  const talk = (key) => {
+    if (told.has(key) || !lab.talk?.[key]) return speaking;
+    told.add(key);
+    return (speaking = speaking.then(() => story(lab.talk[key])));
+  };
   const total = exp.perms.length;
   const hints = [
     "先别判：勾「拿掉」几项，按一下开灯，看灯亮不亮。",
@@ -1018,6 +1026,9 @@ function mountPermissions({ h, icon, lab, onMistake = () => {}, onHint = () => {
     const what = r.denied.length ? `拿掉 ${r.denied.map((id) => exp.find(id).label).join("、")}` : "什么都没拿掉";
     monitor.prepend(h("div", { class: cls(["lab-pl-run", r.lit === false && "fail"]) },
       h("b", {}, `#${r.n} ${kind === "tap" ? "按一下开灯" : "重启手机"} · ${what}`), ...r.lines.map((line) => h("p", {}, line))));
+    if (kind === "reboot") talk("reboot");
+    else if (r.lit && r.denied.length) talk("lit");
+    else if (!r.lit) talk("dark");
     say.textContent = kind === "reboot" ? "重启完了：看监视器，开机时谁自己醒了。"
       : r.lit ? (r.denied.length ? `灯亮了：拿掉的这 ${r.denied.length} 项，开灯一个都用不上。` : "灯亮了。这是对照：什么都不拿掉时的样子。")
         : "灯不亮了：拿掉的里面有开灯要用的。把它们分开再试。";
@@ -1032,7 +1043,7 @@ function mountPermissions({ h, icon, lab, onMistake = () => {}, onHint = () => {
       if (exp.state.done) {
         const needed = exp.perms.filter((x) => x.need).length;
         say.textContent = `七个里头，只有 ${needed} 个是真的在开灯。用了 ${exp.tapRuns()} 次开灯实验${exp.tapRuns() <= 4 ? "，控制变量用得漂亮" : ""}。王奶奶：「那剩下的，我点拒绝就好了。」`;
-        onDone();
+        speaking.then(() => onDone());
       }
     } else {
       if (!res.noProof) onMistake();

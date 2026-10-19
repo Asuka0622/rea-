@@ -454,7 +454,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     const arg = rest.join(" ");
     switch (verb.toLowerCase()) {
       case "help":
-        print("sys", "find <词>    在代码里找含有这些词的行（可以写好几个词）");
+        print("sys", "find <词>    在代码里找词（多个词须同时出现在同一行，如 find fetch STATS_URL）");
         print("sys", "ls           看看拆出了哪些文件");
         print("sys", `sandbox      进入「${sampleName}」的隔离实验`);
         print("sys", "clear        清屏      exit  合上电脑");
@@ -529,6 +529,30 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         h("div", { class: "term sandbox" },
           h("div", { class: "term-bar" }, h("span", {}, `${computerLabel} · REA 沙盒`), h("button", { type: "button", class: "term-close", onclick: () => openTerminal() }, "回到终端")),
           h("div", { class: "term-lab" }, labEl))),
+      h("div", { class: "lt-base", "aria-hidden": "true" })));
+  }
+
+  /* ----- the epilogue: after the case, the client asks for one more thing (puzzle.epilogue) ----- */
+  // { offer: [lines], hook: [lines after the closing card], label, stages: [lab stages], done: [lines] }.
+  // It does not change the case's stars; it is the case's 复刻练习, played on the same device.
+  let epilogueEl = null;
+  function openEpilogue() {
+    const epi = puzzle.epilogue;
+    if (!epilogueEl) {
+      epilogueEl = mountLab({ h, icon, lab: { ...lab, stages: epi.stages }, story: (lines) => say(lines), difficulty: ui.difficulty || "normal",
+        finishLabel: "合上，回到客厅", onFinish: close, onMistake: () => {}, onHint: () => {}, onDone: () => {
+          state.epilogueDone = true;
+          sound.unlock();
+          checkpoint();
+          say(epi.done || []);
+        } });
+    }
+    sound.door();
+    open("terminal", h("div", { class: "case-screen laptop" },
+      h("div", { class: "lt-lid" },
+        h("div", { class: "term sandbox" },
+          h("div", { class: "term-bar" }, h("span", {}, epi.label || `${computerLabel} · 复刻练习`), h("button", { type: "button", class: "term-close", onclick: close }, "先放一放 ✕")),
+          h("div", { class: "term-lab" }, epilogueEl))),
       h("div", { class: "lt-base", "aria-hidden": "true" })));
   }
 
@@ -673,7 +697,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         puzzle.debrief?.length && h("div", {class:"case-debrief"},h("h4",{},"这次查明了什么"),h("ul",{},puzzle.debrief.map(text=>h("li",{},text)))),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
           close();
-          await say([{ who: "client", text: item.game.verdict.closing, face: "happy" }]);
+          await say([{ who: "client", text: item.game.verdict.closing, face: "happy" }, ...(puzzle.epilogue && !state.epilogueDone ? puzzle.epilogue.hook || [] : [])]);
         } }, "好"))));
   }
 
@@ -750,6 +774,10 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     },
     /** E next to the client. */
     async talk() {
+      if (state.phase === "done" && puzzle.epilogue && !state.epilogueDone) {
+        await say(puzzle.epilogue.offer || []);
+        return openEpilogue();
+      }
       if (state.phase === "done") return say([{ who: "client", text: "谢谢你！以后装软件之前，我都先找你看看。", face: "happy" }]);
       if (state.phase === "confront") return startConfront();
       const lines = puzzle.room?.clientTalk?.[state.phase] || [{ who: "client", text: "有什么发现吗？我就在这儿，需要什么尽管问。" }];
