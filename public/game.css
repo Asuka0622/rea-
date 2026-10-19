@@ -1,3 +1,4 @@
+@import url("./graduation-report.css");
 /* 游戏外壳: a full-screen pixel town (beginner mode). The world is 320x180 map pixels drawn at --px
    screen pixels each; everything in it is positioned and sized in map pixels so it scales together.
    The dialogue box, choice menu and windows are normal-size UI on top, like a game's interface. */

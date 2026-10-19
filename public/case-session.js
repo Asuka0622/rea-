@@ -1,3 +1,4 @@
+import { recordCaseObservation } from './graduation-report.js';
 import { mountLab } from "./case-labs.js";
 import { lumiArt } from "./lumi-look.js";
 import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks } from "./case-puzzle.js";
@@ -687,6 +688,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     saveStars(item.id, stars);
     const fresh = unlockedTools(progressFromStars(readStars())).filter((id) => !before.includes(id));
     checkpoint();
+    if (!drill) recordCaseObservation(item, state, stars);
     ui.onSolved(stars);
     await sleep(300);
     sound.unlock();

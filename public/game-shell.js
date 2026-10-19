@@ -1,3 +1,9 @@
+import { createPlayRecord } from './graduation-game-record.js';
+import { loadDetectivePhoto, saveDetectivePhoto, mountPhotoBooth } from './detective-id.js';
+import { createHabitRecorder } from './detective-habits.js';
+import { nearestTalkNpc, NPC_TALK_RADIUS } from "./npc-interaction.js";
+import { npcSpriteAsset, npcSpriteLayout, npcSpriteAnimation } from "./npc-sprite-assets.js";
+import { createNpcMotion } from "./npc-motion.js";
 import { createNpcDialogue, portraitCandidates } from "./npc-dialogue.js";
 import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
@@ -17,6 +23,7 @@ import { caseFor } from "./game-drills.js";
 import { mountLab } from "./case-labs.js";
 import { createSound } from "./game-sound.js";
 import { createDirector } from "./game-director.js";
+import { GRADUATION_KEY, buildGraduationReport, collectGraduationRecords, loadGraduationReport, saveGraduationReport, renderGraduationReport } from './graduation-report.js';
 import { createCaseSession } from "./case-session.js";
 import { unlockedTools, progressFromStars } from "./case-tension.js";
 import { PROLOGUE_QUESTS, KNOWLEDGE_POINTS, takeKind, onBoard } from "./prologue-quests.js";
@@ -136,6 +143,12 @@ const EXTRA_LINES = {
 };
 
 export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null, demo = null }) {
+  const habits = createHabitRecorder();
+  const playRecord = createPlayRecord();
+  let detectivePhoto = loadDetectivePhoto();
+  window.addEventListener('pagehide', () => { habits.flush(); playRecord.flush(); });
+  window.addEventListener('blur', () => { habits.step({ active: false }); habits.flush(); playRecord.flush(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') { habits.step({ active: false }); habits.flush(); playRecord.flush(); } });
   // 预告版（整个序章）: only demo.cases can be taken; the other clients' homes say they open in the full game.
   // The demo opens its cases act by act (game-quests.js caseReachable): a later act's door waits.
   const inDemo = (id) => !demo || demo.cases.includes(id);
@@ -410,7 +423,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* 会说话的 NPC：走近就搭话（npc-chatter.js）。
      12 位常驻的小人图已经交付（public/art/pixel/sprite-<id>.png，6 列 × 5 行：
      待机2 / 下走6 / 上走6 / 侧走6 / 说话2），交付源帧是 96×192，显示时缩成 16×32 逻辑像素。
-     没有图的（委托人里的老秦）还是圆点，等图补齐再换。 */
+     优先登记角色专用图；朵朵/王奶奶/铁叔复用已有anim表，按JSON读取行列。老秦缺少地图小人时保留明确缺图标记。 */
   let nearNpcId = null;
   // 当前这区域里的活人：换图时重新登记，元素随 DOM 一起丢掉。
   const npcSprites = [];
@@ -419,37 +432,48 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const npcMeta = new Map();
   const loadNpcMeta = (artId) => {
     if (!npcMeta.has(artId)) {
-      npcMeta.set(artId, fetch(`/art/pixel/sprite-${artId}.json`, { cache: "no-cache" })
+      npcMeta.set(artId, fetch(`/art/pixel/${artId}.json`, { cache: "no-cache" })
         .then((r) => (r.ok ? r.json() : null)).catch(() => null));
     }
     return npcMeta.get(artId);
   };
   const npcSpriteEl = (npc) => {
-    const artId = npc.sprite || npc.id;
-    if (!has(`sprite-${artId}`)) {
-      return h("i", { style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};box-shadow:0 0 calc(2px * var(--px)) rgba(0,0,0,.55);` });
+    const artId = npcSpriteAsset(npc, has);
+    if (!artId) {
+      return h("i", { "data-art-missing": npc.id, style: `display:block;width:calc(6px * var(--px));height:calc(6px * var(--px));margin:0 auto;border-radius:50%;background:${npc.look};` });
     }
-    const el = h("span", {
-      class: "game-sprite npc", "aria-hidden": "true",
-      style: `background-image:url(/art/pixel/sprite-${artId}.png);background-size:calc(var(--person-w) * 6 * var(--px)) calc(var(--person-h) * 5 * var(--px));background-position:0 0;`,
-    });
-    const one = { el, npc, artId, idle: { frames: 2, ms: 1900 }, talk: { frames: 2, ms: 260 } };
-    loadNpcMeta(artId).then((meta) => {
-      const anims = meta?.animations;
-      if (!anims) return;
-      if (anims.idle?.frames) one.idle = { frames: anims.idle.frames, ms: anims.idle.ms };
-      if (anims.talk?.frames) one.talk = { frames: anims.talk.frames, ms: anims.talk.ms };
-    });
+    // Delivered legacy client sheets have a different grid and no talk row.
+    const legacy = artId === "anim-duoduo" || artId === "anim-grandma";
+    const initial = { frame: legacy || artId === "anim-smith" ? [64,96] : [96,192],
+      sheet: legacy ? [4,2] : artId === "anim-smith" ? [4,5] : [6,5],
+      animations: { idle: { row:0,frames:2,ms:[1800,160] } } };
+    const el = h("span", { class: "game-sprite npc delivered", "data-art": artId, "aria-hidden": "true" });
+    const one = { el, npc, artId, meta: initial };
+    const layout = (meta) => {
+      const size=npcSpriteLayout(meta);
+      if(!size)return;
+      one.meta=meta;
+      el.style.cssText=`--npc-frame-w:calc(var(--person-h) * ${size.aspect});width:calc(var(--npc-frame-w) * var(--px));bottom:0;background-image:url(/art/pixel/${artId}.png);background-size:calc(var(--npc-frame-w) * ${size.columns} * var(--px)) calc(var(--person-h) * ${size.rows} * var(--px));background-position:0 0;background-repeat:no-repeat;animation:none;`;
+    };
+    layout(initial);
+    loadNpcMeta(artId).then(meta => { if(npcSpriteAnimation(meta,false))layout(meta); });
     npcSprites.push(one);
     return el;
   };
   function npcEls() {
     npcSprites.length = 0;
     return npcsInRegion(currentRegionName()).map((npc) =>
-      h("span", {
-        class: "game-npc",
+      h("button", {
+        type: "button", class: "game-npc",
+        "aria-label": `走近${npc.name}交谈`,
+        onclick: () => {
+          if (!dialogue.hidden || !menu.hidden || director.playing) return;
+          if (Math.hypot(player.x - npc.x, player.y - npc.y) <= NPC_TALK_RADIUS) {
+            nearNpcId = npc.id; usePrompt();
+          } else walkTo({ x: npc.x, y: npc.y + 18 });
+        },
         "data-npc": npc.id,
-        style: `left:calc(${npc.x}px * var(--px));top:calc(${npc.y}px * var(--px));position:absolute;z-index:6;pointer-events:none;text-align:center;`,
+        style: `left:calc(${npc.x}px * var(--px));top:calc(${npc.y}px * var(--px));position:absolute;z-index:6;pointer-events:auto;text-align:center;width:calc(26px * var(--px));height:calc(var(--person-h) * var(--px));transform:translate(-50%,-100%);background:transparent;border:0;padding:0;cursor:pointer;`,
       },
         npcSpriteEl(npc),
         h("b", { style: `position:absolute;left:50%;bottom:calc((var(--person-h) + 2px) * var(--px));transform:translateX(-50%);display:block;font:calc(5px * var(--px))/1.3 sans-serif;color:#fff8e7;text-shadow:0 0 calc(1px * var(--px)) #000;white-space:nowrap;` }, npc.name),
@@ -471,13 +495,33 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     return 0;
   }
+  // NPC 的简单动作（npc-motion.js）：散步、各自的小动作、坐长椅，只用精灵表里已有的行。
+  const npcMotion = createNpcMotion({
+    blocked: (x, y) => blocked(x, y),
+    benches: Object.fromEntries(SCENERY.filter((prop) => prop.kind === "sit").map((prop) => [prop.id, prop])),
+  });
+  let npcLastPaint = 0;
   function paintNpcFrames(now) {
+    const dt = Math.min(100, Math.max(0, now - (npcLastPaint || now)));
+    npcLastPaint = now;
+    const moving = stage.dataset.view === "town" && !room && !director.playing;
     for (const one of npcSprites) {
-      const talking = one.npc.id === nearNpcId;
-      const anim = talking ? one.talk : one.idle;
-      const row = talking ? 4 : 0; // 第 4 行是说话
-      const col = frameAtClock(anim.ms, anim.frames, now);
-      one.el.style.backgroundPosition = `calc(${-col} * var(--person-w) * var(--px)) calc(${-row} * var(--person-h) * var(--px))`;
+      const talking = one.npc.id === nearNpcId && !dialogue.hidden;
+      const near = Math.hypot(player.x - one.npc.x, player.y - one.npc.y) <= NPC_TALK_RADIUS + 10;
+      const pose = moving || talking ? npcMotion.update(one.npc, { now, dt: moving ? dt : 0, meta: one.meta, talking, playerNear: near }) : null;
+      const anim = (pose && one.meta?.animations?.[pose.anim]) || npcSpriteAnimation(one.meta,talking);
+      if(!anim)continue;
+      // 小动作从第一帧放起；其余按时钟循环。
+      const col=frameAtClock(anim.ms,anim.frames,pose && pose.gestureAt && !["idle","talk"].includes(pose.anim) && !pose.anim.startsWith("walk") ? now - pose.gestureAt : now);
+      one.el.style.backgroundPosition=`calc(${-col} * var(--npc-frame-w) * var(--px)) calc(${-anim.row} * var(--person-h) * var(--px))`;
+      if (!pose) continue;
+      one.el.classList.toggle("face-left", pose.flip);
+      one.el.classList.toggle("seated", pose.seated);
+      const button = one.el.parentElement;
+      if (button) {
+        button.style.left = `calc(${pose.x}px * var(--px))`;
+        button.style.top = `calc(${pose.y}px * var(--px))`;
+      }
     }
   }
   const npcDialogue = createNpcDialogue({ profiles: NPC_DIALOGUE_PROFILES });
@@ -494,12 +538,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return say([{ who: npc.id, name: npc.name, text: "我先忙一下，待会儿再聊。", face: "normal" }]);
   }
   /** 走进范围就搭一句话；委托人当场开口托付，闲聊的给传闻。 */
-  function talkNearNpcs() {
-    const npc = npcsInRegion(currentRegionName()).find((one) => Math.hypot(player.x - one.x, player.y - one.y) <= 12) || null;
-    const id = npc?.id || null;
-    if (id === nearNpcId) return;
-    nearNpcId = id;
+  function talkToNpc(npc) {
     if (!npc) return;
+    const id = npc.id;
     if (npc.quest) return talkToClient(npc);
     const { talked, first } = markTalked(loadTalked(), id);
     if (!first) {
@@ -797,6 +838,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       dialogue.hidden = true;
       storyFx.end();
       done();
+    } else {
+      dialogue.hidden = true;
+      storyFx.end();
     }
   }
   const sayAndWait = (texts) => new Promise((resolve) => say(texts, null, resolve));
@@ -1130,10 +1174,16 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   function tick(now) {
     requestAnimationFrame(tick);
-    const dt = Math.min(0.05, (now - lastTime) / 1000 || 0);
+    const habitDt = (now - lastTime) / 1000 || 0;
+    const dt = Math.min(0.05, habitDt);
     lastTime = now;
+    playRecord.step(habitDt, !!demo && enabled && document.visibilityState === 'visible' && document.hasFocus());
     paintNpcFrames(now);
-    if (!enabled || windowOpen || caseBusy() || (stage.dataset.view !== "town" && !room)) return;
+    if (!enabled || windowOpen || caseBusy() || (stage.dataset.view !== "town" && !room)) {
+      habits.step({ active: false });
+      return;
+    }
+    const habitFrom = { x: player.x, y: player.y };
     let dx = 0;
     let dy = 0;
     if (!director.playing) {
@@ -1197,6 +1247,10 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (dx) player.left = dx < 0;
       movedSinceSpawn += Math.abs(dx * step) + Math.abs(dy * step);
     }
+    if (demo && !room && document.visibilityState === 'visible' && document.hasFocus()) { playRecord.visitWorld(regionData()?.era === 'china' ? 'china-1088' : 'bit-town'); }
+    habits.step({ dt: habitDt, active: !!demo && !room && document.visibilityState === 'visible' && document.hasFocus() && dialogue.hidden && menu.hidden && overlay.hidden && mapPanel.hidden && !director.playing,
+      moving: Math.hypot(player.x - habitFrom.x, player.y - habitFrom.y) > .001,
+      sprinting: keys.has('shift'), period: daypart(clock.minutes), region: currentRegionName(), weather: regionData()?.environment?.weather ?? null });
     placePlayer();
     animate(dt, dx, dy);
     if (player.walking) walkedSince += SPEED * dt;
@@ -1225,6 +1279,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     Object.assign(player, at);
     target = null;
     nearDoor = null;
+    nearNpcId = null;
+    nearScenery = null;
     prompt.hidden = true;
     dialogue.hidden = true;
     drawTown();
@@ -1236,6 +1292,13 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   let nearScenery = null;
   const prompt = h("button", { class: "game-interact", type: "button", onclick: () => usePrompt() });
   function usePrompt() {
+    if (!room && nearNpcId) {
+      if (!dialogue.hidden || !menu.hidden || !overlay.hidden || director.playing) return;
+      const npc = npcsInRegion(currentRegionName()).find(one => one.id === nearNpcId);
+      if (!npc || Math.hypot(player.x-npc.x,player.y-npc.y)>NPC_TALK_RADIUS) return;
+      keys.clear(); target=null; nearDoor=null; nearScenery=null; prompt.hidden=true;
+      return talkToNpc(npc);
+    }
     if (!nearDoor && nearScenery) return useScenery();
     if (!nearDoor) return;
     if (!room) return enterSpot(nearDoor);
@@ -1257,10 +1320,23 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       nearDoor = null;
       return;
     }
-    if (room) return showRoomPrompt();
+    if (room) { prompt.removeAttribute("aria-label"); return showRoomPrompt(); }
+    if (!dialogue.hidden || !menu.hidden || !overlay.hidden || !mapPanel.hidden) {
+      prompt.hidden=true; nearDoor=null; nearScenery=null; return;
+    }
     collectNearEggs();
-    talkNearNpcs();
+    if (!dialogue.hidden) return;
     checkEncounters();
+    if (!dialogue.hidden || !menu.hidden) return;
+    const npc = nearestTalkNpc(npcsInRegion(currentRegionName()), player);
+    nearNpcId=npc?.id || null;
+    if (npc) {
+      nearDoor=null; nearScenery=null; prompt.hidden=false;
+      prompt.setAttribute("aria-label", `与${npc.name}交谈`);
+      prompt.replaceChildren(h("kbd",{},touch?"点这里":"E"), `交谈 · ${npc.name}`);
+      worldEl?.append(prompt); positionPrompt(); return;
+    }
+    prompt.removeAttribute("aria-label");
     const id = Object.keys(spots()).find((key) => Math.abs(player.x - doorOf(key).x) < 9 && player.y >= doorOf(key).y - 3 && player.y - doorOf(key).y < 12) || null;
     // 没有门，但附近有能坐/能摸的东西：显示“坐下 · 长椅”这类提示。
     const prop = id ? null : sceneryNear();
@@ -1579,6 +1655,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   const storyBeats = createStoryBeats({ host: shell, h, sound: (name, pitch) => sound[name]?.(pitch) });
   /** Show one picture; art is a path under /art/pixel/ without .png, checked against /api/art. */
   function showCinema(art, caption = "") {
+    if (demo && (art === 'scenes/london-1843' || art.startsWith('eras/london/'))) playRecord.visitWorld('london-1843');
     const picture = has(art);
     cinema.replaceChildren(
       picture ? h("img", { src: `/art/pixel/${art}.png`, alt: "" }) : null,
@@ -1658,26 +1735,33 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     showDemoEnd();
   }
   function showDemoEnd() {
-    let started = 0;
-    try {
-      started = Number(localStorage.getItem(DEMO_START)) || 0;
-    } catch {}
-    const minutes = started ? Math.max(1, Math.round((Date.now() - started) / 60000)) : null;
-    let stars = {};
-    try {
-      stars = JSON.parse(localStorage.getItem("rea-workbench-case-stars") || "{}") || {};
-    } catch {}
-    const starCount = PROLOGUE_CASE_IDS.reduce((sum, id) => sum + (stars[id] || 0), 0);
+    if (!detectivePhoto) return openDetectivePhoto(showDemoEnd);
+    let report = loadGraduationReport();
+    if (!report) {
+      report = buildGraduationReport({
+        records: collectGraduationRecords(PROLOGUE_CASE_IDS.map(id => cases().find(item => item.id === id)).filter(Boolean)),
+        caseCount: PROLOGUE_CASE_IDS.length, talked: loadTalked(), eggs: loadFound(), habits: habits.snapshot(), photo: detectivePhoto,
+        gameRecord: (() => {
+          const snapshot = achievements.snapshot();
+          const play = playRecord.snapshot();
+          let stars = {}; try { stars = JSON.parse(localStorage.getItem(CASE_STARS_KEY) || '{}') || {}; } catch {}
+          const score = id => Number.isFinite(stars[id]) ? Math.max(0, Math.min(3, Math.floor(stars[id]))) : 0;
+          return { ...snapshot, recorded: true, playSeconds: play.seconds, worlds: play.worlds,
+            regions: [...new Set([...snapshot.regions, ...habits.snapshot().regions])].map(id => REGIONS[id]?.name || id),
+            stars: PROLOGUE_CASE_IDS.reduce((sum,id) => sum + score(id), 0), starMax: PROLOGUE_CASE_IDS.length * 3,
+            completedCases: PROLOGUE_CASE_IDS.filter(id => score(id) > 0).length, totalCases: PROLOGUE_CASE_IDS.length,
+            badges: quests.badges().map(badge => ({ id: badge.id, title: badge.label })),
+            skills: SKILL_TREE.flatMap(branch => branch.skills).filter(skill => skill.from && quests.stepDone(skill.from)).map(skill => skill.label),
+          };
+        })(),
+      });
+      saveGraduationReport(report);
+    }
     overlay.classList.add("demo-end");
     overlay.replaceChildren(
-      h("div", { class: "demo-end-head" }, h("p", {}, "预告测试版 · 完"), h("h2", {}, "感谢试玩！")),
-      h("div", { class: "demo-end-stats" },
-        h("div", {}, h("b", {}, minutes ? `${minutes} 分钟` : "—"), h("small", {}, "用时")),
-        h("div", {}, h("b", {}, `${starCount} / ${PROLOGUE_CASE_IDS.length * 3}`), h("small", {}, "破案星级")),
-        h("div", {}, h("b", {}, `${achievements.count()} / ${ACHIEVEMENTS.length}`), h("small", {}, "成就")),
-        h("div", {}, h("b", {}, "见习侦探"), h("small", {}, "获得徽章"))),
-      h("div", { class: "demo-end-teaser" },
-        h("h3", {}, "正式版预告 · 第一章 1843 年的伦敦"),
+      renderGraduationReport(h, report),
+      h("details", { class: "demo-end-teaser" },
+        h("summary", {}, "下一站 · 第一章 1843 年的伦敦"),
         h("p", {}, "帮爱达排好分析机的运算卡，找出她原稿里真正的那一处错。然后跟着时光机，一路走回今天。"),
         h("ol", { class: "demo-end-eras" }, ...PART_ONE.map((era) => h("li", {}, h("b", {}, era.title), h("small", {}, era.note)))),
         h("p", { class: "demo-end-more" }, "程序 · 机器能思考吗 · 规则与学习 · 回到 12:00")),
@@ -1688,12 +1772,17 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
           quests.reset();
           try {
             localStorage.removeItem(DEMO_START);
+            localStorage.removeItem(GRADUATION_KEY);
+            habits.reset();
+        playRecord.reset();
           } catch {}
           closeOverlay();
           location.reload();
         } }, "从头再玩一次")),
     );
     overlay.hidden = false;
+    overlay.scrollTop = 0;
+    overlay.querySelector('.graduation-save')?.focus({ preventScroll: true });
   }
 
   /* ----- quests: difficulty, the quest log, and the guide's story lines ----- */
@@ -1731,8 +1820,27 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   shell.append(overlay);
   const closeOverlay = () => {
     overlay.hidden = true;
-    overlay.classList.remove("skilltree", "timemachine", "demo-end", "transfer-overlay");
+    overlay.classList.remove("skilltree", "timemachine", "demo-end", "transfer-overlay", "detective-registration");
   };
+
+  function openDetectivePhoto(after = () => goTown(), { intro = true, cancel = false } = {}) {
+    keys.clear(); target = null; menu.hidden = true; dialogue.hidden = true; stopTyping();
+    overlay.classList.add('detective-registration');
+    overlay.replaceChildren(mountPhotoBooth({ h, initial: detectivePhoto, intro,
+      onConfirm: photo => {
+        detectivePhoto = photo;
+        const stored = saveDetectivePhoto(photo);
+        const report = loadGraduationReport();
+        if (report) saveGraduationReport({ ...report, photo });
+        closeOverlay();
+        if (!stored) toast('照片暂存本次游玩', '浏览器未能保存证件照，刷新后可能需要补拍。');
+        after();
+      },
+      ...(cancel ? { onCancel: () => { closeOverlay(); after(); } } : {}),
+    }));
+    overlay.hidden = false; overlay.scrollTop = 0;
+    overlay.querySelector('button')?.focus({ preventScroll: true });
+  }
 
   /** 路米的样子（玩家就是路米）：开场第一件事，任务日志里也能换。 */
   function chooseLook(next) {
@@ -1774,7 +1882,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       closeOverlay();
       if (first) {
         shownControls = false;
-        goTown();
+        if (demo && !detectivePhoto) openDetectivePhoto();
+        else goTown();
       } else renderLog();
     };
     const askBackground = () => {
@@ -1825,10 +1934,15 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       h("p", { class: "game-panel-note" }, "偏好：", h("b", {}, FOCUSES[quests.focus]?.label || "平衡"), " · 基础：", h("b", {}, DIFFICULTIES[quests.difficulty] ? `${DIFFICULTIES[quests.difficulty].label}（${DIFFICULTIES[quests.difficulty].level}）` : "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换"), " · 路米：", h("b", {}, loadLook() === "m" ? "男生" : "女生"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseLook(() => { renderLog(); overlay.hidden = false; }) }, "换样子")),
       step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, `${step.line.title} · ${step.chapter.title}`)),
       ...quests.lines.map(lineBlock),
+      ...(demo ? [h('button', { class: 'btn', type: 'button', onclick: () => openDetectivePhoto(() => { renderLog(); overlay.hidden = false; }, { intro: !detectivePhoto, cancel: true }) }, detectivePhoto ? '重拍路米的证件照' : '补拍路米的证件照')] : []),
       ...quests.badges().map((badge) => h("p", { class: "game-badge" }, `🏅 已获得徽章：${badge.label}`)),
+      ...(demo && loadGraduationReport() ? [h("button", { class: "btn", type: "button", onclick: showDemoEnd }, "重看我的结业报告")] : []),
       h("div", { class: "game-panel-foot" }, h("button", { class: "btn small", type: "button", onclick: () => {
         if (!window.confirm("要从头开始全部剧情吗？已完成的案子成绩会保留。")) return;
         quests.reset();
+        try { localStorage.removeItem(GRADUATION_KEY); } catch {}
+        habits.reset();
+        playRecord.reset();
         closeOverlay();
         goTown();
       } }, "从头开始全部剧情")),
@@ -2115,6 +2229,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     return PROLOGUE_QUESTS.filter((quest) => progress.accepted.includes(quest.id) && !progress.completed[quest.id]);
   }
   function syncQuestTracker() {
+    if (caseRoom) { questTracker.hidden = true; return; }
     const active = activeQuests();
     if (!active.length) {
       questTracker.hidden = true;
@@ -2158,17 +2273,18 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   ];
 
   function openQuestBoard() {
+    const boardQuests = PROLOGUE_QUESTS.filter(quest => inDemo(quest.caseId) && !demoLater(quest.caseId));
     const progress = loadProgress();
-    const player = playerFor(progress, PROLOGUE_QUESTS);
+    const player = playerFor(progress, boardQuests);
     // 板上只贴「委托人自己贴过来」的那几份（take: "board"）。
-    const lines = boardLines(PROLOGUE_QUESTS.filter(onBoard), player);
+    const lines = boardLines(boardQuests.filter(onBoard), player);
     // 已接未完成的，不管从哪儿接的，都在板上留一张（当作追踪）。
-    for (const quest of PROLOGUE_QUESTS) {
+    for (const quest of boardQuests) {
       if (!progress.accepted.includes(quest.id) || progress.completed[quest.id]) continue;
       if (lines.some((line) => line.id === quest.id)) continue;
       lines.unshift({ id: quest.id, title: quest.title, giver: quest.giver, status: "accepted", reason: "", teaches: "", gain: { score: 0 } });
     }
-    const elsewhere = PROLOGUE_QUESTS.filter((quest) => !onBoard(quest) && !progress.completed[quest.id]).length;
+    const elsewhere = boardQuests.filter((quest) => !onBoard(quest) && !progress.completed[quest.id]).length;
     const picks = (line) => {
       menu.hidden = true;
       if (line.status === "available" || line.status === "accepted") return enterSpot(line.id);
@@ -2176,14 +2292,14 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
         line.status === "done"
           ? "这份委托已经结案了。"
           : line.status === "locked"
-            ? `还接不了：${prerequisiteMessage(PROLOGUE_QUESTS.find(q => q.id === line.id), player, PROLOGUE_QUESTS, KNOWLEDGE_POINTS)}`
+            ? `还接不了：${prerequisiteMessage(boardQuests.find(q => q.id === line.id), player, boardQuests, KNOWLEDGE_POINTS)}`
             : "还没听说这件事。去广场的公告板看看，或者问问镇上的人。";
       return say([{ text: why, face: "thinking" }]);
     };
     /** 没听说的委托只留一张空白条：剧透标题，就没有「打听到」这件事了。 */
     const prettyReason = (reason) =>
       reason
-        .replace(/^先完成 (.+)$/, (_, id) => `先做完「${PROLOGUE_QUESTS.find((q) => q.id === id)?.title ?? id}」`)
+        .replace(/^先完成 (.+)$/, (_, id) => `先做完「${boardQuests.find((q) => q.id === id)?.title ?? id}」`)
         .replace(/^(.+?) 要到 (L\d)$/, (_, id, lv) => `${KNOWLEDGE_POINTS[id]?.split("（")[0] ?? id} 得先到 ${lv}`);
     const note = (line) => {
       const unknown = line.status === "undiscovered";
@@ -2263,6 +2379,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       goTown();
       syncQuestTracker();
       if (quests && (!quests.difficulty || !quests.focus)) chooseDifficulty(true);
+      else if (demo && !detectivePhoto) openDetectivePhoto();
     } else {
       mainHome.parent.insertBefore(main, mainHome.next);
       shell.hidden = true;
@@ -2309,6 +2426,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       return;
     }
     if (!overlay.hidden) {
+      if (overlay.classList.contains('detective-registration')) return;
       if (event.key === "Escape" || (key === "j" && overlay.querySelector(".game-log")) || ((key === "k" || key === "r") && overlay.querySelector(".st"))) closeOverlay();
       return;
     }
@@ -2337,9 +2455,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (event.key === "Escape") closeMap();
       return;
     }
-    if ((key === "e" || event.key === "Enter" || event.key === " ") && (nearDoor || nearScenery) && !windowOpen && dialogue.hidden && !event.target.closest?.("button,a")) {
+    if ((key === "e" || event.key === "Enter" || event.key === " ") && (nearNpcId || nearDoor || nearScenery) && !windowOpen && dialogue.hidden && menu.hidden && overlay.hidden && mapPanel.hidden && (key === "e" || !event.target.closest?.("button,a"))) {
       event.preventDefault();
-      usePrompt();
+      if (!event.repeat) usePrompt();
       return;
     }
     if (event.key === "Escape") {

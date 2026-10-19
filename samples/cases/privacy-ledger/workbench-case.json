@@ -663,10 +663,10 @@
           "title": "界面上看不见的事",
           "text": "没有按钮的 {helper:peek-clipboard}，被 {setInterval} 每 {30000} 毫秒调用一次，把读到的剪贴板文字存进 {lastClipboard}。",
           "explain": "推理成立：没有按钮的功能，被定时器悄悄调用。",
-          "hint": "先搜 setInterval，看它每次调用的是 window.helper 的哪个功能；再去 preload.js 里看这个功能对应哪个通道（搜 peek）。",
+          "hint": "先搜 setInterval，看它每次调用的是 window.helper 的哪个功能；再搜 peek，在 main.js 里找到对应的 helper:peek-clipboard 通道。",
           "done": [
             {
-              "text": "第二条也成立。小林每复制一次，它就悄悄抄一份。",
+              "text": "第二条也成立。它每隔 30 秒读取一次剪贴板，存下当时的文字。",
               "face": "thinking"
             }
           ]

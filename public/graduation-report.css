@@ -1,0 +1,47 @@
+@import url("./detective-id.css");
+.graduation-report {--report-paper:#f2e5c5;--report-ink:#302d28;--report-muted:#685b47;position:relative;background:var(--report-paper);color:var(--report-ink);padding:32px 38px;font:15px/1.85 var(--font-body,"Microsoft YaHei",sans-serif);text-align:left;}
+.graduation-report * {box-sizing:border-box;}
+.graduation-report ::selection {background:#d6aa57;color:#211d17;}
+.graduation-heading {display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #b5a17d;padding-bottom:12px;color:var(--report-muted);font-size:12px;}
+.graduation-office {font-weight:700;}
+.graduation-title {display:flex;align-items:center;justify-content:space-between;gap:16px;margin:28px 0 24px;}
+.graduation-title h2 {font:26px/1.4 var(--font-display,"Microsoft YaHei",sans-serif);margin:0;color:var(--report-ink);}
+.graduation-title p {font-size:13px;color:var(--report-muted);margin:5px 0 0;}
+.graduation-stamp {flex:none;display:grid;place-content:center;width:92px;height:92px;border:3px double #9a4937;color:#9a4937;transform:rotate(-8deg);text-align:center;line-height:1.6;}
+.graduation-stamp b {font-size:17px;}
+.graduation-stamp small {font-size:12px;}
+.graduation-address {margin:0;color:var(--report-muted);font-size:13px;}
+.graduation-style {font-size:21px;line-height:1.5;margin:7px 0 25px;font-weight:750;color:#375044;}
+.graduation-note {margin:21px 0;}
+.graduation-note h4,.graduation-next h4 {font-size:13px;color:var(--report-muted);margin:0 0 4px;font-weight:700;}
+.graduation-note p,.graduation-next p {margin:0;max-width:65ch;}
+.graduation-town {color:var(--report-muted);font-size:13px;margin:24px 0;}
+.graduation-next {border-top:1px solid #b5a17d;padding-top:18px;}
+.graduation-closing {font-weight:700;margin:28px 0 20px;}
+.graduation-signature {display:flex;justify-content:space-between;align-items:end;gap:28px;font-size:12px;color:var(--report-muted);}
+.graduation-signature b {display:block;font-size:24px;font-family:var(--font-display,"Microsoft YaHei",sans-serif);color:var(--report-ink);}
+.graduation-signature p {max-width:30ch;margin:0;}
+.graduation-evidence {border-top:1px solid #b5a17d;margin:25px 0 16px;padding-top:12px;font-size:12px;color:var(--report-muted);}
+.graduation-evidence summary {cursor:pointer;color:#375044;min-height:32px;}
+.graduation-evidence p {margin:6px 0;}
+.graduation-save {min-height:44px;margin-top:2px;color:#f7edd7;background:#375044;border:2px solid #253c31;font-size:14px;cursor:pointer;}
+.graduation-save:hover {background:#466752;}
+.graduation-report button:focus-visible,.graduation-report summary:focus-visible {outline:3px solid #8e5526;outline-offset:4px;}
+.graduation-sample {margin:0 0 18px;padding:8px 12px;background:#e2cd9e;color:#554020;font-size:12px;}
+.game-panel.demo-end:has(.graduation-report) {width:min(760px,calc(100vw - 24px));max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;scrollbar-color:#9c7e4c #30261b;}
+.demo-end:has(.graduation-report) .demo-end-head {padding:12px 20px;font-size:13px;color:#e8cf98;}
+.demo-end:has(.graduation-report) .demo-end-teaser {margin-top:16px;}
+.demo-end:has(.graduation-report) .demo-end-teaser summary {cursor:pointer;font-size:14px;min-height:36px;}
+.demo-end:has(.graduation-report) .demo-end-foot {flex-wrap:wrap;}
+@media(max-width:600px) {.graduation-report {padding:22px 19px;font-size:14px;}.graduation-heading {gap:8px;flex-wrap:wrap;}.graduation-title {gap:10px;margin:20px 0;}.graduation-title h2 {font-size:22px;}.graduation-stamp {width:74px;height:74px;}.graduation-stamp b {font-size:14px;}.graduation-style {font-size:19px;}.graduation-signature {gap:16px;}.graduation-signature p {max-width:23ch;}}
+@media(prefers-reduced-motion:no-preference) {.graduation-stamp {animation:graduation-stamp-settle .3s ease-out both;}@keyframes graduation-stamp-settle {from {transform:rotate(-8deg) scale(1.15);}to {transform:rotate(-8deg) scale(1);}}}
+
+.graduation-fun{border-top:1px solid #b5a17d;padding-top:20px;margin-top:26px}.graduation-fun>h4{font-size:16px;color:#375044;margin:0}.graduation-fun details{font-size:12px;color:#685b47}.graduation-fun summary{cursor:pointer;min-height:32px;padding-top:5px}
+
+/* Scroll placeholder. Enable approved art only after the delivery is checked. */
+.graduation-report{margin:18px 12px 22px;padding-top:58px;padding-bottom:46px;background-color:#f1e1b8;background-image:var(--graduation-scroll-body,linear-gradient(90deg,#d9ba7b 0%,#f2e3bd 4%,#f5e8c9 50%,#f2e3bd 96%,#d9ba7b 100%));background-size:100% auto;background-repeat:repeat-y;box-shadow:0 3px 12px #21180e45;border-left:1px solid #b99b62;border-right:1px solid #b99b62}
+.graduation-report::before,.graduation-report::after{content:"";position:absolute;left:-12px;right:-12px;height:30px;background-image:var(--graduation-scroll-top,linear-gradient(#d4b176,#f4e3b9 40%,#c6a165 85%,#947340));background-size:100% 100%;border:1px solid #aa864e;border-radius:12px;box-shadow:0 4px 5px #30211430;pointer-events:none}
+.graduation-report::before{top:0}.graduation-report::after{bottom:-1px;background-image:var(--graduation-scroll-bottom,linear-gradient(#b28e52,#f5e6c2 50%,#b38d50))}
+.graduation-heading{position:relative}.graduation-game-record{margin:26px 0;padding:20px 0;border-top:1px solid #b5a17d;border-bottom:1px solid #b5a17d}.graduation-game-record h3{font-size:18px;color:#375044;margin:0 0 12px}.graduation-game-record dl{margin:0}.graduation-game-record dl>div{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:5px 0}.graduation-game-record dt{font-size:13px;color:#685b47}.graduation-game-record dd{margin:0;font-size:14px;overflow-wrap:anywhere}.graduation-record-scope{font-size:11px;color:#685b47;line-height:1.7;margin:12px 0}.graduation-game-record details{font-size:12px;color:#375044}.graduation-game-record summary{min-height:36px;cursor:pointer;padding-top:6px}.graduation-game-record h4{margin:12px 0 6px}.graduation-game-record ul{padding-left:20px;margin:0}.graduation-game-record li{margin:4px 0}.graduation-game-record details p{margin:4px 0}
+.graduation-report[data-scroll-art="approved"]{--graduation-scroll-body:url('/art/ui/graduation/scroll-body.png');--graduation-scroll-top:url('/art/ui/graduation/scroll-top.png');--graduation-scroll-bottom:url('/art/ui/graduation/scroll-bottom.png')}.graduation-report[data-scroll-art="approved"]::before,.graduation-report[data-scroll-art="approved"]::after{height:72px;border:0;border-radius:0;box-shadow:none}.graduation-report[data-scroll-art="approved"]{padding-top:96px;padding-bottom:96px}
+@media(max-width:600px){.graduation-report{margin:18px 9px;padding:48px 16px 38px}.graduation-report::before,.graduation-report::after{left:-8px;right:-8px;height:24px}.graduation-game-record dl>div{grid-template-columns:76px 1fr;gap:8px}.graduation-game-record dd{font-size:13px}.graduation-report[data-scroll-art="approved"]{padding-top:76px;padding-bottom:76px}}

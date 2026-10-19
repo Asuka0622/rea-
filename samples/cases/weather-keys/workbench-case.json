@@ -469,11 +469,12 @@
         "items": [
           {
             "id": "monitor",
+            "art": "weather-keys-monitor",
             "label": "阿哲的电脑",
             "look": "laptop",
             "at": [
               150,
-              134
+              92
             ],
             "stand": [
               150,
@@ -501,21 +502,22 @@
                 }
               ]
             },
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "todo",
+            "art": "weather-keys-todo",
             "label": "显示器上的便签",
             "look": "chat",
             "at": [
-              106,
-              127
+              164,
+              80
             ],
             "stand": [
               96,
               146
             ],
-            "size": 20,
+            "size": 8,
             "lines": [
               {
                 "text": "便签写着：「TODO: 上线前把密钥挪到服务器上」。下面一行是铅笔补的：「一直没挪」。"
@@ -532,21 +534,22 @@
                 }
               ]
             },
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "printout",
+            "art": "weather-keys-printout",
             "label": "打印出来的配置",
             "look": "paper",
             "at": [
-              184,
-              127
+              188,
+              94
             ],
             "stand": [
               190,
               146
             ],
-            "size": 22,
+            "size": 15,
             "lines": [
               {
                 "text": "config.json 打印了一页：主题、更新通道、管理员密码，一行行都在。"
@@ -563,21 +566,22 @@
                 }
               ]
             },
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "rack",
+            "art": "weather-keys-rack",
             "label": "统计服务器",
             "look": "router",
             "at": [
-              275,
-              117
+              266,
+              123
             ],
             "stand": [
               270,
               150
             ],
-            "size": 26,
+            "size": 30,
             "wall": true,
             "lines": [
               {
@@ -595,15 +599,16 @@
                 }
               ]
             },
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "poster",
+            "art": "weather-keys-poster",
             "label": "发布清单",
             "look": "clock",
             "at": [
-              126,
-              56
+              116,
+              78
             ],
             "stand": [
               126,
@@ -618,6 +623,7 @@
             ],
             "clue": {
               "id": "poster",
+              "art": "weather-keys-poster",
               "title": "发布清单",
               "text": "阿哲自己列的发布三步：搜 key / token / password，挪到服务器，装干净版本再发。",
               "dict": [
@@ -627,28 +633,29 @@
                 }
               ]
             },
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "router",
+            "art": "weather-keys-router",
             "label": "角落的路由器",
             "look": "router",
             "at": [
-              85,
-              161
+              204,
+              94
             ],
             "stand": [
               60,
               164
             ],
-            "size": 20,
+            "size": 16,
             "optional": true,
             "lines": [
               {
                 "text": "角落的路由器一直亮着。机房里所有机器的网络都从这里出去。"
               }
             ],
-            "hidden": true
+            "hidden": false
           }
         ]
       },

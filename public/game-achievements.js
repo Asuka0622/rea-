@@ -98,6 +98,14 @@ function load() {
   }
 }
 
+export function achievementSnapshot(state = {}) {
+  return {
+    achievements: ACHIEVEMENTS.filter(a => Number.isFinite(state.got?.[a.id]) && state.got[a.id] > 0).map(a => ({ id: a.id, title: a.title, unlockedAt: state.got[a.id] })),
+    achievementTotal: ACHIEVEMENTS.length,
+    regions: [...new Set(Array.isArray(state.regions) ? state.regions.filter(id => typeof id === 'string') : [])],
+  };
+}
+
 export function createAchievements({ onUnlock = () => {} } = {}) {
   const state = load();
   const save = () => {
@@ -161,6 +169,7 @@ export function createAchievements({ onUnlock = () => {} } = {}) {
   timer?.unref?.();
   return {
     note,
+    snapshot: () => achievementSnapshot(state),
     got: (id) => state.got[id] || null,
     count: () => Object.keys(state.got).length,
   };

@@ -1,0 +1,37 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NPC对白预览 · 比特镇</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/game.css">
+<style>body{margin:0;background:#111722;color:#f0e3bf;font:16px/1.7 system-ui,sans-serif;padding:24px}main{max-width:900px;margin:auto}h1{font-size:26px;color:#e7c36b}.context{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}label{display:grid;gap:4px}select,input,button{min-height:40px;font:inherit;color:#f0e3bf;background:#263e37;border:1px solid #a1844b;padding:5px 10px}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #e7c36b;outline-offset:3px}.preview-dialogue{display:flex;align-items:center;gap:18px;margin:24px 0;padding:18px;background:#f0e3bf;color:#282b26;border:2px solid #a1844b;min-height:150px}.preview-dialogue img{width:120px;height:120px;object-fit:contain;flex:0 0 auto}.preview-dialogue p{margin:10px 0}.preview-dialogue b{font-size:20px}#detail{font-size:13px;color:#c8baa0;overflow-wrap:anywhere}a{color:#e7c36b}@media(max-height:500px){body{padding:12px}.preview-dialogue{margin:12px 0;padding:12px;min-height:100px}.preview-dialogue img{width:86px;height:86px}.context{gap:8px;margin:8px 0}h1{margin:0;font-size:21px}}@media(max-width:450px){.preview-dialogue{gap:10px}.preview-dialogue img{width:70px;height:70px}}
+</style></head><body><main><h1>NPC对白预览</h1><p>模拟环境条件，仅验证对白。不会改变正式存档、任务或天气；NPC日程和新动作尚未接入。</p>
+<div class="context"><label>人物<select id="npc"></select></label><label>时间<input id="time" type="time" value="11:58"></label>
+<label>天气<select id="weather"><option value="">未知</option><option value="clear">晴</option><option value="cloudy">阴</option><option value="rain">雨</option><option value="storm">雷雨</option><option value="snow">雪</option></select></label>
+<label>季节<select id="season"><option value="">未知</option><option value="spring">春</option><option value="summer">夏</option><option value="autumn">秋</option><option value="winter">冬</option></select></label>
+<label>遮蔽<select id="shelter"><option value="">未知</option><option value="exposed">露天</option><option value="covered">屋檐</option><option value="indoors">室内</option></select></label>
+<label>风<select id="wind"><option value="">无特定状态</option><option value="strong">大风</option></select></label>
+<label>近期事件<select id="event"><option value="">无</option><option value="rain-cleared">雨停10分钟</option></select></label></div>
+<button id="next" type="button">换一句</button><section class="preview-dialogue" aria-label="人物对话"><img id="face" alt=""><div class="case-say-text"><b id="name"></b><p id="text" aria-live="polite"></p></div></section>
+<p id="detail"></p><a href="/?demo">返回试玩</a></main><script type="module">
+import {createNpcDialogue,portraitCandidates} from './npc-dialogue.js';
+import {NPC_DIALOGUE_PROFILES as profiles,NPC_DIALOGUE_PORTRAITS} from './npc-dialogue-data.js';
+const by=id=>document.getElementById(id);
+let stamp=0;
+const engine=createNpcDialogue({profiles,storage:null,now:()=>stamp,cooldownMs:0});
+const portraits=new Set(NPC_DIALOGUE_PORTRAITS);
+for(const p of profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;by('npc').append(o);}
+function update(){
+ const [h,m]=by('time').value.split(':').map(Number);
+ const ctx={minutes:Number.isFinite(h)&&Number.isFinite(m)?h*60+m:null};
+ for(const k of ['weather','season','shelter','wind'])ctx[k]=by(k).value||null;
+ if(by('event').value){ctx.recentEvent='rain-cleared';ctx.eventAgeMinutes=10;}
+ stamp+=6001;
+ const line=engine.select(by('npc').value,ctx);
+ if(!line){by('text').textContent='当前没有可用对白。';return;}
+ by('name').textContent=line.name;by('text').textContent=line.text;
+ const candidates=portraitCandidates(line.who,line.face);
+ const file=candidates.find(p=>portraits.has(p))||candidates.at(-1);
+ by('face').src='/art/faces/'+file+'.webp';by('face').alt=line.name;
+ by('detail').textContent=line.id+' · '+line.kind+' · 当前模拟环境：'+JSON.stringify(ctx);
+}
+by('next').addEventListener('click',update);
+for(const id of ['npc','time','weather','season','shelter','wind','event'])by(id).addEventListener('change',update);
+update();
+</script></body></html>

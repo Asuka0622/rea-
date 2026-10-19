@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createQuests, QUEST_LINES, ARCHIVE_QUEST, MAIN_QUEST, DIFFICULTIES, FOCUSES } from "../public/game-quests.js";
+import { createQuests, QUEST_LINES, ARCHIVE_QUEST, MAIN_QUEST, DIFFICULTIES, FOCUSES, DEMO_QUEST, DEMO_CASES } from "../public/game-quests.js";
 import { caseCatalog } from "../lib/cases.mjs";
 
 test("the main line is the prologue (same flow as the preview); the archive side line opens after it", () => {
@@ -138,4 +138,12 @@ test("the demo opens its cases act by act", () => {
   playDemo(later, { until: PROLOGUE_CASES[5] });
   assert.equal(later.caseReachable(PROLOGUE_CASES[5]), true);
   assert.equal(quests.caseReachable("not-a-demo-case"), true);
+});
+
+test("demo clocks stay stopped through the London introduction", () => {
+  const quests = createQuests([DEMO_QUEST], { key: "demo-clock-player-qa" });
+  assert.equal(quests.clockState(), "stopped");
+  playDemo(quests);
+  assert.equal(quests.current(), null);
+  assert.equal(quests.clockState(), "stopped");
 });

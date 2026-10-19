@@ -35,3 +35,13 @@ test('the farm scene uses the actual save character, day and gold instead of con
   const state=JSON.parse(packed.body),text=farm.game.puzzle.scene.items.find(x=>x.id==='console').lines.map(x=>x.text).join(' ');
   assert.ok(text.includes(state.player));assert.ok(text.includes(String(state.day)));assert.ok(text.includes(String(state.gold)));
 });
+
+test('calculator accepts the actual local authorization assignment as evidence, but not an ordinary display change',()=>{
+  const calculator=caseCatalog().find(item=>item.id==='calculator-eggs');
+  const statement=calculator.game.puzzle.confront.statements.find(statement=>statement.text.includes('无害彩蛋'));
+  const lines=shippedLines(calculator.game.lab.sources);
+  const authorization=lines.find(line=>line.text.includes('license = { pro: true }'));
+  assert.ok(authorization);
+  assert.equal(breaks(statement,{text:authorization.text}),true);
+  assert.equal(breaks(statement,{text:'screen.textContent = display;'}),false);
+});
