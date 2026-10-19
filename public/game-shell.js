@@ -9,7 +9,7 @@ import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
 import { lumiArt, knowArt, loadLook, saveLook, mountLookPicker } from "./lumi-look.js";
 import { createStoryFx } from "./story-fx.js";
-import { daypart, skipTo, clockLabel } from "./prologue-clock.js";
+import { daypart, skipTo, clockLabel, SEASON } from "./prologue-clock.js";
 import { vigilScript, towerScript } from "./prologue-scenes.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
@@ -526,11 +526,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   const npcDialogue = createNpcDialogue({ profiles: NPC_DIALOGUE_PROFILES });
   function npcChatterContext(npc) {
-    // No weather/season system exists in this branch yet. Unknown fields must not invent weather.
+    // No weather system exists in this branch yet. Unknown fields must not invent weather.
+    // 季节固定在秋天（prologue-clock.js SEASON），季节系统放到正式版。
     const env = regionData()?.environment || {};
     const stopped = quests?.clockState() === "stopped";
     return { minutes: clock.minutes, stopped, weather: env.weather ?? null,
-      season: env.season ?? null, shelter: npc.environment?.shelter ?? null, wind: env.wind ?? null };
+      season: env.season ?? SEASON, shelter: npc.environment?.shelter ?? null, wind: env.wind ?? null };
   }
   function chatWithNpc(npc) {
     const line = npcDialogue.select(npc.id, npcChatterContext(npc));

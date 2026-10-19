@@ -4,6 +4,8 @@
 
 export const TOWER_STOP = 11 * 60 + 58; // 钟楼的钟面：看上去是 11:58，其实是某天夜里的 23:58 停的
 export const DAY = 24 * 60;
+/** 季节：第一部的序章固定在秋天（只画了秋季的图）。季节系统放到正式版做（docs/roadmap.md）。 */
+export const SEASON = "autumn";
 
 /** 一天里的哪一段：画面用它调光（白天不调）。 */
 export function daypart(minutes) {
