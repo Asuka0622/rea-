@@ -120,6 +120,24 @@
 | 星博士 `xingbo` | normal / happy / thinking / surprised / guilty | 标准行，见第7节 | 五张头像与4×5标准行候选已交付，待验收；精灵表复用收件目录 #141 |
 | 开发者 `dev`（卡牌对质对手） | normal / flustered | 无行走表：半身立绘 + 对质姿势2 | 小游戏「当面对质」的新角色；先交方向稿定人设（白衬衫工牌、抱平板），见 requests-minigames.md |
 
+### 男版路米 `lumi-m`（2026-10-19 新增，P0）
+
+玩家扮演路米，开场可以选女生或男生。**女版是现有形象，一律不改；男版是女版的性转**：同一个人、同一个年纪、同一套配色和识别特征，单看就能认出是「路米」。
+
+- **保留（逐项对照女版）**：薄荷青短发和头顶一撮呆毛、琥珀色眼睛、金框绿方片发夹、挂在脖子上的耳机、米色斗篷＋灰色连帽衫、深色短裤、棕色短靴。
+- **只改这些**：脸型和眉眼收一点，去掉女性化的长睫毛和腮红；头发更短更利落（两侧不过耳），呆毛保留；长筒袜换成深色及膝袜或小腿长裤。身高、头身比、脚底位置与女版一致（同一个精灵框里站得一样高）。不要画成另一个角色，也不要成年化。
+
+| 文件 | 规格 | 说明 |
+|---|---|---|
+| `public/art/faces/lumi-m-{normal,happy,thinking,surprised,point}.webp` | 与女版同尺寸（320×320）、同裁切、同眼线粗细 | 对应女版现有五张；开场选样子用 normal，结业报告证件照用 normal / happy / thinking / surprised |
+| `public/art/pixel/anim-lumi-m.png` | 与 `anim-lumi.png` 完全同格式：384×960，每帧 96×192，4 列 × 5 行 | 程序直接复用女版的 `anim-lumi.json`，帧数、行序、脚底锚点不能变 |
+| `public/art/pixel/anim-lumi-m-unified.png`、`anim-lumi-m-case.png` | 分别与 `anim-lumi-unified.png`、`anim-lumi-case.png` 同格式（256×640） | 小镇和案件房间用 |
+| `public/art/pixel/sprite-lumi-m.png` | 与 `sprite-lumi.png` 同尺寸（96×192） | 静态站姿后备 |
+| `public/art/pixel/anim-lumi-m-victorian.png` | 与女版维多利亚标准行同格式（384×960） | P1，1843 伦敦用，可以晚于上面几项 |
+
+- **接入**：文件名把 `lumi` 换成 `lumi-m`，放进同一目录，程序自动识别（`public/lumi-look.js`）。哪张没交，游戏就继续用女版那张，所以可以分批交，先交头像和 `anim-lumi-m`。路米四向 8 帧返修如果先给女版落地，男版按同一新格式再出。
+- **验收**：男女两版同一表情、同一帧并排比对：身高、头身比、脚底锚点、配色一致；男版单独看能认出是路米。现在开场的男生卡片显示「男版形象绘制中」占位，交付后自动换成真头像。
+
 ### 另外三个现场
 
 | 场景 | 背景文件 | `case-props/` 下物品 |

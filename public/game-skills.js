@@ -139,7 +139,7 @@ export const branchesOfPart = (part = PART) => SKILL_TREE.filter((branch) => (br
 export const skillsFrom = (stepId) => SKILL_TREE.flatMap((branch) => branch.skills.filter((skill) => skill.from === stepId));
 
 /** Ranks by skills lit: every 3 skills is a level. */
-const TITLES = ["新来的助手", "见习侦探助手", "小镇技术员", "工坊学徒", "比特镇达人", "钟楼守护者"];
+const TITLES = ["新开张的侦探", "见习侦探", "小镇技术员", "工坊学徒", "比特镇达人", "钟楼守护者"];
 export function rank(lit) {
   const level = 1 + Math.floor(lit / 3);
   return { level, title: TITLES[Math.min(TITLES.length - 1, Math.floor((level - 1) / 2))], into: lit % 3, per: 3 };

@@ -157,7 +157,7 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
     tabBar.replaceChildren(...tabs.map(([id, text, ic]) => {
       const count = id === "notes" ? state.clues.length + state.words.size + state.evidence.length : id === "board" ? `${state.solved.size}/${puzzle.board.length}` : "";
       return h("button", { type: "button", role: "tab", class: `pz-tab ${state.tab === id ? "on" : ""}`, "aria-selected": String(state.tab === id), onclick: () => ((state.tab = id), render()) }, icon(ic, { size: 14 }), text, count !== "" && h("small", {}, String(count)));
-    }), h("button", { type: "button", class: "btn small ghost pz-hint", onclick: hint }, icon("bulb", { size: 13 }), "问路米"));
+    }), h("button", { type: "button", class: "btn small ghost pz-hint", onclick: hint }, icon("bulb", { size: 13 }), "问小克"));
   }
 
   const roomSay = h("p", { class: "pz-say", role: "status" });
@@ -371,7 +371,7 @@ export function createPuzzle({ h, icon, item, talk, line, onMistake, onHint, onD
       text = g >= 0 ? puzzle.board[g].hint : "推理板都盖章了，去下一步吧。";
     }
     say(state.phase === "confront" ? confrontSay : state.tab === "search" ? searchSay : state.tab === "board" ? boardSays[Math.max(0, puzzle.board.findIndex((_, i) => !state.solved.has(i)))] : roomSay, text);
-    await speak([{ text, face: "thinking" }]);
+    await speak([{ who: "xiaoke", text, face: "thinking" }]);
   }
 
   /* ----- layout ----- */

@@ -45,12 +45,12 @@ export const MAIN_QUEST = {
   chapters: [
     {
       id: "prologue",
-      title: "序章 · 新来的助手",
+      title: "序章 · 新开张的事务所",
       steps: [
         {
-          id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所找路米",
-          say: [{ text: "欢迎来到比特镇！我是路米，在镇上开了一家侦探事务所，专门帮大家查软件。", face: "happy" }, { text: "你愿意当我的助手吗？先跟我回事务所看看吧，就在广场正北边。", face: "normal" }],
-          done: [{ text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" }, { text: "……咦，都中午了，钟楼怎么没响？算了，先办正事。开工之前，你得先学点基础。", face: "thinking" }],
+          id: "visit-office", type: "enter", spot: "home", goal: "去广场北边的侦探事务所",
+          say: [{ text: "我叫路米。今天，我的侦探事务所在比特镇开张了，专门帮大家查软件。", face: "happy" }, { text: "事务所就在广场正北边，先过去看看。", face: "normal" }],
+          done: [{ text: "这就是我的事务所。侦探的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" }, { text: "……咦，都中午了，钟楼怎么没响？算了，先办正事。开工之前，先去图书馆把基础温一遍。", face: "thinking" }],
         },
         {
           id: "visit-library", type: "enter", spot: "learn", goal: "去图书馆找书奶奶上第一课",
@@ -202,7 +202,7 @@ export const REA_QUEST = {
       id: "case-1",
       title: "委托一 · 小林的记账软件",
       steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "第一个委托来自小林，他住在住宅区的宿舍楼：从广场往西走就到。他说新装的记账软件有点不对劲。", face: "thinking" }] }],
-      done: [{ text: "漂亮！你已经学会看软件往哪里发数据、用了哪些敏感能力了。", face: "happy" }],
+      done: [{ who: "xiaoke", text: "漂亮！软件往哪里发数据、用了哪些敏感能力，你都查出来了。", face: "happy" }],
     },
     {
       id: "case-2",
@@ -220,7 +220,7 @@ export const REA_QUEST = {
       id: "case-4",
       title: "委托四 · 朵朵的存档",
       steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "朵朵想知道她的种田游戏是怎么存档的。农场在住宅区，红色谷仓那里。", face: "normal" }] }],
-      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
+      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。文件格式，我也能看懂了。", face: "happy" }],
     },
     {
       id: "case-5",
@@ -238,20 +238,20 @@ export const REA_QUEST = {
       id: "case-6",
       title: "委托六 · 王奶奶的手电筒",
       steps: [{ id: "solve-flashlight", type: "solve", case: "flashlight-apk", spot: "flashlight-apk", goal: "去王奶奶家，看看手电筒为什么要通讯录", say: [{ text: "王奶奶装了个手电筒，它却要看通讯录。王奶奶家门口晾着衣服，很好认。", face: "thinking" }] }],
-      done: [{ text: "权限和功能对不上，就是最明显的危险信号。王奶奶要谢谢你呢！", face: "happy" }],
+      done: [{ text: "权限和功能对不上，就是最明显的危险信号。王奶奶非要留我喝茶。", face: "happy" }],
     },
     {
       id: "stories",
       title: "尾声 · 档案馆的故事",
-      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去档案馆，听听真实发生过的故事", say: [{ text: "你已经破了六个案子。住宅区档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
-      done: [{ text: "这些都是真事。你学到的方法，真正的安全研究员每天都在用。", face: "thinking" }],
+      steps: [{ id: "read-stories", type: "solve", case: "real-stories", spot: "real-stories", goal: "去档案馆，听听真实发生过的故事", say: [{ text: "六个案子都破了。住宅区档案馆的老秦收集了很多真实发生过的故事，去听听吧。", face: "normal" }] }],
+      done: [{ text: "这些都是真事。我用的这些方法，真正的安全研究员每天都在用。", face: "thinking" }],
     },
     {
       id: "finale",
       title: "结案 · 见习侦探",
       badge: { id: "rea-detective", label: "见习侦探" },
-      steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所向路米报告", say: [{ text: "回事务所来吧，我有东西要给你。", face: "happy" }] }],
-      done: [{ text: "这枚「见习侦探」徽章是你的了！逆向分析的基础，你已经全部学会。", face: "happy" }, { text: "以后钟楼的案子，也要靠你这双侦探的眼睛了。", face: "happy" }],
+      steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所，把六份委托的档案整理好", say: [{ text: "六份委托都结了。回事务所，把档案整理好。", face: "happy" }] }],
+      done: [{ who: "smith", text: "路米在吗？镇长让我捎来的：「见习侦探」徽章。逆向分析的基础，你算是全学会了。", face: "happy" }, { who: "smith", text: "以后钟楼的案子，也要靠你这双侦探的眼睛了。", face: "happy" }],
     },
   ],
 };
@@ -272,18 +272,23 @@ export const DEMO_QUEST = {
     {
       id: "d-prologue",
       act: 1,
-      title: "序章 · 新来的助手",
+      title: "序章 · 路米的第一份档案",
       steps: [
         {
-          id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所找路米",
+          id: "visit-office", type: "enter", spot: "home", goal: "去侦探事务所，开始路米的第一天",
           say: [
-            { text: "欢迎来到比特镇！我是路米，在镇上开了一家侦探事务所，专门帮大家查软件。", face: "happy" },
-            { text: "你愿意当我的助手吗？事务所就在广场正北边，红屋顶、挂着放大镜招牌的那栋。", face: "normal" },
+            { text: "我叫路米。证件照拍好了，接下来该去事务所看看今天的委托了。", face: "happy" },
+            { text: "我的事务所就在广场正北边，红屋顶、挂着放大镜招牌的那栋。", face: "normal" },
           ],
           done: [
-            { text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" },
-            { focus: "story balanced", text: "镇上的人遇到可疑的软件，都会来这儿找我。最近委托特别多，一个人实在忙不过来。", face: "thinking" },
-            { focus: "story balanced", text: "墙上这块软木板还空着。每查清一件事，我们就钉一张卡上去。", face: "normal" },
+            { text: "这就是我的事务所。侦探的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" },
+            { focus: "story balanced", text: "镇上的人遇到可疑的软件，都会来这儿找我。先从一份委托开始，把每条证据查清楚。", face: "thinking" },
+            { focus: "story balanced", text: "墙上这块软木板还空着。每查清一件事，就钉一张卡上去。", face: "normal" },
+            { who: "xiaoke", text: "叮！你好，我是小克，比特镇的 AI 助手。事务所的电脑里也有我。查案要帮忙，尽管叫我！", face: "happy", fx: { type: "xiaoke", face: "happy" } },
+            { text: "那先考考你：北区的钟楼，为什么停在 11:58？", face: "thinking" },
+            { who: "xiaoke", text: "这个我知道！钟楼年久失修，齿轮全生锈了。", face: "happy" },
+            { text: "……说得跟真的一样。钟楼一直归铁叔照看，他可不会让齿轮生锈。", face: "thinking" },
+            { text: "记下了：小克说的话，核实过再信。", face: "normal" },
           ],
         },
       ],
@@ -293,21 +298,21 @@ export const DEMO_QUEST = {
       id: "d-case-1",
       act: 1,
       title: "第一幕 · 小林的记账软件",
-      steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "小林住在住宅区的宿舍楼：从广场往西走，看到一栋好多窗户的三层楼就是。", face: "normal" }] }],
-      done: [{ text: "漂亮！软件往哪里发数据、偷偷用了哪些能力，你已经会查了。", face: "happy" }],
+      steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ who: "xiaoke", text: "小林住在住宅区的宿舍楼：从广场往西走，好多窗户的那栋三层楼就是。", face: "normal" }] }],
+      done: [{ who: "xiaoke", text: "漂亮！软件往哪里发数据、偷偷用了哪些能力，你都查出来了。", face: "happy" }],
     },
     {
       id: "d-case-2",
       act: 1,
       title: "第一幕 · 朵朵的存档",
-      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去住宅区找朵朵，当面接存档委托", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵就在住宅区红色谷仓的门口。先走近她，按 E 交谈接下委托，再进农场。", face: "thinking" }] }],
-      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
+      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去住宅区找朵朵，当面接存档委托", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。", face: "thinking" }, { who: "xiaoke", text: "朵朵就在住宅区红色谷仓的门口。走近她按 E，当面接下委托，再进农场。", face: "normal" }] }],
+      done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。文件格式，我也能看懂了。", face: "happy" }],
     },
     {
       id: "d-case-3",
       act: 1,
       title: "第一幕 · 小雨的计算器",
-      steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "向广场的小石头打听，再去小雨家", say: [{ text: "还有一份委托来自小雨。先去中心广场找小石头，按 E 听他讲计算器的传闻，再去住宅区粉色屋顶的小雨家门口。", face: "happy" }] }],
+      steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "向广场的小石头打听，再去小雨家", say: [{ text: "还有一份委托来自小雨，说她的计算器里藏着秘密。", face: "happy" }, { who: "xiaoke", text: "先去中心广场找小石头，按 E 听他讲计算器的传闻；小雨家是住宅区粉色屋顶的那栋。", face: "normal" }] }],
       done: [{ text: "彩蛋可以留，后门不能留：藏起来的入口，要看门后面是什么。", face: "normal" }],
     },
     {
@@ -315,14 +320,17 @@ export const DEMO_QUEST = {
       act: 1,
       title: "中场 · 这三件事有关系吗",
       badge: { id: "rea-detective", label: "见习侦探" },
-      steps: [{ id: "pin-act1", type: "enter", spot: "home", goal: "回事务所，把三条线索钉上墙", say: [{ text: "三份委托都办完了！回事务所来吧，我有东西要给你。", face: "happy" }] }],
+      steps: [{ id: "pin-act1", type: "enter", spot: "home", goal: "回事务所，把三条线索钉上墙", say: [{ text: "三份委托都办完了。回事务所，把手账里的线索钉上墙。", face: "thinking" }] }],
       done: [
-        { text: "这枚「见习侦探」徽章是你的了！拆开软件、收集证据、拿证据说话，你都学会了。", face: "happy" },
+        { who: "smith", text: "路米在吗？镇上的规矩：新开的事务所办成三件委托，就发「见习侦探」徽章。喏，镇长让我捎来的。", face: "happy" },
+        { text: "谢谢铁叔！……对了，钟楼的钥匙一直在您那儿吧？它怎么就停了？", face: "happy" },
+        { who: "smith", text: "钥匙我守了二十年。规矩是：钟坏了，得镇长点头才能开门。镇长说「现在谁还看钟楼呀，大家都看手机」——不急。", face: "thinking" },
+        { who: "smith", text: "可我急。它停得太干脆了，不像是零件坏了。", face: "thinking" },
         { text: "不过，手账里有三条线索，哪个委托都没问，我却放不下。", face: "thinking" },
         { text: "小林的小账本，确实把数据发给了「悄悄统计」。朵朵的存档里有 23:58 的同步字段，小雨的调试页也写着 23:58 和「钟楼」。后两条还只是记录和配置，是否真上传过，要继续验证。", face: "thinking", fx: { type: "wall", cards: WALL_ACT1, ask: "悄悄统计 · 23:58 · 钟楼" } },
         { text: "悄悄统计、23:58、钟楼……这三件事，有关系吗？", face: "thinking" },
         { who: "xiaoke", text: "我可以帮你查悄悄统计！……嗯，我只查到它的广告：「让数据为你服务」。它具体在做什么，我不确定。", face: "unsure" },
-        { text: "能说「不确定」，比瞎猜强多了。委托板上又来了新的委托——接着查。", face: "happy" },
+        { text: "能说「不确定」，比上回编一个「齿轮生锈」强多了。委托板上又来了新的委托——接着查。", face: "happy" },
       ],
     },
     {
@@ -336,7 +344,7 @@ export const DEMO_QUEST = {
       id: "d-case-5",
       act: 2,
       title: "第二幕 · 周姐的便签更新",
-      steps: [{ id: "solve-notes", type: "solve", case: "notes-versions", spot: "notes-versions", goal: "接下周姐的委托：新版本到底改了什么", say: [{ text: "周姐的委托也在委托板上：便签软件的更新说明只有一句「修复了一些小问题」，她总觉得不对劲。", face: "normal" }] }],
+      steps: [{ id: "solve-notes", type: "solve", case: "notes-versions", spot: "notes-versions", goal: "接下周姐的委托：新版本到底改了什么", say: [{ text: "周姐的委托也在委托板上：便签软件的更新说明只有一句「修复了一些小问题」，她总觉得不对劲。", face: "normal" }, { who: "xiaoke", text: "周姐的公司在北区，钟楼旁边那栋大办公楼。", face: "normal" }] }],
       done: [{ text: "只看更新说明，永远不知道改了什么。新旧两版一对，再快进一天，全都看清了。", face: "happy" }],
     },
     {
@@ -347,7 +355,7 @@ export const DEMO_QUEST = {
       done: [
         { text: "五张卡片。我拿一卷红线，一张张连起来——", face: "thinking", fx: { type: "wall", cards: WALL_ACT2, ask: "每条线都指向：悄悄统计 · 23:58 · 钟楼" } },
         { text: "每一条，都指向悄悄统计。每一晚，都是 23:58。目的地，都是钟楼。", face: "surprised" },
-        { text: "六个软件里，已经有五个了……还差一个。", face: "thinking" },
+        { text: "五个软件，五条线，全连到同一个地方。镇上用着悄悄统计的，恐怕不止这五个。", face: "thinking" },
         { text: "住宅区的王奶奶，前两天说她想装个手电筒，问我们手机老弹东西是怎么回事。去看看她吧。", face: "normal" },
       ],
     },
@@ -355,7 +363,7 @@ export const DEMO_QUEST = {
       id: "d-case-6",
       act: 3,
       title: "第三幕 · 王奶奶的手电筒",
-      steps: [{ id: "solve-flashlight", type: "solve", case: "flashlight-apk", spot: "flashlight-apk", goal: "去住宅区找王奶奶，当面接下委托", say: [{ text: "王奶奶家在住宅区，院子里晾着衣服的那栋老房子。先在门口和她聊聊，再进屋。", face: "normal" }] }],
+      steps: [{ id: "solve-flashlight", type: "solve", case: "flashlight-apk", spot: "flashlight-apk", goal: "去住宅区找王奶奶，当面接下委托", say: [{ who: "xiaoke", text: "王奶奶家在住宅区，院子里晾着衣服的那栋老房子。先在门口和她聊聊，再进屋。", face: "normal" }] }],
       done: [{ text: "六个了。广告组件是悄悄统计做的，数据最后报给钟楼。", face: "thinking" }],
     },
     {

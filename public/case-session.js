@@ -1,4 +1,5 @@
 import { mountLab } from "./case-labs.js";
+import { lumiArt } from "./lumi-look.js";
 import { shippedLines, searchCode, termsIn, checkGroup, blanksOf, breaks } from "./case-puzzle.js";
 import {caseSnapshot,restoreCaseState,caseObjective} from './case-progress.js';
 import {createTension,spend,hintCost,loseHeart,retryConfront,tensionStars,left as pointsLeft,overBudget,expandAlias,HEARTS,TOOLS,unlockedTools,progressFromStars,canStamp} from './case-tension.js';
@@ -193,7 +194,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       h("div", { class: "nb-cover-edge", "aria-hidden": "true" }),
       h("div", { class: "nb-paper" },
         h("div", { class: "nb-head" }, h("b", {}, "侦探手账 · ", item.game.puzzle.title || client.name + "的委托"),
-          noHints ? h("span", { class: "nb-nohint" }, "复勘：没有提示") : h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问路米"),
+          noHints ? h("span", { class: "nb-nohint" }, "复勘：没有提示") : h("button", { class: "nb-hint", type: "button", onclick: () => hint(say) }, "问小克"),
           h("button", { class: "nb-close", type: "button", "aria-label": "合上手账", onclick: close }, "✕")),
         body,
         say),
@@ -567,7 +568,9 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
     open("confront", confrontView());
     say(puzzle.confront.intro || []);
   }
-  const portrait = (who, face) => {
+  const portrait = (speaker, face) => {
+    // 路米按玩家选的样子取头像（lumi-look.js）。
+    const who = speaker === "lumi" ? lumiArt("lumi-normal", { has: (x) => ui.portraits().has(x) }).replace(/-normal$/, "") : speaker;
     const name = `${who}-${face}`;
     return ui.portraits().has(name) || ui.portraits().has(`${who}-normal`) ? h("img", { src: `/art/faces/${ui.portraits().has(name) ? name : `${who}-normal`}.webp`, alt: "" }) : h("span", { class: "cf-standin" }, who === "lumi" ? "路" : client.name.slice(0, 1));
   };
@@ -649,7 +652,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         h("div", { class: "cf-actions" },
           h("button", { type: "button", class: "cf-act", onclick: press }, "追问"),
           h("button", { type: "button", class: "cf-act primary", onclick: () => ((strip.hidden = !strip.hidden), sound.page()) }, "出示证据"),
-          h("button", { type: "button", class: "cf-act ghost", onclick: () => hint(null) }, "问路米")),
+          h("button", { type: "button", class: "cf-act ghost", onclick: () => hint(null) }, "问小克")),
         count,
         strip));
     view.repaint = paint;
@@ -693,7 +696,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
         h("p", { class: "cs-kicker" }, "侦探事务所 · 委托完成"),
         h("h3", {}, item.title),
         h("p", { class: "cs-stars", "aria-label": `评价 ${stars} 星` }, "★".repeat(stars) + "☆".repeat(3 - stars)),
-        h("p", { class: "cs-score" }, `犯错 ${state.mistakes} 次 · 问路米 ${state.hints} 次 · 行动点 ${tension.spent}/${tension.budget}${overBudget(tension) ? `（超支 ${overBudget(tension)}）` : ""} · 心证 ${tension.hearts}/${HEARTS}`),
+        h("p", { class: "cs-score" }, `犯错 ${state.mistakes} 次 · 问小克 ${state.hints} 次 · 行动点 ${tension.spent}/${tension.budget}${overBudget(tension) ? `（超支 ${overBudget(tension)}）` : ""} · 心证 ${tension.hearts}/${HEARTS}`),
         fresh.length && h("p", { class: "cs-tools" }, "新工具：", fresh.map((id) => {
           const tool = TOOLS.find((t) => t.id === id);
           return tool ? `${tool.name}（${tool.desc}）` : id;
@@ -709,13 +712,13 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   /* ----- hints ----- */
   async function hint(sayEl) {
     if (noHints) {
-      const text = "复勘的时候没有路米提示：自己看代码。";
-      if (sayEl) sayEl.textContent = `路米：${text}`;
-      else await say([{ text, face: "thinking" }]);
+      const text = "复勘不能问我哦：这次自己看代码。";
+      if (sayEl) sayEl.textContent = `小克：${text}`;
+      else await say([{ who: "xiaoke", text, face: "normal" }]);
       return;
     }
     state.hints += 1;
-    charge(hintCost(tension), "问路米");
+    charge(hintCost(tension), "问小克");
     checkpoint();
     let text;
     if (state.phase === "confront") text = puzzle.confront.statements[state.statement].hint || "先「追问」，听听这句话背后还有什么。";
@@ -726,8 +729,9 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
       const g = puzzle.board.findIndex((_, i) => !state.solved.has(i));
       text = g >= 0 ? puzzle.board[g].hint : "推理都盖章了。";
     }
-    if (sayEl) sayEl.textContent = `路米：${text}`;
-    else await say([{ text, face: "thinking" }]);
+    // 提示由小克给（玩家就是路米）：它看得到手账，说的是对的，但最后拿主意的是路米。
+    if (sayEl) sayEl.textContent = `小克：${text}`;
+    else await say([{ who: "xiaoke", text, face: "thinking" }]);
   }
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

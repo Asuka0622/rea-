@@ -1,6 +1,7 @@
 import { createNpcDialogue, portraitCandidates } from "./npc-dialogue.js";
 import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
+import { lumiArt, knowArt, loadLook, saveLook, mountLookPicker } from "./lumi-look.js";
 import { createStoryFx } from "./story-fx.js";
 import { daypart, skipTo, clockLabel } from "./prologue-clock.js";
 import { vigilScript, towerScript } from "./prologue-scenes.js";
@@ -142,7 +143,7 @@ const ACTIONS = {
 };
 
 const EXTRA_LINES = {
-  home: "想从哪儿开始？第一次来的话，推荐先看看委托板。",
+  home: "想从哪儿开始？拿不准的话，先看看委托板。",
   learn: "书架上的教程按顺序排好了，挑一本翻开吧。",
   engines: "需要哪件工具，我帮你挑。",
   clients: "选好你常用的 AI 助手，我们把工具寄过去。",
@@ -318,6 +319,12 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
 
   /* ----- drawing ----- */
   const has = (name) => art().pixel.has(name);
+  // 路米的图按玩家选的样子取（lumi-look.js）：男版那张有了用男版，没有就用女版。
+  knowArt((name) => art().pixel.has(name) || art().portraits.has(name));
+  const lumiSheet = (fallback) => {
+    const unified = lumiArt("anim-lumi-unified", { has });
+    return has(unified) ? unified : lumiArt(fallback, { has });
+  };
   // The town is five region maps (game-regions.js) once their pictures exist; before that, one town.png.
   const regional = () => has("regions/town-center");
   let region = "center";
@@ -381,7 +388,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       ...npcEls(),
       ...sceneryEls(),
       // fronts are added by addFronts() below
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet", style: `background-image:url(/art/pixel/${lumiSheet("anim-lumi")}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player")),
     );
     placePlayer();
     addFronts();
@@ -709,7 +716,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     target = null;
     roomEl = h("div", { class: "game-room" },
       picture ? h("img", { class: "game-bg", src: `/art/pixel/room-${id}.png`, alt: "" }) : h("div", { class: `game-bg drawn room ${id}`, "aria-hidden": "true" }, h("span", { class: "window" }), h("span", { class: "shelf" }), h("span", { class: "desk" })),
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${lumiSheet("anim-lumi")}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
     stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon(scene.icon, { size: 16 }), scene.place));
     placePlayer();
     animate(0, 0, 0);
@@ -718,7 +725,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   /* ----- dialogue: click or press Enter/Space to continue; choices when the lines run out ----- */
   // A line is "text" or { text, face }: the face picks Lumi's expression for that line.
   const portrait = (face = "normal", who = "lumi", name = "") => {
-    const file = portraitCandidates(who, face).find((n) => art().portraits.has(n));
+    const file = portraitCandidates(who, face).map((n) => lumiArt(n, { has: (x) => art().portraits.has(x) })).find((n) => art().portraits.has(n));
     if (file) return h("div", { class: "case-portrait", "aria-hidden": "true" }, h("img", { src: `/art/faces/${file}.webp`, alt: "", width: 160, height: 160 }));
     // Someone without a portrait yet: a wooden frame with the first character of their name.
     if (who !== "lumi") return h("div", { class: "case-portrait game-portrait-stand-in", "aria-hidden": "true" }, h("span", {}, (name || SPEAKERS[who] || who).slice(0, 1)));
@@ -1893,12 +1900,30 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     overlay.classList.remove("skilltree", "timemachine", "demo-end", "transfer-overlay");
   };
 
+  /** 路米的样子（玩家就是路米）：开场第一件事，任务日志里也能换。 */
+  function chooseLook(next) {
+    keys.clear();
+    dialogue.hidden = true;
+    overlay.classList.add("lumi-look-panel");
+    overlay.replaceChildren(mountLookPicker({ h, initial: loadLook(), onPick: (look) => {
+      if (!saveLook(look)) toast("这次先用这个样子", "浏览器没能保存选择，刷新后可能要再选一次。");
+      overlay.classList.remove("lumi-look-panel");
+      closeOverlay();
+      if (stage.dataset.view === "town") drawTown();
+      next();
+    } }));
+    overlay.hidden = false;
+    overlay.scrollTop = 0;
+    overlay.querySelector("button")?.focus({ preventScroll: true });
+  }
+
   /** Pick a difficulty; the first time, the story starts afterwards. */
   /**
    * Before the story: two questions. First what the player came for (story, balanced, knowledge: how
    * deep the story goes), then their background (none, a little, some: the knowledge level).
    */
   function chooseDifficulty(first = false) {
+    if (first && !loadLook()) return chooseLook(() => chooseDifficulty(true));
     if (first) dialogue.hidden = true; // the welcome starts after the questions
     const choices = (entries, chosen, pick) =>
       h("div", { class: "game-difficulties" },
@@ -1963,7 +1988,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     };
     overlay.replaceChildren(
       h("div", { class: "game-panel-head" }, h("h2", {}, "任务日志"), h("button", { class: "btn small", type: "button", onclick: closeOverlay }, icon("close", { size: 14 }), "关闭（J）")),
-      h("p", { class: "game-panel-note" }, "偏好：", h("b", {}, FOCUSES[quests.focus]?.label || "平衡"), " · 基础：", h("b", {}, DIFFICULTIES[quests.difficulty] ? `${DIFFICULTIES[quests.difficulty].label}（${DIFFICULTIES[quests.difficulty].level}）` : "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换")),
+      h("p", { class: "game-panel-note" }, "偏好：", h("b", {}, FOCUSES[quests.focus]?.label || "平衡"), " · 基础：", h("b", {}, DIFFICULTIES[quests.difficulty] ? `${DIFFICULTIES[quests.difficulty].label}（${DIFFICULTIES[quests.difficulty].level}）` : "未选"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseDifficulty(false) }, "更换"), " · 路米：", h("b", {}, loadLook() === "m" ? "男生" : "女生"), " ", h("button", { class: "link-btn", type: "button", onclick: () => chooseLook(() => { renderLog(); overlay.hidden = false; }) }, "换样子")),
       step && h("div", { class: "game-log-now" }, h("small", {}, "当前任务"), h("b", {}, step.goal), h("span", {}, `${step.line.title} · ${step.chapter.title}`)),
       ...quests.lines.map(lineBlock),
       ...quests.badges().map((badge) => h("p", { class: "game-badge" }, `🏅 已获得徽章：${badge.label}`)),
@@ -2082,8 +2107,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     drawTown();
     renderTracker();
     const controls = {
+      who: "xiaoke",
       text: touch
-        ? "用左下角的轮盘走路，走到门口会出现「进入」按钮。点上面的「地图」可以选地方，我会自己走过去；当前任务显示在右上角，头上有「!」的房子就是目标。"
+        ? "用左下角的轮盘走路，走到门口会出现「进入」按钮。点上面的「地图」选个地方，就会自动走过去；当前任务显示在右上角，头上有「!」的房子就是目标。"
         : "用 WASD 或方向键走路，右键点地面也能走过去；走到门口按 E 进去。M 打开地图，J 打开任务日志；头上有「!」的房子就是当前目标。",
       face: "normal",
     };
@@ -2092,7 +2118,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (pending.length) say(pending);
     else if (!shownControls) {
       shownControls = true;
-      say([...(step?.say || [{ text: "这里是我们的小镇。每栋房子都能帮你做一件事。", face: "happy" }]), controls]);
+      say([...(step?.say || [{ who: "xiaoke", text: "这里就是比特镇。每栋房子都能帮你做一件事，想去哪儿，我给你指路！", face: "happy" }]), controls]);
     } else if (step) say([{ text: `接下来：${step.goal}。`, face: "normal" }]);
     else dialogue.hidden = true;
   }
@@ -2255,7 +2281,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       ...puzzle.scene.items.map((thing) => session.propEl(thing)),
       h("button", { type:'button',class: `case-npc ${who.portrait}`, style: `left:calc(${room.client.x}px * var(--px));top:calc(${room.client.y}px * var(--px));z-index:${room.client.y}`, 'aria-label':`和${who.name}说话`,onclick:()=>navigateCaseThing('client') }, has(`anim-${who.portrait}`) ? h("span", { class: `case-client-sheet ${who.portrait}`, 'aria-hidden':'true', style: `background-image:url(/art/pixel/anim-${who.portrait}${has(`anim-${who.portrait}-case`) ? "-case" : ""}.png)` }) : h("span", { class: "game-sprite drawn",'aria-hidden':'true' }, h("i", {}), h("b", {}), h("u", {})), h("small", {}, who.name)),
       h("span", { class: "case-door", style: `left:calc(${room.exit.x}px * var(--px));top:calc(${room.exit.y}px * var(--px))`, "aria-hidden": "true" }),
-      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${has("anim-lumi-unified") ? "anim-lumi-unified" : "anim-lumi-case"}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
+      (playerEl = has("anim-lumi") ? h("span", { class: "game-sprite player sheet indoor", style: `background-image:url(/art/pixel/${lumiSheet("anim-lumi-case")}.png)`, "aria-hidden": "true" }) : sprite("lumi", 0, "player indoor")));
     stage.replaceChildren(roomEl, h("div", { class: "game-place-sign" }, icon("scan", { size: 16 }), puzzle.scene.place), session.hud,session.guide);
     placePlayer();
     animate(0, 0, 0);
@@ -2289,7 +2315,8 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       demoEnding = null;
       return say(story, null, () => scene());
     }
-    say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
+    const guide = id === "home" ? { who: "xiaoke" } : {}; // 自己的事务所里，招呼路米的是电脑里的小克
+    say([...story, { ...guide, text: SCENES[id].line, face: "happy" }, { ...guide, text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
   }
   /* ----- 委托板与公告板：任务不是按章节发的，是自己接的（docs/quest-board.md） ----- */
   /* 进行中的委托：接了还没做完的，一直挂在左上角（像原神的任务追踪）。

@@ -315,7 +315,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
         h("p", { class: "case-kicker" }, "案例馆 · 结案"),
         h("h3", { id: "case-quest-title" }, item.title),
         h("p", { class: "case-stars", "aria-label": `评价 ${game.stars} 星` }, starText(game.stars)),
-        h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 少犯错、少问路米可以拿满三星" : " · 完美破案！"),
+        h("p", { class: "case-score" }, `犯错 ${game.mistakes} 次 · 用了 ${game.hints} 次提示`, game.stars < 3 ? " · 少犯错、少问小克可以拿满三星" : " · 完美破案！"),
         !talking() && bubble(item.game.client.name, verdict.closing.replace(/^[^：]+：/, ""), "client", "happy")),
       ...extras(item),
     ];
@@ -329,7 +329,7 @@ export function createDetective({ h, icon, toast, panel, showSection, rerender, 
     if (!game.puzzle) {
       game.puzzle = createPuzzle({
         h, icon, item, talk, toast,
-        line: (who, text, face) => (who === "client" ? clientLine(item, text, face || "normal") : { text, face: face || "normal" }),
+        line: (who, text, face) => (who === "client" ? clientLine(item, text, face || "normal") : who ? { who, text, face: face || "normal" } : { text, face: face || "normal" }),
         onMistake: () => (game.mistakes += 1),
         onHint: () => (game.hints += 1),
         onDone: () => rerender(),

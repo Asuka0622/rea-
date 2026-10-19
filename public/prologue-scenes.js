@@ -70,7 +70,7 @@ export function towerScript(k) {
     { sound: "blip", pitch: 220 }, { shake: 500 }, { wait: 500 },
     { say: [
       lumi("清晨的钟楼还在低低地嗡鸣。", "thinking"),
-      by("smith", "钥匙我守了二十年。说好了只在钟坏了的时候开——今天，算它坏了。", "normal"),
+      by("smith", "镇长不急，我急。昨晚的事我听说了——今天，这门我开了。", "normal"),
     ] },
     /* ① 打开钟楼：门后不是齿轮，是一台大电脑 */
     { call: () => k.beat("key") },
@@ -86,6 +86,7 @@ export function towerScript(k) {
     /* ② 星博士赶到，承认 */
     { sound: "door" },
     { say: [
+      lumi("门口跑进来一个人——北区 AI 研究所的星博士，阿哲实习时的老师。", "surprised"),
       by("xingbo", "……还是被你们找到了。", "guilty"),
       by("xingbo", "这些数字，是小克学到的东西。小克就在这座钟楼里训练。", "guilty"),
       by("xingbo", "训练用的数据，是研究所从悄悄统计买来的。来源……我没有查。", "guilty"),
@@ -93,13 +94,15 @@ export function towerScript(k) {
     ] },
     /* ③ 秋实也来了：「条款里写着呢」——证据还不够，留到回到现在时对质 */
     { say: [
+      lumi("又有人挤了进来：西装笔挺，胸牌上写着「悄悄统计 · 经理 秋实」。", "thinking"),
       by("qiushi", "哎呀，各位别激动。我们悄悄统计一向实事求是：数据都是用户同意过的，条款里写着呢。", "confident"),
       lumi("（他腋下夹着的那本《用户协议》，厚得像一块砖。）", "thinking"),
       lumi("（小账本、存档、计算器、天气助手、便签、手电筒……我记得每一件证据。可现在，还不够把他驳倒。）", "thinking"),
     ] },
-    /* ④ 镇上吵起来 */
+    /* ④ 镇上吵起来：昨晚钟楼的灯光全镇都看见了，天一亮人就围过来了 */
     { shake: 300 },
     { say: [
+      lumi("天已经大亮。昨晚钟楼的灯光，全镇都看见了——门口围满了人，六位委托人也在。", "thinking"),
       by("kobayashi", "同意？我连同意了什么都不知道！关掉它，它学的是我们的东西！", "surprised"),
       by("duoduo", "可小克帮我找过好多次种子……它又没做错什么。", "thinking"),
       by("zhoujie", "公司的客服已经离不开它了。说关就关，明天谁来接电话？", "thinking"),
@@ -114,6 +117,7 @@ export function towerScript(k) {
       by("smith", "钟楼最深处，还有一样东西。", "thinking"),
       by("smith", "一枚黄铜齿轮，上面刻着「A.A.L. 1843」。墙上的大表盘刻着六个年份，第一格就是 1843，最后一格写着「现在」。", "surprised"),
       by("xiaoke", "表盘……亮了。我、我也要去！", "surprised"),
+      lumi("小克从笔记本屏幕里一跃，钻进了我的怀表。", "surprised", { fx: { type: "xiaoke", face: "happy" } }),
     ] },
     /* ⑥ 时光机：之后接外壳里原来的伦敦段落 */
     { call: () => k.beat("watch") },
