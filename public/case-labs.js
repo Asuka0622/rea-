@@ -1,5 +1,6 @@
 import { createPermissionLab } from "./permission-lab.js";
 import { mountAuthority } from "./authority-game.js";
+import { mountTimelapse } from "./timelapse-game.js";
 import { cls } from "./mini-art.js";
 import { mountRhythm, mountTower, mountPipes, mountManage, mountCards, mountMines } from "./case-minigames.js";
 import { fromBase64, toBase64, checksum, openSave } from "./save-lab.js";
@@ -655,7 +656,7 @@ function mountCalculator({ h, icon, lab, onMistake, onHint, onDone, story = asyn
           h("span", { class: "lab-sort-bins" },
             h("button", { type: "button", class: `lab-bin ${!removed.has(r.id) ? "picked" : ""}`, disabled: phase === "done", onclick: () => { removed.delete(r.id); render(); } }, "保留"),
             h("button", { type: "button", class: `lab-bin bad ${removed.has(r.id) ? "picked" : ""}`, disabled: phase === "done", onclick: () => { removed.add(r.id); render(); } }, "删除")))),
-        phase === "fix" && h("button", { class: "btn primary", type: "button", onclick: applyPatch }, "修好了，重新发布并复查"));
+        ...(phase === "fix" ? [h("button", { class: "btn primary", type: "button", onclick: applyPatch }, "修好了，重新发布并复查")] : []));
     }
   }
   makeApp();
@@ -1089,7 +1090,7 @@ function mountPacked({ h, icon, lab, onDone = () => {} }) {
     h("div", { class: "case-actions" }, button));
 }
 
-const MOUNTS = { authority: mountAuthority, network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
+const MOUNTS = { authority: mountAuthority, timelapse: mountTimelapse, network: mountNetwork, calculator: mountCalculator, save: mountSave, secrets: mountSecrets, permissions: mountPermissions,
   rhythm: mountRhythm, tower: mountTower, pipes: mountPipes, manage: mountManage, cards: mountCards, mines: mountMines, packed: mountPacked };
 /** Every kind a case's lab (or one of its chained stages) can name. */
 export const MOUNTABLE_KINDS = Object.keys(MOUNTS);

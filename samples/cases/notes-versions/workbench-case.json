@@ -31,7 +31,7 @@
       "type": "pick-row",
       "section": "新增 · 联网请求（发往哪里）",
       "prompt": "新版本多了一处联网请求，数据发往哪里？",
-      "answer": "insight.notes-cloud",
+      "answer": "quiet-stats",
       "hint": "看「新增 · 联网请求（发往哪里）」。",
       "explain": "insight.notes-cloud.example/v1/upload，名字里的 insight 是「洞察」，upload 是「上传」。旧版本根本不联网，新版本开始往外发数据了。",
       "distractors": [
@@ -129,7 +129,7 @@
         {
           "text": "「说明里写了，只是修复小问题而已。」",
           "accept": [
-            "insight.notes-cloud",
+            "quiet-stats",
             "截取屏幕"
           ]
         },
@@ -245,6 +245,634 @@
             "why": "关掉 App 也在记你去过哪。"
           }
         ]
+      },
+      "files": [
+        "v1.0/main.js",
+        "v1.0/preload.js",
+        "v1.1/main.js",
+        "v1.1/preload.js"
+      ],
+      "stages": [
+        {
+          "kind": "mines",
+          "title": "审清单",
+          "intro": [
+            {
+              "text": "先从清单开始：1.1 比 1.0 多了几条，混在一堆正常的里面。像扫雷一样，先插旗，再排除。",
+              "face": "normal"
+            },
+            {
+              "who": "client",
+              "text": "周姐：我只会点「同意」……",
+              "face": "thinking"
+            }
+          ],
+          "outro": [
+            {
+              "who": "client",
+              "text": "周姐：清单里写着「定时截屏」……可更新说明一个字都没提。",
+              "face": "surprised"
+            },
+            {
+              "text": "清单说它「能」做。它到底做没做、什么时候做——要跑起来看。",
+              "face": "thinking"
+            }
+          ]
+        },
+        {
+          "kind": "timelapse",
+          "title": "快进一天",
+          "intro": [
+            {
+              "text": "在沙盒里装上它，把时钟快进一天。1.0 也装一次，做对照。",
+              "face": "happy"
+            }
+          ],
+          "outro": [
+            {
+              "who": "client",
+              "text": "周姐：每 10 分钟一张，攒到半夜一起送走……我的客户资料，全在那些截图里。",
+              "face": "surprised"
+            },
+            {
+              "text": "而且送去的是「悄悄统计」，时间是 23:58。",
+              "face": "thinking"
+            },
+            {
+              "text": "证据齐了。去和周姐一句句说清楚。",
+              "face": "happy"
+            }
+          ]
+        }
+      ],
+      "talk": {
+        "capture": [
+          {
+            "who": "client",
+            "text": "周姐：我什么都没点，它就自己截了一张？",
+            "face": "surprised"
+          }
+        ],
+        "batch": [
+          {
+            "who": "client",
+            "text": "周姐：23:58……就是那天风扇响的时候！",
+            "face": "surprised"
+          },
+          {
+            "text": "白天攒着，半夜一起送。白天盯着网速，当然什么都看不到。",
+            "face": "thinking"
+          }
+        ],
+        "export": [
+          {
+            "who": "client",
+            "text": "周姐：真的没了。我每周五都要用的。",
+            "face": "thinking"
+          }
+        ],
+        "control": [
+          {
+            "text": "对照组：同样跑一整天，1.0 一张都没截。问题出在 1.1。",
+            "face": "normal"
+          }
+        ]
+      },
+      "done": [
+        {
+          "text": "证据齐了。周姐还攥着那句「修复了一些小问题」——去一句句对给她看。",
+          "face": "happy"
+        }
+      ]
+    },
+    "puzzle": {
+      "title": "版本侦探：便签更新了什么？",
+      "ask": "更新说明就一句「修复了一些小问题」。可升级以后总觉得哪里不对劲……你帮我把新旧两个版本对比一下？",
+      "terminal": "screen",
+      "computerLabel": "周姐的工位电脑",
+      "sampleName": "随手便签 1.0 / 1.1",
+      "labSource": "沙盒实验",
+      "scene": {
+        "place": "周姐的办公室",
+        "look": "dorm",
+        "art": "case-room-notes-versions",
+        "lead": "在办公室里走走，靠近东西按 E 调查。",
+        "items": [
+          {
+            "id": "screen",
+            "label": "周姐的工位电脑",
+            "look": "laptop",
+            "at": [
+              200,
+              80
+            ],
+            "stand": [
+              196,
+              132
+            ],
+            "size": 22,
+            "art": "screen",
+            "lines": [
+              {
+                "who": "client",
+                "text": "周姐：就是它。前天弹出来「升级到 1.1 版」，我顺手就点了。",
+                "face": "normal"
+              },
+              {
+                "text": "电脑上两个版本的代码都还在：1.0 一份，1.1 一份。拿 REA 一行行对。",
+                "face": "normal"
+              }
+            ],
+            "clue": {
+              "id": "update",
+              "title": "只修了「小问题」",
+              "text": "1.1 的更新说明只有一句：「修复了一些小问题，提升了稳定性。」可新旧两版的代码都在，对一对就知道到底改了什么。",
+              "dict": [
+                {
+                  "zh": "新加的功能",
+                  "code": "notes:pin"
+                }
+              ]
+            }
+          },
+          {
+            "id": "sticky",
+            "label": "便签墙",
+            "look": "paper",
+            "at": [
+              208,
+              52
+            ],
+            "stand": [
+              40,
+              142
+            ],
+            "size": 24,
+            "art": "sticky-wall",
+            "lines": [
+              {
+                "who": "client",
+                "text": "周姐：我的便签墙。客户的电话、报价、合同号……工作的时候，这些全开在屏幕上。",
+                "face": "thinking"
+              },
+              {
+                "text": "谁能截下这块屏幕，谁就看得到这些。",
+                "face": "normal"
+              }
+            ],
+            "clue": {
+              "id": "screen-content",
+              "title": "屏幕上全是客户资料",
+              "text": "周姐工作时，屏幕上开着客户的电话和报价。截屏能拿走的，就是这些。",
+              "dict": [
+                {
+                  "zh": "截屏",
+                  "code": "desktopCapturer"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "printer",
+            "label": "打印机",
+            "look": "paper",
+            "at": [
+              276,
+              72
+            ],
+            "stand": [
+              284,
+              140
+            ],
+            "size": 18,
+            "art": "printer",
+            "lines": [
+              {
+                "who": "client",
+                "text": "周姐：以前每周五，我把便签导出成文本打出来存档。",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "周姐：升级以后，「导出」那个按钮……不见了。",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "export",
+              "title": "导出按钮不见了",
+              "text": "1.0 能把便签导出成文本文件，1.1 升级后这个按钮没了。更新说明里一个字都没提。",
+              "dict": [
+                {
+                  "zh": "导出",
+                  "code": "export"
+                }
+              ]
+            }
+          },
+          {
+            "id": "coffee",
+            "label": "凉掉的咖啡",
+            "look": "paper",
+            "at": [
+              252,
+              84
+            ],
+            "stand": [
+              250,
+              132
+            ],
+            "size": 12,
+            "art": "coffee",
+            "lines": [
+              {
+                "who": "client",
+                "text": "周姐：加班到半夜是常事。上周有一天忙到 23:58，电脑风扇突然呼呼地响了一阵。",
+                "face": "thinking"
+              },
+              {
+                "who": "client",
+                "text": "周姐：我什么都没点啊。",
+                "face": "surprised"
+              }
+            ],
+            "clue": {
+              "id": "night",
+              "title": "半夜风扇响",
+              "text": "有一天加班到 23:58，周姐什么都没点，电脑却突然忙了一阵。程序里要是有「到几点几分就做什么」，会用到钟点。",
+              "dict": [
+                {
+                  "zh": "几点",
+                  "code": "getHours"
+                },
+                {
+                  "zh": "几分",
+                  "code": "getMinutes"
+                }
+              ]
+            }
+          },
+          {
+            "id": "checklist",
+            "label": "升级检查表",
+            "look": "paper",
+            "at": [
+              66,
+              70
+            ],
+            "stand": [
+              100,
+              156
+            ],
+            "size": 16,
+            "art": "checklist",
+            "lines": [
+              {
+                "text": "IT 部门贴的「软件升级检查表」：① 看更新说明 ② 看新要了哪些权限 ③ ……后面没写完。",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "周姐：第三条一直没人写。",
+                "face": "thinking"
+              }
+            ],
+            "clue": {
+              "id": "checklist",
+              "title": "没写完的检查表",
+              "text": "检查表只写到「看新要了哪些权限」。新版本多了什么、每隔多久做一次，要自己去代码里找。",
+              "dict": [
+                {
+                  "zh": "每隔多久",
+                  "code": "setInterval"
+                }
+              ]
+            },
+            "wall": true
+          },
+          {
+            "id": "poster",
+            "label": "茶水间的海报",
+            "look": "paper",
+            "at": [
+              228,
+              40
+            ],
+            "stand": [
+              224,
+              154
+            ],
+            "size": 20,
+            "art": "xiaoke-ad",
+            "lines": [
+              {
+                "text": "海报上写着：「本公司试用小克客服」。",
+                "face": "normal"
+              },
+              {
+                "who": "client",
+                "text": "周姐：小克挺好用的，就是有时候会把客户的名字记错。",
+                "face": "normal"
+              }
+            ],
+            "wall": true,
+            "optional": true
+          },
+          {
+            "id": "plant",
+            "label": "快枯的绿植",
+            "look": "paper",
+            "at": [
+              70,
+              112
+            ],
+            "stand": [
+              76,
+              128
+            ],
+            "size": 18,
+            "art": "plant",
+            "lines": [
+              {
+                "text": "叶子都卷了。周姐忙得连水都忘了浇。",
+                "face": "normal"
+              }
+            ],
+            "optional": true
+          }
+        ]
+      },
+      "brief": [
+        {
+          "text": "两个版本的代码都在：1.0 是旧的，1.1 是新的。只看更新说明是看不出来的，要一行行对比。",
+          "face": "normal"
+        },
+        {
+          "text": "请分清：说明里写的、代码里有的、沙盒里真做了的，是三件事。",
+          "face": "normal"
+        }
+      ],
+      "terms": [
+        "desktopCapturer",
+        "setInterval",
+        "600000",
+        "pending",
+        "getHours",
+        "getMinutes",
+        "INSIGHT_URL",
+        "notes:export-txt",
+        "notes:pin"
+      ],
+      "board": [
+        {
+          "title": "多了一双眼睛",
+          "text": "1.1 新加了 {desktopCapturer}，用 {setInterval} 每 {600000} 毫秒截一次屏。",
+          "hint": "搜 desktopCapturer，再搜 setInterval，看隔多久调一次。",
+          "explain": "600000 毫秒就是 10 分钟：周姐上班一天，它要截五六十张。",
+          "done": [
+            {
+              "text": "第一条成立。10 分钟一张——周姐的客户资料，一天要被拍下几十次。",
+              "face": "thinking"
+            }
+          ]
+        },
+        {
+          "title": "截下来以后",
+          "text": "截图先存进 {pending}，等 {getHours} 是 23、{getMinutes} 是 58，才用 {INSIGHT_URL} 一起送走。",
+          "hint": "搜 pending，看截图放到哪儿了；再搜 getHours。",
+          "explain": "截下来不马上发，攒到半夜一起送：白天看监视器什么都看不到。",
+          "done": [
+            {
+              "text": "第二条也成立。半夜 23:58……又是这个时间。",
+              "face": "thinking"
+            }
+          ]
+        },
+        {
+          "title": "少了的东西",
+          "text": "1.0 有 {notes:export-txt}，1.1 把它删了，换成了 {notes:pin}。",
+          "hint": "两个版本都搜 notes:，对一对有哪些通道。",
+          "explain": "导出被拿掉了：周姐的便签，从此只能待在这个软件里。",
+          "done": [
+            {
+              "text": "第三条成立。更新说明里，这三件事一件都没写。",
+              "face": "normal"
+            }
+          ]
+        }
+      ],
+      "toLab": [
+        {
+          "text": "推理只是推理。把两个版本放进沙盒，真跑一天看看。",
+          "face": "happy"
+        }
+      ],
+      "labEvidence": [
+        {
+          "id": "mines-audit",
+          "text": "清单审查：新版清单里混进了定时截屏上传等几条更新说明没提的项"
+        },
+        {
+          "id": "timelapse",
+          "text": "延时实验：1.1 每 10 分钟截一次屏，攒到 23:58 一起送去 collect.quiet-stats.example；1.1 删掉了导出，找不到这个功能；1.0 跑一整天什么都不发"
+        }
+      ],
+      "confront": {
+        "lead": "一句一句给周姐看。她说的话里，有真的，也有需要纠正的。",
+        "intro": [
+          {
+            "who": "client",
+            "text": "周姐：可是……人家更新说明写得清清楚楚，「修复了一些小问题」。",
+            "face": "thinking"
+          },
+          {
+            "text": "那就一句一句对。",
+            "face": "happy"
+          }
+        ],
+        "objection": "周姐：「这个……和我说的好像没关系吧？」",
+        "statements": [
+          {
+            "text": "「更新说明写了，只是修复了一些小问题而已。」",
+            "accept": [
+              "desktopCapturer"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "周姐：开发者总不会骗人吧？",
+                "face": "normal"
+              },
+              {
+                "text": "1.1 的代码里，多了一个 1.0 没有的东西。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "周姐：截屏……这叫「小问题」？",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示 1.1 里 desktopCapturer 那一行。"
+          },
+          {
+            "text": "「就算截图，也只是偶尔一次吧？」",
+            "accept": [
+              "600000"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "周姐：我又不是天天开着它。",
+                "face": "normal"
+              },
+              {
+                "text": "你上班的时候，它一直开着。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "周姐：每 10 分钟一次……我一天要被拍五六十张？",
+                "face": "surprised"
+              }
+            ],
+            "hint": "出示 setInterval 那一行。"
+          },
+          {
+            "text": "「截了也就存在我电脑上吧，又没发给谁。」",
+            "accept": [
+              "quiet-stats",
+              "一起送去"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "周姐：我白天盯着网速，没见它上传什么。",
+                "face": "thinking"
+              },
+              {
+                "text": "白天当然看不到。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "周姐：攒到半夜 23:58，一起送去「悄悄统计」……难怪那天风扇响。",
+                "face": "surprised"
+              },
+              {
+                "text": "悄悄统计，每晚 23:58。我记进手账了。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示延时实验里 23:58 那条记录，或者 INSIGHT_URL 那一行。"
+          },
+          {
+            "text": "「反正功能没少，升级总没坏处。」",
+            "accept": [
+              "notes:export-txt",
+              "删掉了导出",
+              "找不到这个功能"
+            ],
+            "press": [
+              {
+                "who": "client",
+                "text": "周姐：多了个「置顶」，还挺好用的。",
+                "face": "happy"
+              },
+              {
+                "text": "多了一个，也少了一个。",
+                "face": "thinking"
+              }
+            ],
+            "broken": [
+              {
+                "who": "client",
+                "text": "周姐：导出没了……我的便签从此只能锁在它里面。",
+                "face": "thinking"
+              }
+            ],
+            "hint": "出示 1.0 里 notes:export-txt 那一行。"
+          },
+          {
+            "text": "「便签本身还是只存在我自己电脑上的。」",
+            "press": [
+              {
+                "text": "这一句是真的：notes 只在本机，两个版本都没把便签内容发出去。要发出去的，是屏幕截图。",
+                "face": "normal"
+              }
+            ]
+          }
+        ]
+      },
+      "debrief": [
+        "只看更新说明，永远不知道改了什么：新旧两版一对，多了什么、少了什么一目了然。",
+        "白天看不到，不等于没发生：攒着半夜一起送的，要快进时间才看得见。",
+        "对照组很重要：同样跑一天，旧版本什么都不发，问题才是新版本的。"
+      ],
+      "room": {
+        "top": 124,
+        "spawn": {
+          "x": 160,
+          "y": 168
+        },
+        "exit": {
+          "x": 160,
+          "y": 176
+        },
+        "client": {
+          "x": 150,
+          "y": 150
+        },
+        "blocks": [
+          {
+            "x": 169,
+            "y": 83,
+            "w": 106,
+            "h": 40
+          },
+          {
+            "x": 50,
+            "y": 20,
+            "w": 34,
+            "h": 86
+          },
+          {
+            "x": 259,
+            "y": 76,
+            "w": 35,
+            "h": 34
+          },
+          {
+            "x": 296,
+            "y": 15,
+            "w": 24,
+            "h": 102
+          }
+        ],
+        "clientTalk": {
+          "look": [
+            {
+              "who": "client",
+              "text": "周姐：电脑随便用，两个版本都装在里面。我得先回几封邮件。",
+              "face": "normal"
+            }
+          ],
+          "verify": [
+            {
+              "who": "client",
+              "text": "周姐：对比出来了？那……它到底改了什么？",
+              "face": "thinking"
+            }
+          ]
+        },
+        "characterScale": 1.875
       }
     }
   }

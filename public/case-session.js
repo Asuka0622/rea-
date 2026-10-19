@@ -52,12 +52,14 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
   const code = shippedLines(lab.sources);
   const terms = puzzle.terms;
   const sound = ui.sound;
+  const dropName = (text) => (text.startsWith(`${client.name}：`) || text.startsWith(`${client.name}:`) ? text.slice(client.name.length + 1) : text);
   // A line is spoken by the client, by 路米 (no who), or by another speaker the shell knows (小克: "xiaoke").
   // Level and focus variants (easy / hard / only / focus) are passed through for the shell to pick.
   const line = (l, face) => {
     if (typeof l === "string") return { text: l, face: face || "normal" };
     const base = { ...l, face: l.face || face || "normal" };
-    if (l.who === "client") return { ...base, who: client.portrait, name: client.name, text: String(l.text ?? "").replace(/^[^：「]+：/, "") };
+    // 去掉「小林：」这样的说话人前缀——只认委托人自己的名字，句子中间的冒号不能误伤。
+    if (l.who === "client") return { ...base, who: client.portrait, name: client.name, text: dropName(String(l.text ?? "")) };
     return base;
   };
   const say = (lines) => ui.say(lines.map((l) => line(l)));
@@ -521,7 +523,7 @@ export function createCaseSession({ h, icon, item, layer, ui, drill = null }) {
           await say([{ text: "实验记录收好了。这份委托能下的结论，写进结案里了。", face: "thinking" }]);
           return finish();
         }
-        await say([{ text: `证据齐了。去和${client.name}当面说清楚吧：走到他旁边按 E。`, face: "happy" }]);
+        await say([{ text: `证据齐了。去和${client.name}当面说清楚吧：走到对方旁边按 E。`, face: "happy" }]);
       } });
     }
     open("terminal", h("div", { class: "case-screen laptop" },
