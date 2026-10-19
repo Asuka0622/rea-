@@ -3,6 +3,7 @@ import { NPC_DIALOGUE_PROFILES } from "./npc-dialogue-data.js";
 import { createStoryBeats } from "./story-beats.js";
 import { createStoryFx } from "./story-fx.js";
 import { daypart, skipTo, clockLabel } from "./prologue-clock.js";
+import { vigilScript, towerScript } from "./prologue-scenes.js";
 import { mountTransfer } from "./transfer-practice.js";
 import { SCENES } from "./scenes.js";
 import { DIFFICULTIES, FOCUSES } from "./game-quests.js";
@@ -149,8 +150,10 @@ const EXTRA_LINES = {
 };
 
 export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases = () => [], startCase = () => {}, quests = null, demo = null }) {
-  // 预告测试版: only demo.cases can be taken; the other clients' homes say they open in the full game.
+  // 预告版（整个序章）: only demo.cases can be taken; the other clients' homes say they open in the full game.
+  // The demo opens its cases act by act (game-quests.js caseReachable): a later act's door waits.
   const inDemo = (id) => !demo || demo.cases.includes(id);
+  const demoLater = (id) => Boolean(demo && demo.cases.includes(id) && quests?.caseReachable?.(id) === false);
   const root = document.documentElement;
   const main = document.querySelector("main");
   const mainHome = { parent: main.parentNode, next: main.nextSibling };
@@ -844,8 +847,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     if (spotData(id)?.label) return spotData(id).label;
     const item = cases().find((c) => c.id === id);
     if (item && !inDemo(id)) return { place: item.scene?.place || item.title || id, purpose: "正式版开放" };
+    if (item && demoLater(id)) return { place: item.scene?.place || item.title || id, purpose: "后面的剧情里开放" };
     const order = demo ? demo.cases.indexOf(id) + 1 : item?.order;
-    return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : (demo ? `委托${"一二三"[order - 1] || order}` : `委托 · 案例 ${order ?? ""}`) };
+    return { place: item?.scene?.place || item?.title || id, purpose: item?.type === "stories" ? "真实世界故事" : (demo ? `委托${"一二三四五六"[order - 1] || order}` : `委托 · 案例 ${order ?? ""}`) };
   }
   const doorOf = (id) => spotData(id).door;
   const blocks = () => [
@@ -1763,44 +1767,33 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
 
   /* ----- 预告测试版: the ending — the tower opens, a short 1843 intro, then the chapter card and thanks ----- */
-  let demoEnding = false;
+  // 预告版（整个序章）里，有两章结束后要接一场大戏：守夜、打开钟楼（剧情在 prologue-scenes.js）。
+  // 那一章的结束台词说完，就播这一场（进门时或在小镇里都行）。
+  let demoEnding = null;
+  const DEMO_SCENES = { "d-vigil": () => playVigil(), "d-finale": () => playDemoEnding() };
   const DEMO_START = "rea-demo-started";
+  const sceneHooks = (door) => ({
+    tower: door,
+    goNorth: (pos) => {
+      place = null;
+      lastPlace = null;
+      cameraFocus = null;
+      switchRegion("north", pos);
+    },
+    skipTime: (minutes, opts) => skipTime(minutes, opts),
+    cinema: (img, caption) => showCinema(img, caption),
+    hideCinema: () => hideCinema(),
+    beat: (id) => storyBeats.play(id),
+  });
+  async function playVigil() {
+    await director.play(vigilScript(sceneHooks(REGIONS.north.spots.clocktower.door)));
+    say(takeQuestLines());
+  }
   async function playDemoEnding() {
     const door = REGIONS.north.spots.clocktower.door;
     await director.play([
-      { flash: 600, color: "#ffffff" },
-      { call: () => {
-        place = null;
-        lastPlace = null;
-        cameraFocus = null;
-        switchRegion("north", { x: door.x - 70, y: door.y + 40 });
-      } },
-      { wait: 600 },
-      { camera: { x: door.x, y: door.y - 70 }, ms: 1200 },
-      { wait: 500 },
-      { sound: "blip", pitch: 220 }, { shake: 600 }, { wait: 700 },
-      { sound: "blip", pitch: 180 }, { shake: 800 }, { flash: 500, color: "#d8f4ff" }, { wait: 600 },
-      { say: [
-        { text: "钟楼……在发光？！", face: "surprised" },
-        { text: "停摆的钟楼里，好像藏着一台能穿越时间的机器……", face: "thinking" },
-      ] },
-      /* ① 打开钟楼：门后不是齿轮，是一台大电脑（scenes/tower-open） */
-      { call: () => storyBeats.play("key") },
-      { call: () => showCinema("scenes/tower-open") },
-      { call: () => storyBeats.play("boot") },
-      { sound: "door" },
-      { wait: 500 },
-      { say: [
-        { who: "smith", text: "钥匙我守了二十年……门后哪是齿轮，是一台大电脑！这一屏的数字是什么？", face: "surprised" },
-        { text: "满屏都是数不清的数字……小克，你认识它们吗？", face: "thinking" },
-        { who: "xiaoke", text: "我是小克，路米电脑里的 AI 助手！让我想想……我说不上来。可是看着它们，就像在看我自己。", face: "unsure" },
-        { text: "钟楼深处还有一个黄铜表盘，刻着六个年份。第一格亮着：1843。", face: "thinking" },
-        { who: "xiaoke", text: "1843……我、我也要去！", face: "surprised" },
-      ] },
-      /* ② 穿越白闪，落在雾夜的伦敦街头（scenes/london-1843） */
-      { call: () => storyBeats.play("watch") },
-      { sound: "unlock" },
-      { wait: 400 },
+      /* ① 打开钟楼 → 星博士承认 → 秋实 → 镇上吵起来 → 小克的问题 → 时光机（prologue-scenes.js） */
+      ...towerScript(sceneHooks(door)),
       { call: () => showCinema("scenes/london-1843", "1843 年 · 伦敦 · 雾夜") },
       { wait: 600 },
       { say: [
@@ -1875,7 +1868,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
   }
   quests?.onChange(({ step, finishedChapter, story }) => {
     questLines.push(...story);
-    if (demo && finishedChapter?.id === "d-finale") demoEnding = true;
+    if (demo && DEMO_SCENES[finishedChapter?.id]) demoEnding = DEMO_SCENES[finishedChapter.id];
     achievements.note({ type: "step", id: step.id });
     if (finishedChapter) achievements.note({ type: "chapter", id: finishedChapter.id, difficulty: quests.difficulty });
     achievements.note({ type: "skills", count: skillCount() });
@@ -1886,7 +1879,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     renderTracker();
     if (enabled && !windowOpen && stage.dataset.view === "town") {
       drawTown();
-      say(takeQuestLines());
+      const scene = demoEnding;
+      demoEnding = null;
+      say(takeQuestLines(), null, scene ? () => scene() : null);
     }
   });
 
@@ -2116,6 +2111,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
       if (spotData(id).soon && regionData()?.era) return say([{ text: `「${info(id).place}」……现在进不去，以后再来看看吧。`, face: "thinking" }]);
       return say([{ text: spotData(id).placeholder?.line || `「${info(id).place}」还在装修，过段时间就开门了。到时候我带你来！`, face: "thinking" }]);
     }
+    if (demoLater(id)) return say([{ text: `「${info(id).place}」现在还没什么动静。先把手头的委托办完，回事务所理一理线索。`, face: "thinking" }]);
     const commission = PROLOGUE_QUESTS.find(q => q.caseId === id);
     if (commission && inDemo(id)) {
       const progress = loadProgress();
@@ -2126,7 +2122,7 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     }
     const practice=cases().find(c=>c.id===id && c.game?.practice);
     if(practice) return enterTransferPractice(practice);
-    if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。这次先帮委托板上的三位吧！`, face: "thinking" }]);
+    if (!inDemo(id)) return say([{ text: `「${info(id).place}」的委托要等正式版才能接。预告版先查序章的六份委托：跟着任务栏走就好。`, face: "thinking" }]);
     // A puzzle case is played in the client's room itself.
     const puzzleCase = cases().find((c) => c.id === id && c.game?.puzzle);
     if (puzzleCase) return enterCaseRoom(puzzleCase);
@@ -2289,8 +2285,9 @@ export function createGameShell({ h, icon, showTab, isPro, setMode, art, cases =
     quests?.event("enter", id);
     const story = takeQuestLines();
     if (demoEnding) {
-      demoEnding = false;
-      return say(story, null, () => playDemoEnding());
+      const scene = demoEnding;
+      demoEnding = null;
+      return say(story, null, () => scene());
     }
     say([...story, { text: SCENES[id].line, face: "happy" }, { text: EXTRA_LINES[id], face: "thinking" }], () => roomMenu(id));
   }

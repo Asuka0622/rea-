@@ -17,7 +17,7 @@
 // night / rain / clock / xiaoke / clue / wall 会一直留着，直到这段对话结束（end()）。
 
 /** 能用的演出种类（测试用它检查剧情数据里没有拼错的）。 */
-export const FX_TYPES = ["shake", "flash", "clue", "wall", "clock", "night", "rain", "xiaoke", "stamp"];
+export const FX_TYPES = ["shake", "flash", "clue", "wall", "clock", "night", "rain", "xiaoke", "stamp", "feed"];
 
 export function createStoryFx({ h, host, sound = {}, hasArt = () => false }) {
   const layer = h("div", { class: "sfx-layer", "aria-hidden": "true" });
@@ -91,6 +91,15 @@ export function createStoryFx({ h, host, sound = {}, hasArt = () => false }) {
       play("unlock");
       const art = hasArt(`xiaoke-${face}`) ? h("img", { src: `/art/faces/xiaoke-${face}.webp`, alt: "" }) : h("span", { class: "sfx-xiaoke-dot" });
       keep(h("div", { class: "sfx-xiaoke" }, h("span", { class: "sfx-xiaoke-glow" }), art, h("small", {}, "小克")));
+    },
+    // 行为监视器刷屏：一行行很快地冒出来（守夜 23:58，六个软件同时往钟楼送数据）
+    feed({ title = "行为监视器", lines = [], gap = 260 } = {}) {
+      const list = h("ol", {});
+      keep(h("div", { class: "sfx-feed" }, h("b", {}, title), list));
+      lines.forEach((text, i) => setTimeout(() => {
+        list.append(h("li", {}, text));
+        play("beep");
+      }, 300 + i * gap));
     },
     stamp({ text = "" } = {}) {
       play("stamp");

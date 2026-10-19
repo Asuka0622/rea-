@@ -1407,3 +1407,7 @@ html:has(.game-dialogue:not([hidden])) .case-hud-book {opacity:0;pointer-events:
 .game-stage[data-daypart="dusk"] :is(.game-world, .game-room)::after {opacity:1;background-color:rgba(255,170,110,.5);}
 .game-stage[data-daypart="night"] :is(.game-world, .game-room)::after {opacity:1;background-color:rgba(60,80,150,.62);}
 @media (prefers-reduced-motion:reduce) {.game-stage :is(.game-world, .game-room)::after {transition:none;}}
+.sfx-feed {position:absolute;right:24px;top:90px;width:min(420px,60vw);padding:10px 12px;background:rgba(10,16,12,.92);border:1px solid #6fbf73;box-shadow:0 0 24px rgba(111,191,115,.35);color:#cfe8d4;font:12px/1.6 var(--font-mono,monospace);animation:sfx-fade .3s ease-out;}
+.sfx-feed b {display:block;color:#ffb39e;margin-bottom:4px;font-family:var(--font-body);}
+.sfx-feed ol {margin:0;padding-left:18px;}
+.sfx-feed li {animation:sfx-fade .2s ease-out;}

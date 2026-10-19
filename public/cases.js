@@ -7,10 +7,12 @@ import { sceneBanner } from "./scenes.js";
 // Beginners answer one question at a time with hints that jump to the right report section;
 // professionals see the findings and explanations directly. A "stories" case is read, not analysed.
 export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showEngines, getReports, getTarget, isPro, openReplicate, onCatalog, onSolved = () => {}, talk = null, demo = null }) {
-  // 预告测试版: only demo.cases can be taken, numbered 1–3 in that order; the rest open in the full game.
+  // 预告版（整个序章）: only demo.cases can be taken, numbered 1–6 in that order; the rest open in the full game.
+  // demo.reachable: a later act's case waits until the story gets there.
   const inDemo = (item) => !demo || demo.cases.includes(item.id);
+  const later = (item) => Boolean(demo && inDemo(item) && demo.reachable?.(item.id) === false);
   const caseNo = (item) => (demo && inDemo(item) ? demo.cases.indexOf(item.id) + 1 : item.order);
-  const caseName = (item) => (demo ? `委托${"一二三"[caseNo(item) - 1] || caseNo(item)}` : `案例 ${item.order}`);
+  const caseName = (item) => (demo ? `委托${"一二三四五六"[caseNo(item) - 1] || caseNo(item)}` : `案例 ${item.order}`);
   const library = document.querySelector("#case-library");
   const list = document.querySelector("#case-list");
   const quest = document.querySelector("#case-quest");
@@ -85,6 +87,8 @@ export function mountCases({ h, icon, api, toast, analyze, busy, showHome, showE
           item.requires?.length && h("p", { class: "case-requires" }, icon("engines", { size: 15 }), `需要先安装分析引擎：${item.requires.map((id) => ENGINE_NAMES[id] || id).join(" + ")}`),
           !inDemo(item)
             ? h("button", { class: "btn", type: "button", disabled: true }, "正式版开放")
+            : later(item)
+            ? h("button", { class: "btn", type: "button", disabled: true }, "后面的剧情里开放")
             : item.type === "stories"
             ? h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("learn", { size: 16 }), "阅读故事")
             : h("button", { class: "btn primary", type: "button", onclick: () => start(item) }, icon("scan", { size: 16 }), "开始调查"),

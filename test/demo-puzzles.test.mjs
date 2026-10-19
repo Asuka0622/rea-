@@ -5,10 +5,10 @@ import {DEMO_CASES,DEMO_QUEST,createQuests} from '../public/game-quests.js';
 import {shippedLines,blanksOf,breaks,checkGroup} from '../public/case-puzzle.js';
 import {emptyCaseState,restoreCaseState,caseSnapshot,caseObjective} from '../public/case-progress.js';
 const demos=DEMO_CASES.map(id=>caseCatalog().find(item=>item.id===id));
-test('all three demo cases have their own explorable puzzle, optional prop and real lab',()=>{
-  assert.equal(demos.length,3);
+test('all six prologue cases have their own explorable puzzle, optional prop and real lab',()=>{
+  assert.equal(demos.length,6);
   for(const item of demos){const p=item.game.puzzle;assert.ok(p,item.id);assert.equal(p.board.length,3,item.id);assert.ok(p.scene.items.some(x=>!x.clue),item.id);assert.ok(p.scene.items.some(x=>x.id===p.terminal),item.id);assert.ok(p.labEvidence.length,item.id);assert.ok(item.game.lab.files.every(name=>item.game.lab.sources[name]),item.id);}
-  assert.deepEqual(new Set(demos.map(item=>item.game.lab.kind)),new Set(['network','save','calculator']));
+  for(const kind of ['network','save','calculator'])assert.ok(demos.some(item=>item.game.lab.kind===kind),kind);
 });
 test('each puzzle can restore real discoveries, verified deductions, experiments, and supported verdicts',()=>{
   for(const item of demos){
@@ -25,9 +25,9 @@ test('each puzzle can restore real discoveries, verified deductions, experiments
 });
 test('the independent case completion events lead to the demo epilogue and detective badge',()=>{
   const q=createQuests([DEMO_QUEST],{key:'demo-expanded-puzzles-test'});
-  assert.ok(q.event('enter','home'));
-  for(const item of demos)assert.ok(q.event('solve',item.id),item.id);
-  assert.ok(q.event('enter','home'));assert.equal(q.current(),null);assert.ok(q.badges().some(b=>b.id==='rea-detective'));
+  const [a,b,c,d,e,f]=demos.map(item=>['solve',item.id]),home=['enter','home'];
+  for(const [kind,id] of [home,a,b,c,home,d,e,home,f,home,['enter','clocktower']])assert.ok(q.event(kind,id),kind+' '+id);
+  assert.equal(q.current(),null);assert.ok(q.badges().some(b=>b.id==='rea-detective'));
 });
 test('the farm scene uses the actual save character, day and gold instead of confusing them with the client or defaults',()=>{
   const farm=demos.find(x=>x.id==='farm-save');

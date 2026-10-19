@@ -125,18 +125,42 @@ test("lines written for a difficulty only use the known levels", () => {
   }
 });
 
-test("the demo runs through three cases that need no extra analysis engine, then ends with the badge", async () => {
-  const { DEMO_QUEST, DEMO_CASES } = await import("../public/game-quests.js");
-  const catalog = caseCatalog();
-  for (const id of DEMO_CASES) {
-    const item = catalog.find((c) => c.id === id);
-    assert.ok(item?.game, `${id} is a detective case`);
-    assert.ok(!item.requires?.length, `${id} needs no engine`);
+import { DEMO_QUEST as PROLOGUE, DEMO_CASES as PROLOGUE_CASES } from "../public/game-quests.js";
+
+/** The whole prologue in story order: three acts of cases, back to the office between acts, then the tower. */
+function playDemo(quests, { until } = {}) {
+  const [a, b, c, d, e, f] = PROLOGUE_CASES;
+  const events = [["enter", "home"], ["solve", a], ["solve", b], ["solve", c], ["enter", "home"], ["solve", d], ["solve", e], ["enter", "home"], ["solve", f], ["enter", "home"], ["enter", "clocktower"]];
+  for (const [kind, id] of events) {
+    if (id === until) return;
+    assert.equal(quests.event(kind, id), true, `${kind} ${id}`);
   }
-  const quests = createQuests([DEMO_QUEST], { key: "test-demo" });
-  assert.equal(quests.event("enter", "home"), true);
-  for (const id of DEMO_CASES) assert.equal(quests.event("solve", id), true, id);
-  assert.equal(quests.event("enter", "home"), true);
+}
+
+test("the demo is the whole prologue: six puzzle-room cases in three acts, then the vigil and the tower", () => {
+  const catalog = caseCatalog();
+  assert.equal(PROLOGUE_CASES.length, 6);
+  for (const id of PROLOGUE_CASES) assert.ok(catalog.find((c) => c.id === id)?.game?.puzzle, `${id} is played in its puzzle room (no engine needed there)`);
+  const ids = PROLOGUE.chapters.map((c) => c.id);
+  for (const id of ["d-interlude", "d-midpoint", "d-vigil", "d-finale"]) assert.ok(ids.includes(id), id);
+  assert.ok(ids.indexOf("d-vigil") < ids.indexOf("d-finale"));
+  // The finale's goal says nothing: its lines would otherwise play before the vigil scene.
+  assert.deepEqual(PROLOGUE.chapters.find((c) => c.id === "d-finale").steps[0].say, []);
+  const quests = createQuests([PROLOGUE], { key: "test-demo" });
+  playDemo(quests);
   assert.equal(quests.current(), null);
   assert.deepEqual(quests.badges().map((b) => b.id), ["rea-detective"]);
+});
+
+test("the demo opens its cases act by act", () => {
+  const quests = createQuests([PROLOGUE], { key: "test-demo-acts" });
+  const open = () => PROLOGUE_CASES.filter((id) => quests.caseReachable(id));
+  assert.deepEqual(open(), PROLOGUE_CASES.slice(0, 3));
+  playDemo(quests, { until: PROLOGUE_CASES[3] });
+  assert.deepEqual(open(), PROLOGUE_CASES.slice(0, 5));
+  assert.equal(quests.current().chapter.id, "d-case-4");
+  const later = createQuests([PROLOGUE], { key: "test-demo-acts-3" });
+  playDemo(later, { until: PROLOGUE_CASES[5] });
+  assert.equal(later.caseReachable(PROLOGUE_CASES[5]), true);
+  assert.equal(quests.caseReachable("not-a-demo-case"), true);
 });

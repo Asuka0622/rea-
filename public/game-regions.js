@@ -63,7 +63,8 @@ export const REGIONS = {
     name: "北区",
     spawn: { x: 492, y: 500 },
     spots: {
-      office: { x: 405, y: 45, w: 220, h: 165, door: { x: 505, y: 236 }, soon: { place: "周姐的办公楼", purpose: "上班族的大楼（即将开放）" } },
+      // 周姐的办公楼：便签更新的委托（序章第二幕）就在这栋楼里。
+      "notes-versions": { x: 405, y: 45, w: 220, h: 165, door: { x: 505, y: 236 } },
       // Drawn as a stand-in until its picture is in the region map (docs/story.md 第 11 节).
       clocktower: { x: 712, y: 150, w: 48, h: 108, door: { x: 736, y: 270 }, kind: "tower", placeholder: { place: "钟楼", purpose: "停摆了", line: "钟楼的门锁着，门上刻着一串 0 和 1。等铁叔回来，我们再想办法打开它。" } },
     },

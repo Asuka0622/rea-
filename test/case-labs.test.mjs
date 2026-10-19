@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { caseCatalog } from "../lib/cases.mjs";
-import { LAB_KINDS, MOUNTABLE_KINDS } from "../public/case-labs.js";
+import { MOUNTABLE_KINDS } from "../public/case-labs.js";
 import { DEMO_CASES } from "../public/game-quests.js";
 
 test("every demo case has a hands-on lab that runs the sample's own files", () => {
@@ -9,9 +9,9 @@ test("every demo case has a hands-on lab that runs the sample's own files", () =
   for (const id of DEMO_CASES) {
     const lab = catalog.find((c) => c.id === id)?.game?.lab;
     assert.ok(lab, `${id} has a lab`);
-    assert.ok(LAB_KINDS.includes(lab.kind), `${id}: ${lab.kind}`);
+    assert.ok(MOUNTABLE_KINDS.includes(lab.kind), `${id}: ${lab.kind} can be mounted in the room`);
     for (const file of lab.files) assert.ok(lab.sources[file]?.length, `${id}: ${file} is loaded`);
-    assert.ok(lab.intro?.length && lab.done?.length, `${id} has lines around the lab`);
+    assert.ok((lab.intro || lab.stages?.[0]?.intro)?.length && lab.done?.length, `${id} has lines around the lab`); // a chained lab opens with its first stage
   }
 });
 

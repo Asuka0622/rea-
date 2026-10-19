@@ -258,19 +258,20 @@ export const REA_QUEST = {
 
 export const QUEST_LINES = [MAIN_QUEST, REA_QUEST];
 
-/*
- * 预告测试版 (demo, about 30 minutes): Bit Town and the detective agency only. Three cases of different
- * kinds — where data goes, a file format, hidden entries — then the badge and a teaser of the whole game.
- * Progress is saved apart from the full game's.
- */
-export const DEMO_CASES = ["privacy-ledger", "farm-save", "calculator-eggs"]; // none needs an extra analysis engine
+// 预告版 = 整个序章（docs/story-prologue.md，用户 2026-10-19 定）：六个委托分三幕，幕与幕之间回事务所钉线索，
+// 第三幕之后守夜、打开钟楼，然后时光机 → 1843 伦敦 → 字卡。每一章的 act 决定哪些委托开放（caseReachable）：
+// 第一幕的三份可以任意顺序做，第二幕的要等中场之后，第三幕的要等中点之后。
+export const DEMO_CASES = ["privacy-ledger", "farm-save", "calculator-eggs", "weather-keys", "notes-versions", "flashlight-apk"]; // all six are played in their puzzle rooms, which need no analysis engine
+const WALL_ACT1 = ["小账本 → 悄悄统计（沙盒里抓到了）", "朵朵的存档：23:58 的同步字段", "小雨的调试页：23:58 · 钟楼（配置）"];
+const WALL_ACT2 = [...WALL_ACT1, "阿哲的「统计小库」→ db.quiet-stats", "周姐的截图：每晚 23:58 → 悄悄统计"];
 export const DEMO_QUEST = {
   id: "demo",
-  title: "侦探事务所 · 预告测试版",
-  subtitle: "跟着路米，拆开三个可疑的软件",
+  title: "侦探事务所 · 序章",
+  subtitle: "钟楼停在 11:58：六个可疑的软件，一条线",
   chapters: [
     {
       id: "d-prologue",
+      act: 1,
       title: "序章 · 新来的助手",
       steps: [
         {
@@ -282,45 +283,94 @@ export const DEMO_QUEST = {
           done: [
             { text: "这就是我们的事务所。我们的工作叫「逆向分析」：把软件拆开，看清它到底在做什么。", face: "happy" },
             { focus: "story balanced", text: "镇上的人遇到可疑的软件，都会来这儿找我。最近委托特别多，一个人实在忙不过来。", face: "thinking" },
+            { focus: "story balanced", text: "墙上这块软木板还空着。每查清一件事，我们就钉一张卡上去。", face: "normal" },
           ],
         },
       ],
-      done: [{ text: "委托板上已经有三份委托了。第一份来自小林，我带你一步一步查，查完你就会了！", face: "happy" }],
+      done: [{ text: "眼下有三份委托。小林的贴在委托板上，朵朵要当面接，小雨的事得先找小石头打听。先从小林开始吧！", face: "happy" }],
     },
     {
       id: "d-case-1",
-      title: "委托一 · 小林的记账软件",
+      act: 1,
+      title: "第一幕 · 小林的记账软件",
       steps: [{ id: "solve-privacy", type: "solve", case: "privacy-ledger", spot: "privacy-ledger", goal: "去小林的宿舍，查查「小账本」", say: [{ text: "小林住在住宅区的宿舍楼：从广场往西走，看到一栋好多窗户的三层楼就是。", face: "normal" }] }],
       done: [{ text: "漂亮！软件往哪里发数据、偷偷用了哪些能力，你已经会查了。", face: "happy" }],
     },
     {
       id: "d-case-2",
-      title: "委托二 · 朵朵的存档",
-      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去朵朵的农场，看懂游戏存档", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵的农场也在住宅区，红色谷仓那里。", face: "thinking" }] }],
+      act: 1,
+      title: "第一幕 · 朵朵的存档",
+      steps: [{ id: "solve-save", type: "solve", case: "farm-save", spot: "farm-save", goal: "去住宅区找朵朵，当面接存档委托", say: [{ text: "下一份委托是朵朵的：她想知道种田游戏是怎么存档的。这次要拆的是一个文件。朵朵就在住宅区红色谷仓的门口。先走近她，按 E 交谈接下委托，再进农场。", face: "thinking" }] }],
       done: [{ text: "编码不是加密，校验码也挡不住看懂代码的人。你已经能看懂文件格式了！", face: "happy" }],
     },
     {
       id: "d-case-3",
-      title: "委托三 · 小雨的计算器",
-      steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "去小雨家，找找计算器里的秘密", say: [{ text: "最后一份委托来自小雨：她说计算器里藏着秘密。她家是住宅区里粉色屋顶的那栋。", face: "happy" }] }],
+      act: 1,
+      title: "第一幕 · 小雨的计算器",
+      steps: [{ id: "solve-eggs", type: "solve", case: "calculator-eggs", spot: "calculator-eggs", goal: "向广场的小石头打听，再去小雨家", say: [{ text: "还有一份委托来自小雨。先去中心广场找小石头，按 E 听他讲计算器的传闻，再去住宅区粉色屋顶的小雨家门口。", face: "happy" }] }],
       done: [{ text: "彩蛋可以留，后门不能留：藏起来的入口，要看门后面是什么。", face: "normal" }],
     },
     {
-      id: "d-finale",
-      title: "结案 · 见习侦探",
+      id: "d-interlude",
+      act: 1,
+      title: "中场 · 这三件事有关系吗",
       badge: { id: "rea-detective", label: "见习侦探" },
-      steps: [{ id: "report-back", type: "enter", spot: "home", goal: "回事务所向路米报告", say: [{ text: "三份委托都办完了！回事务所来吧，我有东西要给你。", face: "happy" }] }],
+      steps: [{ id: "pin-act1", type: "enter", spot: "home", goal: "回事务所，把三条线索钉上墙", say: [{ text: "三份委托都办完了！回事务所来吧，我有东西要给你。", face: "happy" }] }],
       done: [
         { text: "这枚「见习侦探」徽章是你的了！拆开软件、收集证据、拿证据说话，你都学会了。", face: "happy" },
-        // 中场（docs/story-prologue.md 第 3、4 节）：三个案子各留下一条主线线索，在这里第一次摆到一起。
         { text: "不过，手账里有三条线索，哪个委托都没问，我却放不下。", face: "thinking" },
-        { text: "小林的小账本，偷偷把数据发给「悄悄统计」。朵朵的存档，每晚 23:58 在「同步」。小雨的计算器，每晚 23:58 往「钟楼」上传。", face: "thinking", fx: { type: "wall", cards: ["小账本 → 悄悄统计（沙盒里抓到了）", "朵朵的存档：23:58 的同步字段", "小雨的调试页：23:58 · 钟楼（配置）"], ask: "悄悄统计 · 23:58 · 钟楼" } },
+        { text: "小林的小账本，确实把数据发给了「悄悄统计」。朵朵的存档里有 23:58 的同步字段，小雨的调试页也写着 23:58 和「钟楼」。后两条还只是记录和配置，是否真上传过，要继续验证。", face: "thinking", fx: { type: "wall", cards: WALL_ACT1, ask: "悄悄统计 · 23:58 · 钟楼" } },
         { text: "悄悄统计、23:58、钟楼……这三件事，有关系吗？", face: "thinking" },
         { who: "xiaoke", text: "我可以帮你查悄悄统计！……嗯，我只查到它的广告：「让数据为你服务」。它具体在做什么，我不确定。", face: "unsure" },
-        { text: "能说「不确定」，比瞎猜强多了。", face: "happy" },
-        { focus: "story balanced", text: "……对了，你有没有发现？今天中午，北边钟楼的钟一声都没响。", face: "thinking" },
-        { text: "钟楼那边好像有动静。我们去看看！", face: "surprised", fx: "shake" },
+        { text: "能说「不确定」，比瞎猜强多了。委托板上又来了新的委托——接着查。", face: "happy" },
       ],
+    },
+    {
+      id: "d-case-4",
+      act: 2,
+      title: "第二幕 · 阿哲的天气小助手",
+      steps: [{ id: "solve-weather", type: "solve", case: "weather-keys", spot: "weather-keys", goal: "接下阿哲的委托：发布前的安全自查", say: [{ text: "阿哲的委托贴在委托板上：他的「天气小助手」下周要发给全校用，想先做一次安全自查。", face: "normal" }] }],
+      done: [{ text: "钥匙不能跟着软件走：该在服务器的放服务器。还有——他那个「统计小库」，开在悄悄统计。", face: "thinking" }],
+    },
+    {
+      id: "d-case-5",
+      act: 2,
+      title: "第二幕 · 周姐的便签更新",
+      steps: [{ id: "solve-notes", type: "solve", case: "notes-versions", spot: "notes-versions", goal: "接下周姐的委托：新版本到底改了什么", say: [{ text: "周姐的委托也在委托板上：便签软件的更新说明只有一句「修复了一些小问题」，她总觉得不对劲。", face: "normal" }] }],
+      done: [{ text: "只看更新说明，永远不知道改了什么。新旧两版一对，再快进一天，全都看清了。", face: "happy" }],
+    },
+    {
+      id: "d-midpoint",
+      act: 2,
+      title: "中点 · 红线",
+      steps: [{ id: "pin-act2", type: "enter", spot: "home", goal: "回事务所，把新线索也钉上墙", say: [{ text: "回事务所。墙上的卡片，该连起来了。", face: "thinking" }] }],
+      done: [
+        { text: "五张卡片。我拿一卷红线，一张张连起来——", face: "thinking", fx: { type: "wall", cards: WALL_ACT2, ask: "每条线都指向：悄悄统计 · 23:58 · 钟楼" } },
+        { text: "每一条，都指向悄悄统计。每一晚，都是 23:58。目的地，都是钟楼。", face: "surprised" },
+        { text: "六个软件里，已经有五个了……还差一个。", face: "thinking" },
+        { text: "住宅区的王奶奶，前两天说她想装个手电筒，问我们手机老弹东西是怎么回事。去看看她吧。", face: "normal" },
+      ],
+    },
+    {
+      id: "d-case-6",
+      act: 3,
+      title: "第三幕 · 王奶奶的手电筒",
+      steps: [{ id: "solve-flashlight", type: "solve", case: "flashlight-apk", spot: "flashlight-apk", goal: "去住宅区找王奶奶，当面接下委托", say: [{ text: "王奶奶家在住宅区，院子里晾着衣服的那栋老房子。先在门口和她聊聊，再进屋。", face: "normal" }] }],
+      done: [{ text: "六个了。广告组件是悄悄统计做的，数据最后报给钟楼。", face: "thinking" }],
+    },
+    {
+      id: "d-vigil",
+      act: 3,
+      title: "高潮 · 守夜",
+      steps: [{ id: "wait-night", type: "enter", spot: "home", goal: "回事务所，等到夜里", say: [{ text: "回事务所。今晚我们不睡了——23:58，去钟楼底下守着。", face: "thinking" }] }],
+      done: [{ text: "天黑了。带上笔记本，我们走。", face: "normal" }],
+    },
+    {
+      id: "d-finale",
+      act: 3,
+      title: "结尾 · 打开钟楼",
+      steps: [{ id: "open-tower", type: "enter", spot: "clocktower", goal: "天亮了，去北区钟楼找铁叔", say: [] }],
+      done: [{ text: "铁叔已经在门口等着了。", face: "normal" }],
     },
   ],
 };
@@ -454,6 +504,20 @@ export function createQuests(lines = QUEST_LINES, { key = KEY } = {}) {
     track(lineId) {
       state.tracked = lineId;
       save();
+    },
+    /**
+     * A case the story has reached (the demo opens its cases act by act): every chapter before the
+     * first chapter of that case's act is done. Cases outside every line count as reachable.
+     */
+    caseReachable(caseId) {
+      for (const line of lines) {
+        const at = line.chapters.findIndex((c) => c.steps.some((s) => s.type === "solve" && s.case === caseId));
+        if (at < 0) continue;
+        const act = line.chapters[at].act;
+        const start = act == null ? at : line.chapters.findIndex((c) => c.act === act);
+        return line.chapters.slice(0, start).every((c) => chapterDone(line, c));
+      }
+      return true;
     },
     /** Best stars per drill, from the 复勘 ladder (game-drills.js). */
     get drills() {
